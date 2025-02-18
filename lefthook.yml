@@ -1,0 +1,8 @@
+pre-push:
+  commands:
+    ts:
+      run: npm run tsc
+pre-commit:
+  commands:
+    lint:
+      run: npx biome ci .

@@ -1,0 +1,149 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedPrivateClassMembers": "error",
+        "useArrayLiterals": "error",
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": {
+          "level": "error",
+          "options": {
+            "hooks": [
+              {
+                "name": "useLiveQuery", // react-dexie
+                "closureIndex": 0,
+                "dependenciesIndex": 1
+              }
+            ]
+          }
+        }
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "options": {
+            "attributes": ["className"], // react
+            "functions": ["cn"] // shared/ui/cn.ts
+          }
+        }
+      },
+      "performance": {
+        "noBarrelFile": "error"
+      },
+      "style": {
+        "noDefaultExport": "error",
+        "noNamespace": "error",
+        "noNamespaceImport": "error",
+        "noNegationElse": "error",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "options": {
+            "syntax": "generic"
+          }
+        },
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "filenameCases": ["kebab-case"]
+          }
+        },
+        "useForOf": "error",
+        "useFragmentSyntax": "error",
+        "useNamingConvention": "error",
+        "useShorthandAssign": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "error",
+        "useAwait": "error",
+        "noConstEnum": "error"
+      }
+    }
+  },
+  "formatter": {
+    "attributePosition": "multiline",
+    "indentStyle": "space"
+  },
+  "files": {
+    "ignore": [
+      ".DS_Store",
+      ".idea",
+      "node_modules",
+      "dist",
+      "coverage",
+      "playwright-report",
+      "test-results",
+      ".react-router",
+      ".env",
+      ".wrangler",
+      ".vercel",
+      "data",
+      ".obsidian",
+      ".astro",
+      ".vscode",
+      ".husky/_"
+    ]
+  },
+  "overrides": [
+    {
+      "include": [
+        "*.config.ts", // root level configs use default exports
+        "packages/*/*.config.ts", // root level config for workspaces
+        "src/main.ts", // some engines and frameworks use default exports
+        "src/routes.ts", // react router
+        "src/root.tsx", // react router
+        "*.page.tsx" // react router
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["*.spec.ts", "*.spec.tsx"], // because in order to mock top-level function, the test suite should import the whole ESModule
+      "linter": {
+        "rules": {
+          "style": {
+            "noNamespaceImport": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/tsconfig.json", "**/tsconfig.*.json"], // its really JSONC/JSON5 format despite the name
+      "json": {
+        "parser": {
+          "allowComments": true
+        }
+      }
+    },
+    {
+      "include": ["**/package.json"], // because NPM CLI doesn't preserve format and put new lines where it shouldn't by formatter definitions, so the only option is to obey to NPM
+      "formatter": {
+        "lineWidth": 1
+      }
+    },
+    {
+      "include": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
+}

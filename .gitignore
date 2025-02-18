@@ -1,0 +1,16 @@
+.DS_Store
+.idea
+node_modules
+dist
+coverage
+playwright-report
+test-results
+.react-router
+.env
+.wrangler
+.vercel
+data
+.obsidian
+.astro
+.vscode
+.husky/_

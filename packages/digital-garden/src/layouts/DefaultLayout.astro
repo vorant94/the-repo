@@ -1,0 +1,53 @@
+---
+import Background from "@/components/Background.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import Meta from "@/components/Meta.astro";
+import Nav from "@/components/Nav.astro";
+import "@/styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Seo, { type Props as SeoProps } from "@/components/Seo.astro";
+import { getFullTitle } from "@/utils/seo.helpers";
+
+export interface Props extends Omit<SeoProps, "fullTitle"> {
+  title?: string;
+}
+
+const { title, description, image, type } = Astro.props;
+
+const fullTitle = getFullTitle(title);
+---
+
+<!doctype html>
+<html
+	lang="en"
+	class="dark:[color-scheme:dark]"
+	prefix="og: https://ogp.me/ns#">
+	<head>
+		<Meta/>
+
+		<title>{fullTitle}</title>
+
+		<Seo
+			fullTitle={fullTitle}
+			description={description}
+			image={image}
+			type={type}
+		/>
+
+		<ClientRouter />
+	</head>
+	<body class="mx-auto flex min-h-dvh flex-col bg-slate-50 sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl dark:bg-slate-900">
+		<Background/>
+
+		<Header>
+			<Nav/>
+		</Header>
+
+		<main class="flex flex-1 flex-col gap-2 px-4 py-8">
+			<slot />
+		</main>
+
+		<Footer/>
+	</body>
+</html>

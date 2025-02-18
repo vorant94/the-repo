@@ -1,0 +1,38 @@
+---
+import { publishedAtFormat } from "@/globals/published-at-format";
+import type { PostModel } from "@/utils/content.helpers";
+import type { HTMLAttributes } from "astro/types";
+import { format } from "date-fns";
+import Link from "./ui/Link.astro";
+
+export interface Props extends HTMLAttributes<"li"> {
+  post: PostModel;
+}
+
+const { post, class: className, ...rest } = Astro.props;
+---
+
+<li
+	class:list={["flex flex-col py-3 text-medium", className]}
+	{...rest}
+>
+	<Link
+		href={`/${post.collection}/${post.id}`}
+		class="flex items-center gap-3 text-slate-800 dark:text-slate-100"
+		aria-label={post.data.title}
+	>
+		<span
+			class="flex-1 truncate"
+			transition:name={`post.${post.id}.title`}
+		>
+			{post.data.title}
+		</span>
+
+		<span
+			class="whitespace-nowrap text-xs"
+			transition:name={`post.${post.id}.publishedAt`}
+		>
+			{format(post.data.publishedAt, publishedAtFormat.short)}
+		</span>
+	</Link>
+</li>

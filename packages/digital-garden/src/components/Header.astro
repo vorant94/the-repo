@@ -1,0 +1,26 @@
+---
+import headerLogoDark from "@/assets/header-logo-dark.webp";
+import headerLogo from "@/assets/header-logo.webp";
+import ButtonLink from "./ui/ButtonLink.astro";
+import ThemedImage from "./ui/ThemedImage.astro";
+---
+
+<header class="sticky top-0 z-10 backdrop-blur flex items-center gap-1 border-slate-300 border-b p-4 dark:border-slate-600">
+	<nav>
+		<ButtonLink
+			href="/"
+			class="!p-0"
+		>
+			<ThemedImage
+				src={headerLogo}
+				srcDark={headerLogoDark}
+				alt="Logo"
+				width="120"
+			/>
+		</ButtonLink>
+	</nav>
+
+	<span class="flex-1" />
+
+	<slot/>
+</header>

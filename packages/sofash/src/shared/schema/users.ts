@@ -1,0 +1,41 @@
+import { randomUUID } from "node:crypto";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { resourceType } from "./resource-types.ts";
+
+export const userRoles = ["admin", "user"] as const;
+export type UserRole = (typeof userRoles)[number];
+
+export const userRoleSchema = z.enum(userRoles);
+
+export const users = sqliteTable("users", {
+  id: text()
+    .primaryKey()
+    .$default(() => randomUUID()),
+  resourceType: text({ enum: [resourceType.user] })
+    .notNull()
+    .default(resourceType.user),
+  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text()
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+
+  telegramChatId: integer().notNull().unique(),
+  role: text({ enum: userRoles }).notNull().default("user"),
+});
+
+export const userSchema = createSelectSchema(users);
+
+export type User = z.infer<typeof userSchema>;
+
+export const createUserSchema = createInsertSchema(users).omit({
+  id: true,
+  resourceType: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type CreateUser = z.infer<typeof createUserSchema>;

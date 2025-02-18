@@ -1,0 +1,30 @@
+{
+  "dbVersion": 4,
+  "subscriptions": [
+    {
+      "id": 1,
+      "name": "Goolge",
+      "description": "Google One",
+      "icon": "google",
+      "price": 120,
+      "startedAt": "2023-12-05T22:00:00.000Z",
+      "cycle": {
+        "each": 1,
+        "period": "yearly"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Spotify",
+      "description": "Spotify Premium",
+      "icon": "spotify",
+      "price": 21.9,
+      "startedAt": "2024-01-20T22:00:00.000Z",
+      "cycle": {
+        "each": 1,
+        "period": "monthly"
+      }
+    }
+  ],
+  "categories": []
+}

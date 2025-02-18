@@ -1,0 +1,27 @@
+{
+  "name": "the-repo",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "tsc": "npm run tsc --workspaces --if-present",
+    "lint:check": "biome check .",
+    "lint:write": "biome check --write .",
+    "lint:write:unsafe": "biome check --write --unsafe .",
+    "prepare": "lefthook install"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "lefthook": "^1.10.10"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ]
+}

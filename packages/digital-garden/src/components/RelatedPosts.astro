@@ -1,0 +1,62 @@
+---
+import { getEntries } from "astro:content";
+import {
+  type PostModel,
+  sortPostsByPublishedAt,
+} from "@/utils/content.helpers";
+import PostList from "./PostList.astro";
+import PostListItem from "./PostListItem.astro";
+import StandOut from "./ui/StandOut.astro";
+import Title from "./ui/Title.astro";
+
+export interface Props {
+  post: PostModel;
+}
+
+const { post } = Astro.props;
+
+const posts = post.data.related
+  ? sortPostsByPublishedAt(await getEntries(post.data.related))
+  : [];
+---
+
+<StandOut class="flex-col">
+	<details class="text-slate-800 dark:text-slate-100 details">
+		<summary class="hover:cursor-pointer">
+			<Title
+				as="h6"
+				class="mb-0 inline-block"
+			>
+				<span class="pl-2">Related posts</span>
+			</Title>
+		</summary>
+		<PostList>
+			{posts.map((post) => (
+				<PostListItem post={post} />
+			))}
+		</PostList>
+	</details>
+</StandOut>
+
+<style>
+.details {
+  > summary {
+    /* Chrome */
+    list-style-type: none;
+
+    /* Safari */
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: "\f0d7";
+      font: var(--fa-font-solid);
+    }
+  }
+
+  &[open] > summary::before {
+    content: "\f0d8";
+  }
+}
+</style>

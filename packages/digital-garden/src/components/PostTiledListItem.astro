@@ -1,0 +1,50 @@
+---
+import { publishedAtFormat } from "@/globals/published-at-format";
+import { type PostModel, isPostWithCover } from "@/utils/content.helpers";
+import { format } from "date-fns";
+import Caption from "./ui/Caption.astro";
+import Link from "./ui/Link.astro";
+import ThemedImage from "./ui/ThemedImage.astro";
+import Title from "./ui/Title.astro";
+
+export interface Props {
+  post: PostModel;
+}
+
+const { post } = Astro.props;
+---
+
+<li class="group flex cursor-pointer flex-col rounded-md border border-transparent text-medium duration-100 hover:scale-105 hover:border-slate-300 hover:shadow-md hover:dark:border-slate-600">
+	<Link
+		href={`/${post.collection}/${post.id}`}
+		class="flex items-center p-3 gap-2"
+	>
+		<!-- adding display: flex here breaks inline-block hack from below -->
+		<div class="flex-1 overflow-hidden">
+			<Title
+				transition:name={`post.${post.id}.title`}
+				as="h6"
+				class="truncate group-hover:text-inherit"
+			>
+				{post.data.title}
+			</Title>
+			<!-- this inline-block removes the inherited text-decoration, since it cannot be simply
+				overridden like any other parent css style -->
+			<Caption
+				class="inline-block"
+				transition:name={`post.${post.id}.publishedAt`}
+			>
+				{format(post.data.publishedAt, publishedAtFormat.full)}
+			</Caption>
+		</div>
+		{isPostWithCover(post) && (
+			<ThemedImage
+				transition:name={`post.${post.id}.coverImage`}
+				class="h-20 w-20 object-scale-down"
+				src={post.data.coverImage}
+				srcDark={post.data.coverImageDark}
+				alt={post.data.coverAlt}
+			/>
+		)}
+	</Link>
+</li>

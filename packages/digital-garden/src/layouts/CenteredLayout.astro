@@ -1,0 +1,36 @@
+---
+import Background from "@/components/Background.astro";
+import Meta from "@/components/Meta.astro";
+import "@/styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import { getFullTitle } from "@/utils/seo.helpers";
+
+export interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+
+const fullTitle = getFullTitle(title);
+---
+
+<!doctype html>
+<html
+	lang="en"
+	class="dark:[color-scheme:dark]"
+	prefix="og: https://ogp.me/ns#">
+	<head>
+		<Meta/>
+
+		<title>{fullTitle}</title>
+
+		<ClientRouter />
+	</head>
+	<body class="mx-auto flex min-h-dvh flex-col bg-slate-50 sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl dark:bg-slate-900">
+		<Background/>
+
+		<main class="flex flex-1 flex-col items-center justify-center">
+			<slot />
+		</main>
+	</body>
+</html>

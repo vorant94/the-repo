@@ -1,0 +1,87 @@
+erDiagram
+	users {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		timestamp	updated_at
+
+		string 		telegram_chat_id UK
+	}
+
+	user_titles {
+		string 		id PK
+		string		resource_type
+		timestamp	created_at
+		string		created_by FK
+		timestamp	updated_at
+
+		string 		user_id FK
+		string 		title_id FK
+	}
+
+	chains {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		timestamp	updated_at
+
+		string		name
+	}
+
+	sites {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		timestamp	updated_at
+
+		string		chain_id FK
+
+		string		name
+	}
+
+	releases {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		timestamp	updated_at
+
+		string		chain_release_id
+		string		chain_id FK
+	}
+
+	showtimes {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		timestamp	updated_at
+
+		string		site_id FK
+		string		release_id FK
+
+		string		site_link
+		timestamp	starts_at
+	}
+
+	titles {
+		string		id PK
+		string		resource_type
+		timestamp	created_at
+		string		created_by FK
+		timestamp	updated_at
+
+		string		title_id FK
+		string		imdb_id UK
+
+		string		name
+	}
+
+	titles ||--o{ releases : "is released via"
+
+	users ||--o{ user_titles : "is subscribed to releases of"
+	titles ||--o{ user_titles : "notifies users about releases via"
+
+	chains ||--o{ sites : "owns"
+	chains ||--o{ releases : "produces"
+
+	sites ||--o{ showtimes : "has"
+	releases ||--o{ showtimes : "is shown via"

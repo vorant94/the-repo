@@ -1,0 +1,28 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export const buttonVariants = ["default", "outlined"] as const;
+export type ButtonVariant = (typeof buttonVariants)[number];
+const buttonVariantToStyles = {
+  outlined:
+    "border rounded-2xl hover:outline outline-cyan-500 hover:border-cyan-500",
+  default: "",
+} as const satisfies Record<ButtonVariant, string>;
+
+export interface Props extends HTMLAttributes<"button"> {
+  variant?: ButtonVariant;
+}
+
+const { variant = "default", class: className, ...rest } = Astro.props;
+---
+
+<button
+	class:list={[
+			"p-1 hover:text-cyan-500",
+			buttonVariantToStyles[variant],
+			className,
+	]}
+	{...rest}
+>
+	<slot />
+</button>

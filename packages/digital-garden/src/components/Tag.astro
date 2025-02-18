@@ -1,0 +1,31 @@
+---
+import type { TagModel } from "@/utils/content.helpers";
+import { type TailwindColor, tailwindColors } from "@/utils/tailwind.helpers";
+import Badge from "./ui/Badge.astro";
+import Link from "./ui/Link.astro";
+
+export interface Props {
+  tag: TagModel;
+}
+
+const { tag } = Astro.props;
+
+const tagHash = tag.data.id
+  .split("")
+  .map((char) => char.charCodeAt(0))
+  .reduce((prev, curr) => prev + curr, 0);
+
+const color = tailwindColors[tagHash % tailwindColors.length] as TailwindColor;
+---
+
+<Link
+	transition:name={`tag.${tag.data.id}`}
+	href={`/${tag.collection}/${tag.data.id}`}
+>
+	<Badge
+		class="!inline-block max-w-24 truncate sm:max-w-none lg:max-w-24 xl:max-w-none"
+		color={color}
+	>
+		#{tag.data.id}
+	</Badge>
+</Link>

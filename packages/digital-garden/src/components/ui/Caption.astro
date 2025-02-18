@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export type Props = HTMLAttributes<"span">;
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<span
+	class:list={["text-slate-500 text-sm", className]}
+	{...rest}
+>
+	<slot/>
+</span>

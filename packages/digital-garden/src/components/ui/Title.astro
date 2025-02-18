@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export const titleTags = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
+export type TitleTag = (typeof titleTags)[number];
+const titleTagToStyles = {
+  h1: "text-4xl font-extrabold",
+  h2: "",
+  h3: "text-2xl font-semibold",
+  h4: "",
+  h5: "",
+  h6: " text-lg font-medium",
+} as const satisfies Record<TitleTag, string>;
+
+export interface Props extends HTMLAttributes<"h1"> {
+  as: TitleTag;
+}
+
+const { as: Tag, class: className, ...rest } = Astro.props;
+---
+
+<Tag
+	class:list={[
+		"text-slate-800 dark:text-slate-100",
+		titleTagToStyles[Tag],
+		className,
+	]}
+	{...rest}
+>
+	<slot/>
+</Tag>

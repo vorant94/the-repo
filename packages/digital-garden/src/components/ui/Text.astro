@@ -1,0 +1,28 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+export const textTags = ["span", "strong", "em"] as const;
+export type TextTag = (typeof textTags)[number];
+const textTagToStyle = {
+  span: "",
+  strong: "font-semibold",
+  em: "font-light",
+} as const satisfies Record<TextTag, string>;
+
+export interface Props extends HTMLAttributes<"span"> {
+  as: TextTag;
+}
+
+const { as: Tag, class: className, ...rest } = Astro.props;
+---
+
+<Tag
+	class:list={[
+		"text-slate-800 dark:text-slate-100",
+		textTagToStyle[Tag],
+		className,
+	]}
+ {...rest}
+>
+	<slot/>
+</Tag>

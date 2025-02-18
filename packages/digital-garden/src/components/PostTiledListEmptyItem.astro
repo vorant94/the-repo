@@ -1,0 +1,15 @@
+---
+import Link, { type Props as LinkProps } from "./ui/Link.astro";
+
+export type Props = Pick<LinkProps, "href">;
+
+const { href } = Astro.props;
+---
+<li class="self-center">
+	<Link
+		href={href}
+		class="p-3"
+	>
+		<slot/>
+	</Link>
+</li>

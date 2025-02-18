@@ -1,0 +1,66 @@
+---
+import Header from "./Header.astro";
+import NavLink from "./NavLink.astro";
+import Button from "./ui/Button.astro";
+import Icon from "./ui/Icon.astro";
+
+const navLinksMeta = [
+  { label: "👨 About", url: "/about" },
+  { label: "📒 Posts", url: "/posts" },
+] as const;
+---
+
+<div x-data="true">
+	<nav
+		data-testid="desktop-nav"
+		class="hidden lg:flex"
+	>
+		<menu class="flex gap-3 md:gap-4 lg:gap-6">
+			{navLinksMeta.map((navLink) => (
+				<NavLink href={navLink.url}>
+					{navLink.label}
+				</NavLink>
+			))}
+		</menu>
+	</nav>
+
+	<Button
+		x-on:click="$store.defaultLayout.openMobileNav()"
+		aria-label="mobile-nav-burger"
+		class="lg:hidden"
+	>
+		<Icon glyph="menu" />
+	</Button>
+
+	<template x-teleport="body">
+		<div
+			x-bind:class="$store.defaultLayout.isMobileNavOpen ? 'translate-y-0' : '-translate-y-full'"
+			x-cloak="true"
+			class="fixed top-0 left-0 z-10 h-dvh w-dvw backdrop-blur backdrop-filter transition duration-300"
+		>
+			<div class="mx-auto flex h-full flex-col sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
+				<Header>
+					<Button
+						x-on:click="$store.defaultLayout.closeMobileNav()"
+						aria-label="modal-close"
+					>
+						<Icon glyph="close" />
+					</Button>
+				</Header>
+
+				<nav
+					data-testid="mobile-nav"
+					class="flex flex-1 flex-col justify-center"
+				>
+					<menu class="flex flex-col gap-3 px-6">
+						{navLinksMeta.map((navLink) => (
+							<NavLink href={navLink.url}>
+								{navLink.label}
+							</NavLink>
+						))}
+					</menu>
+				</nav>
+			</div>
+		</div>
+	</template>
+</div>

@@ -1,0 +1,18 @@
+---
+import ButtonLink from "./ui/ButtonLink.astro";
+import Icon from "./ui/Icon.astro";
+---
+
+<footer class="flex items-center gap-1 border-slate-300 border-t p-4 text-slate-500 dark:border-slate-600">
+	<span class="text-sm">Mordechai Dror © 2023-present</span>
+
+	<div class="flex-1" />
+
+	<ButtonLink
+		href="/rss.xml"
+		aria-label="RSS feed"
+		target="_blank"
+	>
+		<Icon glyph="rss" />
+	</ButtonLink>
+</footer>

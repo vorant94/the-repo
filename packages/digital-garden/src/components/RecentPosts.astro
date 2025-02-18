@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content";
+import { sortPostsByPublishedAt } from "@/utils/content.helpers";
+import PostTiledList from "./PostTiledList.astro";
+import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
+import PostTiledListItem from "./PostTiledListItem.astro";
+
+const filteredPosts = await getCollection(
+  "posts",
+  (post) => !post.data.isPinned,
+);
+const sortedPosts = sortPostsByPublishedAt(filteredPosts);
+const recentPosts = sortedPosts.slice(0, 3);
+---
+
+<PostTiledList title={"Recent Posts"}>
+	{recentPosts.map((post) => (
+		<PostTiledListItem post={post} />
+	))}
+
+	<PostTiledListEmptyItem href="/posts">
+		See all
+	</PostTiledListEmptyItem>
+</PostTiledList>

@@ -1,0 +1,26 @@
+---
+import Divider from "./ui/Divider.astro";
+import Link from "./ui/Link.astro";
+import Text from "./ui/Text.astro";
+import Title from "./ui/Title.astro";
+---
+
+<div class="flex flex-col gap-2">
+	<Divider>
+			<Title as="h3">Stay up to date</Title>
+	</Divider>
+
+	<Text as="span">
+		If you wish to be up to date with new posts you can{" "}
+		<Link
+			href="/rss.xml"
+			target="_blank"
+		>
+			subscribe with RSS
+		</Link>
+	</Text>
+
+	<Text as="span">
+		There will also be an email newsletter somewhere in the future
+	</Text>
+</div>

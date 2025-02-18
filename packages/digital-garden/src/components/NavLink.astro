@@ -1,0 +1,25 @@
+---
+import Link, { type Props as LinkProps } from "./ui/Link.astro";
+
+export interface Props extends Omit<LinkProps, "isActive"> {}
+
+const { href, class: className, ...rest } = Astro.props;
+
+const { pathname } = Astro.url;
+---
+
+<li>
+	<Link
+		href={href}
+		class:list={[
+			"block rounded-full border-2 p-3 text-center font-semibold text-2xl md:p-4 lg:rounded-none lg:border-none lg:p-0 lg:text-sm",
+			"border-slate-300 bg-slate-50 lg:bg-transparent",
+			"dark:border-slate-600 dark:bg-slate-900 dark:lg:bg-transparent",
+			className,
+		]}
+		isActive={pathname.startsWith(href)}
+		{...rest}
+	>
+		<slot/>
+	</Link>
+</li>
