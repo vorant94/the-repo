@@ -10,9 +10,8 @@ import {
 import { ManageCategories } from "../../../widgets/manage-categories/ui/manage-categories.tsx";
 import { SelectCategory } from "../../../widgets/select-category/ui/select-category.tsx";
 import { SubscriptionList } from "../../../widgets/subscription-list/ui/subscription-list.tsx";
-import type { Route } from "./+types/subscriptions.page.ts";
 
-export default memo(() => {
+export const SubscriptionsPage: FC = memo(() => {
   const mode = useUpsertSubscriptionMode();
 
   return (
@@ -31,4 +30,4 @@ export default memo(() => {
       <SubscriptionList />
     </DefaultLayout>
   );
-}) satisfies FC<Route.ComponentProps>;
+});

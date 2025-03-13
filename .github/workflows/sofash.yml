@@ -11,6 +11,7 @@ on:
       - 'packages/sofash/docs/**'
       - '.github/workflows/digital-garden.yml'
       - '.github/workflows/subs-savvy.yml'
+      - 'biome.jsonc'
 
 jobs:
   lint:

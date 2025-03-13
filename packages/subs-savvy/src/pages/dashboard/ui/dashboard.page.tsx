@@ -12,9 +12,8 @@ import { ExpensesPerMonth } from "../../../widgets/expenses-per-month/ui/expense
 import { ManageCategories } from "../../../widgets/manage-categories/ui/manage-categories.tsx";
 import { SelectCategory } from "../../../widgets/select-category/ui/select-category.tsx";
 import { UpcomingPayments } from "../../../widgets/upcoming-payments/ui/upcoming-payments.tsx";
-import type { Route } from "./+types/dashboard.page.ts";
 
-export default memo(() => {
+export const DashboardPage: FC = memo(() => {
   const mode = useUpsertSubscriptionMode();
 
   return (
@@ -39,4 +38,4 @@ export default memo(() => {
       </div>
     </DefaultLayout>
   );
-}) satisfies FC<Route.ComponentProps>;
+});

@@ -1,16 +1,22 @@
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import i18next from "i18next";
 import i18nextBrowserLanguageDetector from "i18next-browser-languagedetector";
 import i18nextFetchBackend from "i18next-fetch-backend";
 import { HMRPlugin } from "i18next-hmr/plugin";
-import { StrictMode, startTransition } from "react";
-import { hydrateRoot } from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { initReactI18next } from "react-i18next";
-import { HydratedRouter } from "react-router/dom";
+import { RouterProvider } from "react-router/dom";
+import { router } from "./app/providers/router.tsx";
+import { theme } from "./app/providers/theme.tsx";
 import {
   defaultLanguage,
   supportedLanguages,
 } from "./features/i18n/model/use-language.ts";
 import { db } from "./shared/lib/db.ts";
+import "./style.css";
+import { HelmetProvider } from "react-helmet-async";
 
 if (import.meta.env.DEV) {
   window.addEventListener("unhandledrejection", ({ reason }) => {
@@ -52,11 +58,19 @@ i18n.init({
   },
 });
 
-startTransition(() => {
-  hydrateRoot(
-    document,
-    <StrictMode>
-      <HydratedRouter />
-    </StrictMode>,
-  );
-});
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found!");
+}
+
+createRoot(rootElement).render(
+  <StrictMode>
+    <MantineProvider theme={theme}>
+      <Notifications />
+
+      <HelmetProvider>
+        <RouterProvider router={router} />
+      </HelmetProvider>
+    </MantineProvider>
+  </StrictMode>,
+);

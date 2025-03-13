@@ -8,7 +8,6 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-    "rootDirs": [".", "./.react-router/types"],
 
     /* Strictness */
     "strict": true,
@@ -44,11 +43,5 @@
       "vite-plugin-svgr/client"
     ]
   },
-  "include": [
-    "src",
-    "e2e",
-    "scripts",
-    "*.config.ts",
-    ".react-router/types/**/*"
-  ]
+  "include": ["src", "e2e", "scripts", "*.config.ts"]
 }

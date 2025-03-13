@@ -10,9 +10,8 @@ import {
   DefaultLayoutHeader,
 } from "../../../shared/ui/default.layout.tsx";
 import { Icon } from "../../../shared/ui/icon.tsx";
-import type { Route } from "./+types/recovery.page.ts";
 
-export default memo(() => {
+export const RecoveryPage: FC = memo(() => {
   const { t } = useTranslation();
 
   return (
@@ -48,7 +47,7 @@ export default memo(() => {
       </Card>
     </DefaultLayout>
   );
-}) satisfies FC<Route.ComponentProps>;
+});
 
 const tab = {
   import: "import",
