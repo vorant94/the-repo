@@ -1,6 +1,6 @@
 import fse from "fs-extra";
 import { sortObjectKeys } from "../src/shared/lib/sort-object-keys.ts";
-import { translationFilePaths } from "./shared/translation.js";
+import { translationFilePaths } from "./shared/translation.ts";
 
 await Promise.all(
   translationFilePaths.map(async (filePath) => {
@@ -9,7 +9,7 @@ await Promise.all(
     const sortedTranslation = sortObjectKeys(translation);
 
     await fse.writeJSON(filePath, sortedTranslation, {
-      spaces: "\t",
+      spaces: 2,
     });
   }),
 );

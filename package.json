@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "ts:check": "npm run tsc --workspaces --if-present",
+    "ts:check": "npm run ts:check --workspaces --if-present",
     "lint:check": "biome check .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
@@ -15,10 +15,10 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "lefthook": "^1.10.10"
+    "lefthook": "^1.11.3"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=23"
   },
   "os": [
     "darwin",

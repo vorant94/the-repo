@@ -54,7 +54,7 @@ jobs:
 
       - name: Are Translations Sorted
         working-directory: packages/subs-savvy
-        run: npx tsx scripts/are-translations-sorted.ts
+        run: node scripts/are-translations-sorted.ts
 
   test:
     name: Test

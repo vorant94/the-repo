@@ -2,7 +2,7 @@ import console from "node:console";
 import process from "node:process";
 import fse from "fs-extra";
 import { sortObjectKeys } from "../src/shared/lib/sort-object-keys.ts";
-import { translationFilePaths } from "./shared/translation.js";
+import { translationFilePaths } from "./shared/translation.ts";
 
 const results = await Promise.allSettled(
   translationFilePaths.map(async (filePath) => {

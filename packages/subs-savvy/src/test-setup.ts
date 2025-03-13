@@ -5,8 +5,6 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import { afterEach, expect, vi } from "vitest";
 import { dateMatchers } from "./shared/test/date.matchers.ts";
-// temp disable, see https://github.com/JoshuaKGoldberg/console-fail-test/issues/36
-// import "console-fail-test/setup";
 
 // react testing library
 afterEach(() => {

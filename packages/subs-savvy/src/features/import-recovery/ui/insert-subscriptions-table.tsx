@@ -23,7 +23,7 @@ import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscr
 import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
 import {
   type InsertSubscriptionModel,
-  subscriptionSchema,
+  insertSubscriptionSchema,
 } from "../../../shared/api/subscription.model.ts";
 import { cn } from "../../../shared/ui/cn.ts";
 
@@ -274,5 +274,5 @@ export interface InsertSubscriptionsTableFormValue {
 }
 
 const schema = z.object({
-  subscriptions: z.array(subscriptionSchema),
+  subscriptions: z.array(insertSubscriptionSchema),
 });
