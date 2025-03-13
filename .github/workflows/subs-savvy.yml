@@ -6,9 +6,9 @@ on:
     branches:
       - 'master'
     paths-ignore:
-      - 'packages/sofash/**'
-      - 'packages/digital-garden/**'
-      - 'packages/subs-savvy/docs/**'
+      - 'apps/sofash/**'
+      - 'apps/digital-garden/**'
+      - 'apps/subs-savvy/docs/**'
       - '.github/workflows/sofash.yml'
       - '.github/workflows/digital-garden.yml'
       - 'biome.jsonc'
@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Are Translations Sorted
-        working-directory: packages/subs-savvy
+        working-directory: apps/subs-savvy
         run: node scripts/are-translations-sorted.ts
 
   test:
@@ -77,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: packages/subs-savvy/coverage/
+          path: apps/subs-savvy/coverage/
           retention-days: 30
 
   build:
@@ -102,7 +102,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bundle
-          path: packages/subs-savvy/dist
+          path: apps/subs-savvy/dist
           retention-days: 30
 
   e2e:
@@ -152,10 +152,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bundle
-          path: packages/subs-savvy/dist
+          path: apps/subs-savvy/dist
 
       - name: Deploy Bundle
-        working-directory: packages/subs-savvy
+        working-directory: apps/subs-savvy
         run: npm run deploy --workspace subs-savvy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

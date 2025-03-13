@@ -6,8 +6,8 @@ on:
     branches:
       - 'master'
     paths-ignore:
-      - 'packages/sofash/**'
-      - 'packages/subs-savvy/**'
+      - 'apps/sofash/**'
+      - 'apps/subs-savvy/**'
       - '.github/workflows/sofash.yml'
       - '.github/workflows/subs-savvy.yml'
       - 'biome.jsonc'
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bundle
-          path: packages/digital-garden/dist
+          path: apps/digital-garden/dist
           retention-days: 30
 
   e2e:
@@ -109,10 +109,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bundle
-          path: packages/digital-garden/dist
+          path: apps/digital-garden/dist
 
       - name: Deploy Bundle
-        working-directory: packages/digital-garden
+        working-directory: apps/digital-garden
         run: npm run deploy --workspace digital-garden
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

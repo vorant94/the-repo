@@ -20,7 +20,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-${{steps.setup.outputs.node-version}}-playwright-${{ steps.define-playwright-version.outputs.playwright-version }}-${{hashFiles('packages/blog/playwright.config.js')}}
+        key: ${{ runner.os }}-${{steps.setup.outputs.node-version}}-playwright-${{ steps.define-playwright-version.outputs.playwright-version }}-${{hashFiles(format('apps/{0}/playwright.config.ts', inputs.workspace))}}
 
     - name: Install Playwright with it's dependencies
       if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -41,5 +41,5 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: e2e-report
-        path: packages/${{inputs.workspace}}/playwright-report/
+        path: apps/${{inputs.workspace}}/playwright-report/
         retention-days: 30

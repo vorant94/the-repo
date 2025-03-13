@@ -6,9 +6,9 @@ on:
     branches:
       - 'master'
     paths-ignore:
-      - 'packages/subs-savvy/**'
-      - 'packages/digital-garden/**'
-      - 'packages/sofash/docs/**'
+      - 'apps/subs-savvy/**'
+      - 'apps/digital-garden/**'
+      - 'apps/sofash/docs/**'
       - '.github/workflows/digital-garden.yml'
       - '.github/workflows/subs-savvy.yml'
       - 'biome.jsonc'
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: packages/sofash/coverage/
+          path: apps/sofash/coverage/
           retention-days: 30
 
   build:
@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bundle
-          path: packages/sofash/dist/
+          path: apps/sofash/dist/
           retention-days: 30
 
   migrate:
@@ -137,7 +137,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bundle
-          path: packages/sofash/dist/
+          path: apps/sofash/dist/
 
       - name: Deploy Bundle
         run: npm run deploy --workspace sofash
