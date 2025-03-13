@@ -86,6 +86,7 @@ jobs:
     needs:
       - lint
       - ts
+      - build
 #      - e2e
     if: |
       github.event_name == 'push' &&
