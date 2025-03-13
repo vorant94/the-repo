@@ -1,0 +1,21 @@
+name: Setup Node & NPM
+
+outputs:
+  node-version:
+    description: 'The installed node version.'
+    value: ${{ steps.setup-node.outputs.node-version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node
+      id: setup-node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: "npm"
+
+    - name: Install Dependencies
+      if: steps.cache-node_modules.outputs.cache-hit != 'true'
+      run: npm ci --no-audit
+      shell: bash

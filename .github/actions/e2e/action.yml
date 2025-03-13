@@ -1,0 +1,47 @@
+name: E2E Tests
+
+inputs:
+  env:
+    description: Environment to run E2E in
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Define Playwright Version
+      id: define-playwright-version
+      run: |
+        PLAYWRIGHT_VERSION=$(cat package-lock.json | jq -r ".packages[\"node_modules/@playwright\/test\"].version")
+        echo "playwright-version=$PLAYWRIGHT_VERSION" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Playwright Browsers
+      id: cache-playwright
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-${{steps.setup.outputs.node-version}}-playwright-${{ steps.define-playwright-version.outputs.playwright-version }}-${{hashFiles('packages/blog/playwright.config.js')}}
+
+    - name: Install Playwright with it's dependencies
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: cd packages/blog && npx playwright install --with-deps
+      shell: bash
+
+    - name: Install Playwright's dependencies
+      if: steps.playwright-cache.outputs.cache-hit == 'true'
+      run: cd packages/blog && npx playwright install-deps
+      shell: bash
+
+    - name: Run E2E
+      run: cd packages/blog && npx playwright test
+      env:
+        NODE_ENV: ${{ inputs.env }}
+      shell: bash
+
+    - name: Upload E2E Test Report
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-report-${{ inputs.shard }}_${{ inputs.total_shards }}
+        path: packages/blog/playwright-report/
+        retention-days: 30
