@@ -1,0 +1,18 @@
+name = "sofash"
+main = "dist/main.js"
+compatibility_date = "2024-11-12"
+compatibility_flags = [ "nodejs_compat" ]
+
+no_bundle = true
+rules = [
+  { type = "Text", globs = ["main.js.map"], fallthrough = true }
+]
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sofash"
+database_id = "2e220ae3-0252-483d-911b-87daf934a808"
+migrations_dir = "drizzle"

@@ -1,4 +1,4 @@
-name: Digital Garden CI/CD
+name: Sofash CI/CD
 
 on:
   workflow_dispatch:
@@ -6,9 +6,10 @@ on:
     branches:
       - 'master'
     paths-ignore:
-      - 'packages/sofash/**'
       - 'packages/subs-savvy/**'
-      - '.github/workflows/sofash.yml'
+      - 'packages/digital-garden/**'
+      - 'packages/sofash/docs/**'
+      - '.github/workflows/digital-garden.yml'
       - '.github/workflows/subs-savvy.yml'
 
 jobs:
@@ -36,13 +37,37 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: TS
-        run: npm run ts:check --workspace digital-garden
+        run: npm run ts:check --workspace sofash
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs:
+      - ts
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node & NPM
+        uses: ./.github/actions/setup
+
+      - name: Run Unit Tests
+        run: npm run test:coverage --workspace sofash
+
+      - name: Upload Unit Test Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: packages/sofash/coverage/
+          retention-days: 30
 
   build:
     name: Build
     runs-on: ubuntu-latest
     needs:
       - ts
+    outputs:
+      bundle-cache-hit: ${{ steps.cache-bundle.outputs.cache-hit }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -52,33 +77,35 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build App Bundle
-        run: npm run build --workspace digital-garden
+        run: npm run build --workspace sofash
 
       - name: Upload App Bundle
+        if: steps.cache-bundle.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: bundle
-          path: packages/digital-garden/dist
+          path: packages/sofash/dist/
           retention-days: 30
 
-#  e2e:
-#    name: E2E
-#    timeout-minutes: 60
-#    runs-on: ubuntu-latest
-#    needs:
-#      - build
-#    steps:
-#      - name: Checkout Code
-#        uses: actions/checkout@v4
-#
-#      - name: Setup Node & NPM
-#        id: setup
-#        uses: ./.github/actions/setup
-#
-#      - name: Run E2E Tests
-#        uses: ./.github/actions/e2e
-#        with:
-#          env: 'development'
+  migrate:
+    name: Migrate
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node & NPM
+        id: setup
+        uses: ./.github/actions/setup
+
+      - name: Run migrations
+        run: npm run migrate:prod --workspace sofash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
   deploy:
     name: Deploy
@@ -86,13 +113,14 @@ jobs:
     needs:
       - lint
       - ts
+      - test
       - build
-#      - e2e
+      - migrate
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/master'
     concurrency:
-      group: digital-garden-deploy
+      group: sofash-deploy
       cancel-in-progress: false
     steps:
       - name: Checkout Code
@@ -106,11 +134,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bundle
-          path: packages/digital-garden/dist
+          path: packages/sofash/dist/
 
       - name: Deploy Bundle
-        working-directory: packages/digital-garden
-        run: npm run deploy --workspace digital-garden
+        run: npm run deploy --workspace sofash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

@@ -9,6 +9,8 @@ on:
       - 'packages/sofash/**'
       - 'packages/digital-garden/**'
       - 'packages/subs-savvy/docs/**'
+      - '.github/workflows/sofash.yml'
+      - '.github/workflows/digital-garden.yml'
 
 jobs:
   lint:
@@ -138,7 +140,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/master'
     concurrency:
-      group: deploy
+      group: subs-savvv-deploy
       cancel-in-progress: false
     steps:
       - name: Checkout Code
