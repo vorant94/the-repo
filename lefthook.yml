@@ -1,7 +1,7 @@
 pre-push:
   commands:
     ts:
-      run: npm run tsc
+      run: npm run ts:check
 pre-commit:
   commands:
     lint:

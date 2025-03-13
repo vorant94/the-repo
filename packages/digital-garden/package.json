@@ -7,9 +7,10 @@
     "start:dev": "astro dev",
     "start:prod": "astro preview",
     "build": "astro build",
-    "tsc": "astro check",
+    "ts:check": "astro check",
     "e2e:ui": "playwright test --ui",
-    "e2e:codegen": "playwright codegen"
+    "e2e:codegen": "playwright codegen",
+    "deploy": "wrangler pages deploy"
   },
   "dependencies": {
     "@astrojs/alpinejs": "^0.4.1",

@@ -6,10 +6,12 @@
   "scripts": {
     "start:dev": "react-router dev",
     "build": "react-router build",
-    "tsc": "tsc",
+    "ts:check": "tsc",
     "e2e:ui": "playwright test --ui",
     "e2e:codegen": "playwright codegen",
-    "prepare": "react-router typegen"
+    "prepare": "react-router typegen",
+    "deploy": "wrangler pages deploy",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
@@ -71,6 +73,6 @@
     "vite": "^6.0.7",
     "vite-plugin-svgr": "^4.3.0",
     "vitest": "^3.0.2",
-    "wrangler": "^3.67.1"
+    "wrangler": "^3.114.1"
   }
 }

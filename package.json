@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "tsc": "npm run tsc --workspaces --if-present",
+    "ts:check": "npm run tsc --workspaces --if-present",
     "lint:check": "biome check .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
