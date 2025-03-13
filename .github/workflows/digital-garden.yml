@@ -11,6 +11,8 @@ on:
       - '.github/workflows/sofash.yml'
       - '.github/workflows/subs-savvy.yml'
       - 'biome.jsonc'
+      - '.editorconfig'
+      - '**/README.md'
 
 jobs:
   lint:

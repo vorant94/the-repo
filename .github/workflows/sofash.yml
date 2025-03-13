@@ -12,6 +12,8 @@ on:
       - '.github/workflows/digital-garden.yml'
       - '.github/workflows/subs-savvy.yml'
       - 'biome.jsonc'
+      - '.editorconfig'
+      - '**/README.md'
 
 jobs:
   lint:
