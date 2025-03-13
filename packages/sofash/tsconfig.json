@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "erasableSyntaxOnly": true,
 
     /* Strictness */
     "strict": true,
@@ -43,7 +44,10 @@
       "@total-typescript/ts-reset",
       "node",
       "@cloudflare/workers-types"
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "e2e", "scripts", "*.config.ts"]
 }

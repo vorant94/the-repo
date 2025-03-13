@@ -1,15 +1,15 @@
-import { CloseButton, Divider, TextInput } from "@mantine/core";
-import { memo, useCallback, useMemo, useState } from "react";
-import { isSubscriptionExpired } from "../../../entities/subscription/lib/is-subscription-expired.ts";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
-import { SubscriptionGridItem } from "../../../features/list-subscriptions/ui/subscription-grid-item.tsx";
+import { isSubscriptionExpired } from "@/entities/subscription/lib/is-subscription-expired.ts";
+import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
+import { SubscriptionGridItem } from "@/features/list-subscriptions/ui/subscription-grid-item.tsx";
 import {
   SubscriptionGrid,
   type SubscriptionGridChildrenProps,
-} from "../../../features/list-subscriptions/ui/subscription-grid.tsx";
-import { useUpsertSubscriptionActions } from "../../../features/upsert-subscription/model/upsert-subscription.store.tsx";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { cn } from "../../../shared/ui/cn.ts";
+} from "@/features/list-subscriptions/ui/subscription-grid.tsx";
+import { useUpsertSubscriptionActions } from "@/features/upsert-subscription/model/upsert-subscription.store.tsx";
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
+import { cn } from "@/shared/ui/cn.ts";
+import { CloseButton, Divider, TextInput } from "@mantine/core";
+import { memo, useCallback, useMemo, useState } from "react";
 
 export const SubscriptionList = memo(() => {
   const [namePrefix, setNamePrefix] = useState("");

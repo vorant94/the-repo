@@ -1,3 +1,9 @@
+import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
+import {
+  monthlySubscription,
+  yearlySubscription,
+} from "@/shared/api/__mocks__/subscription.model.ts";
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import { MantineProvider } from "@mantine/core";
 import {
   type RenderResult,
@@ -14,21 +20,11 @@ import {
   it,
   vi,
 } from "vitest";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
-import {
-  monthlySubscription,
-  yearlySubscription,
-} from "../../../shared/api/__mocks__/subscription.model.ts";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { SubscriptionList } from "./subscription-list.tsx";
 
-vi.mock(import("../../../entities/subscription/model/subscriptions.store.tsx"));
-vi.mock(
-  import("../../../features/list-subscriptions/ui/subscription-grid.tsx"),
-);
-vi.mock(
-  import("../../../features/list-subscriptions/ui/subscription-grid-item.tsx"),
-);
+vi.mock(import("@/entities/subscription/model/subscriptions.store.tsx"));
+vi.mock(import("@/features/list-subscriptions/ui/subscription-grid.tsx"));
+vi.mock(import("@/features/list-subscriptions/ui/subscription-grid-item.tsx"));
 
 describe("SubscriptionList", () => {
   let screen: RenderResult;

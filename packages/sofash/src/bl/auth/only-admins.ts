@@ -1,9 +1,9 @@
+import type { GrammyContext } from "@/shared/env/grammy-context.ts";
+import type { HonoEnv } from "@/shared/env/hono-env.ts";
 import type { MiddlewareFn } from "grammy";
 import type { MiddlewareHandler } from "hono";
 import { basicAuth } from "hono/basic-auth";
 import { getContext } from "hono/context-storage";
-import type { GrammyContext } from "../../shared/env/grammy-context.ts";
-import type { HonoEnv } from "../../shared/env/hono-env.ts";
 
 export const hOnlyAdmins: MiddlewareHandler<HonoEnv> = (hc, next) => {
   const { config } = hc.var;

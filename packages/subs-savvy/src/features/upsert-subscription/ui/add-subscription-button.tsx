@@ -1,9 +1,9 @@
+import { Icon } from "@/shared/ui/icon.tsx";
+import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
 import { ActionIcon, Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Icon } from "../../../shared/ui/icon.tsx";
-import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 import { useUpsertSubscriptionActions } from "../model/upsert-subscription.store.tsx";
 
 export const AddSubscriptionButton = memo(() => {

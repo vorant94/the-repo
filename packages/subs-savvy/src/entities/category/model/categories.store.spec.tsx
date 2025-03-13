@@ -1,3 +1,5 @@
+import { categoryMock } from "@/shared/api/__mocks__/category.model.ts";
+import type { CategoryModel } from "@/shared/api/category.model.ts";
 import {
   type RenderHookResult,
   act,
@@ -5,15 +7,13 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
-import type { CategoryModel } from "../../../shared/api/category.model.ts";
 import {
   CategoriesProvider,
   useCategories,
   useSelectedCategory,
 } from "./categories.store.tsx";
 
-vi.mock(import("../../../shared/api/category.table.ts"));
+vi.mock(import("@/shared/api/category.table.ts"));
 
 describe("categories.store", () => {
   let screen: RenderHookResult<HooksCombined, void>;

@@ -1,11 +1,11 @@
-import dayjs from "dayjs";
-import { useMemo } from "react";
 import {
   type SubscriptionWithNextPaymentAt,
   getSubscriptionNextPaymentAt,
-} from "../../../entities/subscription/lib/get-subscription-next-payment-at.ts";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
-import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
+} from "@/entities/subscription/lib/get-subscription-next-payment-at.ts";
+import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
+import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 
 // TODO do so if subA has two payment dates before subB, so the upcoming payments
 // 	will look like "subA, subA, subB"

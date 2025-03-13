@@ -1,16 +1,16 @@
+import {
+  type RecoveryModel,
+  recoverySchema,
+} from "@/shared/api/recovery.model.ts";
+import { catchError } from "@/shared/lib/catch-error.ts";
+import { cn } from "@/shared/ui/cn.ts";
+import { Icon } from "@/shared/ui/icon.tsx";
+import { notificationColor } from "@/shared/ui/notification.ts";
 import { Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconFileCode } from "@tabler/icons-react";
 import { memo, useCallback, useEffect, useState } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
-import {
-  type RecoveryModel,
-  recoverySchema,
-} from "../../../shared/api/recovery.model.ts";
-import { catchError } from "../../../shared/lib/catch-error.ts";
-import { cn } from "../../../shared/ui/cn.ts";
-import { Icon } from "../../../shared/ui/icon.tsx";
-import { notificationColor } from "../../../shared/ui/notification.ts";
 
 export const ImportRecoveryDropZone = memo(
   ({ onRecoveryParsed }: ImportRecoveryDropZoneProps) => {

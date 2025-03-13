@@ -1,12 +1,12 @@
+import {
+  type SubscriptionsAggregatedByCategory,
+  noCategoryPlaceholder,
+} from "@/entities/subscription/lib/aggregate-subscriptions-by-category.ts";
+import { useCurrencyFormatter } from "@/features/i18n/model/use-currency-formatter.ts";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { LabelProps } from "recharts";
 import type { PolarViewBox } from "recharts/types/util/types";
-import {
-  type SubscriptionsAggregatedByCategory,
-  noCategoryPlaceholder,
-} from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
-import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";
 
 // TODO rewrite with foreignObject
 export const ExpensesByCategoryLabelContent = ({

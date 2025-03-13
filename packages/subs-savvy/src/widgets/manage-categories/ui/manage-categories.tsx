@@ -1,8 +1,8 @@
+import { Icon } from "@/shared/ui/icon.tsx";
 import { ActionIcon } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { memo } from "react";
-import { Icon } from "../../../shared/ui/icon.tsx";
 import { ManageCategoriesModal } from "./manage-categories-modal.tsx";
 
 export const ManageCategories = memo(() => {

@@ -1,11 +1,11 @@
-import { type RenderHookResult, act, renderHook } from "@testing-library/react";
-import { BrowserRouter } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
 import {
   DefaultLayoutProvider,
   type UseDefaultLayout,
   useDefaultLayout,
-} from "../../../shared/ui/default.layout.tsx";
+} from "@/shared/ui/default.layout.tsx";
+import { type RenderHookResult, act, renderHook } from "@testing-library/react";
+import { BrowserRouter } from "react-router";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   type UpsertSubscriptionActions,
   UpsertSubscriptionProvider,

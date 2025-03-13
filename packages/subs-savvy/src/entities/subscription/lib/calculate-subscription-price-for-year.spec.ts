@@ -1,13 +1,13 @@
-import dayjs from "dayjs";
-import { describe, expect, it } from "vitest";
 import {
   monthlySubscription,
   twoMonthlySubscription,
   twoYearlySubscription,
   yearlySubscription,
-} from "../../../shared/api/__mocks__/subscription.model.ts";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { startOfYear } from "../../../shared/lib/dates.ts";
+} from "@/shared/api/__mocks__/subscription.model.ts";
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
+import { startOfYear } from "@/shared/lib/dates.ts";
+import dayjs from "dayjs";
+import { describe, expect, it } from "vitest";
 import { calculateSubscriptionPriceForYear } from "./calculate-subscription-price-for-year.ts";
 
 describe("calculateSubscriptionPriceForYear", () => {

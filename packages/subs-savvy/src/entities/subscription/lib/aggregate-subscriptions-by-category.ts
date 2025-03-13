@@ -1,5 +1,5 @@
-import type { CategoryModel } from "../../../shared/api/category.model.ts";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import type { CategoryModel } from "@/shared/api/category.model.ts";
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import { compareSubscriptionsDesc } from "./compare-subscriptions.ts";
 
 export function aggregateSubscriptionsByCategory(

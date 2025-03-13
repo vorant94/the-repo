@@ -1,23 +1,23 @@
+import { useSelectedCategory } from "@/entities/category/model/categories.store.tsx";
+import type {
+  InsertSubscriptionModel,
+  SubscriptionModel,
+  UpdateSubscriptionModel,
+  UpsertSubscriptionModel,
+} from "@/shared/api/subscription.model.ts";
+import {
+  deleteSubscription,
+  insertSubscription,
+  updateSubscription,
+} from "@/shared/api/subscription.table.ts";
+import { rootRoute } from "@/shared/lib/route.ts";
+import { useDefaultLayout } from "@/shared/ui/default.layout.tsx";
 import { usePrevious } from "@mantine/hooks";
 import { type PropsWithChildren, memo, useEffect } from "react";
 import { useLocation } from "react-router";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
-import { useSelectedCategory } from "../../../entities/category/model/categories.store.tsx";
-import type {
-  InsertSubscriptionModel,
-  SubscriptionModel,
-  UpdateSubscriptionModel,
-  UpsertSubscriptionModel,
-} from "../../../shared/api/subscription.model.ts";
-import {
-  deleteSubscription,
-  insertSubscription,
-  updateSubscription,
-} from "../../../shared/api/subscription.table.ts";
-import { rootRoute } from "../../../shared/lib/route.ts";
-import { useDefaultLayout } from "../../../shared/ui/default.layout.tsx";
 
 export function useUpsertSubscription(): UpsertSubscriptionState {
   return useStore(useShallow(selectState));

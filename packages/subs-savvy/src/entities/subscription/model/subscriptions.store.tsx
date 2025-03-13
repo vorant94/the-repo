@@ -1,9 +1,9 @@
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
+import { findSubscriptions } from "@/shared/api/subscription.table.ts";
 import { useLiveQuery } from "dexie-react-hooks";
 import { type PropsWithChildren, memo, useEffect, useMemo } from "react";
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { findSubscriptions } from "../../../shared/api/subscription.table.ts";
 import { useSelectedCategory } from "../../category/model/categories.store.tsx";
 
 export function useSubscriptions(): ReadonlyArray<SubscriptionModel> {

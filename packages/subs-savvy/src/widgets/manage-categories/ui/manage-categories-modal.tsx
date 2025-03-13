@@ -1,15 +1,15 @@
-import { Button, Modal } from "@mantine/core";
-import { memo, useCallback, useEffect, useState } from "react";
-import { useCategories } from "../../../entities/category/model/categories.store.tsx";
-import { CategoryList } from "../../../features/list-categories/ui/category-list.tsx";
+import { useCategories } from "@/entities/category/model/categories.store.tsx";
+import { CategoryList } from "@/features/list-categories/ui/category-list.tsx";
 import {
   useUpsertCategoryActions,
   useUpsertCategoryMode,
-} from "../../../features/upsert-category/model/upsert-category.store.tsx";
-import { CategoryForm } from "../../../features/upsert-category/ui/category-form.tsx";
-import type { CategoryModel } from "../../../shared/api/category.model.ts";
-import { deleteCategory } from "../../../shared/api/category.table.ts";
-import { cn } from "../../../shared/ui/cn.ts";
+} from "@/features/upsert-category/model/upsert-category.store.tsx";
+import { CategoryForm } from "@/features/upsert-category/ui/category-form.tsx";
+import type { CategoryModel } from "@/shared/api/category.model.ts";
+import { deleteCategory } from "@/shared/api/category.table.ts";
+import { cn } from "@/shared/ui/cn.ts";
+import { Button, Modal } from "@mantine/core";
+import { memo, useCallback, useEffect, useState } from "react";
 
 export const ManageCategoriesModal = memo(
   ({ isOpen, close }: ManageCategoriesModalProps) => {

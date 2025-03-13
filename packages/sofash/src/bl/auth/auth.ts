@@ -1,11 +1,8 @@
+import { createUser, findUserByTelegramChatId } from "@/dal/db/users.table.ts";
+import type { GrammyContext } from "@/shared/env/grammy-context.ts";
+import type { HonoEnv } from "@/shared/env/hono-env.ts";
 import type { MiddlewareFn } from "grammy";
 import { getContext } from "hono/context-storage";
-import {
-  createUser,
-  findUserByTelegramChatId,
-} from "../../dal/db/users.table.ts";
-import type { GrammyContext } from "../../shared/env/grammy-context.ts";
-import type { HonoEnv } from "../../shared/env/hono-env.ts";
 
 export const auth: MiddlewareFn<GrammyContext> = async (gc, next) => {
   const hc = getContext<HonoEnv>();

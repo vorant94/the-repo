@@ -27,4 +27,9 @@ export default defineConfig({
       entry: path.resolve(process.cwd(), "src/main.ts"),
     }),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(process.cwd(), "src/"),
+    },
+  },
 });

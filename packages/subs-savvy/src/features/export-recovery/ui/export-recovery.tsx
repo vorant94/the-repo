@@ -1,9 +1,9 @@
+import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
+import { recoverySchema } from "@/shared/api/recovery.model.ts";
+import { dbVersion } from "@/shared/lib/db.ts";
+import { cn } from "@/shared/ui/cn.ts";
 import { Button, Switch } from "@mantine/core";
 import { memo, useCallback, useState } from "react";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
-import { recoverySchema } from "../../../shared/api/recovery.model.ts";
-import { dbVersion } from "../../../shared/lib/db.ts";
-import { cn } from "../../../shared/ui/cn.ts";
 import { SelectSubscriptionsTable } from "./select-subscriptions-table.tsx";
 
 export const ExportRecovery = memo(() => {

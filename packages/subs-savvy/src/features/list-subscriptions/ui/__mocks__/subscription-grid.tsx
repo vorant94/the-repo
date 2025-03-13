@@ -1,5 +1,5 @@
+import type { PropsWithFcChildren } from "@/shared/lib/props-with-fc-children.ts";
 import { vi } from "vitest";
-import type { PropsWithFcChildren } from "../../../../shared/lib/props-with-fc-children.ts";
 import type {
   SubscriptionGridChildrenProps,
   SubscriptionGridProps,

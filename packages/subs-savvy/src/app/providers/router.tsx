@@ -1,5 +1,5 @@
+import { rootRoute } from "@/shared/lib/route.ts";
 import { Navigate, createBrowserRouter } from "react-router";
-import { rootRoute } from "../../shared/lib/route.ts";
 import { App } from "../ui/app.tsx";
 
 export const router = createBrowserRouter([
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
       {
         path: `/${rootRoute.dashboard}`,
         lazy: () =>
-          import("../../pages/dashboard/ui/dashboard.page.tsx").then((m) => ({
+          import("@/pages/dashboard/ui/dashboard.page.tsx").then((m) => ({
             // biome-ignore lint/style/useNamingConvention: 3-rd party type
             Component: m.DashboardPage,
           })),
@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
       {
         path: `/${rootRoute.subscriptions}`,
         lazy: () =>
-          import("../../pages/subscription/ui/subscriptions.page.tsx").then(
+          import("@/pages/subscription/ui/subscriptions.page.tsx").then(
             (m) => ({
               // biome-ignore lint/style/useNamingConvention: 3-rd party type
               Component: m.SubscriptionsPage,
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
       {
         path: `/${rootRoute.recovery}`,
         lazy: () =>
-          import("../../pages/recovery/ui/recovery.page.tsx").then((m) => ({
+          import("@/pages/recovery/ui/recovery.page.tsx").then((m) => ({
             // biome-ignore lint/style/useNamingConvention: 3-rd party type
             Component: m.RecoveryPage,
           })),

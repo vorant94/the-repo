@@ -1,10 +1,10 @@
-import dayjs from "dayjs";
-import { expect, it } from "vitest";
 import {
   monthlySubscription,
   yearlySubscription,
-} from "../../../shared/api/__mocks__/subscription.model.ts";
-import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+} from "@/shared/api/__mocks__/subscription.model.ts";
+import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
+import dayjs from "dayjs";
+import { expect, it } from "vitest";
 import { getSubscriptionNextPaymentAt } from "./get-subscription-next-payment-at.ts";
 
 it("monthly subscription", () => {

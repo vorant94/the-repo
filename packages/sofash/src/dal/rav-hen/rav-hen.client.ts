@@ -1,8 +1,8 @@
 import { URL } from "node:url";
+import { catchError } from "@/shared/lib/error-or/catch-error.ts";
+import type { ErrorOr } from "@/shared/lib/error-or/error-or.ts";
 import { format } from "date-fns";
 import { z } from "zod";
-import { catchError } from "../../shared/lib/error-or/catch-error.ts";
-import type { ErrorOr } from "../../shared/lib/error-or/error-or.ts";
 import {
   type RavHenSiteId,
   ravHenEventSchema,

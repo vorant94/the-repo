@@ -1,10 +1,10 @@
+import type { HonoEnv } from "@/shared/env/hono-env.ts";
+import type { Constructor } from "@/shared/lib/constructor.ts";
+import { catchError } from "@/shared/lib/error-or/catch-error.ts";
+import type { User } from "@/shared/schema/users.ts";
 import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
 import { getContext } from "hono/context-storage";
-import type { HonoEnv } from "../../shared/env/hono-env.ts";
-import type { Constructor } from "../../shared/lib/constructor.ts";
-import { catchError } from "../../shared/lib/error-or/catch-error.ts";
-import type { User } from "../../shared/schema/users.ts";
 
 export async function checkHealth(): Promise<Health> {
   const { db, bot, user } = getContext<HonoEnv>().var;
