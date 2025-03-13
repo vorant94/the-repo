@@ -1,8 +1,8 @@
 name: E2E Tests
 
 inputs:
-  env:
-    description: Environment to run E2E in
+  workspace:
+    description: Workspace to run E2E in
     required: true
 
 runs:
@@ -24,24 +24,22 @@ runs:
 
     - name: Install Playwright with it's dependencies
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: cd packages/blog && npx playwright install --with-deps
+      run: npm run e2e:install --workspace ${{inputs.workspace}}
       shell: bash
 
     - name: Install Playwright's dependencies
       if: steps.playwright-cache.outputs.cache-hit == 'true'
-      run: cd packages/blog && npx playwright install-deps
+      run: npm run e2e:install-deps --workspace ${{inputs.workspace}}
       shell: bash
 
     - name: Run E2E
-      run: cd packages/blog && npx playwright test
-      env:
-        NODE_ENV: ${{ inputs.env }}
+      run: npm run e2e --workspace ${{inputs.workspace}}
       shell: bash
 
     - name: Upload E2E Test Report
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: e2e-report-${{ inputs.shard }}_${{ inputs.total_shards }}
-        path: packages/blog/playwright-report/
+        name: e2e-report
+        path: packages/${{inputs.workspace}}/playwright-report/
         retention-days: 30
