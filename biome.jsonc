@@ -85,14 +85,16 @@
       ".obsidian",
       ".astro",
       ".vscode",
-      ".husky/_"
+      ".husky/_",
+      "build",
+      "out"
     ]
   },
   "overrides": [
     {
       "include": [
         "*.config.ts", // root level configs use default exports
-        "packages/*/*.config.ts", // root level config for workspaces
+        "*.config.mjs", // root level configs use default exports
         "src/main.ts" // some engines and frameworks use default exports
       ],
       "linter": {

@@ -34,20 +34,11 @@
     "allowImportingTsExtensions": true,
 
     /* Runtime/Framework */
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
 
     /* Misc */
-    "types": [
-      "vite/client",
-      "@total-typescript/ts-reset",
-      "node",
-      "@cloudflare/workers-types"
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "types": ["@total-typescript/ts-reset"]
   },
-  "include": ["src", "scripts", "*.config.ts"]
+  "include": ["src", "*.config.ts"]
 }

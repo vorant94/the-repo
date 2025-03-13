@@ -14,3 +14,5 @@ data
 .astro
 .vscode
 .husky/_
+build
+out

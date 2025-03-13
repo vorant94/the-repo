@@ -43,5 +43,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "e2e", "scripts", "*.config.ts", ".astro/types.d.ts"]
+  "include": ["src", "e2e", "*.config.ts", ".astro/types.d.ts"]
 }
