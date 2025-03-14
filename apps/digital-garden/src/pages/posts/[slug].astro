@@ -97,13 +97,12 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-	<!-- TODO fork and fix bug of fist reaction -->
 	<giscus-widget
 		id="comments"
-		repo="vorant94/digital-garden"
+		repo="vorant94/the-repo"
 		repoid="R_kgDOKWcyPw="
-		category="Posts"
-		categoryid="DIC_kwDOKWcyP84Cc9LF"
+		category="Digital Garden Post Comments"
+		categoryid="DIC_kwDON7ttjc4CoCVG"
 		mapping="specific"
 		term={post.id}
 		reactionsenabled="1"

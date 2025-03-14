@@ -28,7 +28,6 @@ import { ExpensesPerMonthLegendContent } from "./expenses-per-month-legend-conte
 
 export const ExpensesPerMonth = memo(() => {
   const [monthDate, setMonthDate] = useState(startOfMonth);
-  // TODO translate via dayjs locale once we have more than english
   const monthName = useMemo(() => dayjs(monthDate).format("MMMM"), [monthDate]);
   const goPreviousMonth = useCallback(
     () => setMonthDate(dayjs(monthDate).subtract(1, "month").toDate()),

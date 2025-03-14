@@ -63,7 +63,6 @@ test.describe("recovery", () => {
       async () => await window.db.subscriptions.toArray(),
     );
 
-    // TODO validate categories as well
     const areAllSubscriptionsImported = recoveryToImport.subscriptions.every(
       (subscriptionToImport) =>
         !!importedSubscriptions.find(

@@ -22,7 +22,6 @@ export const ExportRecovery = memo(() => {
     const subscriptionsExport = recoverySchema.parse({
       dbVersion,
       subscriptions: subscriptionsToExport,
-      // TODO implement export of categories as well
       categories: [],
     });
     const jsonToExport = isPrettify

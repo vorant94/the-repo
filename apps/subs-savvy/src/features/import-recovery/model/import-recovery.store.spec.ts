@@ -188,8 +188,6 @@ describe("import-recovery.store", () => {
         ),
       );
 
-      // TODO test intermediate "processing" stage
-
       await waitFor(() =>
         expect(upsertCategoriesAndSubscriptionsSpy).toBeCalledWith(
           recovery.categories,

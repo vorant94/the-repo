@@ -27,7 +27,6 @@ const posts = defineCollection({
     ]),
 });
 
-// TODO report a bug when simultaneously adding a new entry and immediately referencing it
 const tags = defineCollection({
   loader: () => {
     return [

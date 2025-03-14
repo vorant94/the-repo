@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import type { LabelProps } from "recharts";
 import type { PolarViewBox } from "recharts/types/util/types";
 
-// TODO rewrite with foreignObject
 export const ExpensesByCategoryLabelContent = ({
   viewBox,
   aggregatedSubscriptions,

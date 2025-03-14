@@ -11,7 +11,6 @@ import { ImportRecoveryDropZone } from "./import-recovery-drop-zone.tsx";
 import { InsertCategoriesTable } from "./insert-categories-table.tsx";
 import { InsertSubscriptionsTable } from "./insert-subscriptions-table.tsx";
 
-// TODO improve performance (parsing a lot of sub makes UI lag)
 export const ImportRecovery = memo(() => {
   const { stage, subscriptions, categories } = useImportRecovery();
   const {
@@ -81,10 +80,7 @@ export const ImportRecovery = memo(() => {
           </Button>
         </div>
       </Stepper.Step>
-      <Stepper.Completed>
-        {/*TODO implement UI here*/}
-        completed/failed
-      </Stepper.Completed>
+      <Stepper.Completed>completed/failed</Stepper.Completed>
     </Stepper>
   );
 });

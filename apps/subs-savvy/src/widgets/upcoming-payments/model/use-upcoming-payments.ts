@@ -7,8 +7,6 @@ import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 
-// TODO do so if subA has two payment dates before subB, so the upcoming payments
-// 	will look like "subA, subA, subB"
 export function useUpcomingPayments(): Array<SubscriptionWithNextPaymentAt> {
   const subscriptions = useSubscriptions();
 
