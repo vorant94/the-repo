@@ -28,7 +28,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Lint
-        run: npx biome ci .
+        run: npm run lint:ci
 
   ts:
     name: TS

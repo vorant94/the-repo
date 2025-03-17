@@ -8,6 +8,7 @@
     "lint:check": "biome check .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
+    "lint:ci": "biome ci .",
     "prepare": "lefthook install"
   },
   "workspaces": [
