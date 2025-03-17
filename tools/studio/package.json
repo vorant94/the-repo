@@ -11,8 +11,8 @@
     "@remotion/cli": "4.0.277",
     "@remotion/zod-types": "4.0.277",
     "clsx": "^2.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "remotion": "4.0.277",
     "tailwind-merge": "^3.0.2",
     "zod": "3.22.3"
@@ -20,8 +20,8 @@
   "devDependencies": {
     "@remotion/tailwind-v4": "^4.0.277",
     "@total-typescript/ts-reset": "^0.6.1",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "tailwindcss": "^4.0.14",
     "typescript": "^5.8.2"
   },
