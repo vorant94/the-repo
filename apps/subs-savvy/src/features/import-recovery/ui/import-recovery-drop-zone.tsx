@@ -2,7 +2,7 @@ import {
   type RecoveryModel,
   recoverySchema,
 } from "@/shared/api/recovery.model.ts";
-import { catchError } from "@/shared/lib/catch-error.ts";
+import { catchError } from "@/shared/lib/error-or/catch-error.ts";
 import { cn } from "@/shared/ui/cn.ts";
 import { Icon } from "@/shared/ui/icon.tsx";
 import { notificationColor } from "@/shared/ui/notification.ts";

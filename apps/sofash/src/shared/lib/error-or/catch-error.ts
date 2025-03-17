@@ -1,4 +1,4 @@
-import type { Constructor } from "../constructor.ts";
+import type { Constructor } from "./constructor.ts";
 import type { ErrorOr } from "./error-or.ts";
 
 export function catchError<T, E extends Constructor<Error>>(
