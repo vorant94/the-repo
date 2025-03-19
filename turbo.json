@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "build": {
+      "dependsOn": []
+    },
+    "ts:check": {
+      "dependsOn": []
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    }
+  }
+}

@@ -56,14 +56,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run Unit Tests
-        run: npm run test:coverage --workspace sofash
-
-      - name: Upload Unit Test Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: apps/sofash/coverage/
-          retention-days: 30
+        run: npx turbo test --filter=...sofash
 
   build:
     name: Build

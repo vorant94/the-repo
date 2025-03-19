@@ -1,8 +1,8 @@
 pre-push:
   commands:
-    ts:
-      run: npm run ts:check
+    ts:check:
+      run: npx turbo ts:check
 pre-commit:
   commands:
-    lint:
+    lint:ci:
       run: npm run lint:ci

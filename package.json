@@ -13,11 +13,13 @@
   },
   "workspaces": [
     "apps/*",
-    "tools/*"
+    "tools/*",
+    "libs/*"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "lefthook": "^1.11.3"
+    "lefthook": "^1.11.3",
+    "turbo": "^2.4.4"
   },
   "engines": {
     "node": ">=23"
@@ -25,5 +27,6 @@
   "os": [
     "darwin",
     "linux"
-  ]
+  ],
+  "packageManager": "^npm@11.2.0"
 }

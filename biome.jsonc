@@ -87,7 +87,8 @@
       ".vscode",
       ".husky/_",
       "build",
-      "out"
+      "out",
+      ".turbo"
     ]
   },
   "overrides": [
@@ -139,6 +140,16 @@
           },
           "style": {
             "useFilenamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["libs/*/src/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
           }
         }
       }
