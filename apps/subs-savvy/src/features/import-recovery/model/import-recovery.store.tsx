@@ -1,14 +1,14 @@
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import { CategoryNotFound } from "@/shared/api/category.table.ts";
-import type { RecoveryModel } from "@/shared/api/recovery.model.ts";
-import { upsertCategoriesAndSubscriptions } from "@/shared/api/recovery.table.ts";
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
-import { rootRoute } from "@/shared/lib/route.ts";
 import { type PropsWithChildren, memo, useEffect } from "react";
 import { useLocation } from "react-router";
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import { CategoryNotFound } from "../../../shared/api/category.table.ts";
+import type { RecoveryModel } from "../../../shared/api/recovery.model.ts";
+import { upsertCategoriesAndSubscriptions } from "../../../shared/api/recovery.table.ts";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { rootRoute } from "../../../shared/lib/route.ts";
 
 export function useImportRecovery(): ImportRecoveryState {
   return useStore(useShallow(selectState));

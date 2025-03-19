@@ -1,4 +1,7 @@
-import type { HonoEnv } from "@/shared/env/hono-env.ts";
+import { eq } from "drizzle-orm";
+import { getContext } from "hono/context-storage";
+import { HTTPException } from "hono/http-exception";
+import type { HonoEnv } from "../../shared/env/hono-env.ts";
 import {
   type CreateUser,
   type User,
@@ -7,10 +10,7 @@ import {
   userRoleSchema,
   userSchema,
   users,
-} from "@/shared/schema/users.ts";
-import { eq } from "drizzle-orm";
-import { getContext } from "hono/context-storage";
-import { HTTPException } from "hono/http-exception";
+} from "../../shared/schema/users.ts";
 
 export async function createUser(toCreateRaw: CreateUser): Promise<User> {
   const { db } = getContext<HonoEnv>().var;

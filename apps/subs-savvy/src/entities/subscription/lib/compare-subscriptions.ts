@@ -1,4 +1,4 @@
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 
 export const compareSubscriptionsDesc = createCompareSubscriptions("desc");
 

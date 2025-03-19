@@ -1,8 +1,8 @@
 import { getCollection } from "astro:content";
-import { profile } from "@/globals/profile.ts";
-import { sortPostsByPublishedAt } from "@/utils/content.helpers.ts";
 import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
+import { profile } from "../globals/profile.ts";
+import { sortPostsByPublishedAt } from "../utils/content.helpers.ts";
 
 export async function GET(ctx: APIContext) {
   const posts = sortPostsByPublishedAt(await getCollection("posts"));

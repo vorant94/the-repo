@@ -42,10 +42,7 @@
       "vite/client",
       "@total-typescript/ts-reset",
       "vite-plugin-svgr/client"
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    ]
   },
   "include": ["src", "e2e", "scripts", "*.config.ts"]
 }

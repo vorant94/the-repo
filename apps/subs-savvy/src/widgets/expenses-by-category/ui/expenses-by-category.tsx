@@ -1,15 +1,3 @@
-import {
-  type SubscriptionsAggregatedByCategory,
-  aggregateSubscriptionsByCategory,
-  noCategoryPlaceholder,
-} from "@/entities/subscription/lib/aggregate-subscriptions-by-category.ts";
-import { calculateSubscriptionPriceForMonth } from "@/entities/subscription/lib/calculate-subscription-price-for-month.ts";
-import { calculateSubscriptionPriceForYear } from "@/entities/subscription/lib/calculate-subscription-price-for-year.ts";
-import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
-import { useCurrencyFormatter } from "@/features/i18n/model/use-currency-formatter.ts";
-import { startOfMonth } from "@/shared/lib/dates.ts";
-import { Icon } from "@/shared/ui/icon.tsx";
-import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Card,
@@ -33,6 +21,18 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Cell, Label, Pie, PieChart } from "recharts";
 import { z } from "zod";
+import {
+  type SubscriptionsAggregatedByCategory,
+  aggregateSubscriptionsByCategory,
+  noCategoryPlaceholder,
+} from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
+import { calculateSubscriptionPriceForMonth } from "../../../entities/subscription/lib/calculate-subscription-price-for-month.ts";
+import { calculateSubscriptionPriceForYear } from "../../../entities/subscription/lib/calculate-subscription-price-for-year.ts";
+import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
+import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";
+import { startOfMonth } from "../../../shared/lib/dates.ts";
+import { Icon } from "../../../shared/ui/icon.tsx";
+import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 import { ExpensesByCategoryLabelContent } from "./expenses-by-category-label-content.tsx";
 
 export const ExpensesByCategory: FC<ExpensesByCategoryProps> = memo(

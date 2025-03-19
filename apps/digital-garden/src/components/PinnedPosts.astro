@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
-import { publishedAtFormat } from "@/globals/published-at-format";
-import { sortPostsByPublishedAt } from "@/utils/content.helpers";
 import { format } from "date-fns";
+import { publishedAtFormat } from "../globals/published-at-format";
+import { sortPostsByPublishedAt } from "../utils/content.helpers";
 import PostListItem from "./PostListItem.astro";
 import StandOut from "./ui/StandOut.astro";
 

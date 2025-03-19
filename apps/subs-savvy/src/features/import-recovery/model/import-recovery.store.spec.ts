@@ -1,13 +1,3 @@
-import { categoryMock } from "@/shared/api/__mocks__/category.model.ts";
-import {
-  monthlySubscription,
-  yearlySubscription,
-} from "@/shared/api/__mocks__/subscription.model.ts";
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import type { RecoveryModel } from "@/shared/api/recovery.model.ts";
-import * as recoveryTable from "@/shared/api/recovery.table.ts";
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
-import { dbVersion } from "@/shared/lib/db.ts";
 import {
   type RenderHookResult,
   act,
@@ -24,6 +14,16 @@ import {
   it,
   vi,
 } from "vitest";
+import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
+import {
+  monthlySubscription,
+  yearlySubscription,
+} from "../../../shared/api/__mocks__/subscription.model.ts";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import type { RecoveryModel } from "../../../shared/api/recovery.model.ts";
+import * as recoveryTable from "../../../shared/api/recovery.table.ts";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { dbVersion } from "../../../shared/lib/db.ts";
 import {
   type ImportRecoveryActions,
   type ImportRecoveryState,
@@ -32,7 +32,7 @@ import {
   useStore,
 } from "./import-recovery.store.tsx";
 
-vi.mock(import("@/shared/api/recovery.table.ts"));
+vi.mock(import("../../../shared/api/recovery.table.ts"));
 
 describe("import-recovery.store", () => {
   let renderResult: RenderHookResult<HooksCombined, void>;

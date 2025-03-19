@@ -1,5 +1,5 @@
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import dayjs from "dayjs";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { isSubscriptionExpired } from "./is-subscription-expired.ts";
 
 export function calculateSubscriptionPriceForYear(

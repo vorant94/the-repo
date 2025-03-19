@@ -1,11 +1,11 @@
 ---
 import { getCollection } from "astro:content";
-import PostList from "@/components/PostList.astro";
-import PostListItem from "@/components/PostListItem.astro";
-import { publishedAtFormat } from "@/globals/published-at-format";
-import DefaultLayout from "@/layouts/DefaultLayout.astro";
-import { sortPostsByPublishedAt } from "@/utils/content.helpers";
 import { format } from "date-fns";
+import PostList from "../../components/PostList.astro";
+import PostListItem from "../../components/PostListItem.astro";
+import { publishedAtFormat } from "../../globals/published-at-format";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import { sortPostsByPublishedAt } from "../../utils/content.helpers";
 
 const sortedPosts = sortPostsByPublishedAt(await getCollection("posts"));
 

@@ -1,15 +1,15 @@
-import { ExportRecovery } from "@/features/export-recovery/ui/export-recovery.tsx";
-import { ImportRecovery } from "@/features/import-recovery/ui/import-recovery.tsx";
-import {
-  DefaultLayout,
-  DefaultLayoutHeader,
-} from "@/shared/ui/default.layout.tsx";
-import { Icon } from "@/shared/ui/icon.tsx";
 import { Card, Tabs } from "@mantine/core";
 import { IconDownload, IconUpload } from "@tabler/icons-react";
 import { cn } from "cn";
 import { type FC, memo } from "react";
 import { useTranslation } from "react-i18next";
+import { ExportRecovery } from "../../../features/export-recovery/ui/export-recovery.tsx";
+import { ImportRecovery } from "../../../features/import-recovery/ui/import-recovery.tsx";
+import {
+  DefaultLayout,
+  DefaultLayoutHeader,
+} from "../../../shared/ui/default.layout.tsx";
+import { Icon } from "../../../shared/ui/icon.tsx";
 
 export const RecoveryPage: FC = memo(() => {
   const { t } = useTranslation();

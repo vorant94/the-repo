@@ -1,9 +1,9 @@
-import { subscriptionCyclePeriodToLabel } from "@/shared/api/subscription-cycle-period.model.ts";
-import { subscriptionIconToLabel } from "@/shared/api/subscription-icon.model.ts";
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import { Checkbox, Table } from "@mantine/core";
 import dayjs from "dayjs";
 import { type Dispatch, type SetStateAction, memo } from "react";
+import { subscriptionCyclePeriodToLabel } from "../../../shared/api/subscription-cycle-period.model.ts";
+import { subscriptionIconToLabel } from "../../../shared/api/subscription-icon.model.ts";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 
 export const SelectSubscriptionsTable = memo(
   ({

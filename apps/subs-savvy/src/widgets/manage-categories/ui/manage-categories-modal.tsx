@@ -1,15 +1,15 @@
-import { useCategories } from "@/entities/category/model/categories.store.tsx";
-import { CategoryList } from "@/features/list-categories/ui/category-list.tsx";
-import {
-  useUpsertCategoryActions,
-  useUpsertCategoryMode,
-} from "@/features/upsert-category/model/upsert-category.store.tsx";
-import { CategoryForm } from "@/features/upsert-category/ui/category-form.tsx";
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import { deleteCategory } from "@/shared/api/category.table.ts";
 import { Button, Modal } from "@mantine/core";
 import { cn } from "cn";
 import { memo, useCallback, useEffect, useState } from "react";
+import { useCategories } from "../../../entities/category/model/categories.store.tsx";
+import { CategoryList } from "../../../features/list-categories/ui/category-list.tsx";
+import {
+  useUpsertCategoryActions,
+  useUpsertCategoryMode,
+} from "../../../features/upsert-category/model/upsert-category.store.tsx";
+import { CategoryForm } from "../../../features/upsert-category/ui/category-form.tsx";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import { deleteCategory } from "../../../shared/api/category.table.ts";
 
 export const ManageCategoriesModal = memo(
   ({ isOpen, close }: ManageCategoriesModalProps) => {

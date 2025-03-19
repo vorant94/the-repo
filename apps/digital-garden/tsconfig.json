@@ -38,10 +38,7 @@
     "jsx": "preserve",
 
     /* Misc */
-    "types": ["vite/client", "@total-typescript/ts-reset"],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "types": ["vite/client", "@total-typescript/ts-reset"]
   },
   "include": ["src", "e2e", "*.config.ts", ".astro/types.d.ts"]
 }

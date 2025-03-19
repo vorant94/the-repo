@@ -1,11 +1,3 @@
-import { useCategories } from "@/entities/category/model/categories.store.tsx";
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import { subscriptionCyclePeriodsComboboxData } from "@/shared/api/subscription-cycle-period.model.ts";
-import { subscriptionIconsComboboxData } from "@/shared/api/subscription-icon.model.ts";
-import {
-  type InsertSubscriptionModel,
-  insertSubscriptionSchema,
-} from "@/shared/api/subscription.model.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type ComboboxData,
@@ -26,6 +18,14 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { useCategories } from "../../../entities/category/model/categories.store.tsx";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscription-cycle-period.model.ts";
+import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
+import {
+  type InsertSubscriptionModel,
+  insertSubscriptionSchema,
+} from "../../../shared/api/subscription.model.ts";
 
 export const InsertSubscriptionsTable = memo(
   forwardRef<HTMLFormElement, InsertSubscriptionsTableProps>(

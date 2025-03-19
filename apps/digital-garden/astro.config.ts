@@ -1,4 +1,3 @@
-import path from "node:path";
 import process from "node:process";
 import alpine from "@astrojs/alpinejs";
 import sitemap from "@astrojs/sitemap";
@@ -47,11 +46,6 @@ export default defineConfig({
           cssnano,
           tailwindcssNesting(postcssNested),
         ],
-      },
-    },
-    resolve: {
-      alias: {
-        "@": path.resolve(process.cwd(), "src/"),
       },
     },
   },

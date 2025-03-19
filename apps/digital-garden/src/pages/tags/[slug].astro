@@ -1,13 +1,13 @@
 ---
 import { getCollection } from "astro:content";
-import PostList from "@/components/PostList.astro";
-import PostListItem from "@/components/PostListItem.astro";
-import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import PostList from "../../components/PostList.astro";
+import PostListItem from "../../components/PostListItem.astro";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import {
   type PostModel,
   type TagModel,
   sortPostsByPublishedAt,
-} from "@/utils/content.helpers";
+} from "../../utils/content.helpers";
 
 export async function getStaticPaths() {
   const [tags, posts] = await Promise.all([

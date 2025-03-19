@@ -44,10 +44,7 @@
       "@total-typescript/ts-reset",
       "node",
       "@cloudflare/workers-types"
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    ]
   },
   "include": ["src", "scripts", "*.config.ts"]
 }

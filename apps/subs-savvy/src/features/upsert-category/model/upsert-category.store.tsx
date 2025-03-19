@@ -1,13 +1,16 @@
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 import type {
   CategoryModel,
   InsertCategoryModel,
   UpdateCategoryModel,
   UpsertCategoryModel,
-} from "@/shared/api/category.model.ts";
-import { insertCategory, updateCategory } from "@/shared/api/category.table.ts";
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import { useShallow } from "zustand/react/shallow";
+} from "../../../shared/api/category.model.ts";
+import {
+  insertCategory,
+  updateCategory,
+} from "../../../shared/api/category.table.ts";
 
 export function useUpsertCategory(): UpsertCategoryState {
   return useStore(useShallow(selectState));

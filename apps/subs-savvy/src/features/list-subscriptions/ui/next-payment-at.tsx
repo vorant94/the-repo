@@ -1,8 +1,8 @@
-import { startOfToday } from "@/shared/lib/dates.ts";
 import { Text } from "@mantine/core";
 import { cn } from "cn";
 import dayjs from "dayjs";
 import { type FC, memo, useMemo } from "react";
+import { startOfToday } from "../../../shared/lib/dates.ts";
 import { useRelativeTimeFormatter } from "../../i18n/model/use-relative-time-formatter.ts";
 
 export const NextPaymentAt: FC<NextPaymentDateAtProps> = memo(

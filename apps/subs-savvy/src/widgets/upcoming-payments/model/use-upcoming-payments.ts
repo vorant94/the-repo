@@ -1,11 +1,11 @@
+import dayjs from "dayjs";
+import { useMemo } from "react";
 import {
   type SubscriptionWithNextPaymentAt,
   getSubscriptionNextPaymentAt,
-} from "@/entities/subscription/lib/get-subscription-next-payment-at.ts";
-import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
-import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
-import dayjs from "dayjs";
-import { useMemo } from "react";
+} from "../../../entities/subscription/lib/get-subscription-next-payment-at.ts";
+import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
+import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 
 export function useUpcomingPayments(): Array<SubscriptionWithNextPaymentAt> {
   const subscriptions = useSubscriptions();

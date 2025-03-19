@@ -1,10 +1,10 @@
-import { promoteUserToAdmin } from "@/bl/system/promote-user-to-admin.ts";
-import { userSchema } from "@/shared/schema/users.ts";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
+import { promoteUserToAdmin } from "../../bl/system/promote-user-to-admin.ts";
+import { userSchema } from "../../shared/schema/users.ts";
 
 export const usersRoute = new Hono();
 

@@ -1,13 +1,13 @@
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import {
-  CategoryNotFound,
-  findCategories,
-} from "@/shared/api/category.table.ts";
 import { useLiveQuery } from "dexie-react-hooks";
 import { type PropsWithChildren, memo, useEffect } from "react";
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import {
+  CategoryNotFound,
+  findCategories,
+} from "../../../shared/api/category.table.ts";
 
 export function useCategories(): ReadonlyArray<CategoryModel> {
   return useStore(selectCategories);

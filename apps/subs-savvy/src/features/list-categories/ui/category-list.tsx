@@ -1,9 +1,9 @@
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import { Icon } from "@/shared/ui/icon.tsx";
 import { ActionIcon, Text } from "@mantine/core";
 import { IconCircleFilled, IconPencil, IconTrash } from "@tabler/icons-react";
 import { cn } from "cn";
 import { type FC, memo } from "react";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import { Icon } from "../../../shared/ui/icon.tsx";
 
 export const CategoryList: FC<CategoryListPros> = memo(
   ({ categories, onEditClick, onDeleteClick }) => {

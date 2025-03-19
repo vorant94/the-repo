@@ -1,9 +1,9 @@
 ---
-import Background from "@/components/Background.astro";
-import Meta from "@/components/Meta.astro";
-import "@/styles/global.css";
+import Background from "../components/Background.astro";
+import Meta from "../components/Meta.astro";
+import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
-import { getFullTitle } from "@/utils/seo.helpers";
+import { getFullTitle } from "../utils/seo.helpers";
 
 export interface Props {
   title?: string;

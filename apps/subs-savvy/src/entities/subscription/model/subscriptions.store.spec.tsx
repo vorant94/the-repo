@@ -1,10 +1,3 @@
-import { categoryMock } from "@/shared/api/__mocks__/category.model.ts";
-import {
-  monthlySubscription,
-  yearlySubscription,
-} from "@/shared/api/__mocks__/subscription.model.ts";
-import type { CategoryModel } from "@/shared/api/category.model.ts";
-import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import {
   type RenderHookResult,
   act,
@@ -12,6 +5,13 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
+import {
+  monthlySubscription,
+  yearlySubscription,
+} from "../../../shared/api/__mocks__/subscription.model.ts";
+import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import {
   CategoriesProvider,
   useCategories,
@@ -22,8 +22,8 @@ import {
   useSubscriptions,
 } from "./subscriptions.store.tsx";
 
-vi.mock(import("@/shared/api/category.table.ts"));
-vi.mock(import("@/shared/api/subscription.table.ts"));
+vi.mock(import("../../../shared/api/category.table.ts"));
+vi.mock(import("../../../shared/api/subscription.table.ts"));
 
 describe("subscriptions.store", () => {
   let screen: RenderHookResult<HooksCombined, void>;

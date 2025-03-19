@@ -1,16 +1,16 @@
 ---
 import { getCollection, getEntries, render } from "astro:content";
-import RelatedPosts from "@/components/RelatedPosts.astro";
-import Tag from "@/components/Tag.astro";
-import Caption from "@/components/ui/Caption.astro";
-import Text from "@/components/ui/Text.astro";
-import ThemedImage from "@/components/ui/ThemedImage.astro";
-import Title from "@/components/ui/Title.astro";
-import { publishedAtFormat } from "@/globals/published-at-format";
-import DefaultLayout from "@/layouts/DefaultLayout.astro";
-import type { PostModel } from "@/utils/content.helpers";
-import { isPostWithCover } from "@/utils/content.helpers";
 import { format } from "date-fns";
+import RelatedPosts from "../../components/RelatedPosts.astro";
+import Tag from "../../components/Tag.astro";
+import Caption from "../../components/ui/Caption.astro";
+import Text from "../../components/ui/Text.astro";
+import ThemedImage from "../../components/ui/ThemedImage.astro";
+import Title from "../../components/ui/Title.astro";
+import { publishedAtFormat } from "../../globals/published-at-format";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import type { PostModel } from "../../utils/content.helpers";
+import { isPostWithCover } from "../../utils/content.helpers";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");

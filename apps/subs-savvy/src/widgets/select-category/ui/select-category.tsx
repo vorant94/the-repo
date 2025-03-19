@@ -1,9 +1,4 @@
 import {
-  useCategories,
-  useSelectedCategory,
-} from "@/entities/category/model/categories.store.tsx";
-import { Icon } from "@/shared/ui/icon.tsx";
-import {
   CloseButton,
   Combobox,
   Input,
@@ -14,6 +9,11 @@ import { IconCircleFilled } from "@tabler/icons-react";
 import { cn } from "cn";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  useCategories,
+  useSelectedCategory,
+} from "../../../entities/category/model/categories.store.tsx";
+import { Icon } from "../../../shared/ui/icon.tsx";
 
 export const SelectCategory = memo(() => {
   const categories = useCategories();

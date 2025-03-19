@@ -1,12 +1,3 @@
-import { useCategories } from "@/entities/category/model/categories.store.tsx";
-import { subscriptionCyclePeriodsComboboxData } from "@/shared/api/subscription-cycle-period.model.ts";
-import { subscriptionIconsComboboxData } from "@/shared/api/subscription-icon.model.ts";
-import {
-  type UpsertSubscriptionModel,
-  insertSubscriptionSchema,
-  updateSubscriptionSchema,
-} from "@/shared/api/subscription.model.ts";
-import { createDatePickerInputAriaLabels } from "@/shared/ui/create-date-picker-input-aria-labels.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -21,6 +12,15 @@ import { DatePickerInput } from "@mantine/dates";
 import { cn } from "cn";
 import { memo, useMemo } from "react";
 import { Controller, type DefaultValues, useForm } from "react-hook-form";
+import { useCategories } from "../../../entities/category/model/categories.store.tsx";
+import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscription-cycle-period.model.ts";
+import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
+import {
+  type UpsertSubscriptionModel,
+  insertSubscriptionSchema,
+  updateSubscriptionSchema,
+} from "../../../shared/api/subscription.model.ts";
+import { createDatePickerInputAriaLabels } from "../../../shared/ui/create-date-picker-input-aria-labels.ts";
 import {
   useUpsertSubscription,
   useUpsertSubscriptionActions,

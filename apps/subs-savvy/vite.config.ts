@@ -15,9 +15,4 @@ export default defineConfig({
         localesDir: path.resolve(process.cwd(), "public/locales"),
       }),
   ],
-  resolve: {
-    alias: {
-      "@": path.resolve(process.cwd(), "src/"),
-    },
-  },
 });

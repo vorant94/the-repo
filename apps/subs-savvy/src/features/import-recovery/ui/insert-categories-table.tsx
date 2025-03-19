@@ -1,7 +1,3 @@
-import {
-  type CategoryModel,
-  categorySchema,
-} from "@/shared/api/category.model.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ColorInput, Table, TextInput } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
@@ -15,6 +11,10 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import {
+  type CategoryModel,
+  categorySchema,
+} from "../../../shared/api/category.model.ts";
 
 export const InsertCategoriesTable = memo(
   forwardRef<HTMLFormElement, InsertCategoriesTableProps>(
