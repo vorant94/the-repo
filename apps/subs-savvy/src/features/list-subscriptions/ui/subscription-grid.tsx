@@ -1,7 +1,7 @@
 import type { SubscriptionWithNextPaymentAt } from "@/entities/subscription/lib/get-subscription-next-payment-at.ts";
 import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
 import type { PropsWithFcChildren } from "@/shared/lib/props-with-fc-children.ts";
-import { cn } from "@/shared/ui/cn.ts";
+import { cn } from "cn";
 import { memo } from "react";
 
 export const SubscriptionGrid = memo(

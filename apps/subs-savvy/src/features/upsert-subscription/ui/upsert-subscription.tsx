@@ -6,7 +6,6 @@ import {
   insertSubscriptionSchema,
   updateSubscriptionSchema,
 } from "@/shared/api/subscription.model.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { createDatePickerInputAriaLabels } from "@/shared/ui/create-date-picker-input-aria-labels.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,6 +18,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
+import { cn } from "cn";
 import { memo, useMemo } from "react";
 import { Controller, type DefaultValues, useForm } from "react-hook-form";
 import {

@@ -1,5 +1,5 @@
-import { cn } from "@/shared/ui/cn.ts";
 import { Card, Drawer, type MantineThemeOverride } from "@mantine/core";
+import { cn } from "cn";
 
 export const theme = {
   components: {

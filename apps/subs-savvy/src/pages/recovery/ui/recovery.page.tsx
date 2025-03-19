@@ -1,6 +1,5 @@
 import { ExportRecovery } from "@/features/export-recovery/ui/export-recovery.tsx";
 import { ImportRecovery } from "@/features/import-recovery/ui/import-recovery.tsx";
-import { cn } from "@/shared/ui/cn.ts";
 import {
   DefaultLayout,
   DefaultLayoutHeader,
@@ -8,6 +7,7 @@ import {
 import { Icon } from "@/shared/ui/icon.tsx";
 import { Card, Tabs } from "@mantine/core";
 import { IconDownload, IconUpload } from "@tabler/icons-react";
+import { cn } from "cn";
 import { type FC, memo } from "react";
 import { useTranslation } from "react-i18next";
 

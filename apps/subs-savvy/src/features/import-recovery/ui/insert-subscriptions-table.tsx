@@ -6,7 +6,6 @@ import {
   type InsertSubscriptionModel,
   insertSubscriptionSchema,
 } from "@/shared/api/subscription.model.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type ComboboxData,
@@ -17,6 +16,7 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { usePrevious } from "@mantine/hooks";
+import { cn } from "cn";
 import { forwardRef, memo, useEffect, useMemo } from "react";
 import {
   Controller,

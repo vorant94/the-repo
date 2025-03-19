@@ -8,7 +8,6 @@ import { calculateSubscriptionPriceForYear } from "@/entities/subscription/lib/c
 import { useSubscriptions } from "@/entities/subscription/model/subscriptions.store.tsx";
 import { useCurrencyFormatter } from "@/features/i18n/model/use-currency-formatter.ts";
 import { startOfMonth } from "@/shared/lib/dates.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { Icon } from "@/shared/ui/icon.tsx";
 import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +19,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
+import { cn } from "cn";
 import dayjs from "dayjs";
 import {
   type FC,

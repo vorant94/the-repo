@@ -2,7 +2,6 @@ import {
   useCategories,
   useSelectedCategory,
 } from "@/entities/category/model/categories.store.tsx";
-import { cn } from "@/shared/ui/cn.ts";
 import { Icon } from "@/shared/ui/icon.tsx";
 import {
   CloseButton,
@@ -12,6 +11,7 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
+import { cn } from "cn";
 import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 

@@ -1,6 +1,6 @@
 import type { IconProps as TablerIconProps } from "@tabler/icons-react";
+import { cn } from "cn";
 import { type FC, memo } from "react";
-import { cn } from "./cn.ts";
 
 // the goal of this wrapper is to apply some defaults
 export const Icon: FC<IconProps> = memo(

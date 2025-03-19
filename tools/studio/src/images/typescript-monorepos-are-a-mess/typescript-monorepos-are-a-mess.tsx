@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { FC } from "react";
 import { z } from "zod";
 import gitDarkLogo from "../../assets/git-logo-dark.svg";
@@ -6,7 +7,6 @@ import tsDarkLogo from "../../assets/ts-logo-dark.svg";
 import tsLogo from "../../assets/ts-logo.svg";
 import yarnDarkLogo from "../../assets/yarn-logo-dark.svg";
 import yarnLogo from "../../assets/yarn-logo.svg";
-import { cn } from "../../shared/ui/cn";
 
 // biome-ignore lint/style/useNamingConvention: AMess is two word
 export const typescriptMonoreposAreAMessPropsSchema = z.object({

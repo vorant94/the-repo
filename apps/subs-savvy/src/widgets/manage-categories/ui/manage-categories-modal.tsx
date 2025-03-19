@@ -7,8 +7,8 @@ import {
 import { CategoryForm } from "@/features/upsert-category/ui/category-form.tsx";
 import type { CategoryModel } from "@/shared/api/category.model.ts";
 import { deleteCategory } from "@/shared/api/category.table.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { Button, Modal } from "@mantine/core";
+import { cn } from "cn";
 import { memo, useCallback, useEffect, useState } from "react";
 
 export const ManageCategoriesModal = memo(

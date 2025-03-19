@@ -30,6 +30,7 @@ import {
   IconWorld,
   IconYinYang,
 } from "@tabler/icons-react";
+import { cn } from "cn";
 import type { ReactElement } from "react";
 import GitHub from "simple-icons/icons/github.svg?react";
 import GoDaddy from "simple-icons/icons/godaddy.svg?react";
@@ -41,7 +42,6 @@ import ProtonMail from "simple-icons/icons/protonmail.svg?react";
 import Spotify from "simple-icons/icons/spotify.svg?react";
 import Telegram from "simple-icons/icons/telegram.svg?react";
 import YouTube from "simple-icons/icons/youtube.svg?react";
-import { cn } from "../ui/cn.ts";
 import { Icon } from "../ui/icon.tsx";
 import Moovit from "../ui/moovit.svg?react";
 import type { SubscriptionIconModel } from "./subscription-icon.model.ts";

@@ -5,8 +5,8 @@ import {
 } from "@/features/list-subscriptions/ui/subscription-grid.tsx";
 import { useUpsertSubscriptionActions } from "@/features/upsert-subscription/model/upsert-subscription.store.tsx";
 import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { Text } from "@mantine/core";
+import { cn } from "cn";
 import { type FC, type HTMLAttributes, memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useUpcomingPayments } from "../model/use-upcoming-payments.ts";

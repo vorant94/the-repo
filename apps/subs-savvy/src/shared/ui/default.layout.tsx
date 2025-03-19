@@ -6,6 +6,7 @@ import {
   NavLink as MantineNavLink,
 } from "@mantine/core";
 import { useDisclosure, usePrevious } from "@mantine/hooks";
+import { cn } from "cn";
 import {
   type PropsWithChildren,
   type ReactElement,
@@ -17,7 +18,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { type NavLink, useNavLinks } from "../lib/use-nav-links.tsx";
-import { cn } from "./cn.ts";
 import { Logo } from "./logo.tsx";
 import { useBreakpoint } from "./use-breakpoint.tsx";
 import type { Disclosure } from "./use-disclosure.ts";

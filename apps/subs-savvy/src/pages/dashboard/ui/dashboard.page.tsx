@@ -1,7 +1,6 @@
 import { useUpsertSubscriptionMode } from "@/features/upsert-subscription/model/upsert-subscription.store.tsx";
 import { AddSubscriptionButton } from "@/features/upsert-subscription/ui/add-subscription-button.tsx";
 import { UpsertSubscription } from "@/features/upsert-subscription/ui/upsert-subscription.tsx";
-import { cn } from "@/shared/ui/cn.ts";
 import {
   DefaultLayout,
   DefaultLayoutHeader,
@@ -11,6 +10,7 @@ import { ExpensesPerMonth } from "@/widgets/expenses-per-month/ui/expenses-per-m
 import { ManageCategories } from "@/widgets/manage-categories/ui/manage-categories.tsx";
 import { SelectCategory } from "@/widgets/select-category/ui/select-category.tsx";
 import { UpcomingPayments } from "@/widgets/upcoming-payments/ui/upcoming-payments.tsx";
+import { cn } from "cn";
 import { type FC, memo } from "react";
 
 export const DashboardPage: FC = memo(() => {

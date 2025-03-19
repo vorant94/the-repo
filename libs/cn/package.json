@@ -1,0 +1,17 @@
+{
+  "name": "cn",
+  "private": true,
+  "license": "MIT",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.2"
+  },
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.6.1",
+    "vite": "^6.2.1"
+  }
+}

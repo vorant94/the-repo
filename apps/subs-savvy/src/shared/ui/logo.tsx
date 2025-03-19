@@ -1,5 +1,5 @@
+import { cn } from "cn";
 import { memo } from "react";
-import { cn } from "./cn.ts";
 import { useBreakpoint } from "./use-breakpoint.tsx";
 
 export const Logo = memo(() => {

@@ -2,10 +2,10 @@ import {
   type CategoryModel,
   categorySchema,
 } from "@/shared/api/category.model.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ColorInput, Table, TextInput } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
+import { cn } from "cn";
 import { forwardRef, memo, useEffect } from "react";
 import {
   Controller,

@@ -8,11 +8,11 @@ import { useSubscriptions } from "@/entities/subscription/model/subscriptions.st
 import { useCurrencyFormatter } from "@/features/i18n/model/use-currency-formatter.ts";
 import type { CategoryModel } from "@/shared/api/category.model.ts";
 import { startOfMonth } from "@/shared/lib/dates.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { Icon } from "@/shared/ui/icon.tsx";
 import { useBreakpoint } from "@/shared/ui/use-breakpoint.tsx";
 import { ActionIcon, Card, Divider, Text, Title } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { cn } from "cn";
 import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

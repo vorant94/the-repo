@@ -1,5 +1,5 @@
-import { cn } from "@/shared/ui/cn.ts";
 import { Button, Stepper } from "@mantine/core";
+import { cn } from "cn";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {

@@ -7,8 +7,8 @@ import {
 } from "@/features/list-subscriptions/ui/subscription-grid.tsx";
 import { useUpsertSubscriptionActions } from "@/features/upsert-subscription/model/upsert-subscription.store.tsx";
 import type { SubscriptionModel } from "@/shared/api/subscription.model.ts";
-import { cn } from "@/shared/ui/cn.ts";
 import { CloseButton, Divider, TextInput } from "@mantine/core";
+import { cn } from "cn";
 import { memo, useCallback, useMemo, useState } from "react";
 
 export const SubscriptionList = memo(() => {
