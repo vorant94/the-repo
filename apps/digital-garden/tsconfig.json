@@ -3,10 +3,7 @@
   "compilerOptions": {
     /* Runtime/Framework */
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "jsx": "preserve",
-
-    /* Misc */
-    "types": ["vite/client", "@total-typescript/ts-reset"]
+    "jsx": "preserve"
   },
   "include": ["src", "e2e", "*.config.ts", ".astro/types.d.ts"]
 }

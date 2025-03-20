@@ -5,26 +5,10 @@ export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
-      environment: "happy-dom",
+      root: `${import.meta.dirname}/src`,
       clearMocks: true,
-      root: "./src",
+      environment: "happy-dom",
       setupFiles: ["./src/test-setup.ts"],
-      coverage: {
-        provider: "v8",
-        reportsDirectory: "../coverage",
-        reporter: ["text", "html"],
-        exclude: [
-          "**/*.d.ts",
-          "**/*.spec.ts",
-          "**/*.spec.tsx",
-          "**/__mocks__/*",
-          "**/*.model.ts",
-          "**/*.model.tsx",
-          "shared/test/**",
-          "shared/ui/cn.ts",
-          "main.tsx",
-        ],
-      },
     },
   }),
 );

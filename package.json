@@ -4,12 +4,13 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "ts:check": "npm run ts:check --workspaces --if-present",
     "lint:check": "biome check .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
     "lint:ci": "biome ci .",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test:all": "vitest run",
+    "test:all:coverage": "vitest run --coverage"
   },
   "workspaces": [
     "apps/*",

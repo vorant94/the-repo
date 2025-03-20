@@ -5,21 +5,8 @@ export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
-      root: "./src",
+      root: `${import.meta.dirname}/src`,
       clearMocks: true,
-      coverage: {
-        provider: "v8",
-        reportsDirectory: "../coverage",
-        reporter: ["text", "html"],
-        exclude: [
-          "**/*.d.ts",
-          "**/*.spec.ts",
-          "**/__mocks__/*",
-          "main.ts",
-          "shared/context/env.ts",
-          "shared/schema",
-        ],
-      },
     },
   }),
 );

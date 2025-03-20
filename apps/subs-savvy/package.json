@@ -13,8 +13,7 @@
     "e2e:install-deps": "playwright install-deps",
     "e2e:codegen": "playwright codegen",
     "deploy": "wrangler pages deploy",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

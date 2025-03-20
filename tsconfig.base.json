@@ -31,6 +31,9 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+
+    /* Misc */
+    "types": ["vite/client", "@total-typescript/ts-reset"]
   }
 }
