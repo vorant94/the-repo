@@ -4,7 +4,7 @@ import {
   type SubscriptionWithNextPaymentAt,
   getSubscriptionNextPaymentAt,
 } from "../../../entities/subscription/lib/get-subscription-next-payment-at.ts";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
+import { useSubscriptions } from "../../../shared/store/hooks.ts";
 import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 
 export function useUpcomingPayments(): Array<SubscriptionWithNextPaymentAt> {

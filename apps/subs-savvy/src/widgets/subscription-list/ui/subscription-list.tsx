@@ -2,14 +2,13 @@ import { CloseButton, Divider, TextInput } from "@mantine/core";
 import { cn } from "cn";
 import { memo, useCallback, useMemo, useState } from "react";
 import { isSubscriptionExpired } from "../../../entities/subscription/lib/is-subscription-expired.ts";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
 import { SubscriptionGridItem } from "../../../features/list-subscriptions/ui/subscription-grid-item.tsx";
 import {
   SubscriptionGrid,
   type SubscriptionGridChildrenProps,
 } from "../../../features/list-subscriptions/ui/subscription-grid.tsx";
-import { useUpsertSubscriptionActions } from "../../../features/upsert-subscription/model/upsert-subscription.store.tsx";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { useStore, useSubscriptions } from "../../../shared/store/hooks.ts";
 
 export const SubscriptionList = memo(() => {
   const [namePrefix, setNamePrefix] = useState("");
@@ -43,11 +42,10 @@ export const SubscriptionList = memo(() => {
     [filteredSubscriptions],
   );
 
-  const { open } = useUpsertSubscriptionActions();
-
   const openSubscriptionUpdate = useCallback(
-    (subscription: SubscriptionModel) => open(subscription),
-    [open],
+    (subscription: SubscriptionModel) =>
+      useStore.getState().openUpsertSubscription(subscription),
+    [],
   );
 
   const subscriptionGridChildren = useCallback(

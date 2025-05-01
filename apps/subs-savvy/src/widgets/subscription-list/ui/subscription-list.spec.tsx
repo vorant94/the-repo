@@ -14,15 +14,15 @@ import {
   it,
   vi,
 } from "vitest";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
 import {
   monthlySubscription,
   yearlySubscription,
 } from "../../../shared/api/__mocks__/subscription.model.ts";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { useSubscriptions } from "../../../shared/store/hooks.ts";
 import { SubscriptionList } from "./subscription-list.tsx";
 
-vi.mock(import("../../../entities/subscription/model/subscriptions.store.tsx"));
+vi.mock(import("../../../shared/store/hooks.ts"));
 vi.mock(
   import("../../../features/list-subscriptions/ui/subscription-grid.tsx"),
 );

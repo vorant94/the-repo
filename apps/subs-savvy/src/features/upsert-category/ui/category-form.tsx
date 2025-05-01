@@ -9,15 +9,11 @@ import {
   insertCategorySchema,
   updateCategorySchema,
 } from "../../../shared/api/category.model.ts";
-import {
-  useUpsertCategory,
-  useUpsertCategoryActions,
-} from "../model/upsert-category.store.tsx";
+import { useStore, useUpsertCategory } from "../../../shared/store/hooks.ts";
 
 export const CategoryForm = memo(
   forwardRef<HTMLFormElement>((_, ref) => {
     const state = useUpsertCategory();
-    const actions = useUpsertCategoryActions();
 
     const {
       register,
@@ -26,9 +22,14 @@ export const CategoryForm = memo(
       formState: { errors },
     } = useForm<UpsertCategoryModel>({
       resolver: zodResolver(
-        state.mode === "update" ? updateCategorySchema : insertCategorySchema,
+        state.upsertCategoryMode === "update"
+          ? updateCategorySchema
+          : insertCategorySchema,
       ),
-      defaultValues: state.mode === "update" ? state.category : defaultValues,
+      defaultValues:
+        state.upsertCategoryMode === "update"
+          ? state.categoryToUpsert
+          : defaultValues,
     });
 
     const { t } = useTranslation();
@@ -37,7 +38,7 @@ export const CategoryForm = memo(
       <form
         id="categoryForm"
         ref={ref}
-        onSubmit={handleSubmit(actions.upsert)}
+        onSubmit={handleSubmit(useStore.getState().upsertCategory)}
         className={cn("flex flex-col gap-2 self-stretch")}
       >
         <TextInput

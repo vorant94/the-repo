@@ -18,10 +18,10 @@ import {
   noCategoryPlaceholder,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { calculateSubscriptionPriceForMonth } from "../../../entities/subscription/lib/calculate-subscription-price-for-month.ts";
-import { useSubscriptions } from "../../../entities/subscription/model/subscriptions.store.tsx";
 import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";
 import type { CategoryModel } from "../../../shared/api/category.model.ts";
 import { startOfMonth } from "../../../shared/lib/dates.ts";
+import { useSubscriptions } from "../../../shared/store/hooks.ts";
 import { Icon } from "../../../shared/ui/icon.tsx";
 import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 import { ExpensesPerMonthLegendContent } from "./expenses-per-month-legend-content.tsx";

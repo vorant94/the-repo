@@ -4,8 +4,8 @@ import { CategoryNotFound } from "./category.table.ts";
 import type { SubscriptionModel } from "./subscription.model.ts";
 
 export function upsertCategoriesAndSubscriptions(
-  categories: Array<CategoryModel>,
-  subscriptions: Array<SubscriptionModel>,
+  categories: ReadonlyArray<CategoryModel>,
+  subscriptions: ReadonlyArray<SubscriptionModel>,
 ): Promise<void> {
   return db.transaction("rw", db.subscriptions, db.categories, async () => {
     const categoryPuts = categories.map((category) =>

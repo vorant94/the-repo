@@ -12,7 +12,6 @@ import { DatePickerInput } from "@mantine/dates";
 import { cn } from "cn";
 import { memo, useMemo } from "react";
 import { Controller, type DefaultValues, useForm } from "react-hook-form";
-import { useCategories } from "../../../entities/category/model/categories.store.tsx";
 import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscription-cycle-period.model.ts";
 import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
 import {
@@ -20,15 +19,15 @@ import {
   insertSubscriptionSchema,
   updateSubscriptionSchema,
 } from "../../../shared/api/subscription.model.ts";
-import { createDatePickerInputAriaLabels } from "../../../shared/ui/create-date-picker-input-aria-labels.ts";
 import {
+  useCategories,
+  useStore,
   useUpsertSubscription,
-  useUpsertSubscriptionActions,
-} from "../model/upsert-subscription.store.tsx";
+} from "../../../shared/store/hooks.ts";
+import { createDatePickerInputAriaLabels } from "../../../shared/ui/create-date-picker-input-aria-labels.ts";
 
 export const UpsertSubscription = memo(() => {
   const state = useUpsertSubscription();
-  const actions = useUpsertSubscriptionActions();
 
   const {
     register,
@@ -37,11 +36,14 @@ export const UpsertSubscription = memo(() => {
     formState: { errors },
   } = useForm<UpsertSubscriptionModel>({
     resolver: zodResolver(
-      state.mode === "update"
+      state.upsertSubscriptionMode === "update"
         ? updateSubscriptionSchema
         : insertSubscriptionSchema,
     ),
-    defaultValues: state.mode === "update" ? state.subscription : defaultValues,
+    defaultValues:
+      state.upsertSubscriptionMode === "update"
+        ? state.subscriptionToUpsert
+        : defaultValues,
   });
 
   const categories = useCategories();
@@ -54,7 +56,7 @@ export const UpsertSubscription = memo(() => {
 
   return (
     <form
-      onSubmit={handleSubmit(actions.upsert)}
+      onSubmit={handleSubmit(useStore.getState().upsertSubscription)}
       className={cn("flex flex-1 flex-col gap-2 self-stretch")}
     >
       <TextInput
@@ -200,21 +202,21 @@ export const UpsertSubscription = memo(() => {
 
       <div className={cn("flex justify-end gap-2")}>
         <Button type="submit">
-          {state.mode === "update" ? "Update" : "Insert"}
+          {state.upsertSubscriptionMode === "update" ? "Update" : "Insert"}
         </Button>
         <Button
           type="button"
           variant="outline"
-          onClick={actions.close}
+          onClick={useStore.getState().closeUpsertSubscription}
         >
           Close
         </Button>
-        {state.mode === "update" && (
+        {state.upsertSubscriptionMode === "update" && (
           <Button
             type="button"
             color="red"
             variant="outline"
-            onClick={actions.delete}
+            onClick={useStore.getState().deleteSubscription}
           >
             Delete
           </Button>

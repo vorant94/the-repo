@@ -1,15 +1,15 @@
 import { Button, Modal } from "@mantine/core";
 import { cn } from "cn";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useCategories } from "../../../entities/category/model/categories.store.tsx";
 import { CategoryList } from "../../../features/list-categories/ui/category-list.tsx";
-import {
-  useUpsertCategoryActions,
-  useUpsertCategoryMode,
-} from "../../../features/upsert-category/model/upsert-category.store.tsx";
 import { CategoryForm } from "../../../features/upsert-category/ui/category-form.tsx";
 import type { CategoryModel } from "../../../shared/api/category.model.ts";
 import { deleteCategory } from "../../../shared/api/category.table.ts";
+import {
+  useCategories,
+  useStore,
+  useUpsertCategory,
+} from "../../../shared/store/hooks.ts";
 
 export const ManageCategoriesModal = memo(
   ({ isOpen, close }: ManageCategoriesModalProps) => {
@@ -17,16 +17,15 @@ export const ManageCategoriesModal = memo(
 
     const categories = useCategories();
 
-    const upsertMode = useUpsertCategoryMode();
-    const upsertActions = useUpsertCategoryActions();
+    const { upsertCategoryMode } = useUpsertCategory();
     const openCategoryInsert = useCallback(() => {
       setMode("upsert");
-      upsertActions.open();
-    }, [upsertActions.open]);
+      useStore.getState().openUpsertCategory();
+    }, []);
     const closeCategoryUpsert = useCallback(() => {
       setMode("view");
-      upsertActions.close();
-    }, [upsertActions.close]);
+      useStore.getState().closeUpsertCategory();
+    }, []);
 
     const [formId, setFormId] = useState("");
     const updateFormId: (ref: HTMLFormElement | null) => void = useCallback(
@@ -40,24 +39,24 @@ export const ManageCategoriesModal = memo(
           setMode("view");
         }
 
-        if (upsertMode) {
-          upsertActions.close();
+        if (upsertCategoryMode) {
+          useStore.getState().closeUpsertCategory();
         }
       }
 
-      if (!upsertMode && mode !== "view") {
+      if (!upsertCategoryMode && mode !== "view") {
         setMode("view");
       }
 
-      if (upsertMode && mode === "view") {
+      if (upsertCategoryMode && mode === "view") {
         setMode("upsert");
       }
-    }, [isOpen, mode, upsertActions.close, upsertMode]);
+    }, [isOpen, mode, upsertCategoryMode]);
 
-    const { open } = useUpsertCategoryActions();
     const openCategoryUpdate = useCallback(
-      (category: CategoryModel) => open(category),
-      [open],
+      (category: CategoryModel) =>
+        useStore.getState().openUpsertCategory(category),
+      [],
     );
 
     const handleDeleteCategory = useCallback(
@@ -97,7 +96,7 @@ export const ManageCategoriesModal = memo(
                 key="submit-category-form"
                 form={formId}
               >
-                {upsertMode === "update" ? "Update" : "Insert"}
+                {upsertCategoryMode === "update" ? "Update" : "Insert"}
               </Button>
             )}
             {mode !== "view" ? (

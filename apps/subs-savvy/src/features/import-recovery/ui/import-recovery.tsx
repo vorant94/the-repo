@@ -2,22 +2,15 @@ import { Button, Stepper } from "@mantine/core";
 import { cn } from "cn";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  type ImportRecoveryStateStage,
-  useImportRecovery,
-  useImportRecoveryActions,
-} from "../model/import-recovery.store.tsx";
+import { useImportRecovery, useStore } from "../../../shared/store/hooks.ts";
+import type { ImportRecoveryStage } from "../../../shared/store/types.ts";
 import { ImportRecoveryDropZone } from "./import-recovery-drop-zone.tsx";
 import { InsertCategoriesTable } from "./insert-categories-table.tsx";
 import { InsertSubscriptionsTable } from "./insert-subscriptions-table.tsx";
 
 export const ImportRecovery = memo(() => {
-  const { stage, subscriptions, categories } = useImportRecovery();
-  const {
-    goNextFromUploadRecovery,
-    goNextFromSubmitCategories,
-    goNextFromSubmitSubscriptions,
-  } = useImportRecoveryActions();
+  const { importStage, subscriptionsToImport, categoriesToImport } =
+    useImportRecovery();
 
   const [subscriptionsFormId, setSubscriptionsFormId] = useState("");
   const updateSubscriptionsFormId: (ref: HTMLFormElement | null) => void =
@@ -34,7 +27,7 @@ export const ImportRecovery = memo(() => {
     );
 
   const [active, setActive] = useState(0);
-  useEffect(() => setActive(stageToActive[stage]), [stage]);
+  useEffect(() => setActive(stageToActive[importStage]), [importStage]);
 
   const { t } = useTranslation();
 
@@ -42,15 +35,17 @@ export const ImportRecovery = memo(() => {
     <Stepper active={active}>
       <Stepper.Step label={t("upload-recovery")}>
         <div className={cn("flex flex-col")}>
-          <ImportRecoveryDropZone onRecoveryParsed={goNextFromUploadRecovery} />
+          <ImportRecoveryDropZone
+            onRecoveryParsed={useStore.getState().goNextFromUploadRecovery}
+          />
         </div>
       </Stepper.Step>
       <Stepper.Step label={t("submit-categories")}>
         <div className={cn("flex flex-col gap-2")}>
           <InsertCategoriesTable
-            categories={categories}
+            categories={categoriesToImport}
             ref={updateCategoriesFormId}
-            onSubmit={goNextFromSubmitCategories}
+            onSubmit={useStore.getState().goNextFromSubmitCategories}
           />
 
           <Button
@@ -65,10 +60,10 @@ export const ImportRecovery = memo(() => {
       <Stepper.Step label={t("submit-subscriptions")}>
         <div className={cn("flex flex-col gap-2")}>
           <InsertSubscriptionsTable
-            subscriptions={subscriptions}
-            categories={categories}
+            subscriptions={subscriptionsToImport}
+            categories={categoriesToImport}
             ref={updateSubscriptionsFormId}
-            onSubmit={goNextFromSubmitSubscriptions}
+            onSubmit={useStore.getState().goNextFromSubmitSubscriptions}
           />
 
           <Button
@@ -91,4 +86,4 @@ const stageToActive = {
   "submit-subscriptions": 2,
   failed: 3,
   completed: 3,
-} satisfies Record<ImportRecoveryStateStage, number>;
+} satisfies Record<ImportRecoveryStage, number>;

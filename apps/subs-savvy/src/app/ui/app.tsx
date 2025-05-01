@@ -7,15 +7,12 @@ import { memo, useMemo } from "react";
 import { Helmet, type HtmlProps } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
-import { CategoriesProvider } from "../../entities/category/model/categories.store.tsx";
-import { SubscriptionsProvider } from "../../entities/subscription/model/subscriptions.store.tsx";
-import { ImportRecoveryProvider } from "../../features/import-recovery/model/import-recovery.store.tsx";
-import { UpsertSubscriptionProvider } from "../../features/upsert-subscription/model/upsert-subscription.store.tsx";
 import { rootRoute } from "../../shared/lib/route.ts";
 import {
   type NavLink,
   NavLinksProvider,
 } from "../../shared/lib/use-nav-links.tsx";
+import { StoreProvider } from "../../shared/store/store.provider.tsx";
 import { DefaultLayoutProvider } from "../../shared/ui/default.layout.tsx";
 import { Icon } from "../../shared/ui/icon.tsx";
 import { BreakpointsProvider } from "../../shared/ui/use-breakpoint.tsx";
@@ -38,15 +35,9 @@ export const App = memo(() => {
       >
         <BreakpointsProvider>
           <DefaultLayoutProvider>
-            <UpsertSubscriptionProvider>
-              <CategoriesProvider>
-                <SubscriptionsProvider>
-                  <ImportRecoveryProvider>
-                    <Outlet />
-                  </ImportRecoveryProvider>
-                </SubscriptionsProvider>
-              </CategoriesProvider>
-            </UpsertSubscriptionProvider>
+            <StoreProvider>
+              <Outlet />
+            </StoreProvider>
           </DefaultLayoutProvider>
         </BreakpointsProvider>
       </NavLinksProvider>

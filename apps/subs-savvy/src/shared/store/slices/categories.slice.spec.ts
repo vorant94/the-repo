@@ -5,17 +5,14 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
-import type { CategoryModel } from "../../../shared/api/category.model.ts";
-import {
-  CategoriesProvider,
-  useCategories,
-  useSelectedCategory,
-} from "./categories.store.tsx";
+import { categoryMock } from "../../api/__mocks__/category.model.ts";
+import type { CategoryModel } from "../../api/category.model.ts";
+import { useCategories, useSelectedCategory, useStore } from "../hooks.ts";
+import { StoreTestWrapper } from "../test.utils.tsx";
 
-vi.mock(import("../../../shared/api/category.table.ts"));
+vi.mock(import("../../api/category.table.ts"));
 
-describe("categories.store", () => {
+describe("categories.slice", () => {
   let screen: RenderHookResult<HooksCombined, void>;
   let hook: RenderHookResult<HooksCombined, void>["result"];
 
@@ -23,18 +20,15 @@ describe("categories.store", () => {
     screen = renderHook<HooksCombined, void>(
       () => {
         const categories = useCategories();
-        const [selectedCategory, selectCategory] = useSelectedCategory();
+        const selectedCategory = useSelectedCategory();
 
         return {
           categories,
           selectedCategory,
-          selectCategory,
         };
       },
       {
-        wrapper: ({ children }) => {
-          return <CategoriesProvider>{children}</CategoriesProvider>;
-        },
+        wrapper: StoreTestWrapper,
       },
     );
 
@@ -53,12 +47,13 @@ describe("categories.store", () => {
     await waitFor(() => expect(hook.current.categories.length).toEqual(1));
 
     // don't know how to check error type here, it isn't bubbling up to ErrorBoundary#onError for some reason
-    expect(() => act(() => hook.current.selectCategory("7"))).toThrowError();
+    expect(() =>
+      act(() => useStore.getState().selectCategory("7")),
+    ).toThrowError();
   });
 });
 
 interface HooksCombined {
   categories: ReadonlyArray<CategoryModel>;
   selectedCategory: CategoryModel | null;
-  selectCategory(categoryId: string | null): void;
 }

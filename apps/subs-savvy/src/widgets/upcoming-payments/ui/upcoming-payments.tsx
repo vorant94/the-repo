@@ -7,8 +7,8 @@ import {
   SubscriptionGrid,
   type SubscriptionGridChildrenProps,
 } from "../../../features/list-subscriptions/ui/subscription-grid.tsx";
-import { useUpsertSubscriptionActions } from "../../../features/upsert-subscription/model/upsert-subscription.store.tsx";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { useStore } from "../../../shared/store/hooks.ts";
 import { useUpcomingPayments } from "../model/use-upcoming-payments.ts";
 
 export const UpcomingPayments: FC<UpcomingPaymentsProps> = memo(
@@ -17,11 +17,10 @@ export const UpcomingPayments: FC<UpcomingPaymentsProps> = memo(
 
     const upcomingPayments = useUpcomingPayments();
 
-    const { open } = useUpsertSubscriptionActions();
-
     const openSubscriptionUpdate = useCallback(
-      (subscription: SubscriptionModel) => open(subscription),
-      [open],
+      (subscription: SubscriptionModel) =>
+        useStore.getState().openUpsertSubscription(subscription),
+      [],
     );
 
     const subscriptionGridChildren = useCallback(

@@ -12,7 +12,8 @@ import { useTranslation } from "react-i18next";
 import {
   useCategories,
   useSelectedCategory,
-} from "../../../entities/category/model/categories.store.tsx";
+  useStore,
+} from "../../../shared/store/hooks.ts";
 import { Icon } from "../../../shared/ui/icon.tsx";
 
 export const SelectCategory = memo(() => {
@@ -21,13 +22,14 @@ export const SelectCategory = memo(() => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-  const [selectedCategory, selectCategory] = useSelectedCategory();
+  const selectedCategory = useSelectedCategory();
   const handleSelectCategory = useCallback(
     (categoryId: string | null) => {
-      selectCategory(categoryId);
+      const { selectCategory, deselectCategory } = useStore.getState();
+      categoryId ? selectCategory(categoryId) : deselectCategory();
       combobox.closeDropdown();
     },
-    [selectCategory, combobox],
+    [combobox],
   );
 
   const { t } = useTranslation();
@@ -57,7 +59,7 @@ export const SelectCategory = memo(() => {
               <CloseButton
                 size="sm"
                 onMouseDown={(event) => event.preventDefault()}
-                onClick={() => selectCategory(null)}
+                onClick={useStore.getState().deselectCategory}
                 aria-label="Clear selected category"
               />
             ) : (

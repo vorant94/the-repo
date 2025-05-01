@@ -1,12 +1,12 @@
 import { MantineProvider } from "@mantine/core";
 import { type RenderResult, fireEvent, render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { selectCategorySpy } from "../../../entities/category/model/__mocks__/categories.store.tsx";
 import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
 import type { CategoryModel } from "../../../shared/api/category.model.ts";
+import { selectCategorySpy } from "../../../shared/store/__mocks__/hooks.ts";
 import { SelectCategory } from "./select-category.tsx";
 
-vi.mock(import("../../../entities/category/model/categories.store.tsx"));
+vi.mock("../../../shared/store/hooks.ts");
 
 describe("SelectCategory", () => {
   let screen: RenderResult;

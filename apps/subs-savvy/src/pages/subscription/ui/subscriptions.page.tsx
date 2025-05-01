@@ -1,8 +1,8 @@
 import { cn } from "cn";
 import { type FC, memo } from "react";
-import { useUpsertSubscriptionMode } from "../../../features/upsert-subscription/model/upsert-subscription.store.tsx";
 import { AddSubscriptionButton } from "../../../features/upsert-subscription/ui/add-subscription-button.tsx";
 import { UpsertSubscription } from "../../../features/upsert-subscription/ui/upsert-subscription.tsx";
+import { useUpsertSubscription } from "../../../shared/store/hooks.ts";
 import {
   DefaultLayout,
   DefaultLayoutHeader,
@@ -12,7 +12,7 @@ import { SelectCategory } from "../../../widgets/select-category/ui/select-categ
 import { SubscriptionList } from "../../../widgets/subscription-list/ui/subscription-list.tsx";
 
 export const SubscriptionsPage: FC = memo(() => {
-  const mode = useUpsertSubscriptionMode();
+  const { upsertSubscriptionMode } = useUpsertSubscription();
 
   return (
     <DefaultLayout
@@ -25,7 +25,7 @@ export const SubscriptionsPage: FC = memo(() => {
         </DefaultLayoutHeader>
       }
       drawerContent={<UpsertSubscription />}
-      drawerTitle={`${mode === "update" ? "Update" : "Insert"} Subscription`}
+      drawerTitle={`${upsertSubscriptionMode === "update" ? "Update" : "Insert"} Subscription`}
     >
       <SubscriptionList />
     </DefaultLayout>
