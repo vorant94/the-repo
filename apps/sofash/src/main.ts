@@ -9,7 +9,7 @@ import { contextStorage } from "hono/context-storage";
 import { adminRoute } from "./api/admin/admin.route.ts";
 import { healthRoute } from "./api/health/health.route.ts";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
-import { auth } from "./bl/auth/auth.ts";
+import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/env/config.ts";
 import type { GrammyContext } from "./shared/env/grammy-context.ts";
 import type { HonoEnv } from "./shared/env/hono-env.ts";
@@ -32,7 +32,7 @@ app.use(contextStorage(), async (hc, next) => {
   hc.set("config", config);
 
   const bot = new Bot<GrammyContext>(config.BOT_TOKEN);
-  bot.use(auth);
+  bot.use(ensureUser);
   bot.use(session());
   bot.use(conversations());
   hc.set("bot", bot);

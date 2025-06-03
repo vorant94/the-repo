@@ -1,19 +1,16 @@
-import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
-export const userRoles = ["admin", "user"] as const;
+export const userRoles = ["root", "admin", "user"] as const;
 export type UserRole = (typeof userRoles)[number];
 
 export const userRoleSchema = z.enum(userRoles);
 
 export const users = sqliteTable("users", {
-  id: text()
-    .primaryKey()
-    .$default(() => randomUUID()),
+  id: text().primaryKey(),
   resourceType: text({ enum: [resourceType.user] })
     .notNull()
     .default(resourceType.user),

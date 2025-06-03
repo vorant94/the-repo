@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 import { configSchema } from "./src/shared/env/config.ts";
-import { dbConfig } from "./src/shared/schema/db-config";
+import { dbConfig } from "./src/shared/schema/db-config.ts";
 
 const dotenvConfig = configSchema
   .pick({

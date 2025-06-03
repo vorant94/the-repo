@@ -6,9 +6,9 @@ export const configSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: env variables have different convention
   DB_FILE_NAME: z.string().optional().default(":memory:"),
   // biome-ignore lint/style/useNamingConvention: env variables have different convention
-  ADMIN_USERNAME: z.string(),
+  ROOT_USERNAME: z.string(),
   // biome-ignore lint/style/useNamingConvention: env variables have different convention
-  ADMIN_PASSWORD: z.string(),
+  ROOT_PASSWORD: z.string(),
 });
 
 export type Config = z.infer<typeof configSchema>;

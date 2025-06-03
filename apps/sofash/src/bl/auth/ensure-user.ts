@@ -7,7 +7,7 @@ import {
 import type { GrammyContext } from "../../shared/env/grammy-context.ts";
 import type { HonoEnv } from "../../shared/env/hono-env.ts";
 
-export const auth: MiddlewareFn<GrammyContext> = async (gc, next) => {
+export const ensureUser: MiddlewareFn<GrammyContext> = async (gc, next) => {
   const hc = getContext<HonoEnv>();
 
   if (!gc.chat) {

@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
-import { promoteUserToAdmin } from "../../bl/system/promote-user-to-admin.ts";
+import { findAllUsers, promoteUserToAdmin } from "../../bl/system/users.ts";
 import { userSchema } from "../../shared/schema/users.ts";
 
 export const usersRoute = new Hono();
@@ -14,10 +14,35 @@ const userDtoSchema = userSchema.omit({
   updatedAt: true,
 });
 
+usersRoute.get(
+  "/",
+  describeRoute({
+    description: "List all users",
+    tags: ["users"],
+    security: [{ basicAuth: [] }],
+    responses: {
+      200: {
+        description: "List of users",
+        content: {
+          "application/json": {
+            schema: resolver(z.array(userDtoSchema)),
+          },
+        },
+      },
+    },
+  }),
+  async (hc) => {
+    const users = await findAllUsers();
+
+    return hc.json(users.map((user) => userDtoSchema.parse(user)));
+  },
+);
+
 usersRoute.put(
   "/:id/promote-to-admin",
   describeRoute({
     description: "Promote a user to admin",
+    tags: ["users"],
     security: [
       {
         basicAuth: [],
@@ -25,7 +50,7 @@ usersRoute.put(
     ],
     responses: {
       200: {
-        description: "User promoted to admin",
+        description: "User was promoted to admin",
         content: {
           "application/json": {
             schema: resolver(userDtoSchema),

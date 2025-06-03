@@ -24,9 +24,9 @@ const { id, baseUrl } = z
 const env = configSchema
   .pick({
     // biome-ignore lint/style/useNamingConvention: env variables have different convention
-    ADMIN_USERNAME: true,
+    ROOT_USERNAME: true,
     // biome-ignore lint/style/useNamingConvention: env variables have different convention
-    ADMIN_PASSWORD: true,
+    ROOT_PASSWORD: true,
   })
   .parse(config().parsed);
 
@@ -37,7 +37,7 @@ const response = await fetch(
     headers: {
       "Content-Type": "application/json",
       // biome-ignore lint/style/useNamingConvention: headers have different convention
-      Authorization: `Basic ${Buffer.from(`${env.ADMIN_USERNAME}:${env.ADMIN_PASSWORD}`).toString("base64")}`,
+      Authorization: `Basic ${Buffer.from(`${env.ROOT_USERNAME}:${env.ROOT_PASSWORD}`).toString("base64")}`,
     },
   },
 );
