@@ -31,7 +31,7 @@ const env = configSchema
   .parse(config().parsed);
 
 const response = await fetch(
-  new URL(`/admin/users/${id}/promote-to-admin`, baseUrl),
+  new URL(`/api/v1/users/${id}/promote-to-admin`, baseUrl),
   {
     method: "PUT",
     headers: {

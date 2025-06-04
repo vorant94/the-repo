@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
-import { checkHealth, healthStatuses } from "../../bl/system/check-health.ts";
-import { createLogger } from "../../shared/logger/logger.ts";
+import { checkHealth, healthStatuses } from "../bl/system/check-health.ts";
+import { createLogger } from "../shared/logger/logger.ts";
 
 export const healthRoute = new Hono();
 

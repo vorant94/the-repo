@@ -6,9 +6,9 @@ import { Hono } from "hono";
 import { openAPISpecs } from "hono-openapi";
 import { env } from "hono/adapter";
 import { contextStorage } from "hono/context-storage";
-import { adminRoute } from "./api/admin/admin.route.ts";
-import { healthRoute } from "./api/health/health.route.ts";
-import { telegramRoute } from "./api/telegram/telegram.route.ts";
+import { healthRoute } from "./api/health.route.ts";
+import { telegramRoute } from "./api/telegram.route.ts";
+import { usersRoute } from "./api/users.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/env/config.ts";
 import type { GrammyContext } from "./shared/env/grammy-context.ts";
@@ -23,7 +23,7 @@ if (import.meta.env.DEV) {
   config();
 }
 
-const app = new Hono<HonoEnv>();
+const app = new Hono<HonoEnv>().basePath("/api/v1");
 
 app.use(contextStorage(), async (hc, next) => {
   hc.set("requestId", randomUUID());
@@ -48,7 +48,7 @@ app.use(contextStorage(), async (hc, next) => {
   await next();
 });
 
-app.route("/admin", adminRoute);
+app.route("/users", usersRoute);
 app.route("/health", healthRoute);
 // cannot set this path to be secret since in CF secrets are accessed only
 // inside request. the same goes for creating a bot instance outside of request
@@ -61,7 +61,7 @@ app.get(
     documentation: {
       info: {
         title: "Sofash",
-        version: "0.0.1",
+        version: "1.0.0",
         description: "Sofash API",
       },
       servers: [
@@ -82,6 +82,6 @@ app.get(
   }),
 );
 
-app.get("/docs", swaggerUI({ url: "/openapi.json" }));
+app.get("/docs", swaggerUI({ url: "/api/v1/openapi.json" }));
 
 export default app;
