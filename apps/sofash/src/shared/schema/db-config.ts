@@ -3,5 +3,3 @@ import type { DrizzleConfig } from "drizzle-orm";
 export const dbConfig = {
   casing: "snake_case",
 } as const satisfies DrizzleConfig;
-
-export const uuidNamespace = "86178bf8-cc5f-4836-839a-7fbde6b1f594";

@@ -1,10 +1,6 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { basicAuth } from "hono/basic-auth";
-import {
-  createUser,
-  findUserByTelegramChatId,
-  rootUserChatId,
-} from "../../dal/db/users.table.ts";
+import { rootUserChatId, upsertUser } from "../../dal/db/users.table.ts";
 import type { HonoEnv } from "../../shared/env/hono-env.ts";
 
 export const ensureRoot: MiddlewareHandler<HonoEnv> = (hc, next) => {
@@ -20,9 +16,10 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = (hc, next) => {
         return false;
       }
 
-      const user =
-        (await findUserByTelegramChatId(rootUserChatId)) ??
-        (await createUser({ telegramChatId: rootUserChatId, role: "root" }));
+      const user = await upsertUser({
+        telegramChatId: rootUserChatId,
+        role: "root",
+      });
       hc.set("user", user);
 
       return true;

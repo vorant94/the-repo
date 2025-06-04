@@ -28,11 +28,11 @@ export const userSchema = createSelectSchema(users);
 
 export type User = z.infer<typeof userSchema>;
 
-export const createUserSchema = createInsertSchema(users).omit({
+export const upsertUserSchema = createInsertSchema(users).omit({
   id: true,
   resourceType: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export type CreateUser = z.infer<typeof createUserSchema>;
+export type UpsertUser = z.infer<typeof upsertUserSchema>;

@@ -2,45 +2,37 @@ import { eq } from "drizzle-orm";
 import { getContext } from "hono/context-storage";
 import { HTTPException } from "hono/http-exception";
 import { v5 } from "uuid";
+import { createConflictUpdateColumns } from "../../shared/drizzle/create-conflict-update-columns.ts";
 import type { HonoEnv } from "../../shared/env/hono-env.ts";
-import { uuidNamespace } from "../../shared/schema/db-config.ts";
+import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
-  type CreateUser,
+  type UpsertUser,
   type User,
   type UserRole,
-  createUserSchema,
+  upsertUserSchema,
   userRoleSchema,
   userSchema,
   users,
 } from "../../shared/schema/users.ts";
 
-export async function createUser(toCreateRaw: CreateUser): Promise<User> {
+export async function upsertUser(toUpsertRaw: UpsertUser): Promise<User> {
   const { db } = getContext<HonoEnv>().var;
 
-  const toCreate = createUserSchema.parse(toCreateRaw);
+  const toUpsert = upsertUserSchema.parse(toUpsertRaw);
 
-  const [created] = await db
+  const [upserted] = await db
     .insert(users)
     .values({
-      id: v5(toCreateRaw.telegramChatId.toString(), uuidNamespace),
-      ...toCreate,
+      id: v5(toUpsertRaw.telegramChatId.toString(), uuidNamespace),
+      ...toUpsert,
+    })
+    .onConflictDoUpdate({
+      target: users.id,
+      set: createConflictUpdateColumns(users, ["role", "updatedAt"]),
     })
     .returning();
 
-  return userSchema.parse(created);
-}
-
-export async function findUserByTelegramChatId(
-  telegramChatId: User["telegramChatId"],
-): Promise<User | null> {
-  const { db } = getContext<HonoEnv>().var;
-
-  const [raw] = await db
-    .select()
-    .from(users)
-    .where(eq(users.telegramChatId, telegramChatId));
-
-  return raw ? userSchema.parse(raw) : null;
+  return userSchema.parse(upserted);
 }
 
 export async function setUserRole(
