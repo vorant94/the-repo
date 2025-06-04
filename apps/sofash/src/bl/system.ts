@@ -2,8 +2,8 @@ import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
 import { type Constructor, catchError } from "error-or";
 import { getContext } from "hono/context-storage";
-import type { HonoEnv } from "../../shared/env/hono-env.ts";
-import type { User } from "../../shared/schema/users.ts";
+import type { HonoEnv } from "../shared/env/hono-env.ts";
+import type { User } from "../shared/schema/users.ts";
 
 export async function checkHealth(): Promise<Health> {
   const { db, bot, user } = getContext<HonoEnv>().var;
@@ -31,6 +31,7 @@ export async function checkHealth(): Promise<Health> {
 
   return {
     status,
+    latestApiVersion: "v1",
     components: {
       database: {
         status: dbError ? "down" : "up",
@@ -47,8 +48,12 @@ export async function checkHealth(): Promise<Health> {
 export const healthStatuses = ["up", "down"] as const;
 export type HealthStatus = (typeof healthStatuses)[number];
 
+export const apiVersions = ["v1"] as const;
+export type ApiVersion = (typeof apiVersions)[number];
+
 export interface Health {
   status: HealthStatus;
+  latestApiVersion: ApiVersion;
   components: {
     database: {
       status: HealthStatus;

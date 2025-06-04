@@ -3,9 +3,9 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
-import { ensureRoot } from "../bl/auth/ensure-root.ts";
-import { findAllUsers, promoteUserToAdmin } from "../bl/system/users.ts";
-import { userSchema } from "../shared/schema/users.ts";
+import { ensureRoot } from "../../bl/auth/ensure-root.ts";
+import { findAllUsers, promoteUserToAdmin } from "../../bl/users.ts";
+import { userSchema } from "../../shared/schema/users.ts";
 
 export const usersRoute = new Hono();
 

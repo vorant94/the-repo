@@ -27,6 +27,4 @@ const { BOT_TOKEN } = configSchema
 
 const bot = new Bot(BOT_TOKEN);
 
-await bot.api.setWebhook(
-  new URL("/api/v1/telegram/webhook", baseUrl).toString(),
-);
+await bot.api.setWebhook(new URL("/api/telegram/webhook", baseUrl).toString());

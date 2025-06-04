@@ -1,7 +1,7 @@
 import { Composer } from "grammy";
 import { renderToString } from "hono/jsx/dom/server";
 import { z } from "zod";
-import { checkHealth, healthStatuses } from "../../bl/system/check-health.ts";
+import { checkHealth, healthStatuses } from "../../bl/system.ts";
 import { command } from "../../shared/env/command.ts";
 import type { GrammyContext } from "../../shared/env/grammy-context.ts";
 import { userSchema } from "../../shared/schema/users.ts";
