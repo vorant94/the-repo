@@ -7,19 +7,29 @@ import { createLogger } from "../../shared/logger/logger.ts";
 
 export const systemRoute = new Hono();
 
-const healthDtoSchema = z.object({
-  status: z.enum(healthStatuses),
-  latestApiVersion: z.enum(apiVersions),
-  components: z.object({
-    database: z.object({
-      status: z.enum(healthStatuses),
+const healthStatusDtoSchema = z
+  .enum(healthStatuses)
+  .openapi({ ref: "HealthStatusDto" });
+
+const apiVersionDtoSchema = z
+  .enum(apiVersions)
+  .openapi({ ref: "ApiVersionDto" });
+
+const healthDtoSchema = z
+  .object({
+    status: healthStatusDtoSchema,
+    latestApiVersion: apiVersionDtoSchema,
+    components: z.object({
+      database: z.object({
+        status: healthStatusDtoSchema,
+      }),
+      telegram: z.object({
+        username: z.string().nullish(),
+        webhookUrl: z.string().url().nullish(),
+      }),
     }),
-    telegram: z.object({
-      username: z.string().nullish(),
-      webhookUrl: z.string().url().nullish(),
-    }),
-  }),
-});
+  })
+  .openapi({ ref: "HealthDto" });
 
 systemRoute.get(
   "/health",

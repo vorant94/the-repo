@@ -11,11 +11,13 @@ export const usersRoute = new Hono();
 
 usersRoute.use(ensureRoot);
 
-const userDtoSchema = userSchema.omit({
-  resourceType: true,
-  createdAt: true,
-  updatedAt: true,
-});
+const userDtoSchema = userSchema
+  .omit({
+    resourceType: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .openapi({ ref: "UserDto" });
 
 usersRoute.get(
   "/",
@@ -32,6 +34,9 @@ usersRoute.get(
           },
         },
       },
+      401: {
+        description: "Unauthorized",
+      },
     },
   }),
   async (hc) => {
@@ -46,11 +51,7 @@ usersRoute.put(
   describeRoute({
     description: "Promote a user to admin",
     tags: ["users"],
-    security: [
-      {
-        basicAuth: [],
-      },
-    ],
+    security: [{ basicAuth: [] }],
     responses: {
       200: {
         description: "User was promoted to admin",
@@ -59,6 +60,12 @@ usersRoute.put(
             schema: resolver(userDtoSchema),
           },
         },
+      },
+      401: {
+        description: "Unauthorized",
+      },
+      404: {
+        description: "User not found",
       },
     },
   }),

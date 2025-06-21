@@ -2,6 +2,7 @@ import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
 import { type Constructor, catchError } from "error-or";
 import { getContext } from "hono/context-storage";
+import { HTTPException } from "hono/http-exception";
 import type { HonoEnv } from "../shared/env/hono-env.ts";
 import type { User } from "../shared/schema/users.ts";
 
@@ -73,7 +74,7 @@ async function getWebhookUrl(): Promise<string> {
 
   const result = await bot.api.getWebhookInfo();
   if (!result.url) {
-    throw new Error("No webhook URL set");
+    throw new HTTPException(404, { message: "No webhook URL set" });
   }
 
   return result.url;

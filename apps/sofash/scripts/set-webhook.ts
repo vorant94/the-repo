@@ -6,7 +6,9 @@ import { configSchema } from "../src/shared/env/config.ts";
 
 export const { baseUrl } = z
   .object({
-    baseUrl: z.string().url(),
+    // .optional() doesn't work with .url(),
+    // see here https://github.com/colinhacks/zod/discussions/2801
+    baseUrl: z.union([z.string().trim().url(), z.literal("").optional()]),
   })
   .parse(
     parseArgs({
@@ -27,4 +29,6 @@ const { BOT_TOKEN } = configSchema
 
 const bot = new Bot(BOT_TOKEN);
 
-await bot.api.setWebhook(new URL("/api/telegram/webhook", baseUrl).toString());
+await bot.api.setWebhook(
+  baseUrl ? new URL("/api/telegram/webhook", baseUrl).toString() : "",
+);

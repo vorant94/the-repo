@@ -1,3 +1,5 @@
+import "zod-openapi/extend";
+
 import { randomUUID } from "node:crypto";
 import { conversations } from "@grammyjs/conversations";
 import { swaggerUI } from "@hono/swagger-ui";
@@ -80,6 +82,9 @@ app.get(
   }),
 );
 
-app.get("/docs", swaggerUI({ url: "/api/openapi.json" }));
+app.get(
+  "/docs",
+  swaggerUI({ url: "/api/openapi.json", persistAuthorization: true }),
+);
 
 export default app;
