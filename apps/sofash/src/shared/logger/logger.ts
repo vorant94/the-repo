@@ -18,20 +18,17 @@ export interface Logger extends Disposable {
   error: LoggerFn;
 }
 
+type LogLevel = "debug" | "info" | "error";
+
 const logger: Logger = {
   debug(...args: Array<unknown>): void {
-    console.debug(
-      formatRequestId(),
-      formatTime(),
-      formatName("debug"),
-      ...args,
-    );
+    console.debug(...formatMessage("debug", ...args));
   },
   info(...args: Array<unknown>): void {
-    console.info(formatRequestId(), formatTime(), formatName("info"), ...args);
+    console.info(...formatMessage("info", ...args));
   },
   error(...args: Array<unknown>): void {
-    console.info(formatRequestId(), formatTime(), formatName("error"), ...args);
+    console.error(...formatMessage("error", ...args));
   },
   [Symbol.dispose]() {
     logger.debug("end");
@@ -40,6 +37,19 @@ const logger: Logger = {
 };
 
 const names: Array<string> = [];
+
+function formatMessage(
+  logLevel: LogLevel,
+  ...args: Array<unknown>
+): Array<unknown> {
+  return [
+    formatRequestId(),
+    formatTime(),
+    formatLogLevel(logLevel),
+    formatName(logLevel),
+    ...args,
+  ];
+}
 
 function formatRequestId(): string {
   const { requestId } = getContext();
@@ -51,18 +61,20 @@ function formatTime(): string {
   return `${styleText("magenta", format(Date.now(), "yyyy/MM/dd, HH:mm:ss"))} -`;
 }
 
-type LogLevel = "debug" | "info" | "error";
-
-const logLevelToNameFormatModifiers = {
+const logLevelToFormatModifiers = {
   debug: "gray",
   info: "blue",
   error: "red",
 } as const satisfies Record<LogLevel, Parameters<typeof styleText>[0]>;
 
+function formatLogLevel(logLevel: LogLevel): string {
+  return `${styleText(logLevelToFormatModifiers[logLevel], logLevel.toUpperCase())}\t`;
+}
+
 function formatName(logLevel: LogLevel): string {
   const name = names.at(-1);
 
   return name
-    ? styleText(logLevelToNameFormatModifiers[logLevel], `[${name}]`)
+    ? styleText(logLevelToFormatModifiers[logLevel], `[${name}]`)
     : "";
 }
