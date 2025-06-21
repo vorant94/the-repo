@@ -24,7 +24,10 @@ if (import.meta.env.DEV) {
   config();
 }
 
-const app = new Hono<HonoEnv>().basePath("/api");
+// cannot use basePath /api here since I want to redirect root route
+// (without /api) to /api/docs, therefore all "real" routes have /api prefix
+// set up manually
+const app = new Hono<HonoEnv>();
 
 app.use(contextStorage(), async (hc, next) => {
   hc.set("requestId", randomUUID());
@@ -49,14 +52,16 @@ app.use(contextStorage(), async (hc, next) => {
   await next();
 });
 
-app.route("/v1", v1Route);
+app.get("/", (hc) => hc.redirect("/api/docs"));
+
+app.route("/api/v1", v1Route);
 // cannot set this path to be secret since in CF secrets are accessed only
 // inside request. the same goes for creating a bot instance outside of request
 // scope since token is a secret that is accessible only inside request
-app.route("/telegram", telegramRoute);
+app.route("/api/telegram", telegramRoute);
 
 app.get(
-  "/openapi.json",
+  "/api/openapi.json",
   openAPISpecs(app, {
     documentation: {
       info: {
@@ -83,7 +88,7 @@ app.get(
 );
 
 app.get(
-  "/docs",
+  "/api/docs",
   swaggerUI({ url: "/api/openapi.json", persistAuthorization: true }),
 );
 
