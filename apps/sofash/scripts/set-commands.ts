@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { Bot } from "grammy";
-import { command } from "../src/shared/env/command.ts";
-import { configSchema } from "../src/shared/env/config.ts";
+import { configSchema } from "../src/shared/context/config.ts";
+import { command } from "../src/shared/telegram/command.ts";
 
 const env = configSchema
   .pick({

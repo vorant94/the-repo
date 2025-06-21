@@ -1,7 +1,7 @@
 import type { MiddlewareFn } from "grammy";
 import { upsertUser } from "../../dal/db/users.table.ts";
-import { patchContext } from "../../shared/env/context.ts";
-import type { GrammyContext } from "../../shared/env/grammy-context.ts";
+import { patchContext } from "../../shared/context/context.ts";
+import type { GrammyContext } from "../../shared/telegram/grammy-context.ts";
 
 export const ensureUser: MiddlewareFn<GrammyContext> = async (gc, next) => {
   if (!gc.chat) {

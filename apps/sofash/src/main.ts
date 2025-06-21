@@ -12,11 +12,11 @@ import { env } from "hono/adapter";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
-import { configSchema } from "./shared/env/config.ts";
-import { runWithinContext } from "./shared/env/context.ts";
-import type { GrammyContext } from "./shared/env/grammy-context.ts";
+import { configSchema } from "./shared/context/config.ts";
+import { runWithinContext } from "./shared/context/context.ts";
 import type { HonoEnv } from "./shared/env/hono-env.ts";
 import { dbConfig } from "./shared/schema/db-config.ts";
+import type { GrammyContext } from "./shared/telegram/grammy-context.ts";
 
 if (import.meta.env.DEV) {
   // dotenv needed during development to set env locally from process.env

@@ -3,8 +3,8 @@ import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import type { Bot } from "grammy";
 import type { User } from "../schema/users.ts";
+import type { GrammyContext } from "../telegram/grammy-context.ts";
 import type { Config } from "./config.ts";
-import type { GrammyContext } from "./grammy-context.ts";
 
 export interface Context {
   config: Config;

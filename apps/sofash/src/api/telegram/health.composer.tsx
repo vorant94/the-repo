@@ -2,9 +2,9 @@ import { Composer } from "grammy";
 import { renderToString } from "hono/jsx/dom/server";
 import { z } from "zod";
 import { checkHealth, healthStatuses } from "../../bl/system.ts";
-import { command } from "../../shared/env/command.ts";
-import type { GrammyContext } from "../../shared/env/grammy-context.ts";
 import { userSchema } from "../../shared/schema/users.ts";
+import { command } from "../../shared/telegram/command.ts";
+import type { GrammyContext } from "../../shared/telegram/grammy-context.ts";
 import { CodeBlock } from "../../shared/ui/code-block.tsx";
 
 export const healthComposer = new Composer<GrammyContext>();

@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { v5 } from "uuid";
+import { getContext } from "../../shared/context/context.ts";
 import { createConflictUpdateColumns } from "../../shared/drizzle/create-conflict-update-columns.ts";
-import { getContext } from "../../shared/env/context.ts";
 import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
   type UpsertUser,

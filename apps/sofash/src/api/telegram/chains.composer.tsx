@@ -1,7 +1,7 @@
 import { Composer } from "grammy";
 import { roleGuard } from "../../bl/auth/role.guard.ts";
-import { command } from "../../shared/env/command.ts";
-import type { GrammyContext } from "../../shared/env/grammy-context.ts";
+import { command } from "../../shared/telegram/command.ts";
+import type { GrammyContext } from "../../shared/telegram/grammy-context.ts";
 
 export const chainsComposer = new Composer<GrammyContext>();
 

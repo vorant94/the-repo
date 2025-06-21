@@ -2,7 +2,7 @@ import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
 import { type Constructor, catchError } from "error-or";
 import { HTTPException } from "hono/http-exception";
-import { getContext } from "../shared/env/context.ts";
+import { getContext } from "../shared/context/context.ts";
 import type { User } from "../shared/schema/users.ts";
 
 export async function checkHealth(): Promise<Health> {

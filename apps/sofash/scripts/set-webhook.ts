@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import { config } from "dotenv";
 import { Bot } from "grammy";
 import { z } from "zod";
-import { configSchema } from "../src/shared/env/config.ts";
+import { configSchema } from "../src/shared/context/config.ts";
 
 export const { baseUrl } = z
   .object({
