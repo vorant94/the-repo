@@ -1,5 +1,6 @@
-import { getContext } from "hono/context-storage";
-import type { HonoEnv } from "../env/hono-env.ts";
+import { styleText } from "node:util";
+import { format } from "date-fns";
+import { getContext } from "../env/context.ts";
 
 export function createLogger(name: string): Logger {
   names.push(name);
@@ -9,16 +10,28 @@ export function createLogger(name: string): Logger {
   return logger;
 }
 
+export type LoggerFn = (...args: Array<unknown>) => void;
+
 export interface Logger extends Disposable {
-  debug(...args: Array<unknown>): void;
+  debug: LoggerFn;
+  info: LoggerFn;
+  error: LoggerFn;
 }
 
 const logger: Logger = {
   debug(...args: Array<unknown>): void {
-    const name = names.at(-1);
-    const { requestId } = getContext<HonoEnv>().var;
-
-    console.debug(requestId, name, ...args);
+    console.debug(
+      formatRequestId(),
+      formatTime(),
+      formatName("debug"),
+      ...args,
+    );
+  },
+  info(...args: Array<unknown>): void {
+    console.info(formatRequestId(), formatTime(), formatName("info"), ...args);
+  },
+  error(...args: Array<unknown>): void {
+    console.info(formatRequestId(), formatTime(), formatName("error"), ...args);
   },
   [Symbol.dispose]() {
     logger.debug("end");
@@ -27,3 +40,29 @@ const logger: Logger = {
 };
 
 const names: Array<string> = [];
+
+function formatRequestId(): string {
+  const { requestId } = getContext();
+
+  return `${styleText("cyan", `[${requestId}]`)} -`;
+}
+
+function formatTime(): string {
+  return `${styleText("magenta", format(Date.now(), "yyyy/MM/dd, HH:mm:ss"))} -`;
+}
+
+type LogLevel = "debug" | "info" | "error";
+
+const logLevelToNameFormatModifiers = {
+  debug: "gray",
+  info: "blue",
+  error: "red",
+} as const satisfies Record<LogLevel, Parameters<typeof styleText>[0]>;
+
+function formatName(logLevel: LogLevel): string {
+  const name = names.at(-1);
+
+  return name
+    ? styleText(logLevelToNameFormatModifiers[logLevel], `[${name}]`)
+    : "";
+}

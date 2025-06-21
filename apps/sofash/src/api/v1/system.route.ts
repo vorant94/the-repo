@@ -3,7 +3,6 @@ import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
 import { z } from "zod";
 import { apiVersions, checkHealth, healthStatuses } from "../../bl/system.ts";
-import { createLogger } from "../../shared/logger/logger.ts";
 
 export const systemRoute = new Hono();
 
@@ -48,10 +47,6 @@ systemRoute.get(
     },
   }),
   async (hc) => {
-    // @ts-ignore
-    // biome-ignore lint/correctness/noUnusedVariables: testing purposes
-    using logger = createLogger("healthRoute");
-
     const json = healthDtoSchema.parse(await checkHealth());
 
     return hc.json(json);

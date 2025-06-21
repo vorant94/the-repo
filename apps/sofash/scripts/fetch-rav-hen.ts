@@ -1,10 +1,11 @@
-import console from "node:console";
+import { randomUUID } from "node:crypto";
 import { inspect, parseArgs } from "node:util";
 import { addDays } from "date-fns";
-import { reThrowError } from "error-or";
 import { z } from "zod";
-import { findRavHenFilmEvents } from "../src/dal/rav-hen/rav-hen.client.ts";
-import { ravHenSiteIdSchema } from "../src/dal/rav-hen/rav-hen.dtos.ts";
+import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
+import { ravHenSiteIdSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
+import { type Context, runWithinContext } from "../src/shared/env/context.ts";
+import { createLogger } from "../src/shared/logger/logger.ts";
 
 const { siteId, date } = z
   .object({
@@ -27,12 +28,25 @@ const { siteId, date } = z
     }).values,
   );
 
-const filmEvents = await reThrowError(findRavHenFilmEvents(siteId, date));
+await runWithinContext({ requestId: randomUUID() } as Context, async () => {
+  using logger = createLogger("fetch-rav-hen");
 
-console.info(
-  inspect(filmEvents, {
-    colors: true,
-    depth: Number.POSITIVE_INFINITY,
-    maxArrayLength: Number.POSITIVE_INFINITY,
-  }),
-);
+  const [error, filmEvents] = await findQuickbookFilmEvents(
+    "rav-hen",
+    siteId,
+    date,
+  );
+  if (error) {
+    logger.error(error);
+    return;
+  }
+
+  logger.info(
+    "response",
+    inspect(filmEvents, {
+      colors: true,
+      depth: Number.POSITIVE_INFINITY,
+      maxArrayLength: Number.POSITIVE_INFINITY,
+    }),
+  );
+});

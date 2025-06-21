@@ -1,13 +1,12 @@
 import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
 import { type Constructor, catchError } from "error-or";
-import { getContext } from "hono/context-storage";
 import { HTTPException } from "hono/http-exception";
-import type { HonoEnv } from "../shared/env/hono-env.ts";
+import { getContext } from "../shared/env/context.ts";
 import type { User } from "../shared/schema/users.ts";
 
 export async function checkHealth(): Promise<Health> {
-  const { db, bot, user } = getContext<HonoEnv>().var;
+  const { db, bot, user } = getContext();
 
   const [dbResolved, telegramMeResolved, telegramWebhookResolved] =
     await Promise.all([
@@ -70,7 +69,7 @@ export interface Health {
 // bot.api.getWebhookInfo returns url as an empty string if no webhook is set
 // it is easier to threat it as an error and throw an exception
 async function getWebhookUrl(): Promise<string> {
-  const { bot } = getContext<HonoEnv>().var;
+  const { bot } = getContext();
 
   const result = await bot.api.getWebhookInfo();
   if (!result.url) {

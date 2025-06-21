@@ -1,10 +1,18 @@
 import { z } from "zod";
 
+export const quickbookTenants = ["rav-hen", "planet"] as const;
+export type QuickbookTenant = (typeof quickbookTenants)[number];
+export const quickbookTenantSchema = z.enum(quickbookTenants);
+
 export const ravHenSiteIds = ["1058", "1071", "1062"] as const;
 export type RavHenSiteId = (typeof ravHenSiteIds)[number];
 export const ravHenSiteIdSchema = z.enum(ravHenSiteIds);
 
-export const ravHenFilmSchema = z.object({
+export const platenSiteIds = ["1072"] as const;
+export type PlanetSiteId = (typeof platenSiteIds)[number];
+export const planetSiteIdSchema = z.enum(platenSiteIds);
+
+export const quickbookFilmSchema = z.object({
   id: z.string(),
   name: z.string(),
   length: z.number(),
@@ -16,9 +24,9 @@ export const ravHenFilmSchema = z.object({
   attributeIds: z.array(z.string()),
 });
 
-export type RavHenFilmDto = z.infer<typeof ravHenFilmSchema>;
+export type QuickbookFilmDto = z.infer<typeof quickbookFilmSchema>;
 
-export const ravHenEventSchema = z.object({
+export const QuickbookEventSchema = z.object({
   id: z.string(),
   filmId: z.string(),
   cinemaId: z.string(),
@@ -47,4 +55,4 @@ export const ravHenEventSchema = z.object({
   auditoriumTinyName: z.string(),
 });
 
-export type RavHenEventDto = z.infer<typeof ravHenEventSchema>;
+export type QuickbookEventDto = z.infer<typeof QuickbookEventSchema>;

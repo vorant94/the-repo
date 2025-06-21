@@ -3,15 +3,17 @@ import "zod-openapi/extend";
 import { randomUUID } from "node:crypto";
 import { conversations } from "@grammyjs/conversations";
 import { swaggerUI } from "@hono/swagger-ui";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import { Bot, session } from "grammy";
 import { Hono } from "hono";
 import { openAPISpecs } from "hono-openapi";
 import { env } from "hono/adapter";
-import { contextStorage } from "hono/context-storage";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/env/config.ts";
+import { runWithinContext } from "./shared/env/context.ts";
 import type { GrammyContext } from "./shared/env/grammy-context.ts";
 import type { HonoEnv } from "./shared/env/hono-env.ts";
 import { dbConfig } from "./shared/schema/db-config.ts";
@@ -29,27 +31,26 @@ if (import.meta.env.DEV) {
 // set up manually
 const app = new Hono<HonoEnv>();
 
-app.use(contextStorage(), async (hc, next) => {
-  hc.set("requestId", randomUUID());
+app.use(async (hc, next) => {
+  const requestId = randomUUID();
 
   const config = configSchema.parse(env(hc));
-  hc.set("config", config);
 
   const bot = new Bot<GrammyContext>(config.BOT_TOKEN);
   bot.use(ensureUser);
   bot.use(session());
   bot.use(conversations());
-  hc.set("bot", bot);
 
+  let db: DrizzleD1Database | LibSQLDatabase;
   if (import.meta.env.DEV) {
     const { drizzle } = await import("drizzle-orm/libsql");
-    hc.set("db", drizzle(config.DB_FILE_NAME, dbConfig));
+    db = drizzle(config.DB_FILE_NAME, dbConfig);
   } else {
     const { drizzle } = await import("drizzle-orm/d1");
-    hc.set("db", drizzle(hc.env.DB, dbConfig));
+    db = drizzle(hc.env.DB, dbConfig);
   }
 
-  await next();
+  await runWithinContext({ requestId, config, bot, db }, next);
 });
 
 app.get("/", (hc) => hc.redirect("/api/docs"));

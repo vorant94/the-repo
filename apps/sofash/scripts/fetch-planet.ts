@@ -1,12 +1,15 @@
-import console from "node:console";
+import { randomUUID } from "node:crypto";
 import { inspect, parseArgs } from "node:util";
-import { addDays, format } from "date-fns";
+import { addDays } from "date-fns";
 import { z } from "zod";
+import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
+import { planetSiteIdSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
+import { type Context, runWithinContext } from "../src/shared/env/context.ts";
+import { createLogger } from "../src/shared/logger/logger.ts";
 
-const { tenantId, siteId, date } = z
+const { siteId, date } = z
   .object({
-    tenantId: z.coerce.number().default(10100),
-    siteId: z.coerce.number().default(1072),
+    siteId: planetSiteIdSchema.default("1072"),
     date: z.coerce.date().default(addDays(new Date(), 1)),
   })
   .parse(
@@ -25,15 +28,25 @@ const { tenantId, siteId, date } = z
     }).values,
   );
 
-const response = await fetch(
-  `https://www.planetcinema.co.il/il/data-api-service/v1/quickbook/${tenantId}/film-events/in-cinema/${siteId}/at-date/${format(date, "yyyy-MM-dd")}`,
-);
-const json = await response.json();
+await runWithinContext({ requestId: randomUUID() } as Context, async () => {
+  using logger = createLogger("fetch-planet");
 
-console.info(
-  inspect(json, {
-    colors: true,
-    depth: Number.POSITIVE_INFINITY,
-    maxArrayLength: Number.POSITIVE_INFINITY,
-  }),
-);
+  const [error, filmEvents] = await findQuickbookFilmEvents(
+    "planet",
+    siteId,
+    date,
+  );
+  if (error) {
+    logger.error(error);
+    return;
+  }
+
+  logger.info(
+    "response",
+    inspect(filmEvents, {
+      colors: true,
+      depth: Number.POSITIVE_INFINITY,
+      maxArrayLength: Number.POSITIVE_INFINITY,
+    }),
+  );
+});

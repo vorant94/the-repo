@@ -1,9 +1,8 @@
 import { eq } from "drizzle-orm";
-import { getContext } from "hono/context-storage";
 import { HTTPException } from "hono/http-exception";
 import { v5 } from "uuid";
 import { createConflictUpdateColumns } from "../../shared/drizzle/create-conflict-update-columns.ts";
-import type { HonoEnv } from "../../shared/env/hono-env.ts";
+import { getContext } from "../../shared/env/context.ts";
 import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
   type UpsertUser,
@@ -16,7 +15,7 @@ import {
 } from "../../shared/schema/users.ts";
 
 export async function upsertUser(toUpsertRaw: UpsertUser): Promise<User> {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getContext();
 
   const toUpsert = upsertUserSchema.parse(toUpsertRaw);
 
@@ -39,7 +38,7 @@ export async function setUserRole(
   id: User["id"],
   toSetRaw: UserRole,
 ): Promise<User> {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getContext();
 
   const toSet = userRoleSchema.parse(toSetRaw);
 
@@ -56,7 +55,7 @@ export async function setUserRole(
 }
 
 export async function findUsers(): Promise<Array<User>> {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getContext();
 
   return (await db.select().from(users)).map((raw) => userSchema.parse(raw));
 }

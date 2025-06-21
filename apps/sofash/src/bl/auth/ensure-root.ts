@@ -1,14 +1,15 @@
-import type { Context, MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import { basicAuth } from "hono/basic-auth";
 import { rootUserChatId, upsertUser } from "../../dal/db/users.table.ts";
+import { getContext, patchContext } from "../../shared/env/context.ts";
 import type { HonoEnv } from "../../shared/env/hono-env.ts";
 
 export const ensureRoot: MiddlewareHandler<HonoEnv> = (hc, next) => {
   return basicAuth({
     // reimplementing verification as a hack to set user to context once he is
     // authenticated
-    verifyUser: async (username, password, hc) => {
-      const { config } = (hc as Context<HonoEnv>).var;
+    verifyUser: async (username, password) => {
+      const { config } = getContext();
 
       const isEqual =
         username === config.ROOT_USERNAME && password === config.ROOT_PASSWORD;
@@ -20,7 +21,7 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = (hc, next) => {
         telegramChatId: rootUserChatId,
         role: "root",
       });
-      hc.set("user", user);
+      patchContext({ user });
 
       return true;
     },
