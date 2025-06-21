@@ -22,6 +22,9 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    hmr: false,
+  },
   plugins: [
     devServer({
       entry: path.resolve(process.cwd(), "src/main.ts"),
