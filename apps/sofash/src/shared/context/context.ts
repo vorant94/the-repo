@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { randomUUID } from "node:crypto";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import type { Bot } from "grammy";
@@ -7,23 +8,36 @@ import type { GrammyContext } from "../telegram/grammy-context.ts";
 import type { Config } from "./config.ts";
 
 export interface Context {
+  requestId: string;
   config: Config;
   bot: Bot<GrammyContext>;
   db: DrizzleD1Database | LibSQLDatabase;
   user?: User;
-  requestId: string;
 }
+
+export interface RawContext
+  extends Partial<Omit<Context, "requestId">>,
+    Pick<Context, "requestId"> {}
 
 export interface AuthenticatedContext
   extends Omit<Context, "user">,
     Required<Pick<Context, "user">> {}
 
-// reimplementing context storage instead of using hono's built-in one in order
-// to utilize it outside hono like in scripts
-export function getContext(): Context {
+export function getRawContext(): RawContext {
   const context = storage.getStore();
   if (!context) {
     throw new Error("Context is not available");
+  }
+
+  return context;
+}
+
+// reimplementing context storage instead of using hono's built-in one in order
+// to utilize it outside hono like in scripts
+export function getContext(): Context {
+  const context = getRawContext();
+  if (!isContext(context)) {
+    throw new Error("Context is not valid");
   }
 
   return context;
@@ -38,16 +52,28 @@ export function getAuthenticatedContext(): AuthenticatedContext {
   return context;
 }
 
-export function runWithinContext<T>(context: Context, callback: () => T): T {
-  return storage.run(context, callback);
+export function runWithinContext<T>(
+  context: Partial<Omit<Context, "requestId">>,
+  callback: () => T,
+): T {
+  const requestId = randomUUID();
+
+  return storage.run({ ...context, requestId }, callback);
 }
 
-export function patchContext(context: Partial<Context>): void {
-  const prevContext = getContext();
-  storage.enterWith({ ...prevContext, ...context });
+export function runWithinPatchedContext<T>(
+  context: Partial<Omit<Context, "requestId">>,
+  callback: () => T,
+): T {
+  const prevContext = getRawContext();
+  return storage.run({ ...prevContext, ...context }, callback);
 }
 
-const storage = new AsyncLocalStorage<Context>();
+const storage = new AsyncLocalStorage<RawContext>();
+
+function isContext(context: RawContext): context is Context {
+  return "config" in context && "bot" in context && "db" in context;
+}
 
 function isAuthenticatedContext(
   context: Context,

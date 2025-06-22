@@ -1,6 +1,4 @@
 import "zod-openapi/extend";
-
-import { randomUUID } from "node:crypto";
 import { conversations } from "@grammyjs/conversations";
 import { swaggerUI } from "@hono/swagger-ui";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
@@ -13,8 +11,12 @@ import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/context/config.ts";
-import { runWithinContext } from "./shared/context/context.ts";
+import {
+  runWithinContext,
+  runWithinPatchedContext,
+} from "./shared/context/context.ts";
 import type { HonoEnv } from "./shared/env/hono-env.ts";
+import { createLogger } from "./shared/logger/logger.ts";
 import { dbConfig } from "./shared/schema/db-config.ts";
 import type { GrammyContext } from "./shared/telegram/grammy-context.ts";
 
@@ -31,27 +33,36 @@ if (import.meta.env.DEV) {
 // set up manually
 const app = new Hono<HonoEnv>();
 
-app.use(async (hc, next) => {
-  const requestId = randomUUID();
+app.use((hc, next) =>
+  runWithinContext({}, async () => {
+    using logger = createLogger("main");
 
-  const config = configSchema.parse(env(hc));
+    const config = configSchema.parse(env(hc));
+    logger.info("config successfully parsed");
 
-  const bot = new Bot<GrammyContext>(config.BOT_TOKEN);
-  bot.use(ensureUser);
-  bot.use(session());
-  bot.use(conversations());
+    const bot = new Bot<GrammyContext>(config.BOT_TOKEN);
+    bot.use(ensureUser);
+    bot.use(session());
+    bot.use(conversations());
+    logger.info("bot instance successfully created");
 
-  let db: DrizzleD1Database | LibSQLDatabase;
-  if (import.meta.env.DEV) {
-    const { drizzle } = await import("drizzle-orm/libsql");
-    db = drizzle(config.DB_FILE_NAME, dbConfig);
-  } else {
-    const { drizzle } = await import("drizzle-orm/d1");
-    db = drizzle(hc.env.DB, dbConfig);
-  }
+    let db: DrizzleD1Database | LibSQLDatabase;
+    if (import.meta.env.DEV) {
+      const { drizzle } = await import("drizzle-orm/libsql");
+      db = drizzle(config.DB_FILE_NAME, dbConfig);
+      logger.info("db client (libsql) successfully created");
+    } else {
+      const { drizzle } = await import("drizzle-orm/d1");
+      db = drizzle(hc.env.DB, dbConfig);
+      logger.info("db client (d1) successfully created");
+    }
 
-  await runWithinContext({ requestId, config, bot, db }, next);
-});
+    await runWithinPatchedContext({ config, bot, db }, async () => {
+      logger.info("context is successfully initiated");
+      await next();
+    });
+  }),
+);
 
 app.get("/", (hc) => hc.redirect("/api/docs"));
 
@@ -74,6 +85,10 @@ app.get(
         {
           url: "http://localhost:5173",
           description: "Local server",
+        },
+        {
+          url: "https://sofash.vorant94.workers.dev",
+          description: "Production worker",
         },
       ],
       components: {

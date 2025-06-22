@@ -1,13 +1,9 @@
-import { randomUUID } from "node:crypto";
 import { inspect, parseArgs } from "node:util";
 import { addDays } from "date-fns";
 import { z } from "zod";
 import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
 import { planetSiteIdSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
-import {
-  type Context,
-  runWithinContext,
-} from "../src/shared/context/context.ts";
+import { runWithinContext } from "../src/shared/context/context.ts";
 import { createLogger } from "../src/shared/logger/logger.ts";
 
 const { siteId, date } = z
@@ -31,7 +27,7 @@ const { siteId, date } = z
     }).values,
   );
 
-await runWithinContext({ requestId: randomUUID() } as Context, async () => {
+await runWithinContext({}, async () => {
   using logger = createLogger("fetch-planet");
 
   const [error, filmEvents] = await findQuickbookFilmEvents(

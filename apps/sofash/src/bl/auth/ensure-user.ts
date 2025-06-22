@@ -1,6 +1,6 @@
 import type { MiddlewareFn } from "grammy";
 import { upsertUser } from "../../dal/db/users.table.ts";
-import { patchContext } from "../../shared/context/context.ts";
+import { runWithinPatchedContext } from "../../shared/context/context.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import type { GrammyContext } from "../../shared/telegram/grammy-context.ts";
 
@@ -12,8 +12,9 @@ export const ensureUser: MiddlewareFn<GrammyContext> = async (gc, next) => {
   }
 
   const user = await upsertUser({ telegramChatId: gc.chat.id });
-  patchContext({ user });
-  logger.info("context is authenticated, user id is", user.id);
 
-  await next();
+  await runWithinPatchedContext({ user }, async () => {
+    logger.info("context is authenticated, user id is", user.id);
+    await next();
+  });
 };

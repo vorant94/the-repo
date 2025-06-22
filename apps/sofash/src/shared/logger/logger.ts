@@ -1,6 +1,6 @@
 import { styleText } from "node:util";
 import { format } from "date-fns";
-import { getContext } from "../context/context.ts";
+import { getRawContext } from "../context/context.ts";
 
 export function createLogger(name: string): Logger {
   names.push(name);
@@ -52,7 +52,7 @@ function formatMessage(
 }
 
 function formatRequestId(): string {
-  const { requestId } = getContext();
+  const { requestId } = getRawContext();
 
   return `${styleText("cyan", `[${requestId}]`)} -`;
 }
