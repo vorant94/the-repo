@@ -61,6 +61,7 @@ export function runWithinContext<T>(
   return storage.run({ ...context, requestId }, callback);
 }
 
+// cannot simply use storage.enterWith since it isn't implemented in CF Workers
 export function runWithinPatchedContext<T>(
   context: Partial<Omit<Context, "requestId">>,
   callback: () => T,
