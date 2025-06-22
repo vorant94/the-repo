@@ -72,6 +72,10 @@ export function runWithinPatchedContext<T>(
 
 const storage = new AsyncLocalStorage<RawContext>();
 
+// implementing manual simplified validation instead of zod schema in order to
+// leave imports from drizzle-orm/d1 and drizzle-orm/libsql as type-only imports
+// and therefore load only one of them based on environment. otherwise using
+// z.instanceOf requires to actually load both used classes at the same time
 function isContext(context: RawContext): context is Context {
   return "config" in context && "bot" in context && "db" in context;
 }
