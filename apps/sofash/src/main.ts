@@ -7,6 +7,7 @@ import { Bot, session } from "grammy";
 import { Hono } from "hono";
 import { openAPISpecs } from "hono-openapi";
 import { env } from "hono/adapter";
+import { cors } from "hono/cors";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
@@ -32,6 +33,8 @@ if (import.meta.env.DEV) {
 // (without /api) to /api/docs, therefore all "real" routes have /api prefix
 // set up manually
 const app = new Hono<HonoEnv>();
+
+app.use(cors());
 
 app.use((hc, next) =>
   runWithinContext({}, async () => {

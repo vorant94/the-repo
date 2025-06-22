@@ -24,6 +24,7 @@ export default defineConfig({
   },
   server: {
     hmr: false,
+    cors: false,
   },
   plugins: [
     devServer({
