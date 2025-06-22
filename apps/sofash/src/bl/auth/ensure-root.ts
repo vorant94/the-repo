@@ -49,17 +49,6 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = async (hc, next) => {
   throw new HTTPException(status, { res });
 };
 
-const decodeBase64 = (str: string): Uint8Array => {
-  const binary = atob(str);
-  const bytes = new Uint8Array(new ArrayBuffer(binary.length));
-  const half = binary.length / 2;
-  for (let i = 0, j = binary.length - 1; i <= half; i++, j--) {
-    bytes[i] = binary.charCodeAt(i);
-    bytes[j] = binary.charCodeAt(j);
-  }
-  return bytes;
-};
-
 const CREDENTIALS_REGEXP =
   /^ *[Bb][Aa][Ss][Ii][Cc] +([A-Za-z0-9._~+\/-]+=*) *$/;
 const USER_PASS_REGEXP = /^([^:]*):(.*)$/;
@@ -90,4 +79,15 @@ const auth: Auth = (req) => {
 
   // biome-ignore lint/style/noNonNullAssertion: copy-paste code from trusted source
   return { username: userPass[1]!, password: userPass[2]! };
+};
+
+const decodeBase64 = (str: string): Uint8Array => {
+  const binary = atob(str);
+  const bytes = new Uint8Array(new ArrayBuffer(binary.length));
+  const half = binary.length / 2;
+  for (let i = 0, j = binary.length - 1; i <= half; i++, j--) {
+    bytes[i] = binary.charCodeAt(i);
+    bytes[j] = binary.charCodeAt(j);
+  }
+  return bytes;
 };
