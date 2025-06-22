@@ -1,7 +1,7 @@
 import { URL } from "node:url";
 import { format } from "date-fns";
-import { type ErrorOr, catchError } from "error-or";
 import { z } from "zod";
+import { fetchWithZod } from "../../shared/http/fetch-with-zod.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type PlanetSiteId,
@@ -15,17 +15,17 @@ export async function findQuickbookFilmEvents(
   tenant: "rav-hen",
   siteId: RavHenSiteId,
   date: Date,
-): Promise<ErrorOr<FindQuickbookFilmEventsResponseBodyDto>>;
+): Promise<FindQuickbookFilmEventsResponseBodyDto>;
 export async function findQuickbookFilmEvents(
   tenant: "planet",
   siteId: PlanetSiteId,
   date: Date,
-): Promise<ErrorOr<FindQuickbookFilmEventsResponseBodyDto>>;
+): Promise<FindQuickbookFilmEventsResponseBodyDto>;
 export async function findQuickbookFilmEvents(
   tenant: QuickbookTenant,
   siteId: RavHenSiteId | PlanetSiteId,
   date: Date,
-): Promise<ErrorOr<FindQuickbookFilmEventsResponseBodyDto>> {
+): Promise<FindQuickbookFilmEventsResponseBodyDto> {
   using logger = createLogger("findQuickbookFilmEvents");
   logger.debug("tenant", tenant);
 
@@ -39,24 +39,7 @@ export async function findQuickbookFilmEvents(
   );
   logger.debug("url", url.toString());
 
-  const [fetchError, response] = await catchError(fetch(url));
-  if (fetchError) {
-    return [fetchError];
-  }
-
-  const [jsonError, json] = await catchError(response.json());
-  if (jsonError) {
-    return [jsonError];
-  }
-
-  const [parsingError, parsed] = catchError(() =>
-    findQuickbookFilmEventsResponseBodySchema.parse(json),
-  );
-  if (parsingError) {
-    return [parsingError];
-  }
-
-  return [undefined, parsed];
+  return await fetchWithZod(url, findQuickbookFilmEventsResponseBodySchema);
 }
 
 export const findQuickbookFilmEventsResponseBodySchema = z.object({

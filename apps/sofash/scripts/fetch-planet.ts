@@ -30,15 +30,7 @@ const { siteId, date } = z
 await runWithinContext({}, async () => {
   using logger = createLogger("fetch-planet");
 
-  const [error, filmEvents] = await findQuickbookFilmEvents(
-    "planet",
-    siteId,
-    date,
-  );
-  if (error) {
-    logger.error(error);
-    return;
-  }
+  const filmEvents = await findQuickbookFilmEvents("planet", siteId, date);
 
   logger.info(
     "response",

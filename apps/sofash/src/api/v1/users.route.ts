@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
+import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { ensureRoot } from "../../bl/auth/ensure-root.ts";
 import { findAllUsers, promoteUserToAdmin } from "../../bl/users.ts";
@@ -67,6 +68,9 @@ usersRoute.put(
       404: {
         description: "User not found",
       },
+      500: {
+        description: "Internal Server Error",
+      },
     },
   }),
   zValidator(
@@ -78,6 +82,11 @@ usersRoute.put(
   async (hc) => {
     const user = await promoteUserToAdmin(hc.req.param("id"));
 
-    return hc.json(userDtoSchema.parse(user));
+    const parsed = userDtoSchema.safeParse(user);
+    if (!parsed.success) {
+      throw new HTTPException(500, { cause: parsed.error });
+    }
+
+    return hc.json(parsed.data);
   },
 );
