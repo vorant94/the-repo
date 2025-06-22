@@ -23,8 +23,8 @@ export default defineConfig({
     },
   },
   server: {
-    hmr: false,
-    cors: false,
+    hmr: false, // without it swagger UI page gets refreshed on code change, very annoying
+    cors: false, // to avoid conflicts with hono cors middleware
   },
   plugins: [
     devServer({
