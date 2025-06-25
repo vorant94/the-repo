@@ -1,7 +1,7 @@
 import { HTTPException } from "hono/http-exception";
 import type { ZodSchema } from "zod";
 
-export async function fetchWithZod<T>(
+export async function fetchJson<T>(
   url: string | URL,
   schema: ZodSchema<T>,
 ): Promise<T> {

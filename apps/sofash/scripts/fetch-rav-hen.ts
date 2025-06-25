@@ -1,14 +1,14 @@
 import { inspect, parseArgs } from "node:util";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { z } from "zod";
 import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
-import { ravHenSiteIdSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
+import { ravHenSiteSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
 import { runWithinContext } from "../src/shared/context/context.ts";
 import { createLogger } from "../src/shared/logger/logger.ts";
 
-const { siteId, date } = z
+const { site, date } = z
   .object({
-    siteId: ravHenSiteIdSchema.default("1058"),
+    site: ravHenSiteSchema.default("dizengoff"),
     date: z.coerce.date().default(addDays(new Date(), 1)),
   })
   .parse(
@@ -17,7 +17,7 @@ const { siteId, date } = z
         tenantId: {
           type: "string",
         },
-        siteId: {
+        site: {
           type: "string",
         },
         date: {
@@ -30,7 +30,11 @@ const { siteId, date } = z
 await runWithinContext({}, async () => {
   using logger = createLogger("fetch-rav-hen");
 
-  const filmEvents = await findQuickbookFilmEvents("rav-hen", siteId, date);
+  logger.info(
+    `fetching film events from ${site} for ${format(date, "yyyy-MM-dd")}`,
+  );
+
+  const filmEvents = await findQuickbookFilmEvents("rav-hen", site, date);
 
   logger.info(
     "response",
