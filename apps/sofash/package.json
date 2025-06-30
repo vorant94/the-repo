@@ -22,8 +22,10 @@
     "grammy": "^1.31.2",
     "hono": "^4.7.4",
     "hono-openapi": "^0.4.6",
-    "nt-parse": "^0.0.1",
+    "neverthrow": "^8.2.0",
+    "nt": "^0.0.1",
     "uuid": "^11.1.0",
+    "zod": "^3.25.67",
     "zod-openapi": "^4.2.2"
   },
   "devDependencies": {

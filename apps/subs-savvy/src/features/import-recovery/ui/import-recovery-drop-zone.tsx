@@ -2,8 +2,7 @@ import { Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconFileCode } from "@tabler/icons-react";
 import { cn } from "cn";
-import { Result } from "neverthrow";
-import { ntParse } from "nt-parse";
+import { ntJsonParse, ntParseWithZod } from "nt";
 import { memo, useCallback, useEffect, useState } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
 import {
@@ -45,8 +44,8 @@ export const ImportRecoveryDropZone = memo(
             throw new Error("type of result should be string");
           }
 
-          const parsedResult = safeParse(result).andThen((result) =>
-            ntParse(recoverySchema, result),
+          const parsedResult = ntJsonParse(result).andThen((result) =>
+            ntParseWithZod(result, recoverySchema),
           );
           if (parsedResult.isErr()) {
             notifications.show({
@@ -106,5 +105,3 @@ export const ImportRecoveryDropZone = memo(
 export interface ImportRecoveryDropZoneProps {
   onRecoveryParsed(recovery: RecoveryModel): void;
 }
-
-const safeParse = Result.fromThrowable(JSON.parse);
