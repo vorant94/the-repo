@@ -1,6 +1,4 @@
-import type { ResultSet } from "@libsql/client";
 import { sql } from "drizzle-orm";
-import { type Constructor, catchError } from "error-or";
 import { HTTPException } from "hono/http-exception";
 import { getContext } from "../shared/context/context.ts";
 import type { User } from "../shared/schema/users.ts";
@@ -8,37 +6,34 @@ import type { User } from "../shared/schema/users.ts";
 export async function checkHealth(): Promise<Health> {
   const { db, bot, user } = getContext();
 
-  const [dbResolved, telegramMeResolved, telegramWebhookResolved] =
-    await Promise.all([
-      // cannot infer union generic from overloaded function
-      // see https://github.com/microsoft/TypeScript/issues/44312
-      catchError<ResultSet | D1Result<unknown>, Constructor<Error>>(
-        db.run(sql`SELECT 1`).execute(),
-      ),
-      catchError(bot.api.getMe()),
-      catchError(getWebhookUrl()),
-    ]);
-  const [dbError] = dbResolved;
-  const [telegramMeError, telegramMeResult] = telegramMeResolved;
-  const [telegramWebhookUrlError, telegramWebhookUrlResult] =
-    telegramWebhookResolved;
+  const allSettled = await Promise.allSettled([
+    db.run(sql`SELECT 1`).execute(),
+    bot.api.getMe(),
+    getWebhookUrl(),
+  ]);
 
-  const status = [dbError, telegramMeError, telegramWebhookUrlError].some(
-    Boolean,
-  )
+  const status = allSettled.some((settled) => settled.status === "rejected")
     ? "down"
     : "up";
+
+  const [dbSettled, telegramMeSettled, telegramWebhookSettled] = allSettled;
 
   return {
     status,
     latestApiVersion: "v1",
     components: {
       database: {
-        status: dbError ? "down" : "up",
+        status: dbSettled.status === "rejected" ? "down" : "up",
       },
       telegram: {
-        username: telegramMeError ? null : telegramMeResult.username,
-        webhookUrl: telegramWebhookUrlError ? null : telegramWebhookUrlResult,
+        username:
+          telegramMeSettled.status === "rejected"
+            ? null
+            : telegramMeSettled.value.username,
+        webhookUrl:
+          telegramWebhookSettled.status === "rejected"
+            ? null
+            : telegramWebhookSettled.value,
       },
     },
     user,

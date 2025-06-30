@@ -1,28 +1,18 @@
 import { HTTPException } from "hono/http-exception";
+import { ResultAsync } from "neverthrow";
+import { ntParse } from "nt-parse";
 import type { ZodSchema } from "zod";
 
-export async function fetchJson<T>(
+export function fetchJson<T>(
   url: string | URL,
   schema: ZodSchema<T>,
-): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(url);
-  } catch (e) {
-    throw new HTTPException(500, { cause: e });
-  }
-
-  let json: unknown;
-  try {
-    json = await response.json();
-  } catch (e) {
-    throw new HTTPException(500, { cause: e });
-  }
-
-  const parsed = schema.safeParse(json);
-  if (!parsed.success) {
-    throw new HTTPException(500, { cause: parsed.error });
-  }
-
-  return parsed.data;
+): ResultAsync<T, HTTPException> {
+  return safeFetch(url)
+    .andThen((res) => safeJson(res))
+    .andThen((json) => ntParse(schema, json))
+    .mapErr((err) => new HTTPException(500, { cause: err }));
 }
+
+const safeFetch = ResultAsync.fromThrowable(fetch);
+
+const safeJson = ResultAsync.fromThrowable((res: Response) => res.json());

@@ -1,5 +1,7 @@
 import { URL } from "node:url";
 import { format } from "date-fns";
+import type { HTTPException } from "hono/http-exception";
+import type { ResultAsync } from "neverthrow";
 import { z } from "zod";
 import { fetchJson } from "../../shared/fetch/fetch-json.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
@@ -15,21 +17,21 @@ import {
   quickbookFilmSchema,
 } from "./quickbook.dtos.ts";
 
-export async function findQuickbookFilmEvents(
+export function findQuickbookFilmEvents(
   tenant: "rav-hen",
   site: RavHenSite,
   date: Date,
-): Promise<FindQuickbookFilmEventsResponseBodyDto>;
-export async function findQuickbookFilmEvents(
+): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException>;
+export function findQuickbookFilmEvents(
   tenant: "planet",
   site: PlanetSite,
   date: Date,
-): Promise<FindQuickbookFilmEventsResponseBodyDto>;
-export async function findQuickbookFilmEvents(
+): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException>;
+export function findQuickbookFilmEvents(
   tenant: QuickbookTenant,
   site: QuickbookSite,
   date: Date,
-): Promise<FindQuickbookFilmEventsResponseBodyDto> {
+): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException> {
   using logger = createLogger("findQuickbookFilmEvents");
   logger.debug("tenant", tenant);
   logger.debug("site", site);
@@ -46,7 +48,7 @@ export async function findQuickbookFilmEvents(
   );
   logger.debug("url", url.toString());
 
-  return await fetchJson(url, findQuickbookFilmEventsResponseBodySchema);
+  return fetchJson(url, findQuickbookFilmEventsResponseBodySchema);
 }
 
 export const findQuickbookFilmEventsResponseBodySchema = z.object({

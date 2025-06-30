@@ -2,7 +2,8 @@ import { Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconFileCode } from "@tabler/icons-react";
 import { cn } from "cn";
-import { catchError } from "error-or";
+import { Result } from "neverthrow";
+import { ntParse } from "nt-parse";
 import { memo, useCallback, useEffect, useState } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
 import {
@@ -44,10 +45,10 @@ export const ImportRecoveryDropZone = memo(
             throw new Error("type of result should be string");
           }
 
-          const [error, parsed] = catchError(() =>
-            recoverySchema.parse(JSON.parse(result)),
+          const parsedResult = safeParse(result).andThen((result) =>
+            ntParse(recoverySchema, result),
           );
-          if (error) {
+          if (parsedResult.isErr()) {
             notifications.show({
               color: notificationColor.error,
               title: "Recovery is malformed",
@@ -56,7 +57,7 @@ export const ImportRecoveryDropZone = memo(
             return;
           }
 
-          onRecoveryParsed(parsed);
+          onRecoveryParsed(parsedResult.value);
         },
         { signal: controller.signal },
       );
@@ -105,3 +106,5 @@ export const ImportRecoveryDropZone = memo(
 export interface ImportRecoveryDropZoneProps {
   onRecoveryParsed(recovery: RecoveryModel): void;
 }
+
+const safeParse = Result.fromThrowable(JSON.parse);

@@ -35,10 +35,14 @@ await runWithinContext({}, async () => {
   );
 
   const filmEvents = await findQuickbookFilmEvents("rav-hen", site, date);
+  if (filmEvents.isErr()) {
+    logger.error(filmEvents.error);
+    return;
+  }
 
   logger.info(
     "response",
-    inspect(filmEvents, {
+    inspect(filmEvents.value, {
       colors: true,
       depth: Number.POSITIVE_INFINITY,
       maxArrayLength: Number.POSITIVE_INFINITY,

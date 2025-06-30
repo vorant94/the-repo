@@ -1,12 +1,13 @@
 {
-  "name": "error-or",
+  "name": "nt-parse",
   "private": true,
   "license": "MIT",
   "version": "0.0.1",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
-  "scripts": {
-    "test": "vitest run"
+  "dependencies": {
+    "neverthrow": "^8.2.0",
+    "zod": "^3.25.67"
   }
 }
