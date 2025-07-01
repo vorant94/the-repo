@@ -1,9 +1,9 @@
 import { URL } from "node:url";
 import { format } from "date-fns";
-import type { HTTPException } from "hono/http-exception";
+import { HTTPException } from "hono/http-exception";
 import type { ResultAsync } from "neverthrow";
+import { ntFetchJsonWithZod } from "nt";
 import { z } from "zod";
-import { fetchJson } from "../../shared/fetch/fetch-json.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type PlanetSite,
@@ -48,7 +48,10 @@ export function findQuickbookFilmEvents(
   );
   logger.debug("url", url.toString());
 
-  return fetchJson(url, findQuickbookFilmEventsResponseBodySchema);
+  return ntFetchJsonWithZod(
+    url,
+    findQuickbookFilmEventsResponseBodySchema,
+  ).mapErr((err) => new HTTPException(500, { cause: err }));
 }
 
 export const findQuickbookFilmEventsResponseBodySchema = z.object({
