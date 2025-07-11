@@ -43,6 +43,13 @@
       "when": 1752259915802,
       "tag": "0005_wooden_photon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1752264676439,
+      "tag": "0006_sour_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

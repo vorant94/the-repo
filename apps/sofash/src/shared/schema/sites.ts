@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { chains } from "./chains.ts";
+import { chainNames, chains } from "./chains.ts";
 import { resourceType } from "./resource-types.ts";
 
 export const ravHenSiteNames = [
@@ -44,11 +44,18 @@ export const sites = sqliteTable("sites", {
 
   // TODO make uniqueness combined from name and chainId
   name: text({ enum: siteNames }).unique().notNull(),
-  chainId: text()
+  chainName: text({ enum: chainNames })
     .notNull()
-    .references(() => chains.id),
+    .references(() => chains.name),
 });
 
 export const siteSchema = createSelectSchema(sites);
-
 export type Site = z.infer<typeof siteSchema>;
+
+export const insertSiteSchema = createInsertSchema(sites).omit({
+  id: true,
+  resourceType: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertSite = z.infer<typeof insertSiteSchema>;

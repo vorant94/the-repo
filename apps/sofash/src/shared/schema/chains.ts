@@ -22,7 +22,6 @@ export const chains = sqliteTable("chains", {
 });
 
 export const chainSchema = createSelectSchema(chains);
-
 export type Chain = z.infer<typeof chainSchema>;
 
 export const insertChainSchema = createInsertSchema(chains).omit({
@@ -31,5 +30,4 @@ export const insertChainSchema = createInsertSchema(chains).omit({
   createdAt: true,
   updatedAt: true,
 });
-
 export type InsertChain = z.infer<typeof insertChainSchema>;
