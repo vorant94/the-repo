@@ -51,7 +51,11 @@ export function insertChain(
           });
         }
 
-        logger.debug("unknown error", err);
+        logger.debug(
+          "unknown error",
+          err,
+          isErrorWithCode(err) ? err.code : "no code",
+        );
         return new HTTPException(500, {
           message: "Unexpected error while inserting a chain",
           cause: err,
