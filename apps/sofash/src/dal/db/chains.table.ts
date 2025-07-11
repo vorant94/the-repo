@@ -3,7 +3,6 @@ import { ResultAsync } from "neverthrow";
 import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { getContext } from "../../shared/context/context.ts";
-import { isErrorWithCode } from "../../shared/errors/error-with-code.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type Chain,
@@ -12,10 +11,7 @@ import {
   type InsertChain,
   insertChainSchema,
 } from "../../shared/schema/chains.ts";
-import {
-  constraintPrimaryKeyErrorCode,
-  uuidNamespace,
-} from "../../shared/schema/db-extra.ts";
+import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 
 export function insertChain(
   toInsertRaw: InsertChain,
@@ -42,8 +38,8 @@ export function insertChain(
         .returning(),
       (err) => {
         if (
-          isErrorWithCode(err) &&
-          err.code === constraintPrimaryKeyErrorCode
+          err instanceof Error &&
+          err.message === "UNIQUE constraint failed: chains.id"
         ) {
           return new HTTPException(409, {
             message: `Chain with name [${toInsert.name}] already exists`,
