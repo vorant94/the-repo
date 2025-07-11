@@ -37,9 +37,11 @@ export function insertChain(
         })
         .returning(),
       (err) => {
+        // libsql and d1 errors are of different structure, rawdog parsing the
+        // error message is the only common denominator i found
         if (
           err instanceof Error &&
-          err.message === "UNIQUE constraint failed: chains.id"
+          err.message.includes("UNIQUE constraint failed: chains.id")
         ) {
           return new HTTPException(409, {
             message: `Chain with name [${toInsert.name}] already exists`,
@@ -47,12 +49,7 @@ export function insertChain(
           });
         }
 
-        logger.debug(
-          "unknown error",
-          err,
-          // biome-ignore lint/suspicious/noExplicitAny: temp
-          (err as any).rawCode,
-        );
+        logger.error("Unexpected error while inserting a chain", err);
         return new HTTPException(500, {
           message: "Unexpected error while inserting a chain",
           cause: err,
