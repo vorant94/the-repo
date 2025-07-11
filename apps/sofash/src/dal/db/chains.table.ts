@@ -17,7 +17,7 @@ import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 export function insertChain(
   toInsertRaw: InsertChain,
 ): ResultAsync<Chain, HTTPException> {
-  const logger = createLogger("insertChain");
+  using logger = createLogger("insertChain");
   const { db } = getContext();
 
   const toInsert = ntParseWithZod(toInsertRaw, insertChainSchema).mapErr(

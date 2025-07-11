@@ -13,6 +13,7 @@ import { v1Route } from "./api/v1/v1.route.ts";
 import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/context/config.ts";
 import {
+  getContext,
   runWithinContext,
   runWithinPatchedContext,
 } from "./shared/context/context.ts";
@@ -62,7 +63,17 @@ app.use((hc, next) =>
 
     await runWithinPatchedContext({ config, bot, db }, async () => {
       logger.info("context is successfully initiated");
+
+      const { requestId } = getContext();
+      hc.res.headers.set("X-Request-Id", requestId);
+
+      hc.res.headers.set("X-Server-Date-Time", new Date().toISOString());
+
+      const start = Date.now();
       await next();
+      const end = Date.now();
+
+      hc.res.headers.set("X-Response-Time-Ms", `${end - start}`);
     });
   }),
 );
