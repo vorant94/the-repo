@@ -54,7 +54,8 @@ export function insertChain(
         logger.debug(
           "unknown error",
           err,
-          isErrorWithCode(err) ? err.code : "no code",
+          // biome-ignore lint/suspicious/noExplicitAny: temp
+          (err as any).rawCode,
         );
         return new HTTPException(500, {
           message: "Unexpected error while inserting a chain",
