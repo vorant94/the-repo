@@ -5,27 +5,29 @@ import { getContext } from "../../shared/context/context.ts";
 import { createConflictUpdateColumns } from "../../shared/drizzle/create-conflict-update-columns.ts";
 import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
-  type UpsertUser,
+  type InsertUser,
+  insertUserSchema,
   type User,
   type UserRole,
-  upsertUserSchema,
   userRoleSchema,
   userSchema,
   users,
 } from "../../shared/schema/users.ts";
 
-export async function upsertUser(toUpsertRaw: UpsertUser): Promise<User> {
+export async function upsertUserByTelegramChatId(
+  toUpsertRaw: InsertUser,
+): Promise<User> {
   const { db } = getContext();
 
-  const toUpsert = upsertUserSchema.safeParse(toUpsertRaw);
+  const toUpsert = insertUserSchema.safeParse(toUpsertRaw);
   if (!toUpsert.success) {
     throw new HTTPException(400, { cause: toUpsert.error });
   }
 
-  const [upserted] = await db
+  const [upsertedRaw] = await db
     .insert(users)
     .values({
-      id: v5(toUpsertRaw.telegramChatId.toString(), uuidNamespace),
+      id: v5(toUpsert.data.telegramChatId.toString(), uuidNamespace),
       ...toUpsert.data,
     })
     .onConflictDoUpdate({
@@ -34,12 +36,12 @@ export async function upsertUser(toUpsertRaw: UpsertUser): Promise<User> {
     })
     .returning();
 
-  const parsed = userSchema.safeParse(upserted);
-  if (!parsed.success) {
-    throw new HTTPException(500, { cause: parsed.error });
+  const upserted = userSchema.safeParse(upsertedRaw);
+  if (!upserted.success) {
+    throw new HTTPException(500, { cause: upserted.error });
   }
 
-  return parsed.data;
+  return upserted.data;
 }
 
 export async function setUserRole(

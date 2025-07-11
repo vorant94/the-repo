@@ -1,14 +1,18 @@
 import { inspect, parseArgs } from "node:util";
 import { addDays, format } from "date-fns";
 import { z } from "zod";
+import {
+  chainNameToQuickbookChainId,
+  planetSiteNameToPlanetSiteId,
+} from "../src/bl/scrapper/db-to-datasource-mappings.ts";
 import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
-import { planetSiteSchema } from "../src/dal/quickbook/quickbook.dtos.ts";
 import { runWithinContext } from "../src/shared/context/context.ts";
 import { createLogger } from "../src/shared/logger/logger.ts";
+import { planetSiteNameSchema } from "../src/shared/schema/sites.ts";
 
 const { site, date } = z
   .object({
-    site: planetSiteSchema.default("ayalon"),
+    site: planetSiteNameSchema.default("ayalon"),
     date: z.coerce.date().default(addDays(new Date(), 1)),
   })
   .parse(
@@ -34,7 +38,11 @@ await runWithinContext({}, async () => {
     `fetching film events from ${site} for ${format(date, "yyyy-MM-dd")}`,
   );
 
-  const filmEvents = await findQuickbookFilmEvents("planet", site, date);
+  const filmEvents = await findQuickbookFilmEvents(
+    chainNameToQuickbookChainId.planet,
+    planetSiteNameToPlanetSiteId[site],
+    date,
+  );
   if (filmEvents.isErr()) {
     logger.error(filmEvents.error);
     return;

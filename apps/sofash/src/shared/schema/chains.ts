@@ -1,17 +1,14 @@
-import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
-export const chainTypes = ["rav-hen"] as const;
-export type ChainType = (typeof chainTypes)[number];
+export const chainNames = ["rav-hen", "planet"] as const;
+export type ChainName = (typeof chainNames)[number];
 
 export const chains = sqliteTable("chains", {
-  id: text()
-    .primaryKey()
-    .$default(() => randomUUID()),
+  id: text().primaryKey(),
   resourceType: text({ enum: [resourceType.chain] })
     .notNull()
     .default(resourceType.chain),
@@ -21,10 +18,18 @@ export const chains = sqliteTable("chains", {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
-  name: text().notNull(),
-  type: text({ enum: chainTypes }).unique(),
+  name: text({ enum: chainNames }).unique().notNull(),
 });
 
 export const chainSchema = createSelectSchema(chains);
 
 export type Chain = z.infer<typeof chainSchema>;
+
+export const insertChainSchema = createInsertSchema(chains).omit({
+  id: true,
+  resourceType: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertChain = z.infer<typeof insertChainSchema>;

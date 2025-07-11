@@ -1,7 +1,10 @@
 import { TextDecoder } from "node:util";
 import type { MiddlewareHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { rootUserChatId, upsertUser } from "../../dal/db/users.table.ts";
+import {
+  rootUserChatId,
+  upsertUserByTelegramChatId,
+} from "../../dal/db/users.table.ts";
 import {
   getContext,
   runWithinPatchedContext,
@@ -27,7 +30,7 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = async (hc, next) => {
       requestUser.username === config.ROOT_USERNAME &&
       requestUser.password === config.ROOT_PASSWORD;
     if (isEqual) {
-      const user = await upsertUser({
+      const user = await upsertUserByTelegramChatId({
         telegramChatId: rootUserChatId,
         role: "root",
       });
