@@ -22,9 +22,9 @@ import { useTranslation } from "react-i18next";
 import { Cell, Label, Pie, PieChart } from "recharts";
 import { z } from "zod";
 import {
-  type SubscriptionsAggregatedByCategory,
   aggregateSubscriptionsByCategory,
   noCategoryPlaceholder,
+  type SubscriptionsAggregatedByCategory,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { calculateSubscriptionPriceForMonth } from "../../../entities/subscription/lib/calculate-subscription-price-for-month.ts";
 import { calculateSubscriptionPriceForYear } from "../../../entities/subscription/lib/calculate-subscription-price-for-year.ts";

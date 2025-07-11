@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import type { LabelProps } from "recharts";
 import type { PolarViewBox } from "recharts/types/util/types";
 import {
-  type SubscriptionsAggregatedByCategory,
   noCategoryPlaceholder,
+  type SubscriptionsAggregatedByCategory,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";
 

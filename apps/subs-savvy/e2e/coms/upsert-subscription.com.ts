@@ -1,4 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
+import type { UpsertSubscriptionModel } from "../../src/shared/api/subscription.model.ts";
 import {
   type SubscriptionCyclePeriodModel,
   subscriptionCyclePeriodToLabel,
@@ -7,7 +8,6 @@ import {
   type SubscriptionIconModel,
   subscriptionIconToLabel,
 } from "../../src/shared/api/subscription-icon.model.ts";
-import type { UpsertSubscriptionModel } from "../../src/shared/api/subscription.model.ts";
 import { createDatePickerInputAriaLabels } from "../../src/shared/ui/create-date-picker-input-aria-labels.ts";
 import { DatePickerInputCom } from "./date-picker-input.com.ts";
 import { InputCom } from "./input.com.ts";

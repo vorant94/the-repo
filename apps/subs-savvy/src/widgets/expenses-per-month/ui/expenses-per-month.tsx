@@ -13,9 +13,9 @@ import {
   YAxis,
 } from "recharts";
 import {
-  type SubscriptionsAggregatedByCategory,
   aggregateSubscriptionsByCategory,
   noCategoryPlaceholder,
+  type SubscriptionsAggregatedByCategory,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { calculateSubscriptionPriceForMonth } from "../../../entities/subscription/lib/calculate-subscription-price-for-month.ts";
 import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";

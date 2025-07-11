@@ -3,10 +3,10 @@ import type { CategoryModel } from "./category.model.ts";
 import { _getCategory } from "./category.table.ts";
 import {
   type InsertSubscriptionModel,
-  type SubscriptionModel,
-  type UpdateSubscriptionModel,
   insertSubscriptionSchema,
+  type SubscriptionModel,
   subscriptionSchema,
+  type UpdateSubscriptionModel,
   updateSubscriptionSchema,
 } from "./subscription.model.ts";
 

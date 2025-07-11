@@ -1,5 +1,5 @@
 import { MantineProvider } from "@mantine/core";
-import { type RenderResult, fireEvent, render } from "@testing-library/react";
+import { fireEvent, type RenderResult, render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { categoryMock } from "../../../shared/api/__mocks__/category.model.ts";
 import type { CategoryModel } from "../../../shared/api/category.model.ts";

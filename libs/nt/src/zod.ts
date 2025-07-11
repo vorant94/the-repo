@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 import type { ZodError, ZodSchema } from "zod";
 import { ntFetch, ntResponseJson } from "./lib";
 

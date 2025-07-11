@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { rootRoute } from "../../shared/lib/route.ts";
 import { App } from "../ui/app.tsx";
 

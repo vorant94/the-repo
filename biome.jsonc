@@ -1,12 +1,11 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "linter": {
     "rules": {
       "correctness": {
         "noUnusedImports": "error",
         "noUnusedVariables": "error",
         "noUnusedPrivateClassMembers": "error",
-        "useArrayLiterals": "error",
         "useHookAtTopLevel": "error",
         "useExhaustiveDependencies": {
           "level": "error",
@@ -31,12 +30,12 @@
         }
       },
       "performance": {
-        "noBarrelFile": "error"
+        "noBarrelFile": "error",
+        "noNamespaceImport": "error"
       },
       "style": {
         "noDefaultExport": "error",
         "noNamespace": "error",
-        "noNamespaceImport": "error",
         "noNegationElse": "error",
         "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
@@ -56,12 +55,26 @@
         "useForOf": "error",
         "useFragmentSyntax": "error",
         "useNamingConvention": "error",
-        "useShorthandAssign": "error"
+        "useShorthandAssign": "error",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error",
+        "useArrayLiterals": "error"
       },
       "suspicious": {
-        "noConsoleLog": "error",
         "useAwait": "error",
-        "noConstEnum": "error"
+        "noConstEnum": "error",
+        "noConsole": {
+          "level": "error",
+          "options": { "allow": ["error", "info", "debug"] }
+        }
       }
     }
   },
@@ -70,34 +83,31 @@
     "indentStyle": "space"
   },
   "files": {
-    "ignore": [
-      ".DS_Store",
-      ".idea",
-      "node_modules",
-      "dist",
-      "coverage",
-      "playwright-report",
-      "test-results",
-      ".env",
-      ".wrangler",
-      ".vercel",
-      "data",
-      ".obsidian",
-      ".astro",
-      ".vscode",
-      ".husky/_",
-      "build",
-      "out",
-      ".turbo"
+    "includes": [
+      "**",
+      "!**/.DS_Store",
+      "!**/.idea",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/.env",
+      "!**/.wrangler",
+      "!**/.vercel",
+      "!**/data",
+      "!**/.obsidian",
+      "!**/.astro",
+      "!**/.vscode",
+      "!**/.husky/_",
+      "!**/build",
+      "!**/out",
+      "!**/.turbo"
     ]
   },
   "overrides": [
     {
-      "include": [
-        "*.config.ts", // root level configs use default exports
-        "*.config.mjs", // root level configs use default exports
-        "src/main.ts" // some engines and frameworks use default exports
-      ],
+      "includes": ["**/*.config.ts", "**/*.config.mjs", "**/src/main.ts"],
       "linter": {
         "rules": {
           "style": {
@@ -107,17 +117,17 @@
       }
     },
     {
-      "include": ["*.spec.ts", "*.spec.tsx"], // because in order to mock top-level function, the test suite should import the whole ESModule
+      "includes": ["**/*.spec.ts", "**/*.spec.tsx"], // because in order to mock top-level function, the test suite should import the whole ESModule
       "linter": {
         "rules": {
-          "style": {
+          "performance": {
             "noNamespaceImport": "off"
           }
         }
       }
     },
     {
-      "include": ["**/tsconfig.json", "**/tsconfig.*.json"], // its really JSONC/JSON5 format despite the name
+      "includes": ["**/tsconfig.json", "**/tsconfig.*.json"], // its really JSONC/JSON5 format despite the name
       "json": {
         "parser": {
           "allowComments": true
@@ -125,31 +135,31 @@
       }
     },
     {
-      "include": ["**/package.json"], // because NPM CLI doesn't preserve format and put new lines where it shouldn't by formatter definitions, so the only option is to obey to NPM
+      "includes": ["**/package.json"], // because NPM CLI doesn't preserve format and put new lines where it shouldn't by formatter definitions, so the only option is to obey to NPM
       "formatter": {
         "lineWidth": 1
       }
     },
     {
-      "include": ["**/*.astro"],
+      "includes": ["**/*.astro"],
       "linter": {
         "rules": {
           "correctness": {
-            "noUnusedImports": "off",
-            "noUnusedVariables": "off"
+            "noUnusedImports": "off", // Biome doesn't fully support .astro files, hence falsely consider imports used in templates to be unused
+            "noUnusedVariables": "off" // Biome doesn't fully support .astro files, hence falsely consider variables used in templates to be unused
           },
           "style": {
-            "useFilenamingConvention": "off"
+            "useFilenamingConvention": "off" // Astro locks in file naming style as part of the framework
           }
         }
       }
     },
     {
-      "include": ["libs/*/src/index.ts"],
+      "includes": ["**/libs/**/*/src/index.ts"],
       "linter": {
         "rules": {
           "performance": {
-            "noBarrelFile": "off"
+            "noBarrelFile": "off" // these index.ts are entry points for libraries, so it's OK for them to have barrel exports
           }
         }
       }

@@ -1,6 +1,6 @@
 import {
-  type RenderHookResult,
   act,
+  type RenderHookResult,
   renderHook,
   waitFor,
 } from "@testing-library/react";

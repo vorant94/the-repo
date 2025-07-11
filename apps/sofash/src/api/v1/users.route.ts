@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
-import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { ensureRoot } from "../../bl/auth/ensure-root.ts";
 import { findAllUsers, promoteUserToAdmin } from "../../bl/users.ts";

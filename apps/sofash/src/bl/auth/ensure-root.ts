@@ -49,8 +49,7 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = async (hc, next) => {
   throw new HTTPException(status, { res });
 };
 
-const CREDENTIALS_REGEXP =
-  /^ *[Bb][Aa][Ss][Ii][Cc] +([A-Za-z0-9._~+\/-]+=*) *$/;
+const CREDENTIALS_REGEXP = /^ *[Bb][Aa][Ss][Ii][Cc] +([A-Za-z0-9._~+/-]+=*) *$/;
 const USER_PASS_REGEXP = /^([^:]*):(.*)$/;
 const utf8Decoder = new TextDecoder();
 
@@ -64,7 +63,8 @@ const auth: Auth = (req) => {
     return undefined;
   }
 
-  let userPass = undefined;
+  // biome-ignore lint/suspicious/noImplicitAnyLet: copy-paste code from trusted source>
+  let userPass;
   // If an invalid string is passed to atob(), it throws a `DOMException`.
   try {
     userPass = USER_PASS_REGEXP.exec(

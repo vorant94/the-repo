@@ -1,6 +1,3 @@
-import {} from "zod";
-import type {} from "../../api/category.model.ts";
-import {} from "../../api/category.table.ts";
 import type {
   InsertSubscriptionModel,
   UpdateSubscriptionModel,

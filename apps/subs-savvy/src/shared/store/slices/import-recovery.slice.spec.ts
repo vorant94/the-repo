@@ -1,17 +1,17 @@
 import {
-  type RenderHookResult,
   act,
+  type RenderHookResult,
   renderHook,
   waitFor,
 } from "@testing-library/react";
 import {
-  type MockInstance,
   afterEach,
   beforeAll,
   beforeEach,
   describe,
   expect,
   it,
+  type MockInstance,
   vi,
 } from "vitest";
 import { categoryMock } from "../../api/__mocks__/category.model.ts";

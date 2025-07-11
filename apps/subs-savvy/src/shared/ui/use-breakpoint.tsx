@@ -1,8 +1,8 @@
 import { useMediaQuery } from "@mantine/hooks";
 import {
-  type PropsWithChildren,
   createContext,
   memo,
+  type PropsWithChildren,
   useContext,
   useEffect,
   useState,

@@ -2,11 +2,11 @@ import { CloseButton, Divider, TextInput } from "@mantine/core";
 import { cn } from "cn";
 import { memo, useCallback, useMemo, useState } from "react";
 import { isSubscriptionExpired } from "../../../entities/subscription/lib/is-subscription-expired.ts";
-import { SubscriptionGridItem } from "../../../features/list-subscriptions/ui/subscription-grid-item.tsx";
 import {
   SubscriptionGrid,
   type SubscriptionGridChildrenProps,
 } from "../../../features/list-subscriptions/ui/subscription-grid.tsx";
+import { SubscriptionGridItem } from "../../../features/list-subscriptions/ui/subscription-grid-item.tsx";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { useStore, useSubscriptions } from "../../../shared/store/hooks.ts";
 

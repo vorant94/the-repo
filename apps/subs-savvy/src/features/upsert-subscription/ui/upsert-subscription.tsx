@@ -5,20 +5,20 @@ import {
   Fieldset,
   NumberInput,
   Select,
-  TextInput,
   Textarea,
+  TextInput,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { cn } from "cn";
 import { memo, useMemo } from "react";
 import { Controller, type DefaultValues, useForm } from "react-hook-form";
-import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscription-cycle-period.model.ts";
-import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
 import {
-  type UpsertSubscriptionModel,
   insertSubscriptionSchema,
+  type UpsertSubscriptionModel,
   updateSubscriptionSchema,
 } from "../../../shared/api/subscription.model.ts";
+import { subscriptionCyclePeriodsComboboxData } from "../../../shared/api/subscription-cycle-period.model.ts";
+import { subscriptionIconsComboboxData } from "../../../shared/api/subscription-icon.model.ts";
 import {
   useCategories,
   useStore,

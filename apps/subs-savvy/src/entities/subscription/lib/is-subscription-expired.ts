@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { subscriptionCyclePeriodToManipulateUnit } from "../../../shared/api/subscription-cycle-period.model.ts";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
+import { subscriptionCyclePeriodToManipulateUnit } from "../../../shared/api/subscription-cycle-period.model.ts";
 
 export function isSubscriptionExpired(
   subscription: SubscriptionModel,

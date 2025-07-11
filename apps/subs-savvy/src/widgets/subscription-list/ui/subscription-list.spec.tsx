@@ -1,7 +1,7 @@
 import { MantineProvider } from "@mantine/core";
 import {
-  type RenderResult,
   fireEvent,
+  type RenderResult,
   render,
   waitFor,
 } from "@testing-library/react";

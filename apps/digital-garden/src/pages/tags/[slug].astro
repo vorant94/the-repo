@@ -5,8 +5,8 @@ import PostListItem from "../../components/PostListItem.astro";
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import {
   type PostModel,
-  type TagModel,
   sortPostsByPublishedAt,
+  type TagModel,
 } from "../../utils/content.helpers";
 
 export async function getStaticPaths() {
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
   ]);
 
   return await Promise.all(
-    tags.map(async (tag) => {
+    tags.map((tag) => {
       const tagPosts = sortPostsByPublishedAt(
         posts.filter(({ data }) => data.tags.find(({ id }) => id === tag.id)),
       );

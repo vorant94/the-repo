@@ -1,8 +1,7 @@
 import { usePrevious } from "@mantine/hooks";
 import { useLiveQuery } from "dexie-react-hooks";
-import { type PropsWithChildren, memo, useEffect } from "react";
+import { memo, type PropsWithChildren, useEffect } from "react";
 import { useLocation } from "react-router";
-import {} from "zod";
 import { findCategories } from "../api/category.table.ts";
 import { findSubscriptions } from "../api/subscription.table.ts";
 import { rootRoute } from "../lib/route.ts";

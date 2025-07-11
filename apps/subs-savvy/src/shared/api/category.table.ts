@@ -1,14 +1,14 @@
 import { db } from "../lib/db.ts";
 import {
   type CategoryModel,
-  type InsertCategoryModel,
-  type UpdateCategoryModel,
   categorySchema,
+  type InsertCategoryModel,
   insertCategorySchema,
+  type UpdateCategoryModel,
   updateCategorySchema,
 } from "./category.model.ts";
 
-export async function findCategories(): Promise<ReadonlyArray<CategoryModel>> {
+export function findCategories(): Promise<ReadonlyArray<CategoryModel>> {
   return db.transaction("r", db.categories, async () => {
     const raws = await db.categories.toArray();
 
@@ -38,7 +38,7 @@ export function updateCategory(
   });
 }
 
-export async function deleteCategory(id: number): Promise<void> {
+export function deleteCategory(id: number): Promise<void> {
   return db.transaction("rw", db.categories, db.subscriptions, async () => {
     const categorySubscriptions = await db.subscriptions
       .where({ categoryId: id })

@@ -1,4 +1,4 @@
-import { type SQL, getTableColumns, sql } from "drizzle-orm";
+import { getTableColumns, type SQL, sql } from "drizzle-orm";
 import { toSnakeCase } from "drizzle-orm/casing";
 import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 

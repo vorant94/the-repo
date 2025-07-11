@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { type RawSubscriptionModel, db } from "../lib/db.ts";
+import { db, type RawSubscriptionModel } from "../lib/db.ts";
 import { cleanUpDb } from "../test/clean-up-db.ts";
 import { categoryMock } from "./__mocks__/category.model.ts";
 import {

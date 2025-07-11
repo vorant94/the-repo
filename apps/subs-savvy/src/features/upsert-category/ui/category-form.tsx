@@ -5,8 +5,8 @@ import { forwardRef, memo } from "react";
 import { Controller, type DefaultValues, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
-  type UpsertCategoryModel,
   insertCategorySchema,
+  type UpsertCategoryModel,
   updateCategorySchema,
 } from "../../../shared/api/category.model.ts";
 import { useStore, useUpsertCategory } from "../../../shared/store/hooks.ts";

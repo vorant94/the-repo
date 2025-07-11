@@ -4,8 +4,8 @@ import { cn } from "cn";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  type SubscriptionsAggregatedByCategory,
   noCategoryPlaceholder,
+  type SubscriptionsAggregatedByCategory,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { usePercentageFormatter } from "../../../features/i18n/model/use-percentage-formatter.ts";
 import { Icon } from "../../../shared/ui/icon.tsx";
