@@ -72,7 +72,7 @@ export async function setUserRole(
   return parsed.data;
 }
 
-export async function findUsers(): Promise<Array<User>> {
+export async function selectUsers(): Promise<Array<User>> {
   const { db } = getContext();
 
   const parsed = (await db.select().from(users)).map((raw) =>

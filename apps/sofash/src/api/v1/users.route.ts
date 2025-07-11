@@ -4,7 +4,7 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { z } from "zod";
 import { ensureRoot } from "../../bl/auth/ensure-root.ts";
-import { findUsers, setUserRole } from "../../dal/db/users.table.ts";
+import { selectUsers, setUserRole } from "../../dal/db/users.table.ts";
 import { userSchema } from "../../shared/schema/users.ts";
 
 export const usersRoute = new Hono();
@@ -40,7 +40,7 @@ usersRoute.get(
     },
   }),
   async (hc) => {
-    const users = await findUsers();
+    const users = await selectUsers();
 
     return hc.json(users.map((user) => userDtoSchema.parse(user)));
   },

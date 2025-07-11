@@ -2,6 +2,7 @@ import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
+import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
@@ -64,6 +65,29 @@ export function insertChain(
         new HTTPException(500, {
           message:
             "Failed to validate insertion result after chain was inserted",
+          cause: err,
+        }),
+    ),
+  );
+}
+
+export function selectChains(): ResultAsync<Array<Chain>, HTTPException> {
+  const { db } = getContext();
+
+  const rawChains = ResultAsync.fromPromise(
+    db.select().from(chains),
+    (err) =>
+      new HTTPException(500, {
+        message: "Failed to retrieve chains from db",
+        cause: err,
+      }),
+  );
+
+  return rawChains.andThen((rawChains) =>
+    ntParseWithZod(rawChains, z.array(chainSchema)).mapErr(
+      (err) =>
+        new HTTPException(500, {
+          message: "Failed to validate retrieved from db chains",
           cause: err,
         }),
     ),
