@@ -7,6 +7,7 @@ import { getContext } from "../../shared/context/context.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type Chain,
+  type ChainName,
   chainSchema,
   chains,
   type InsertChain,
@@ -33,7 +34,7 @@ export function insertChain(
       db
         .insert(chains)
         .values({
-          id: v5(toInsert.name, uuidNamespace),
+          id: generateChainId(toInsert.name),
           ...toInsert,
         })
         .returning(),
@@ -92,4 +93,8 @@ export function selectChains(): ResultAsync<Array<Chain>, HTTPException> {
         }),
     ),
   );
+}
+
+export function generateChainId(chainName: ChainName): string {
+  return v5(chainName, uuidNamespace);
 }

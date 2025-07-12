@@ -5,7 +5,9 @@ import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import { ensureRoot } from "../../bl/auth/ensure-root.ts";
-import { insertSite, selectSites } from "../../dal/db/sites.table.ts";
+import { createSite } from "../../bl/sites.ts";
+import { selectSites } from "../../dal/db/sites.table.ts";
+import { chainNames } from "../../shared/schema/chains.ts";
 import { insertSiteSchema, siteSchema } from "../../shared/schema/sites.ts";
 
 export const sitesRoute = new Hono();
@@ -19,10 +21,6 @@ const siteDtoSchema = siteSchema
     updatedAt: true,
   })
   .openapi({ ref: "SiteDto" });
-
-const insertSiteDtoSchema = insertSiteSchema.openapi({
-  ref: "InsertSiteDto",
-});
 
 sitesRoute.get(
   "/",
@@ -64,6 +62,13 @@ sitesRoute.get(
   },
 );
 
+const insertSiteDtoSchema = insertSiteSchema
+  .omit({ chainId: true })
+  .extend({ chainName: z.enum(chainNames) })
+  .openapi({
+    ref: "InsertSiteDto",
+  });
+
 sitesRoute.post(
   "/insert",
   describeRoute({
@@ -95,7 +100,7 @@ sitesRoute.post(
   }),
   validator("json", insertSiteDtoSchema),
   async (hc) => {
-    const chain = await insertSite(hc.req.valid("json"));
+    const chain = await createSite(hc.req.valid("json"));
 
     const dto = chain.andThen((upserted) =>
       ntParseWithZod(upserted, siteDtoSchema).mapErr(

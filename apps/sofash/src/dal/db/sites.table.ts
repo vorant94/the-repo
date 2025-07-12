@@ -9,9 +9,8 @@ import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
   type InsertSite,
   insertSiteSchema,
-  planetSiteNameSchema,
-  ravHenSiteNameSchema,
   type Site,
+  type SiteName,
   siteSchema,
   sites,
 } from "../../shared/schema/sites.ts";
@@ -30,28 +29,12 @@ export function insertSite(
       }),
   );
 
-  const chainAssociationValidated = toInsert.andThrough((toInsert) =>
-    ntParseWithZod(
-      toInsert.name,
-      // TODO create a dedicated map of chain name to site name schema
-      toInsert.chainName === "rav-hen"
-        ? ravHenSiteNameSchema
-        : planetSiteNameSchema,
-    ).mapErr(
-      (err) =>
-        new HTTPException(400, {
-          message: `Site with name [${toInsert.name}] isn't associated with chain with name [${toInsert.chainName}]`,
-          cause: err,
-        }),
-    ),
-  );
-
-  const insertedRaw = chainAssociationValidated.asyncAndThen((toInsert) =>
+  const insertedRaw = toInsert.asyncAndThen((toInsert) =>
     ResultAsync.fromPromise(
       db
         .insert(sites)
         .values({
-          id: v5(`${toInsert.chainName}${toInsert.name}`, uuidNamespace),
+          id: generateSiteId(toInsert.chainId, toInsert.name),
           ...toInsert,
         })
         .returning(),
@@ -63,7 +46,17 @@ export function insertSite(
           err.message.includes("UNIQUE constraint failed: sites.id")
         ) {
           return new HTTPException(409, {
-            message: `Site with chain name [${toInsert.chainName}] and name [${toInsert.name}] already exists`,
+            message: `Site with chain id [${toInsert.chainId}] and name [${toInsert.name}] already exists`,
+            cause: err,
+          });
+        }
+
+        if (
+          err instanceof Error &&
+          err.message.includes("FOREIGN KEY constraint failed")
+        ) {
+          return new HTTPException(400, {
+            message: `Chain with id [${toInsert.chainId}] that site is being associated with doesn't exist`,
             cause: err,
           });
         }
@@ -110,4 +103,8 @@ export function selectSites(): ResultAsync<Array<Site>, HTTPException> {
         }),
     ),
   );
+}
+
+export function generateSiteId(chainId: string, siteName: SiteName): string {
+  return v5(`${chainId}${siteName}`, uuidNamespace);
 }

@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { chainNames, chains } from "./chains.ts";
+import { chains } from "./chains.ts";
 import { resourceType } from "./resource-types.ts";
 
 export const ravHenSiteNames = [
@@ -44,9 +44,9 @@ export const sites = sqliteTable("sites", {
 
   // TODO make uniqueness combined from name and chainId
   name: text({ enum: siteNames }).unique().notNull(),
-  chainName: text({ enum: chainNames })
+  chainId: text()
     .notNull()
-    .references(() => chains.name),
+    .references(() => chains.id),
 });
 
 export const siteSchema = createSelectSchema(sites);
