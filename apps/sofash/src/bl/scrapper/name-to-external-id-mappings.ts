@@ -1,15 +1,37 @@
+import { z } from "zod";
 import type {
   PlanetSiteId,
   QuickbookChainId,
   QuickbookSiteId,
   RavHenSiteId,
 } from "../../dal/quickbook/quickbook.dtos.ts";
-import type { ChainName } from "../../shared/schema/chains.ts";
-import type {
-  PlanetSiteName,
-  RavHenSiteName,
-  SiteName,
-} from "../../shared/schema/sites.ts";
+
+export const chainNames = ["rav-hen", "planet"] as const;
+export type ChainName = (typeof chainNames)[number];
+export const chainNameSchema = z.enum(chainNames);
+
+export const ravHenSiteNames = [
+  "givatayim",
+  "dizengoff",
+  "kiryat-ono",
+] as const;
+export type RavHenSiteName = (typeof ravHenSiteNames)[number];
+export const ravHenSiteNameSchema = z.enum(ravHenSiteNames);
+
+export const planetSiteNames = [
+  "ayalon",
+  "beer-sheva",
+  "zichron-yaakov",
+  "haifa",
+  "jerusalem",
+  "rishon-letziyon",
+] as const;
+export type PlanetSiteName = (typeof planetSiteNames)[number];
+export const planetSiteNameSchema = z.enum(planetSiteNames);
+
+export const siteNames = [...ravHenSiteNames, ...planetSiteNames] as const;
+export type SiteName = (typeof siteNames)[number];
+export const siteNameSchema = z.enum(siteNames);
 
 export const chainNameToQuickbookChainId = {
   "rav-hen": "10104",

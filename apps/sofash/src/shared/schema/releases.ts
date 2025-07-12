@@ -1,18 +1,16 @@
-import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { chains } from "./chains.ts";
 import { resourceType } from "./resource-types.ts";
+import { titles } from "./titles.ts";
 
-export const sites = sqliteTable("sites", {
-  id: text()
-    .primaryKey()
-    .$default(() => randomUUID()),
-  resourceType: text({ enum: [resourceType.site] })
+export const releases = sqliteTable("releases", {
+  id: text().primaryKey(),
+  resourceType: text({ enum: [resourceType.release] })
     .notNull()
-    .default(resourceType.site),
+    .default(resourceType.release),
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text()
     .notNull()
@@ -23,17 +21,20 @@ export const sites = sqliteTable("sites", {
     .notNull()
     .references(() => chains.id),
   externalId: text().notNull(),
-
-  name: text().notNull(),
+  titleId: text()
+    .notNull()
+    .references(() => titles.id),
 });
 
-export const siteSchema = createSelectSchema(sites);
-export type Site = z.infer<typeof siteSchema>;
+export const releaseSchema = createSelectSchema(releases);
 
-export const insertSiteSchema = createInsertSchema(sites).omit({
+export type Release = z.infer<typeof releaseSchema>;
+
+export const insertReleaseSchema = createInsertSchema(releases).omit({
   id: true,
   resourceType: true,
   createdAt: true,
   updatedAt: true,
 });
-export type InsertSite = z.infer<typeof insertSiteSchema>;
+
+export type InsertRelease = z.infer<typeof insertReleaseSchema>;

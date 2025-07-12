@@ -6,30 +6,12 @@ import { z } from "zod";
 import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
-  type PlanetSiteId,
   type QuickbookChainId,
   type QuickbookSiteId,
   quickbookEventSchema,
   quickbookFilmSchema,
-  type RavHenSiteId,
 } from "./quickbook.dtos.ts";
 
-export function findQuickbookFilmEvents(
-  chainId: "10104",
-  siteId: RavHenSiteId,
-  date: Date,
-): ResultAsync<
-  FindQuickbookFilmEventsResponseBodyDto,
-  UnexpectedBranchException
->;
-export function findQuickbookFilmEvents(
-  chainId: "10100",
-  siteId: PlanetSiteId,
-  date: Date,
-): ResultAsync<
-  FindQuickbookFilmEventsResponseBodyDto,
-  UnexpectedBranchException
->;
 export function findQuickbookFilmEvents(
   chainId: QuickbookChainId,
   siteId: QuickbookSiteId,

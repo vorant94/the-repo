@@ -25,6 +25,8 @@ erDiagram
 		timestamp	created_at
 		timestamp	updated_at
 
+    string    external_id
+
 		string		name
 	}
 
@@ -34,7 +36,8 @@ erDiagram
 		timestamp	created_at
 		timestamp	updated_at
 
-		string		chain_name FK
+		string		chain_id FK
+    string    external_id
 
 		string		name
 	}
@@ -45,8 +48,9 @@ erDiagram
 		timestamp	created_at
 		timestamp	updated_at
 
-		string		chain_release_id
-		string		chain_id FK
+    string		chain_id FK
+    string		external_id
+    string    title_id FK
 	}
 
 	showtimes {
@@ -66,11 +70,7 @@ erDiagram
 		string		id PK
 		string		resource_type
 		timestamp	created_at
-		string		created_by FK
 		timestamp	updated_at
-
-		string		title_id FK
-		string		imdb_id UK
 
 		string		name
 	}

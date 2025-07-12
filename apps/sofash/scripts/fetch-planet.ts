@@ -3,12 +3,12 @@ import { addDays, format } from "date-fns";
 import { z } from "zod";
 import {
   chainNameToQuickbookChainId,
+  planetSiteNameSchema,
   planetSiteNameToPlanetSiteId,
-} from "../src/bl/scrapper/db-to-datasource-mappings.ts";
+} from "../src/bl/scrapper/name-to-external-id-mappings.ts";
 import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
 import { runWithinContext } from "../src/shared/context/context.ts";
 import { createLogger } from "../src/shared/logger/logger.ts";
-import { planetSiteNameSchema } from "../src/shared/schema/sites.ts";
 
 const { site, date } = z
   .object({

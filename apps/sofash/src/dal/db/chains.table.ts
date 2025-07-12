@@ -1,15 +1,16 @@
-import { ResultAsync } from "neverthrow";
+import { eq } from "drizzle-orm";
+import { err, ResultAsync } from "neverthrow";
 import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
+import { NotFoundException } from "../../shared/exceptions/not-found.exception.ts";
 import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type Chain,
-  type ChainName,
   chainSchema,
   chains,
   type InsertChain,
@@ -99,6 +100,36 @@ export function selectChains(): ResultAsync<
   );
 }
 
-export function generateChainId(chainName: ChainName): string {
+export function generateChainId(chainName: string): string {
   return v5(chainName, uuidNamespace);
+}
+
+export function getChainById(
+  id: string,
+): ResultAsync<
+  Chain,
+  UnexpectedBranchException | BadOutputException | NotFoundException
+> {
+  const { db } = getContext();
+
+  const rawChains = ResultAsync.fromPromise(
+    db.select().from(chains).where(eq(chains.id, id)),
+    (err) =>
+      new UnexpectedBranchException("Failed to retrieve chains from db", {
+        cause: err,
+      }),
+  );
+
+  return rawChains.andThen((rawSites) => {
+    if (rawSites.length === 0) {
+      return err(new NotFoundException(`Chain with id [${id}] not found`));
+    }
+
+    return ntParseWithZod(rawSites[0], chainSchema).mapErr(
+      (err) =>
+        new BadOutputException("Failed to validate retrieved from db chain", {
+          cause: err,
+        }),
+    );
+  });
 }

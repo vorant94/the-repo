@@ -4,12 +4,15 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
+import {
+  chainNameSchema,
+  siteNameSchema,
+} from "../../bl/scrapper/name-to-external-id-mappings.ts";
 import { createSite, scrapSite } from "../../bl/sites.ts";
 import { selectSites } from "../../dal/db/sites.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { NotFoundException } from "../../shared/exceptions/not-found.exception.ts";
-import { chainNames } from "../../shared/schema/chains.ts";
 import { insertSiteSchema, siteSchema } from "../../shared/schema/sites.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
@@ -68,8 +71,8 @@ sitesRoute.get(
 );
 
 const insertSiteDtoSchema = insertSiteSchema
-  .omit({ chainId: true })
-  .extend({ chainName: z.enum(chainNames) })
+  .omit({ chainId: true, name: true })
+  .extend({ chainName: chainNameSchema, name: siteNameSchema })
   .openapi({
     ref: "InsertSiteDto",
   });
@@ -168,7 +171,7 @@ sitesRoute.post(
     });
 
     return result.match(
-      (value) => hc.text(value),
+      (value) => hc.json(value),
       (error) => {
         let status: ContentfulStatusCode = 500;
         if (error instanceof NotFoundException) {

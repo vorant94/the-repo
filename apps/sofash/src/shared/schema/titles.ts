@@ -4,11 +4,11 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
-export const chains = sqliteTable("chains", {
+export const titles = sqliteTable("titles", {
   id: text().primaryKey(),
-  resourceType: text({ enum: [resourceType.chain] })
+  resourceType: text({ enum: [resourceType.release] })
     .notNull()
-    .default(resourceType.chain),
+    .default(resourceType.release),
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text()
     .notNull()
@@ -16,16 +16,17 @@ export const chains = sqliteTable("chains", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
   name: text().notNull(),
-  externalId: text().notNull(),
 });
 
-export const chainSchema = createSelectSchema(chains);
-export type Chain = z.infer<typeof chainSchema>;
+export const titleSchema = createSelectSchema(titles);
 
-export const insertChainSchema = createInsertSchema(chains).omit({
+export type Title = z.infer<typeof titleSchema>;
+
+export const insertTitleSchema = createInsertSchema(titles).omit({
   id: true,
   resourceType: true,
   createdAt: true,
   updatedAt: true,
 });
-export type InsertChain = z.infer<typeof insertChainSchema>;
+
+export type InsertTitle = z.infer<typeof insertTitleSchema>;

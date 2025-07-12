@@ -4,6 +4,7 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
+import { chainNameSchema } from "../../bl/scrapper/name-to-external-id-mappings.ts";
 import { insertChain, selectChains } from "../../dal/db/chains.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
@@ -22,9 +23,12 @@ const chainDtoSchema = chainSchema
   })
   .openapi({ ref: "ChainDto" });
 
-const insertChainDtoSchema = insertChainSchema.openapi({
-  ref: "InsertChainDto",
-});
+const insertChainDtoSchema = insertChainSchema
+  .omit({ name: true })
+  .extend({ name: chainNameSchema })
+  .openapi({
+    ref: "InsertChainDto",
+  });
 
 chainsRoute.get(
   "/",

@@ -14,7 +14,6 @@ import {
   type InsertSite,
   insertSiteSchema,
   type Site,
-  type SiteName,
   siteSchema,
   sites,
 } from "../../shared/schema/sites.ts";
@@ -40,7 +39,7 @@ export function insertSite(
       db
         .insert(sites)
         .values({
-          id: generateSiteId(toInsert.chainId, toInsert.name),
+          id: generateSiteId(toInsert.chainId, toInsert.externalId),
           ...toInsert,
         })
         .returning(),
@@ -141,6 +140,9 @@ export function getSiteById(
   });
 }
 
-export function generateSiteId(chainId: string, siteName: SiteName): string {
-  return v5(`${chainId}${siteName}`, uuidNamespace);
+export function generateSiteId(
+  chainId: string,
+  siteExternalId: string,
+): string {
+  return v5(`${chainId}${siteExternalId}`, uuidNamespace);
 }
