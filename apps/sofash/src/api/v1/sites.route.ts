@@ -4,10 +4,11 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
-import { createSite } from "../../bl/sites.ts";
+import { createSite, scrapSite } from "../../bl/sites.ts";
 import { selectSites } from "../../dal/db/sites.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
+import { NotFoundException } from "../../shared/exceptions/not-found.exception.ts";
 import { chainNames } from "../../shared/schema/chains.ts";
 import { insertSiteSchema, siteSchema } from "../../shared/schema/sites.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
@@ -81,7 +82,7 @@ sitesRoute.post(
     security: [{ basicAuth: [] }],
     responses: {
       201: {
-        description: "Chain was inserted",
+        description: "Site was inserted",
         content: {
           "application/json": {
             schema: resolver(siteDtoSchema),
@@ -118,6 +119,60 @@ sitesRoute.post(
         let status: ContentfulStatusCode = 500;
         if (error instanceof BadInputException) {
           status = 400;
+        }
+
+        return hc.text(error.message, status);
+      },
+    );
+  },
+);
+
+const scrapSiteDtoSchema = z
+  .object({
+    date: z.coerce.date(),
+  })
+  .openapi({ ref: "ScrapSiteDto" });
+
+sitesRoute.post(
+  "/:id/scrap",
+  describeRoute({
+    description: "Scrap a site",
+    tags: ["sites"],
+    security: [{ basicAuth: [] }],
+    responses: {
+      200: {
+        description: "Site was scrapped",
+      },
+      401: {
+        description: "Unauthorized",
+      },
+      404: {
+        description: "Site not found",
+      },
+      500: {
+        description: "Internal Server Error",
+      },
+    },
+  }),
+  validator(
+    "param",
+    z.object({
+      id: z.string(),
+    }),
+  ),
+  validator("json", scrapSiteDtoSchema),
+  async (hc) => {
+    const result = await scrapSite({
+      id: hc.req.valid("param").id,
+      date: hc.req.valid("json").date,
+    });
+
+    return result.match(
+      (value) => hc.text(value),
+      (error) => {
+        let status: ContentfulStatusCode = 500;
+        if (error instanceof NotFoundException) {
+          status = 404;
         }
 
         return hc.text(error.message, status);

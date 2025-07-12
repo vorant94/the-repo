@@ -1,10 +1,12 @@
-import { ResultAsync } from "neverthrow";
+import { eq } from "drizzle-orm";
+import { err, ResultAsync } from "neverthrow";
 import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
+import { NotFoundException } from "../../shared/exceptions/not-found.exception.ts";
 import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import { uuidNamespace } from "../../shared/schema/db-extra.ts";
@@ -107,6 +109,36 @@ export function selectSites(): ResultAsync<
         }),
     ),
   );
+}
+
+export function getSiteById(
+  id: string,
+): ResultAsync<
+  Site,
+  UnexpectedBranchException | BadOutputException | NotFoundException
+> {
+  const { db } = getContext();
+
+  const rawSites = ResultAsync.fromPromise(
+    db.select().from(sites).where(eq(sites.id, id)),
+    (err) =>
+      new UnexpectedBranchException("Failed to retrieve sites from db", {
+        cause: err,
+      }),
+  );
+
+  return rawSites.andThen((rawSites) => {
+    if (rawSites.length === 0) {
+      return err(new NotFoundException(`Site with id [${id}] not found`));
+    }
+
+    return ntParseWithZod(rawSites[0], siteSchema).mapErr(
+      (err) =>
+        new BadOutputException("Failed to validate retrieved from db site", {
+          cause: err,
+        }),
+    );
+  });
 }
 
 export function generateSiteId(chainId: string, siteName: SiteName): string {
