@@ -1,9 +1,11 @@
-import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
+import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
+import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
+import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
@@ -17,14 +19,16 @@ import {
 
 export function insertSite(
   toInsertRaw: InsertSite,
-): ResultAsync<Site, HTTPException> {
+): ResultAsync<
+  Site,
+  BadInputException | BadOutputException | UnexpectedBranchException
+> {
   using logger = createLogger("insertSite");
   const { db } = getContext();
 
   const toInsert = ntParseWithZod(toInsertRaw, insertSiteSchema).mapErr(
     (err) =>
-      new HTTPException(400, {
-        message: "Failed validation of site to insert",
+      new BadInputException("Failed validation of site to insert", {
         cause: err,
       }),
   );
@@ -43,53 +47,54 @@ export function insertSite(
         // error message is the only common denominator i found
         if (
           err instanceof Error &&
-          err.message.includes("UNIQUE constraint failed: sites.id")
+          err.message.includes("UNIQUE constraint failed: sites.name")
         ) {
-          return new HTTPException(409, {
-            message: `Site with chain id [${toInsert.chainId}] and name [${toInsert.name}] already exists`,
-            cause: err,
-          });
+          return new BadInputException(
+            `Site with chain id [${toInsert.chainId}] and name [${toInsert.name}] already exists`,
+            { cause: err },
+          );
         }
 
         if (
           err instanceof Error &&
           err.message.includes("FOREIGN KEY constraint failed")
         ) {
-          return new HTTPException(400, {
-            message: `Chain with id [${toInsert.chainId}] that site is being associated with doesn't exist`,
-            cause: err,
-          });
+          return new BadInputException(
+            `Chain with id [${toInsert.chainId}] that site is being associated with doesn't exist`,
+            { cause: err },
+          );
         }
 
         logger.error("Unexpected error while inserting a site", err);
-        return new HTTPException(500, {
-          message: "Unexpected error while inserting a site",
-          cause: err,
-        });
+        return new UnexpectedBranchException(
+          "Unexpected error while inserting a site",
+          { cause: err },
+        );
       },
     ),
   );
 
-  return insertedRaw.andThen(([upsertedRaw]) =>
-    ntParseWithZod(upsertedRaw, siteSchema).mapErr(
+  return insertedRaw.andThen(([insertedRaw]) =>
+    ntParseWithZod(insertedRaw, siteSchema).mapErr(
       (err) =>
-        new HTTPException(500, {
-          message:
-            "Failed to validate insertion result after site was inserted",
-          cause: err,
-        }),
+        new BadOutputException(
+          "Failed to validate insertion result after site was inserted",
+          { cause: err },
+        ),
     ),
   );
 }
 
-export function selectSites(): ResultAsync<Array<Site>, HTTPException> {
+export function selectSites(): ResultAsync<
+  Array<Site>,
+  UnexpectedBranchException | BadOutputException
+> {
   const { db } = getContext();
 
   const rawSites = ResultAsync.fromPromise(
     db.select().from(sites),
     (err) =>
-      new HTTPException(500, {
-        message: "Failed to retrieve sites from db",
+      new UnexpectedBranchException("Failed to retrieve sites from db", {
         cause: err,
       }),
   );
@@ -97,8 +102,7 @@ export function selectSites(): ResultAsync<Array<Site>, HTTPException> {
   return rawSites.andThen((rawSites) =>
     ntParseWithZod(rawSites, z.array(siteSchema)).mapErr(
       (err) =>
-        new HTTPException(500, {
-          message: "Failed to validate retrieved from db sites",
+        new BadOutputException("Failed to validate retrieved from db sites", {
           cause: err,
         }),
     ),

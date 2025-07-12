@@ -1,10 +1,13 @@
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
+import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import { ensureRoot } from "../../bl/auth/ensure-root.ts";
 import { selectUsers, setUserRole } from "../../dal/db/users.table.ts";
+import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
+import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { userSchema } from "../../shared/schema/users.ts";
 
 export const usersRoute = new Hono();
@@ -42,7 +45,19 @@ usersRoute.get(
   async (hc) => {
     const users = await selectUsers();
 
-    return hc.json(users.map((user) => userDtoSchema.parse(user)));
+    const dtos = users.andThen((users) =>
+      ntParseWithZod(users, z.array(userDtoSchema)).mapErr(
+        (err) =>
+          new BadOutputException("Failed to parse response to DTO", {
+            cause: err,
+          }),
+      ),
+    );
+
+    return dtos.match(
+      (value) => hc.json(value),
+      (error) => hc.text(error.message, 500),
+    );
   },
 );
 
@@ -60,6 +75,9 @@ usersRoute.post(
             schema: resolver(userDtoSchema),
           },
         },
+      },
+      400: {
+        description: "Bad Request",
       },
       401: {
         description: "Unauthorized",
@@ -81,11 +99,25 @@ usersRoute.post(
   async (hc) => {
     const user = await setUserRole(hc.req.param("id"), "admin");
 
-    const parsed = userDtoSchema.safeParse(user);
-    if (!parsed.success) {
-      throw new HTTPException(500, { cause: parsed.error });
-    }
+    const dto = user.andThen((inserted) =>
+      ntParseWithZod(inserted, userDtoSchema).mapErr(
+        (err) =>
+          new BadOutputException("Failed to parse response to DTO", {
+            cause: err,
+          }),
+      ),
+    );
 
-    return hc.json(parsed.data);
+    return dto.match(
+      (value) => hc.json(value, 201),
+      (error) => {
+        let status: ContentfulStatusCode = 500;
+        if (error instanceof BadInputException) {
+          status = 400;
+        }
+
+        return hc.text(error.message, status);
+      },
+    );
   },
 );

@@ -1,6 +1,5 @@
 import { TextDecoder } from "node:util";
 import type { MiddlewareHandler } from "hono";
-import { HTTPException } from "hono/http-exception";
 import {
   rootUserChatId,
   upsertUserByTelegramChatId,
@@ -35,21 +34,19 @@ export const ensureRoot: MiddlewareHandler<HonoEnv> = async (hc, next) => {
         role: "root",
       });
 
-      return runWithinPatchedContext({ user }, () => {
-        logger.info("context is authenticated, user id is", user.id);
-        return next();
-      });
+      return user.match(
+        (user) =>
+          runWithinPatchedContext({ user }, () => {
+            logger.info("context is authenticated, user id is", user.id);
+            return next();
+          }),
+        (error) => hc.text(error.message, 500),
+      );
     }
   }
 
-  const status = 401;
-  const res = new Response("Unauthorized", {
-    status,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Secure Area"',
-    },
-  });
-  throw new HTTPException(status, { res });
+  hc.res.headers.set("WWW-Authenticate", 'Basic realm="Secure Area"');
+  return hc.text("Unauthorized", 401);
 };
 
 const CREDENTIALS_REGEXP = /^ *[Bb][Aa][Ss][Ii][Cc] +([A-Za-z0-9._~+/-]+=*) *$/;

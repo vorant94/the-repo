@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { getContext } from "../shared/context/context.ts";
+import { NotFoundException } from "../shared/exceptions/not-found.exception.ts";
 import type { User } from "../shared/schema/users.ts";
 
 export async function checkHealth(): Promise<Health> {
@@ -68,7 +68,7 @@ async function getWebhookUrl(): Promise<string> {
 
   const result = await bot.api.getWebhookInfo();
   if (!result.url) {
-    throw new HTTPException(404, { message: "No webhook URL set" });
+    throw new NotFoundException("No webhook URL set");
   }
 
   return result.url;

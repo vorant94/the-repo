@@ -1,9 +1,9 @@
 import { URL } from "node:url";
 import { format } from "date-fns";
-import { HTTPException } from "hono/http-exception";
 import type { ResultAsync } from "neverthrow";
 import { ntFetchJsonWithZod } from "nt";
 import { z } from "zod";
+import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
   type PlanetSiteId,
@@ -18,17 +18,26 @@ export function findQuickbookFilmEvents(
   chainId: "10104",
   siteId: RavHenSiteId,
   date: Date,
-): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException>;
+): ResultAsync<
+  FindQuickbookFilmEventsResponseBodyDto,
+  UnexpectedBranchException
+>;
 export function findQuickbookFilmEvents(
   chainId: "10100",
   siteId: PlanetSiteId,
   date: Date,
-): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException>;
+): ResultAsync<
+  FindQuickbookFilmEventsResponseBodyDto,
+  UnexpectedBranchException
+>;
 export function findQuickbookFilmEvents(
   chainId: QuickbookChainId,
   siteId: QuickbookSiteId,
   date: Date,
-): ResultAsync<FindQuickbookFilmEventsResponseBodyDto, HTTPException> {
+): ResultAsync<
+  FindQuickbookFilmEventsResponseBodyDto,
+  UnexpectedBranchException
+> {
   using logger = createLogger("findQuickbookFilmEvents");
   logger.debug("chain", chainId);
   logger.debug("site", siteId);
@@ -45,7 +54,12 @@ export function findQuickbookFilmEvents(
   return ntFetchJsonWithZod(
     url,
     findQuickbookFilmEventsResponseBodySchema,
-  ).mapErr((err) => new HTTPException(500, { cause: err }));
+  ).mapErr(
+    (err) =>
+      new UnexpectedBranchException("Failed to fetch film events", {
+        cause: err,
+      }),
+  );
 }
 
 export const findQuickbookFilmEventsResponseBodySchema = z.object({

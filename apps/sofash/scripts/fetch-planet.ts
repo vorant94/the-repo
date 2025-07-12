@@ -43,17 +43,18 @@ await runWithinContext({}, async () => {
     planetSiteNameToPlanetSiteId[site],
     date,
   );
-  if (filmEvents.isErr()) {
-    logger.error(filmEvents.error);
-    return;
-  }
 
-  logger.info(
-    "response",
-    inspect(filmEvents.value, {
-      colors: true,
-      depth: Number.POSITIVE_INFINITY,
-      maxArrayLength: Number.POSITIVE_INFINITY,
-    }),
+  filmEvents.match(
+    (filmEvents) => {
+      logger.info(
+        "response",
+        inspect(filmEvents, {
+          colors: true,
+          depth: Number.POSITIVE_INFINITY,
+          maxArrayLength: Number.POSITIVE_INFINITY,
+        }),
+      );
+    },
+    (error) => logger.error(error),
   );
 });
