@@ -14,5 +14,4 @@ const bot = new Bot(env.BOT_TOKEN);
 
 await bot.api.setMyCommands([
   { command: command.health, description: "Health Check" },
-  { command: command.addChain, description: "Add New Chain" },
 ]);

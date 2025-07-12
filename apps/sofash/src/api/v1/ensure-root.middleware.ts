@@ -18,7 +18,10 @@ import { createLogger } from "../../shared/logger/logger.ts";
 //  - https://github.com/honojs/hono/blob/main/src/middleware/basic-auth/index.ts
 //  - https://github.com/honojs/hono/blob/main/src/utils/basic-auth.ts
 //  - https://github.com/honojs/hono/blob/main/src/utils/encode.ts
-export const ensureRoot: MiddlewareHandler<HonoEnv> = async (hc, next) => {
+export const ensureRootMiddleware: MiddlewareHandler<HonoEnv> = async (
+  hc,
+  next,
+) => {
   using logger = createLogger("ensureRoot");
 
   const requestUser = auth(hc.req.raw);

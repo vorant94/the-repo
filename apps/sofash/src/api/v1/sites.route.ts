@@ -4,17 +4,17 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
-import { ensureRoot } from "../../bl/auth/ensure-root.ts";
 import { createSite } from "../../bl/sites.ts";
 import { selectSites } from "../../dal/db/sites.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { chainNames } from "../../shared/schema/chains.ts";
 import { insertSiteSchema, siteSchema } from "../../shared/schema/sites.ts";
+import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
 export const sitesRoute = new Hono();
 
-sitesRoute.use(ensureRoot);
+sitesRoute.use(ensureRootMiddleware);
 
 const siteDtoSchema = siteSchema
   .omit({

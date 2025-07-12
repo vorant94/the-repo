@@ -8,9 +8,9 @@ import { Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { openAPISpecs } from "hono-openapi";
+import { ensureUserMiddleware } from "./api/telegram/ensure-user.middleware.ts";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
-import { ensureUser } from "./bl/auth/ensure-user.ts";
 import { configSchema } from "./shared/context/config.ts";
 import {
   getContext,
@@ -45,7 +45,7 @@ app.use((hc, next) =>
     logger.info("config successfully parsed");
 
     const bot = new Bot<GrammyContext>(config.BOT_TOKEN);
-    bot.use(ensureUser);
+    bot.use(ensureUserMiddleware);
     bot.use(session());
     bot.use(conversations());
     logger.info("bot instance successfully created");

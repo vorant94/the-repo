@@ -4,15 +4,15 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
 import { ntParseWithZod } from "nt";
 import { z } from "zod";
-import { ensureRoot } from "../../bl/auth/ensure-root.ts";
 import { selectUsers, setUserRole } from "../../dal/db/users.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { userSchema } from "../../shared/schema/users.ts";
+import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
 export const usersRoute = new Hono();
 
-usersRoute.use(ensureRoot);
+usersRoute.use(ensureRootMiddleware);
 
 const userDtoSchema = userSchema
   .omit({
