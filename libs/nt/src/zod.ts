@@ -1,6 +1,6 @@
 import { err, ok, type Result } from "neverthrow";
 import type { ZodError, ZodSchema } from "zod";
-import { ntFetch, ntResponseJson } from "./lib";
+import { ntFetch, ntResponseJson } from "./lib.ts";
 
 export const ntParseWithZod = <T>(
   value: unknown,
@@ -15,7 +15,7 @@ export const ntParseWithZod = <T>(
 };
 
 export const ntFetchJsonWithZod = <T>(
-  url: string | URL,
+  url: string | URL | Request,
   schema: ZodSchema<T>,
 ) => {
   return ntFetch(url)

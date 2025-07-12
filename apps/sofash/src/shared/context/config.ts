@@ -9,6 +9,8 @@ export const configSchema = z.object({
   ROOT_USERNAME: z.string(),
   // biome-ignore lint/style/useNamingConvention: env variables have different convention
   ROOT_PASSWORD: z.string(),
+  // biome-ignore lint/style/useNamingConvention: env variables have different convention
+  TMDB_AUTH_TOKEN: z.string(),
 });
 
 export type Config = z.infer<typeof configSchema>;

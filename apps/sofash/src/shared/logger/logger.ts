@@ -31,6 +31,7 @@ const logger: Logger = {
     console.error(...formatMessage("error", ...args));
   },
   [Symbol.dispose]() {
+    // TODO for some reason this debug log is missing if called from scripts, need to look into it
     logger.debug("end");
     names.pop();
   },

@@ -18,9 +18,6 @@ const { site, date } = z
   .parse(
     parseArgs({
       options: {
-        tenantId: {
-          type: "string",
-        },
         site: {
           type: "string",
         },

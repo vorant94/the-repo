@@ -17,7 +17,7 @@ export function createSite({
   chainName,
   name,
   ...rest
-}: CreateSite): ResultAsync<
+}: CreateSiteParams): ResultAsync<
   Site,
   BadInputException | BadOutputException | UnexpectedBranchException
 > {
@@ -30,7 +30,7 @@ export function createSite({
   );
 }
 
-export interface CreateSite {
+export interface CreateSiteParams {
   name: string;
   chainName: string;
   externalId: string;
@@ -39,7 +39,7 @@ export interface CreateSite {
 export function scrapSite({
   id,
   date,
-}: ScrapSite): ResultAsync<
+}: ScrapSiteParams): ResultAsync<
   object,
   UnexpectedBranchException | BadOutputException | NotFoundException
 > {
@@ -60,7 +60,7 @@ export function scrapSite({
   );
 }
 
-export interface ScrapSite {
+export interface ScrapSiteParams {
   id: string;
   date: Date;
 }
