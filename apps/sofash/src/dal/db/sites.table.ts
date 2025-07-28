@@ -58,6 +58,17 @@ export function insertSite(
 
         if (
           err instanceof Error &&
+          err.cause instanceof Error &&
+          err.cause.message.includes("FOREIGN KEY constraint failed")
+        ) {
+          return new BadInputException(
+            `Chain you want to associate site with doesn't exist`,
+            { cause: err.cause },
+          );
+        }
+
+        if (
+          err instanceof Error &&
           err.message.includes("FOREIGN KEY constraint failed")
         ) {
           return new BadInputException(
