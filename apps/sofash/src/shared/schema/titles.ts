@@ -16,6 +16,7 @@ export const titles = sqliteTable("titles", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
   name: text().notNull(),
+  externalId: text().notNull(),
 });
 
 export const titleSchema = createSelectSchema(titles);
