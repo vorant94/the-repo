@@ -6,9 +6,9 @@ import { resourceType } from "./resource-types.ts";
 
 export const titles = sqliteTable("titles", {
   id: text().primaryKey(),
-  resourceType: text({ enum: [resourceType.release] })
+  resourceType: text({ enum: [resourceType.title] })
     .notNull()
-    .default(resourceType.release),
+    .default(resourceType.title),
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text()
     .notNull()
