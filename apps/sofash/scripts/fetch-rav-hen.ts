@@ -5,7 +5,7 @@ import {
   chainNameToQuickbookChainId,
   ravHenSiteNameSchema,
   ravHenSiteNameToRavHenSiteId,
-} from "../src/bl/scrapper/name-to-external-id-mappings.ts";
+} from "../src/bl/quickbook/name-to-external-id-mappings.ts";
 import { findQuickbookFilmEvents } from "../src/dal/quickbook/quickbook.client.ts";
 import { runWithinContext } from "../src/shared/context/context.ts";
 import { createLogger } from "../src/shared/logger/logger.ts";

@@ -7,8 +7,9 @@ import { z } from "zod";
 import {
   chainNameSchema,
   siteNameSchema,
-} from "../../bl/scrapper/name-to-external-id-mappings.ts";
-import { createSite, scrapSite } from "../../bl/sites.ts";
+} from "../../bl/quickbook/name-to-external-id-mappings.ts";
+import { scrapSite } from "../../bl/scrap-site.ts";
+import { createSite } from "../../bl/sites.ts";
 import { selectSites } from "../../dal/db/sites.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";

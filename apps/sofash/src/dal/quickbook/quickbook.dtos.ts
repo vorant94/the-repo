@@ -28,10 +28,10 @@ export const quickbookFilmSchema = z.object({
   name: z.string(),
   length: z.number(),
   posterLink: z.string().url(),
-  videoLink: z.string().url(),
+  videoLink: z.string().url().nullish(),
   link: z.string().url(),
   weight: z.number(),
-  releaseYear: z.string(),
+  releaseYear: z.coerce.number(),
   attributeIds: z.array(z.string()),
 });
 

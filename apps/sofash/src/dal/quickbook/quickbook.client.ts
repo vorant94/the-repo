@@ -2,7 +2,8 @@ import { URL } from "node:url";
 import { format } from "date-fns";
 import type { ResultAsync } from "neverthrow";
 import { ntFetchJsonWithZod } from "nt";
-import { z } from "zod";
+import { ZodError, z } from "zod";
+import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
 import {
@@ -36,12 +37,16 @@ export function findQuickbookFilmEvents(
   return ntFetchJsonWithZod(
     url,
     findQuickbookFilmEventsResponseBodySchema,
-  ).mapErr(
-    (err) =>
-      new UnexpectedBranchException("Failed to fetch film events", {
+  ).mapErr((err) => {
+    if (err instanceof ZodError) {
+      return new BadOutputException("Failed to parse quickbook response", {
         cause: err,
-      }),
-  );
+      });
+    }
+    return new UnexpectedBranchException("Failed to fetch film events", {
+      cause: err,
+    });
+  });
 }
 
 export const findQuickbookFilmEventsResponseBodySchema = z.object({
