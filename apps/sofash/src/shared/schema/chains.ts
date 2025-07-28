@@ -16,6 +16,7 @@ export const chains = sqliteTable("chains", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
   name: text().notNull(),
+  // quickbook chain id
   externalId: text().notNull(),
 });
 

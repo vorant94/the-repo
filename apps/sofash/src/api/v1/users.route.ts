@@ -45,6 +45,8 @@ usersRoute.get(
   async (hc) => {
     const users = await selectUsers();
 
+    // can't use validateResponse of hono-openapi/zod#describeRoute since it doesn't
+    // trim unknown to response schema fields like createdAt or resourceType
     const dtos = users.andThen((users) =>
       ntParseWithZod(users, z.array(userDtoSchema)).mapErr(
         (err) =>

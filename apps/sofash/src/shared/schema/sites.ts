@@ -22,6 +22,7 @@ export const sites = sqliteTable("sites", {
   chainId: text()
     .notNull()
     .references(() => chains.id),
+  // quickbook chain id
   externalId: text().notNull(),
 
   name: text().notNull(),

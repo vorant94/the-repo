@@ -17,6 +17,7 @@ export const titles = sqliteTable("titles", {
 
   name: text().notNull(),
   releasedAt: text().notNull(),
+  // TMDB id
   externalId: text().notNull(),
 });
 
