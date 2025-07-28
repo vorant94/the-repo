@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import type { z } from "zod";
+import { z } from "zod";
 import { chains } from "./chains.ts";
 import { resourceType } from "./resource-types.ts";
 import { titles } from "./titles.ts";
@@ -26,11 +26,17 @@ export const releases = sqliteTable("releases", {
     .references(() => titles.id),
 });
 
-export const releaseSchema = createSelectSchema(releases);
+export const releaseSchema = createSelectSchema(releases, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
 
 export type Release = z.infer<typeof releaseSchema>;
 
-export const insertReleaseSchema = createInsertSchema(releases).omit({
+export const insertReleaseSchema = createInsertSchema(releases, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+}).omit({
   id: true,
   resourceType: true,
   createdAt: true,

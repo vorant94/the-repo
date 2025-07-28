@@ -85,6 +85,27 @@
       "when": 1753695751391,
       "tag": "0011_vengeful_talkback",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1753702463934,
+      "tag": "0012_chemical_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1753702669106,
+      "tag": "0013_hot_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1753703425057,
+      "tag": "0014_wise_red_hulk",
+      "breakpoints": true
     }
   ]
 }

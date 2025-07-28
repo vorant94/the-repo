@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import type { z } from "zod";
+import { z } from "zod";
 import { chains } from "./chains.ts";
 import { resourceType } from "./resource-types.ts";
 
@@ -27,10 +27,16 @@ export const sites = sqliteTable("sites", {
   name: text().notNull(),
 });
 
-export const siteSchema = createSelectSchema(sites);
+export const siteSchema = createSelectSchema(sites, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
 export type Site = z.infer<typeof siteSchema>;
 
-export const insertSiteSchema = createInsertSchema(sites).omit({
+export const insertSiteSchema = createInsertSchema(sites, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+}).omit({
   id: true,
   resourceType: true,
   createdAt: true,

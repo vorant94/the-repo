@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import type { z } from "zod";
+import { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
 export const titles = sqliteTable("titles", {
@@ -16,14 +16,23 @@ export const titles = sqliteTable("titles", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
   name: text().notNull(),
+  releasedAt: text().notNull(),
   externalId: text().notNull(),
 });
 
-export const titleSchema = createSelectSchema(titles);
+export const titleSchema = createSelectSchema(titles, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  releasedAt: z.coerce.date(),
+});
 
 export type Title = z.infer<typeof titleSchema>;
 
-export const insertTitleSchema = createInsertSchema(titles).omit({
+export const insertTitleSchema = createInsertSchema(titles, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  releasedAt: z.coerce.date(),
+}).omit({
   id: true,
   resourceType: true,
   createdAt: true,

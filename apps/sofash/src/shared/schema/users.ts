@@ -24,11 +24,17 @@ export const users = sqliteTable("users", {
   role: text({ enum: userRoles }).notNull().default("user"),
 });
 
-export const userSchema = createSelectSchema(users);
+export const userSchema = createSelectSchema(users, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
 
 export type User = z.infer<typeof userSchema>;
 
-export const insertUserSchema = createInsertSchema(users).omit({
+export const insertUserSchema = createInsertSchema(users, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+}).omit({
   id: true,
   resourceType: true,
   createdAt: true,

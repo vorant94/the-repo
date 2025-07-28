@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import type { z } from "zod";
+import { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
 export const chains = sqliteTable("chains", {
@@ -19,10 +19,16 @@ export const chains = sqliteTable("chains", {
   externalId: text().notNull(),
 });
 
-export const chainSchema = createSelectSchema(chains);
+export const chainSchema = createSelectSchema(chains, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
 export type Chain = z.infer<typeof chainSchema>;
 
-export const insertChainSchema = createInsertSchema(chains).omit({
+export const insertChainSchema = createInsertSchema(chains, {
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+}).omit({
   id: true,
   resourceType: true,
   createdAt: true,

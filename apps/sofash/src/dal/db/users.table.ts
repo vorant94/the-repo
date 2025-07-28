@@ -55,7 +55,7 @@ export function upsertUserByTelegramChatId(
 
         logger.error("Unexpected error while upserting a user", err);
         return new UnexpectedBranchException(
-          "Unexpected error while inserting a site",
+          "Unexpected error while inserting a user",
           { cause: err },
         );
       },

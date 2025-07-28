@@ -1,9 +1,10 @@
-import { ResultAsync } from "neverthrow";
+import { err, ok, ResultAsync } from "neverthrow";
 import { getChainById } from "../dal/db/chains.table.ts";
 import { getSiteById } from "../dal/db/sites.table.ts";
+import { upsertTitle } from "../dal/db/titles.table.ts";
 import { findQuickbookFilmEvents } from "../dal/quickbook/quickbook.client.ts";
 import { searchTmdbMovie } from "../dal/the-movie-db/the-movie-db.client.ts";
-import type { BadOutputException } from "../shared/exceptions/bad-output.exception.ts";
+import { BadOutputException } from "../shared/exceptions/bad-output.exception.ts";
 import type { NotFoundException } from "../shared/exceptions/not-found.exception.ts";
 import type { UnexpectedBranchException } from "../shared/exceptions/unexpected-branch.exception.ts";
 import {
@@ -39,13 +40,38 @@ export function scrapSite({
     ResultAsync.combine(
       // TODO make sure there are no duplicates in films array to avoid redundant TMDB requests
       films.map((film) => {
-        const tmdbResult = searchTmdbMovie({
+        const tmdbResults = searchTmdbMovie({
           name: film.name,
           year: film.releaseYear,
         });
 
-        // TODO validate there is only 1 page with only 1 result
-        return tmdbResult.map((result) => result.results[0]);
+        const movieResult = tmdbResults.andThen((result) => {
+          if (result.total_pages > 1 || result.results.length > 1) {
+            return err(
+              new BadOutputException(
+                `Too many TMDB results for [${film.name}] movie of [${film.releaseYear}] year`,
+              ),
+            );
+          }
+          const movie = result.results[0];
+          if (!movie) {
+            return err(
+              new BadOutputException(
+                `No TMDB results for [${film.name}] movie of [${film.releaseYear}] year`,
+              ),
+            );
+          }
+
+          return ok(movie);
+        });
+
+        return movieResult.andThen((movie) =>
+          upsertTitle({
+            externalId: movie.id.toString(),
+            name: movie.title,
+            releasedAt: movie.release_date,
+          }),
+        );
       }),
     ),
   );
