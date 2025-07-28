@@ -26,7 +26,6 @@ export function upsertUserByTelegramChatId(
   User,
   BadInputException | BadOutputException | UnexpectedBranchException
 > {
-  using logger = createLogger("upsertUserByTelegramChatId");
   const { db } = getContext();
 
   const toUpsert = ntParseWithZod(toUpsertRaw, insertUserSchema).mapErr(
@@ -50,6 +49,10 @@ export function upsertUserByTelegramChatId(
         })
         .returning(),
       (err) => {
+        using logger = createLogger(
+          "upsertUserByTelegramChatId::toUpsert.asyncAndThen::err",
+        );
+
         logger.error("Unexpected error while upserting a user", err);
         return new UnexpectedBranchException(
           "Unexpected error while inserting a site",
@@ -77,7 +80,6 @@ export function setUserRole(
   User,
   BadInputException | BadOutputException | UnexpectedBranchException
 > {
-  using logger = createLogger("setUserRole");
   const { db } = getContext();
 
   const toSet = ntParseWithZod(toSetRaw, userRoleSchema).mapErr(
@@ -91,6 +93,8 @@ export function setUserRole(
     ResultAsync.fromPromise(
       db.update(users).set({ role: toSet }).where(eq(users.id, id)).returning(),
       (err) => {
+        using logger = createLogger("setUserRole::toSet.asyncAndThen::err");
+
         logger.error("Unexpected error while setting role to user", err);
         return new UnexpectedBranchException(
           "Unexpected error while setting role to user",

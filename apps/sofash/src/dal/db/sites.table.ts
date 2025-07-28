@@ -24,7 +24,6 @@ export function insertSite(
   Site,
   BadInputException | BadOutputException | UnexpectedBranchException
 > {
-  using logger = createLogger("insertSite");
   const { db } = getContext();
 
   const toInsert = ntParseWithZod(toInsertRaw, insertSiteSchema).mapErr(
@@ -44,6 +43,8 @@ export function insertSite(
         })
         .returning(),
       (err) => {
+        using logger = createLogger("insertSite::toInsert.asyncAndThen::err");
+
         // libsql and d1 errors are of different structure, rawdog parsing the
         // error message is the only common denominator i found
         if (
@@ -62,7 +63,7 @@ export function insertSite(
           err.cause.message.includes("FOREIGN KEY constraint failed")
         ) {
           return new BadInputException(
-            `Chain you want to associate site with doesn't exist`,
+            `Chain with id [${toInsert.chainId}] you want to associate site with doesn't exist`,
             { cause: err.cause },
           );
         }

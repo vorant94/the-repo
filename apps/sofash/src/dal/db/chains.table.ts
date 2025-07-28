@@ -24,7 +24,6 @@ export function insertChain(
   Chain,
   BadInputException | BadOutputException | UnexpectedBranchException
 > {
-  using logger = createLogger("insertChain");
   const { db } = getContext();
 
   const toInsert = ntParseWithZod(toInsertRaw, insertChainSchema).mapErr(
@@ -44,6 +43,8 @@ export function insertChain(
         })
         .returning(),
       (err) => {
+        using logger = createLogger("insertChain::toInsert.asyncAndThen::err");
+
         // libsql and d1 errors are of different structure, rawdog parsing the
         // error message is the only common denominator i found
         if (
