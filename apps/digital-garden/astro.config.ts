@@ -17,6 +17,7 @@ import rehypeSlug from "rehype-slug";
 import tailwindcss from "tailwindcss";
 import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
+import { defaultLang, languages } from "./src/i18n/ui.ts";
 
 export const env = z
   .object({
@@ -32,11 +33,19 @@ export default defineConfig({
       : "http://localhost:4321",
   prefetch: true,
   i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+    locales: Object.keys(languages),
+    defaultLocale: defaultLang,
+    routing: {
+      prefixDefaultLocale: true,
+    },
   },
   integrations: [
-    sitemap(),
+    sitemap({
+      i18n: {
+        defaultLocale: defaultLang,
+        locales: languages,
+      },
+    }),
     alpine({
       entrypoint: "/src/alpine.entrypoint",
     }),

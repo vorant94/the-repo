@@ -1,16 +1,6 @@
 ---
-import { getCollection, getEntries, render } from "astro:content";
-import { format } from "date-fns";
-import RelatedPosts from "../../components/RelatedPosts.astro";
-import Tag from "../../components/Tag.astro";
-import Caption from "../../components/ui/Caption.astro";
-import Text from "../../components/ui/Text.astro";
-import ThemedImage from "../../components/ui/ThemedImage.astro";
-import Title from "../../components/ui/Title.astro";
-import { publishedAtFormat } from "../../globals/published-at-format";
-import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import { getCollection } from "astro:content";
 import type { PostModel } from "../../utils/content.helpers";
-import { isPostWithCover } from "../../utils/content.helpers";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -31,93 +21,7 @@ export interface Props {
 
 const { post } = Astro.props;
 
-const postTags = await getEntries(post.data.tags);
-
-const { Content, remarkPluginFrontmatter } = await render(post);
+const [lang, id] = post.id.split("/");
 ---
 
-<DefaultLayout
-	title={post.data.title}
-	description={post.data.description}
-	image={isPostWithCover(post) ? post.data.coverImage : undefined}
-	type="article"
->
-	<div class="flex flex-col gap-6">
-		{isPostWithCover(post) && (
-			<div class="self-center">
-				<ThemedImage
-					transition:name={`post.${post.id}.coverImage`}
-					src={post.data.coverImage}
-					srcDark={post.data.coverImageDark}
-					alt={post.data.coverAlt}
-				/>
-			</div>
-		)}
-
-		<Title
-			as="h1"
-			transition:name={`post.${post.id}.title`}
-		>
-			{post.data.title}
-		</Title>
-
-		<div class="flex flex-col justify-between gap-2 lg:flex-row lg:items-center">
-			<div class="flex items-center gap-2">
-				<Caption transition:name={`post.${post.id}.publishedAt`}>
-					{format(post.data.publishedAt, publishedAtFormat.full)}
-				</Caption>
-				<Caption>&#x2022;</Caption>
-				<Caption>{remarkPluginFrontmatter.minutesRead}</Caption>
-			</div>
-
-			<menu class="m-0 flex list-none gap-1 p-0">
-				{postTags.map((tag) => (
-					<li class="m-0 p-0">
-						<Tag tag={tag} />
-					</li>
-				))}
-			</menu>
-		</div>
-
-		<Text as="em">{post.data.description}</Text>
-
-		{post.data.codeUrl && (
-			<p>
-				All the code mentioned in the post can be found in my
-				<a
-					href={post.data.codeUrl}
-					target="_blank"
-					rel="noreferrer"
-				>
-					GitHub
-				</a>
-			</p>
-		)}
-	</div>
-
-	<article class="prose dark:prose-invert prose-img:mx-auto mt-6">
-		<Content/>
-	</article>
-
-	{!!post.data.related?.length && <RelatedPosts post={post} />}
-
-	<giscus-widget
-		id="comments"
-		repo="vorant94/the-repo"
-		repoid="R_kgDOKWcyPw="
-		category="Digital Garden Post Comments"
-		categoryid="DIC_kwDON7ttjc4CoCVG"
-		mapping="specific"
-		term={post.id}
-		reactionsenabled="1"
-		emitmetadata="0"
-		inputposition="bottom"
-		theme="preferred_color_scheme"
-		lang="en"
-		loading="lazy"
-	/>
-</DefaultLayout>
-
-<script>
-	import 'giscus';
-</script>
+<meta http-equiv="refresh" content={`0;url=/${lang}/${post.collection}/${id}`} />

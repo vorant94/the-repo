@@ -1,31 +1,5 @@
 ---
-import { getCollection } from "astro:content";
-import { format } from "date-fns";
-import PostList from "../../components/PostList.astro";
-import PostListItem from "../../components/PostListItem.astro";
-import { publishedAtFormat } from "../../globals/published-at-format";
-import DefaultLayout from "../../layouts/DefaultLayout.astro";
-import { sortPostsByPublishedAt } from "../../utils/content.helpers";
-
-const sortedPosts = sortPostsByPublishedAt(await getCollection("posts"));
-
-const groupedPosts = Object.groupBy(sortedPosts, (post) =>
-  format(post.data.publishedAt, publishedAtFormat.year),
-);
-
-const sortedPostYears = Object.keys(groupedPosts).reverse();
+import { defaultLang } from "../../i18n/ui";
 ---
 
-<DefaultLayout title="Posts">
-	{sortedPostYears.map((year) => (
-		<PostList>
-			<Fragment slot="title">
-				{year}
-			</Fragment>
-
-			{groupedPosts[year]!.map((post) => (
-				<PostListItem post={post} />
-			))}
-		</PostList>
-	))}
-</DefaultLayout>
+<meta http-equiv="refresh" content={`0;url=/${defaultLang}/posts/`} />

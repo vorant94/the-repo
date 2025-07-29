@@ -1,0 +1,23 @@
+---
+import Intro from "../../components/Intro.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
+import StayUpToDate from "../../components/StayUpToDate.astro";
+import { languages } from "../../i18n/ui";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+
+export function getStaticPaths() {
+  const langs = Object.keys(languages);
+
+  return langs.map((lang) => ({
+    params: { lang },
+  }));
+}
+---
+
+<DefaultLayout title="About">
+	<Intro />
+
+	<StayUpToDate />
+
+	<SocialLinks />
+</DefaultLayout>

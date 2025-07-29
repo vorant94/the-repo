@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import PostList from "../../../components/PostList.astro";
+import PostListItem from "../../../components/PostListItem.astro";
+import { defaultLang } from "../../../i18n/ui";
+import DefaultLayout from "../../../layouts/DefaultLayout.astro";
+import {
+  type PostModel,
+  sortPostsByPublishedAt,
+  type TagModel,
+} from "../../../utils/content.helpers";
+
+export async function getStaticPaths() {
+  const [tags, posts] = await Promise.all([
+    getCollection("tags"),
+    getCollection("posts"),
+  ]);
+
+  return await Promise.all(
+    tags.map((tag) => {
+      const tagPosts = sortPostsByPublishedAt(
+        posts.filter(({ data }) => data.tags.find(({ id }) => id === tag.id)),
+      );
+
+      return {
+        params: { slug: tag.id, lang: defaultLang },
+        props: {
+          tag,
+          tagPosts,
+        },
+      };
+    }),
+  );
+}
+
+export interface Props {
+  tag: TagModel;
+  tagPosts: Array<PostModel>;
+}
+
+const { tag, tagPosts } = Astro.props;
+---
+
+<DefaultLayout title={`${tag.id} posts`}>
+	<PostList>
+		<span
+			transition:name={`tag.${tag.data.id}`}
+			slot="title"
+		>
+			{`#${tag.id}`}
+		</span>
+
+		{tagPosts.map((post) => (
+			<PostListItem post={post} />
+		))}
+	</PostList>
+</DefaultLayout>

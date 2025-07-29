@@ -1,0 +1,23 @@
+---
+import Intro from "../../components/Intro.astro";
+import PinnedPosts from "../../components/PinnedPosts.astro";
+import RecentPosts from "../../components/RecentPosts.astro";
+import { languages } from "../../i18n/ui";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+
+export function getStaticPaths() {
+  const langs = Object.keys(languages);
+
+  return langs.map((lang) => ({
+    params: { lang },
+  }));
+}
+---
+
+<DefaultLayout>
+	<PinnedPosts/>
+
+	<Intro/>
+
+	<RecentPosts />
+</DefaultLayout>

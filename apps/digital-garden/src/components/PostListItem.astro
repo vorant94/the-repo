@@ -26,14 +26,14 @@ const [lang, id] = post.id.split("/");
 	>
 		<span
 			class="flex-1 truncate"
-			transition:name={`post.${post.id}.title`}
+			transition:name={`post.${id}.title`}
 		>
 			{post.data.title}
 		</span>
 
 		<span
 			class="whitespace-nowrap text-xs"
-			transition:name={`post.${post.id}.publishedAt`}
+			transition:name={`post.${id}.publishedAt`}
 		>
 			{format(post.data.publishedAt, publishedAtFormat.short)}
 		</span>

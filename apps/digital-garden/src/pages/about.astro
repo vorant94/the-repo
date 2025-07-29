@@ -1,14 +1,5 @@
 ---
-import Intro from "../components/Intro.astro";
-import SocialLinks from "../components/SocialLinks.astro";
-import StayUpToDate from "../components/StayUpToDate.astro";
-import DefaultLayout from "../layouts/DefaultLayout.astro";
+import { defaultLang } from "../i18n/ui";
 ---
 
-<DefaultLayout title="About">
-	<Intro />
-
-	<StayUpToDate />
-
-	<SocialLinks />
-</DefaultLayout>
+<meta http-equiv="refresh" content={`0;url=/${defaultLang}/about/`} />
