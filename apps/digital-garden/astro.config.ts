@@ -31,6 +31,10 @@ export default defineConfig({
       ? "https://vorant94.dev"
       : "http://localhost:4321",
   prefetch: true,
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
+  },
   integrations: [
     sitemap(),
     alpine({

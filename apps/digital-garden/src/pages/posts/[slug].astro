@@ -15,10 +15,14 @@ import { isPostWithCover } from "../../utils/content.helpers";
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return posts.map((post) => {
+    const [_, id] = post.id.split("/");
+
+    return {
+      params: { slug: id },
+      props: { post },
+    };
+  });
 }
 
 export interface Props {

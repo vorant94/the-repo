@@ -6,15 +6,15 @@ tags:
   - node
   - infra
 publishedAt: 2024-01-03
-coverImage: ../assets/ts-monorepo-bento.webp
+coverImage: ../../assets/ts-monorepo-bento.webp
 coverAlt: Logos of Yarn, Git and TypeScript arranged like a bento box
-coverImageDark: ../assets/ts-monorepo-bento-dark.webp
+coverImageDark: ../../assets/ts-monorepo-bento-dark.webp
 codeUrl: https://github.com/vorant94/typescript-monorepo
 ---
 
 ## Why TypeScript?
 
-![TypeScript meme](../assets/typescript-meme.webp)
+![TypeScript meme](../../assets/typescript-meme.webp)
 
 So first things first: why TypeScript? A year ago the answer for me would be obvious. Like how else would you build something bigger than a calculator? Imagine having a function you wrote 3 months ago that accepts 5 arguments aaand... thats all you see right from the function signature. You don't know what are the arguments structures, you don't know what the return value structure, you know nothing, John Snow ©️. You have either to document it with JSDoc or pray the God you'll never forget the signature, which is more likely to happen than not. Another issue is refactoring: try to change the field on some data object throughout the whole project and be sure nothing is broken, I'll see you the next month.
 
@@ -36,7 +36,7 @@ In conclusion I think the pain of build boilerplate pays off by avoiding pain of
 
 ## Why Monorepo?
 
-![TypeScript meme](../assets/monorepo-meme.webp)
+![TypeScript meme](../../assets/monorepo-meme.webp)
 
 A little bit of terminology to have a common ground:
 
@@ -197,7 +197,7 @@ So we are left with most interesting part, dev server with live-reload. Here we 
 
 ## nodemon + ts-node (tsc)
 
-![nodemon and ts-node logos with tsc logo in the background](../assets/nodemon+ts-node.webp)
+![nodemon and ts-node logos with tsc logo in the background](../../assets/nodemon+ts-node.webp)
 
 Some time ago a combination of [nodemon](https://www.npmjs.com/package/nodemon) with [ts-node](https://www.npmjs.com/package/ts-node) was the go-to way to achieve live-reload on Node server. `nodemon` watched for file changes and restarted `ts-node`, that compiled TypeScript code on the fly and executed it with NodeJS. Even the fact that to use `ts-node` in ESM-based project the dev needed to use another executable (`ts-node-esm` instead of just `ts-node`) wasn't so much of a problem.
 
@@ -209,7 +209,7 @@ Likely alternative solutions are already emerged in the ecosystem.
 
 ## tsx (esbuild)
 
-![tsx imaginary logo with esbuild in the backgound](../assets/tsx.webp)
+![tsx imaginary logo with esbuild in the backgound](../../assets/tsx.webp)
 
 The next tool I came across is `tsx` (`tsx` doesn't have its own logo, so I came up with my version of it, hope you like it😜). It is a direct alternative to `ts-node`, but claims to be way faster, has out-of-the-box support for ESM and built-in live-reload, which sounded very promising.
 
@@ -219,7 +219,7 @@ There is a good comment in [the issue on GitHub](https://github.com/privatenumbe
 
 ## Node watch mode + tsc (final solution)
 
-![nodejs and typescript logo](../assets/node+tsc.webp)
+![nodejs and typescript logo](../../assets/node+tsc.webp)
 The final solution that I found working for me is actually avoiding all 3-party tooling. You see `tsc` itself has built-in watch mode, the only last part there is to restart the server on each re-build. And recently NodeJS introduced its own watch mode (it's still experimental, but I'm OK to use experimental stuff for dev-only purposes). As simple as that: run `tsc` in watch mode, it will rebuild code on changes resolving project references, run `node` in watch mode, it will restart process on changes resolving changes in monorepo dependencies as well.
 
 ```json5

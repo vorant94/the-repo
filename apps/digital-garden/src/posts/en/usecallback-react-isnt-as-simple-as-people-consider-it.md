@@ -5,7 +5,7 @@ tags:
   - react
   - programming
 publishedAt: 2024-05-29
-coverImage: ../assets/react-usecallback.png
+coverImage: ../../assets/react-usecallback.png
 coverAlt: AI generated art of React logo
 ---
 

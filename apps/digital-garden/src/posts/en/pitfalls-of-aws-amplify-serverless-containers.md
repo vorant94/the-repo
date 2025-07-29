@@ -7,7 +7,7 @@ tags:
   - docker
 publishedAt: 2023-01-31
 related:
-  - aws-amplify-functions-on-steroids
+  - en/aws-amplify-functions-on-steroids
 codeUrl: https://github.com/vorant94/amplify-serverless-containers
 ---
 

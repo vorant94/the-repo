@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import Header from "./Header.astro";
 import NavLink from "./NavLink.astro";
 import Button from "./ui/Button.astro";
@@ -17,7 +18,7 @@ const navLinksMeta = [
 	>
 		<menu class="flex gap-3 md:gap-4 lg:gap-6">
 			{navLinksMeta.map((navLink) => (
-				<NavLink href={navLink.url}>
+				<NavLink href={getRelativeLocaleUrl(Astro.currentLocale!, navLink.url)}>
 					{navLink.label}
 				</NavLink>
 			))}
@@ -54,7 +55,7 @@ const navLinksMeta = [
 				>
 					<menu class="flex flex-col gap-3 px-6">
 						{navLinksMeta.map((navLink) => (
-							<NavLink href={navLink.url}>
+							<NavLink href={getRelativeLocaleUrl(Astro.currentLocale!, navLink.url)}>
 								{navLink.label}
 							</NavLink>
 						))}

@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import headerLogo from "../assets/header-logo.webp";
 import headerLogoDark from "../assets/header-logo-dark.webp";
 import ButtonLink from "./ui/ButtonLink.astro";
@@ -8,7 +9,7 @@ import ThemedImage from "./ui/ThemedImage.astro";
 <header class="sticky top-0 z-10 backdrop-blur flex items-center gap-1 border-slate-300 border-b p-4 dark:border-slate-600">
 	<nav>
 		<ButtonLink
-			href="/"
+			href={getRelativeLocaleUrl(Astro.currentLocale!, "/")}
 			class="!p-0"
 		>
 			<ThemedImage

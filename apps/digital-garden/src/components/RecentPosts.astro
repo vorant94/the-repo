@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import { sortPostsByPublishedAt } from "../utils/content.helpers";
 import PostTiledList from "./PostTiledList.astro";
 import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
@@ -18,7 +19,7 @@ const recentPosts = sortedPosts.slice(0, 3);
 		<PostTiledListItem post={post} />
 	))}
 
-	<PostTiledListEmptyItem href="/posts">
+	<PostTiledListEmptyItem href={getRelativeLocaleUrl(Astro.currentLocale!, "/posts")}>
 		See all
 	</PostTiledListEmptyItem>
 </PostTiledList>

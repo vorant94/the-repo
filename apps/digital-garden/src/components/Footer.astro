@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import ButtonLink from "./ui/ButtonLink.astro";
 import Icon from "./ui/Icon.astro";
 ---
@@ -9,7 +10,7 @@ import Icon from "./ui/Icon.astro";
 	<div class="flex-1" />
 
 	<ButtonLink
-		href="/rss.xml"
+		href={getRelativeLocaleUrl(Astro.currentLocale!, "/rss.xml")}
 		aria-label="RSS feed"
 		target="_blank"
 	>

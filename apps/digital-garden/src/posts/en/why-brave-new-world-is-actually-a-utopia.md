@@ -4,7 +4,7 @@ description: Some time ago, I read Aldous Huxley's "Brave New World." The book m
 tags:
   - books
 publishedAt: 2020-05-02
-coverImage: ../assets/brave-new-world-book-cover.jpg
+coverImage: ../../assets/brave-new-world-book-cover.jpg
 coverAlt: Brave New World book cover
 ---
 

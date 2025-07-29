@@ -6,7 +6,7 @@ tags:
   - separation-of-concerns
   - programming
 publishedAt: 2024-03-10
-coverImage: ../assets/cesar-statue.webp
+coverImage: ../../assets/cesar-statue.webp
 coverAlt: Julius Caesar statue
 ---
 
@@ -18,7 +18,7 @@ The first somewhat real code I wrote in the college was Ruby on Rails, which fol
 
 At some point of time I get acquainted with Atomic Design Methodology, which also splits the components by their technical characteristic: if component is simple - it is "Atom", then based on increasing complexity there can be "Molecules", "Organisms", "Templates" and "Pages". Component with higher complexity can use components with lower complexity, but not otherwise. I concluded that it is the common way to structure modern design systems.
 
-![Mandalorian telling This is The Way](../assets/this-is-the-way.jpg)
+![Mandalorian telling This is The Way](../../assets/this-is-the-way.jpg)
 
 From the other side same Angular I talked earlier introduced me to "Folders-by-feature" principle in its official style-guide. Later I found that it has a little bit nicer name outside Angular ecosystem, it is called "Vertical Slice" (as opposed to "Horizontal Slice", that is followed by MVC and MVVM). According to it project files shouldn't be grouped by a some technical trait like "keep all components together" and "keep all services together". But rather by its feature or domain of use - all dashboard-related stuff should be kept together disregard of whether we are talking about components, services or whatever else. I really liked this approach and didn't notice the contradiction with what I already learned.
 
@@ -94,7 +94,7 @@ I consider this way of structuring the code is way more intuitive and easier to 
 
 It all sounds good and everything (I hope so), but what's the point, yeah?
 
-![Where is the money, Lebowski](../assets/where-is-the-money-lebowski.jpg)
+![Where is the money, Lebowski](../../assets/where-is-the-money-lebowski.jpg)
 
 #### Less mental overhead
 
@@ -127,7 +127,7 @@ I do believe that vertical split allows to get the best of two worlds. You devel
 
 During one of the job interviews I was having recently I got home assignment to build the following component. It is a tree select dropdown with option for a single and multiple selection mode and option to filter leaves. As part of the task I was asked to cover one of the component entities with unit tests. The framework is Angular.
 
-![Home assignment demo](../assets/home-assignment-demo.png)
+![Home assignment demo](../../assets/home-assignment-demo.png)
 
 The final solution included 1 component, 5 directives, 1 pipe, 2 services and 2 non-standard file types. The classic unit testing means you identify a minimal standalone unit inside your program, mocks/stub all the other and test behavior of the chosen one. In my example it can be any of the mentioned above entities since each of them is technically standalone. Mocking/stubbing is always a painful part in unit testing, because you as a developer don't develop anything, you don't add value to the product, you just making endless preparations to code the thing that should add value.
 

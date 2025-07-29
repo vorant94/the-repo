@@ -6,7 +6,7 @@ tags:
   - dart
   - typescript
 publishedAt: 2023-11-27
-coverImage: ../assets/dart-logo-with-background.webp
+coverImage: ../../assets/dart-logo-with-background.webp
 coverAlt: Dart logo on blue background with some small icons
 ---
 

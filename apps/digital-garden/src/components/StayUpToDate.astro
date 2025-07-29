@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import Divider from "./ui/Divider.astro";
 import Link from "./ui/Link.astro";
 import Text from "./ui/Text.astro";
@@ -13,7 +14,7 @@ import Title from "./ui/Title.astro";
 	<Text as="span">
 		If you wish to be up to date with new posts you can{" "}
 		<Link
-			href="/rss.xml"
+			href={getRelativeLocaleUrl(Astro.currentLocale!, "/rss.xml")}
 			target="_blank"
 		>
 			subscribe with RSS

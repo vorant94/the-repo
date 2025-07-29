@@ -6,9 +6,8 @@ tags:
   - war
   - self-reflection
 publishedAt: 2023-10-14
-coverImage: ../assets/israel-flag.webp
+coverImage: ../../assets/israel-flag.webp
 coverAlt: Waving Israel flag on the cloud sky background
-isPinned: true
 ---
 
 ## Intro
