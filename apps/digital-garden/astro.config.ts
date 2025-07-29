@@ -19,6 +19,39 @@ import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
 import { defaultLang, languages } from "./src/i18n/ui.ts";
 
+const legacyBeforeI18nRedirects = {
+  "/": `/${defaultLang}/`,
+  "/about/": `/${defaultLang}/about/`,
+  "/rss.xml": `/${defaultLang}/rss.xml`,
+  "/posts/": `/${defaultLang}/posts/`,
+  "/posts/aws-amplify-functions-on-steroids/": `/${defaultLang}/posts/aws-amplify-functions-on-steroids/`,
+  "/posts/divide-and-conquer-right-concerns-to-separate/": `/${defaultLang}/posts/divide-and-conquer-right-concerns-to-separate/`,
+  "/posts/typescript-monorepos-are-a-mess/": `/${defaultLang}/posts/typescript-monorepos-are-a-mess/`,
+  "/posts/pitfalls-of-aws-amplify-serverless-containers/": `/${defaultLang}/posts/pitfalls-of-aws-amplify-serverless-containers/`,
+  "/posts/dart-through-the-eyes-of-a-js-ts-dev/": `/${defaultLang}/posts/dart-through-the-eyes-of-a-js-ts-dev/`,
+  "/posts/branding-an-angular-app-with-docker-volumes-and-css3-variables/": `/${defaultLang}/posts/branding-an-angular-app-with-docker-volumes-and-css3-variables/`,
+  "/posts/usecallback-react-isnt-as-simple-as-people-consider-it/": `/${defaultLang}/posts/usecallback-react-isnt-as-simple-as-people-consider-it/`,
+  "/posts/war-in-israel/": `/${defaultLang}/posts/war-in-israel/`,
+  "/posts/why-brave-new-world-is-actually-a-utopia/": `/${defaultLang}/posts/why-brave-new-world-is-actually-a-utopia/`,
+  "/tags/react/": `/${defaultLang}/tags/react/`,
+  "/tags/books/": `/${defaultLang}/tags/books/`,
+  "/tags/lambda/": `/${defaultLang}/tags/lambda/`,
+  "/tags/angular/": `/${defaultLang}/tags/angular/`,
+  "/tags/dart/": `/${defaultLang}/tags/dart/`,
+  "/tags/design-patterns/": `/${defaultLang}/tags/design-patterns/`,
+  "/tags/separation-of-concerns/": `/${defaultLang}/tags/separation-of-concerns/`,
+  "/tags/programming/": `/${defaultLang}/tags/programming/`,
+  "/tags/amplify/": `/${defaultLang}/tags/amplify/`,
+  "/tags/serverless/": `/${defaultLang}/tags/serverless/`,
+  "/tags/docker/": `/${defaultLang}/tags/docker/`,
+  "/tags/typescript/": `/${defaultLang}/tags/typescript/`,
+  "/tags/node/": `/${defaultLang}/tags/node/`,
+  "/tags/infra/": `/${defaultLang}/tags/infra/`,
+  "/tags/psychology/": `/${defaultLang}/tags/psychology/`,
+  "/tags/war/": `/${defaultLang}/tags/war/`,
+  "/tags/self-reflection/": `/${defaultLang}/tags/self-reflection/`,
+};
+
 export const env = z
   .object({
     // biome-ignore lint/style/useNamingConvention: env variables have different convention
@@ -39,43 +72,27 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
-  redirects: {
-    "/": `/${defaultLang}/`,
-    "/about/": `/${defaultLang}/about/`,
-    "/rss.xml": `/${defaultLang}/rss.xml`,
-    "/posts/": `/${defaultLang}/posts/`,
-    "/posts/aws-amplify-functions-on-steroids/": `/${defaultLang}/posts/aws-amplify-functions-on-steroids/`,
-    "/posts/divide-and-conquer-right-concerns-to-separate/": `/${defaultLang}/posts/divide-and-conquer-right-concerns-to-separate/`,
-    "/posts/typescript-monorepos-are-a-mess/": `/${defaultLang}/posts/typescript-monorepos-are-a-mess/`,
-    "/posts/pitfalls-of-aws-amplify-serverless-containers/": `/${defaultLang}/posts/pitfalls-of-aws-amplify-serverless-containers/`,
-    "/posts/dart-through-the-eyes-of-a-js-ts-dev/": `/${defaultLang}/posts/dart-through-the-eyes-of-a-js-ts-dev/`,
-    "/posts/branding-an-angular-app-with-docker-volumes-and-css3-variables/": `/${defaultLang}/posts/branding-an-angular-app-with-docker-volumes-and-css3-variables/`,
-    "/posts/usecallback-react-isnt-as-simple-as-people-consider-it/": `/${defaultLang}/posts/usecallback-react-isnt-as-simple-as-people-consider-it/`,
-    "/posts/war-in-israel/": `/${defaultLang}/posts/war-in-israel/`,
-    "/posts/why-brave-new-world-is-actually-a-utopia/": `/${defaultLang}/posts/why-brave-new-world-is-actually-a-utopia/`,
-    "/tags/react/": `/${defaultLang}/tags/react/`,
-    "/tags/books/": `/${defaultLang}/tags/books/`,
-    "/tags/lambda/": `/${defaultLang}/tags/lambda/`,
-    "/tags/angular/": `/${defaultLang}/tags/angular/`,
-    "/tags/dart/": `/${defaultLang}/tags/dart/`,
-    "/tags/design-patterns/": `/${defaultLang}/tags/design-patterns/`,
-    "/tags/separation-of-concerns/": `/${defaultLang}/tags/separation-of-concerns/`,
-    "/tags/programming/": `/${defaultLang}/tags/programming/`,
-    "/tags/amplify/": `/${defaultLang}/tags/amplify/`,
-    "/tags/serverless/": `/${defaultLang}/tags/serverless/`,
-    "/tags/docker/": `/${defaultLang}/tags/docker/`,
-    "/tags/typescript/": `/${defaultLang}/tags/typescript/`,
-    "/tags/node/": `/${defaultLang}/tags/node/`,
-    "/tags/infra/": `/${defaultLang}/tags/infra/`,
-    "/tags/psychology/": `/${defaultLang}/tags/psychology/`,
-    "/tags/war/": `/${defaultLang}/tags/war/`,
-    "/tags/self-reflection/": `/${defaultLang}/tags/self-reflection/`,
-  },
+  redirects: legacyBeforeI18nRedirects,
   integrations: [
     sitemap({
       i18n: {
         defaultLocale: defaultLang,
         locales: languages,
+      },
+      serialize(item) {
+        const maybeI18nRedirect = new URL(item.url).pathname.replace(
+          `/${defaultLang}/`,
+          "/",
+        );
+        if (maybeI18nRedirect in legacyBeforeI18nRedirects) {
+          item.links ??= [];
+          item.links.push({
+            url: new URL(maybeI18nRedirect, "https://vorant94.dev").toString(),
+            lang: defaultLang,
+          });
+        }
+
+        return item;
       },
     }),
     alpine({
