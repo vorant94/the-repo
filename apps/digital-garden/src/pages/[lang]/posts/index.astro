@@ -3,20 +3,23 @@ import { getCollection } from "astro:content";
 import { format } from "date-fns";
 import PostList from "../../../components/PostList.astro";
 import PostListItem from "../../../components/PostListItem.astro";
+import { languages } from "../../../globals/i18n";
 import { publishedAtFormat } from "../../../globals/published-at-format";
-import { languages } from "../../../i18n/ui";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
-import { sortPostsByPublishedAt } from "../../../utils/content.helpers";
+import {
+  createFilterPostsByLang,
+  sortPostsByPublishedAt,
+} from "../../../utils/content.helpers";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({
     params: { lang },
   }));
 }
-const filteredPosts = await getCollection("posts", (post) => {
-  const [postLang] = post.id.split("/");
-  return Astro.currentLocale === postLang;
-});
+const filteredPosts = await getCollection(
+  "posts",
+  createFilterPostsByLang(Astro.currentLocale),
+);
 const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
 const groupedPosts = Object.groupBy(sortedPosts, (post) =>

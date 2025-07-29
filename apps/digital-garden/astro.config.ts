@@ -17,7 +17,11 @@ import rehypeSlug from "rehype-slug";
 import tailwindcss from "tailwindcss";
 import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
-import { defaultLang, languages, languageToLocale } from "./src/i18n/ui.ts";
+import {
+  defaultLang,
+  languages,
+  languageToLocale,
+} from "./src/globals/i18n.ts";
 
 const legacyI18nRedirects = {
   "/": `/${defaultLang}/`,

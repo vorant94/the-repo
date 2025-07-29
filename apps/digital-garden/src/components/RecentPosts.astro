@@ -1,15 +1,18 @@
 ---
 import { getCollection } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
-import { sortPostsByPublishedAt } from "../utils/content.helpers";
+import {
+  createFilterPostsByLang,
+  sortPostsByPublishedAt,
+} from "../utils/content.helpers";
 import PostTiledList from "./PostTiledList.astro";
 import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
 import PostTiledListItem from "./PostTiledListItem.astro";
 
-const filteredPosts = await getCollection("posts", (post) => {
-  const [postLang] = post.id.split("/");
-  return Astro.currentLocale === postLang && !post.data.isPinned;
-});
+const filteredPosts = await getCollection(
+  "posts",
+  createFilterPostsByLang(Astro.currentLocale),
+);
 const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 const recentPosts = sortedPosts.slice(0, 3);
 ---

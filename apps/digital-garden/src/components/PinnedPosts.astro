@@ -2,14 +2,17 @@
 import { getCollection } from "astro:content";
 import { format } from "date-fns";
 import { publishedAtFormat } from "../globals/published-at-format";
-import { sortPostsByPublishedAt } from "../utils/content.helpers";
+import {
+  createFilterPostsByLang,
+  sortPostsByPublishedAt,
+} from "../utils/content.helpers";
 import PostListItem from "./PostListItem.astro";
 import StandOut from "./ui/StandOut.astro";
 
-const filteredPosts = await getCollection("posts", (post) => {
-  const [postLang] = post.id.split("/");
-  return Astro.currentLocale === postLang;
-});
+const filteredPosts = await getCollection(
+  "posts",
+  createFilterPostsByLang(Astro.currentLocale),
+);
 const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
 const pinnedPosts = sortedPosts.filter((post) => post.data.isPinned);

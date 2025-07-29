@@ -1,15 +1,18 @@
 import { getCollection } from "astro:content";
 import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
+import { languages } from "../../globals/i18n.ts";
 import { profile } from "../../globals/profile.ts";
-import { languages } from "../../i18n/ui.ts";
-import { sortPostsByPublishedAt } from "../../utils/content.helpers.ts";
+import {
+  createFilterPostsByLang,
+  sortPostsByPublishedAt,
+} from "../../utils/content.helpers.ts";
 
 export async function GET(ctx: APIContext) {
-  const filteredPosts = await getCollection("posts", (post) => {
-    const [postLang] = post.id.split("/");
-    return ctx.params.lang === postLang;
-  });
+  const filteredPosts = await getCollection(
+    "posts",
+    createFilterPostsByLang(ctx.params.lang),
+  );
   const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
   return rss({

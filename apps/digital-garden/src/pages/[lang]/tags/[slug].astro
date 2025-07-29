@@ -2,9 +2,10 @@
 import { getCollection } from "astro:content";
 import PostList from "../../../components/PostList.astro";
 import PostListItem from "../../../components/PostListItem.astro";
-import { languages } from "../../../i18n/ui";
+import { languages } from "../../../globals/i18n";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
+  createFilterPostsByLang,
   type PostModel,
   sortPostsByPublishedAt,
   type TagModel,
@@ -19,10 +20,7 @@ export async function getStaticPaths() {
   const sortedPosts = sortPostsByPublishedAt(allPosts);
 
   return languages.flatMap((lang) => {
-    const langPosts = sortedPosts.filter((post) => {
-      const [postLang] = post.id.split("/");
-      return lang === postLang;
-    });
+    const langPosts = sortedPosts.filter(createFilterPostsByLang(lang));
 
     return tags
       .map((tag) => {
