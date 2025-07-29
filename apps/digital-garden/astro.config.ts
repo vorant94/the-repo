@@ -19,7 +19,7 @@ import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
 import { defaultLang, languages } from "./src/i18n/ui.ts";
 
-const legacyBeforeI18nRedirects = {
+const legacyI18nRedirects = {
   "/": `/${defaultLang}/`,
   "/about/": `/${defaultLang}/about/`,
   "/rss.xml": `/${defaultLang}/rss.xml`,
@@ -72,7 +72,7 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
-  redirects: legacyBeforeI18nRedirects,
+  redirects: { ...legacyI18nRedirects },
   integrations: [
     sitemap({
       i18n: {
@@ -84,7 +84,7 @@ export default defineConfig({
           `/${defaultLang}/`,
           "/",
         );
-        if (maybeI18nRedirect in legacyBeforeI18nRedirects) {
+        if (maybeI18nRedirect in legacyI18nRedirects) {
           item.links ??= [];
           item.links.push({
             url: new URL(maybeI18nRedirect, "https://vorant94.dev").toString(),
