@@ -6,14 +6,18 @@ import { languages } from "../../i18n/ui.ts";
 import { sortPostsByPublishedAt } from "../../utils/content.helpers.ts";
 
 export async function GET(ctx: APIContext) {
-  const posts = sortPostsByPublishedAt(await getCollection("posts"));
+  const filteredPosts = await getCollection("posts", (post) => {
+    const [postLang] = post.id.split("/");
+    return ctx.params.lang === postLang && !post.data.isPinned;
+  });
+  const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
   return rss({
     title: profile.title,
     description: profile.description,
     // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
     site: ctx.site!.origin,
-    items: posts.map((post) => {
+    items: sortedPosts.map((post) => {
       const { title, description, publishedAt, tags } = post.data;
 
       const [lang, id] = post.id.split("/");
@@ -32,9 +36,7 @@ export async function GET(ctx: APIContext) {
 }
 
 export function getStaticPaths() {
-  const langs = Object.keys(languages);
-
-  return langs.map((lang) => ({
+  return languages.map((lang) => ({
     params: { lang },
   }));
 }

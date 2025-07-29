@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import PostList from "../../../components/PostList.astro";
 import PostListItem from "../../../components/PostListItem.astro";
-import { defaultLang } from "../../../i18n/ui";
+import { languages } from "../../../i18n/ui";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
   type PostModel,
@@ -11,26 +11,39 @@ import {
 } from "../../../utils/content.helpers";
 
 export async function getStaticPaths() {
-  const [tags, posts] = await Promise.all([
+  const [tags, allPosts] = await Promise.all([
     getCollection("tags"),
     getCollection("posts"),
   ]);
 
-  return await Promise.all(
-    tags.map((tag) => {
-      const tagPosts = sortPostsByPublishedAt(
-        posts.filter(({ data }) => data.tags.find(({ id }) => id === tag.id)),
-      );
+  const sortedPosts = sortPostsByPublishedAt(allPosts);
 
-      return {
-        params: { slug: tag.id, lang: defaultLang },
-        props: {
-          tag,
-          tagPosts,
-        },
-      };
-    }),
-  );
+  return languages.flatMap((lang) => {
+    const langPosts = sortedPosts.filter((post) => {
+      const [postLang] = post.id.split("/");
+      return lang === postLang;
+    });
+
+    return tags
+      .map((tag) => {
+        const tagLangPosts = langPosts.filter(({ data }) =>
+          data.tags.find(({ id }) => id === tag.id),
+        );
+
+        if (tagLangPosts.length === 0) {
+          return null;
+        }
+
+        return {
+          params: { slug: tag.id, lang },
+          props: {
+            tag,
+            tagPosts: tagLangPosts,
+          },
+        };
+      })
+      .filter(Boolean);
+  });
 }
 
 export interface Props {

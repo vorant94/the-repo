@@ -6,9 +6,7 @@ import { languages } from "../../i18n/ui";
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
 
 export function getStaticPaths() {
-  const langs = Object.keys(languages);
-
-  return langs.map((lang) => ({
+  return languages.map((lang) => ({
     params: { lang },
   }));
 }

@@ -1,3 +1,9 @@
-export const defaultLang = "en";
+export const languages = ["en", "ru"] as const;
+export type Language = (typeof languages)[number];
 
-export const languages = { en: "en-US" } as const;
+export const defaultLang = "en" satisfies Language;
+
+export const languageToLocale = {
+  en: "en-US",
+  ru: "ru-RU",
+} as const satisfies Record<Language, string>;

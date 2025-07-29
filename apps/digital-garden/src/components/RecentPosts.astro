@@ -6,10 +6,10 @@ import PostTiledList from "./PostTiledList.astro";
 import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
 import PostTiledListItem from "./PostTiledListItem.astro";
 
-const filteredPosts = await getCollection(
-  "posts",
-  (post) => !post.data.isPinned,
-);
+const filteredPosts = await getCollection("posts", (post) => {
+  const [postLang] = post.id.split("/");
+  return Astro.currentLocale === postLang && !post.data.isPinned;
+});
 const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 const recentPosts = sortedPosts.slice(0, 3);
 ---

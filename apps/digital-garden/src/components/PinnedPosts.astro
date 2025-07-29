@@ -6,7 +6,11 @@ import { sortPostsByPublishedAt } from "../utils/content.helpers";
 import PostListItem from "./PostListItem.astro";
 import StandOut from "./ui/StandOut.astro";
 
-const sortedPosts = sortPostsByPublishedAt(await getCollection("posts"));
+const filteredPosts = await getCollection("posts", (post) => {
+  const [postLang] = post.id.split("/");
+  return Astro.currentLocale === postLang;
+});
+const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
 const pinnedPosts = sortedPosts.filter((post) => post.data.isPinned);
 ---

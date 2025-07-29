@@ -17,7 +17,7 @@ import rehypeSlug from "rehype-slug";
 import tailwindcss from "tailwindcss";
 import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
-import { defaultLang, languages } from "./src/i18n/ui.ts";
+import { defaultLang, languages, languageToLocale } from "./src/i18n/ui.ts";
 
 const legacyI18nRedirects = {
   "/": `/${defaultLang}/`,
@@ -66,7 +66,7 @@ export default defineConfig({
       : "http://localhost:4321",
   prefetch: true,
   i18n: {
-    locales: Object.keys(languages),
+    locales: [...languages],
     defaultLocale: defaultLang,
     routing: {
       prefixDefaultLocale: true,
@@ -77,7 +77,7 @@ export default defineConfig({
     sitemap({
       i18n: {
         defaultLocale: defaultLang,
-        locales: languages,
+        locales: languageToLocale,
       },
       serialize(item) {
         const maybeI18nRedirect = new URL(item.url).pathname.replace(
