@@ -11,24 +11,26 @@ const sortedPosts = sortPostsByPublishedAt(await getCollection("posts"));
 const pinnedPosts = sortedPosts.filter((post) => post.data.isPinned);
 ---
 
-<menu>
-	{pinnedPosts.map((post) => (
-		<StandOut class="flex-col">
-			<span class="flex items-center gap-3">
-				<span class="-scale-x-100">📌</span>
+{pinnedPosts.length > 0 && (
+  <menu>
+    {pinnedPosts.map((post) => (
+      <StandOut class="flex-col">
+        <span class="flex items-center gap-3">
+          <span class="-scale-x-100">📌</span>
 
-				<PostListItem
-					post={post}
-					class="!py-0 flex-1"
-				>
-					<Fragment slot="left">
-						{post.data.title}
-					</Fragment>
-					<Fragment slot="right">
-						{format(post.data.publishedAt, publishedAtFormat.short)}
-					</Fragment>
-				</PostListItem>
-			</span>
-		</StandOut>
-	))}
-</menu>
+          <PostListItem
+            post={post}
+            class="!py-0 flex-1"
+          >
+            <Fragment slot="left">
+              {post.data.title}
+            </Fragment>
+            <Fragment slot="right">
+              {format(post.data.publishedAt, publishedAtFormat.short)}
+            </Fragment>
+          </PostListItem>
+        </span>
+      </StandOut>
+    ))}
+  </menu>
+)}
