@@ -8,7 +8,7 @@ import { sortPostsByPublishedAt } from "../../utils/content.helpers.ts";
 export async function GET(ctx: APIContext) {
   const filteredPosts = await getCollection("posts", (post) => {
     const [postLang] = post.id.split("/");
-    return ctx.params.lang === postLang && !post.data.isPinned;
+    return ctx.params.lang === postLang;
   });
   const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
