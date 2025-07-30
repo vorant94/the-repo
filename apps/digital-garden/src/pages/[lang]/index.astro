@@ -1,5 +1,5 @@
 ---
-import Intro from "../../components/Intro.astro";
+import Hero from "../../components/Hero.astro";
 import PinnedPosts from "../../components/PinnedPosts.astro";
 import RecentPosts from "../../components/RecentPosts.astro";
 import { languages } from "../../globals/i18n";
@@ -15,7 +15,7 @@ export function getStaticPaths() {
 <DefaultLayout>
 	<PinnedPosts/>
 
-	<Intro/>
+	<Hero/>
 
 	<RecentPosts />
 </DefaultLayout>

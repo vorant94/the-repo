@@ -1,9 +1,12 @@
 ---
-import introLogo from "../assets/intro-logo.webp";
-import introLogoDark from "../assets/intro-logo-dark.webp";
+import heroLogo from "../assets/hero-logo.webp";
+import heroLogoDark from "../assets/hero-logo-dark.webp";
+import { createTranslate } from "../utils/i18n.helpers";
 import StandOut from "./ui/StandOut.astro";
 import Text from "./ui/Text.astro";
 import ThemedImage from "./ui/ThemedImage.astro";
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
 <StandOut
@@ -12,29 +15,28 @@ import ThemedImage from "./ui/ThemedImage.astro";
 >
 	<div class="hidden shrink-0 lg:block">
 		<ThemedImage
-			src={introLogo}
-			srcDark={introLogoDark}
+			src={heroLogo}
+			srcDark={heroLogoDark}
 			alt="Logo"
 			width="80"
 		/>
 	</div>
 
 	<div class="flex flex-col gap-2">
-		<Text as="strong">Hi, there, I'm Mordechai! 👋</Text>
+		<Text as="strong">{t('hero.title')}</Text>
 		<Text
 			as="span"
 			class="font-light text-sm"
 		>
-			Welcome to my digital garden, here I write about all sorts of things
-			(mostly about technologies, a little bit on gaming, traveling and
-			self-reflecting)
+      {t('hero.text.first-paragraph')}
 		</Text>
 		<Text
 			as="span"
 			class="font-light text-sm"
 		>
-			Make yourself at home, take a sit and grab something to
-			<span class="line-through">drink</span> read
+      {t("hero.text.second-paragraph.before-strikethrough")}
+			<span class="line-through">{t("hero.text.second-paragraph.strikethrough")}</span>
+      {t("hero.text.second-paragraph.after-strikethrough")}
 		</Text>
 	</div>
 </StandOut>
