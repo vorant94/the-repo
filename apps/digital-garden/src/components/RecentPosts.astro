@@ -5,6 +5,7 @@ import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
 } from "../utils/content.helpers";
+import { createTranslate } from "../utils/i18n.helpers";
 import PostTiledList from "./PostTiledList.astro";
 import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
 import PostTiledListItem from "./PostTiledListItem.astro";
@@ -15,14 +16,16 @@ const filteredPosts = await getCollection(
 );
 const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 const recentPosts = sortedPosts.slice(0, 3);
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
-<PostTiledList title={"Recent Posts"}>
+<PostTiledList title={t("recent-posts.title")}>
 	{recentPosts.map((post) => (
 		<PostTiledListItem post={post} />
 	))}
 
 	<PostTiledListEmptyItem href={getRelativeLocaleUrl(Astro.currentLocale!, "/posts")}>
-		See all
+    {t("recent-posts.see-all")}
 	</PostTiledListEmptyItem>
 </PostTiledList>
