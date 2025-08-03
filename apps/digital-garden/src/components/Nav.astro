@@ -1,13 +1,24 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { createTranslate } from "../utils/i18n.helpers";
 import Header from "./Header.astro";
 import NavLink from "./NavLink.astro";
 import Button from "./ui/Button.astro";
 import Icon from "./ui/Icon.astro";
 
+const t = createTranslate(Astro.currentLocale);
+
 const navLinksMeta = [
-  { label: "👨 About", url: "/about" },
-  { label: "📒 Posts", url: "/posts" },
+  {
+    label: t("nav.about"),
+    // biome-ignore lint/style/noNonNullAssertion: lint/style/noNonNullAssertion: we know Astro.currentLocale is defined since site is present in config
+    url: getRelativeLocaleUrl(Astro.currentLocale!, "/about"),
+  },
+  {
+    label: t("nav.posts"),
+    // biome-ignore lint/style/noNonNullAssertion: lint/style/noNonNullAssertion: we know Astro.currentLocale is defined since site is present in config
+    url: getRelativeLocaleUrl(Astro.currentLocale!, "/posts"),
+  },
 ] as const;
 ---
 
@@ -18,7 +29,7 @@ const navLinksMeta = [
 	>
 		<menu class="flex gap-3 md:gap-4 lg:gap-6">
 			{navLinksMeta.map((navLink) => (
-				<NavLink href={getRelativeLocaleUrl(Astro.currentLocale!, navLink.url)}>
+				<NavLink href={navLink.url}>
 					{navLink.label}
 				</NavLink>
 			))}

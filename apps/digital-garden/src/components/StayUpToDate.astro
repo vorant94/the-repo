@@ -1,27 +1,30 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { createTranslate } from "../utils/i18n.helpers";
 import Divider from "./ui/Divider.astro";
 import Link from "./ui/Link.astro";
 import Text from "./ui/Text.astro";
 import Title from "./ui/Title.astro";
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
 <div class="flex flex-col gap-2">
 	<Divider>
-			<Title as="h3">Stay up to date</Title>
+			<Title as="h3">{t('stay-up-to-date.title')}</Title>
 	</Divider>
 
 	<Text as="span">
-		If you wish to be up to date with new posts you can{" "}
+    {t("stay-up-to-date.text.first-paragraph.before-rss-link")}
 		<Link
 			href={getRelativeLocaleUrl(Astro.currentLocale!, "/rss.xml")}
 			target="_blank"
 		>
-			subscribe with RSS
+      {t("stay-up-to-date.text.first-paragraph.rss-link")}
 		</Link>
 	</Text>
 
 	<Text as="span">
-		There will also be an email newsletter somewhere in the future
+    {t("stay-up-to-date.text.second-paragraph")}
 	</Text>
 </div>

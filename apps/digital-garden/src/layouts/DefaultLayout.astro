@@ -15,7 +15,7 @@ export interface Props extends Omit<SeoProps, "fullTitle"> {
 
 const { title, description, image, type } = Astro.props;
 
-const fullTitle = getFullTitle(title);
+const fullTitle = getFullTitle(Astro.currentLocale, title);
 ---
 
 <!doctype html>

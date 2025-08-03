@@ -2,6 +2,7 @@
 import { getImage } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import { profile } from "../globals/profile";
+import { createTranslate } from "../utils/i18n.helpers";
 
 export interface Props {
   fullTitle: string;
@@ -10,9 +11,11 @@ export interface Props {
   type?: string;
 }
 
+const t = createTranslate(Astro.currentLocale);
+
 const {
   fullTitle,
-  description = profile.description,
+  description = t(profile.description),
   image,
   type = "website",
 } = Astro.props;

@@ -1,8 +1,11 @@
 ---
+import { createTranslate } from "../utils/i18n.helpers";
 import ButtonLink from "./ui/ButtonLink.astro";
 import Divider from "./ui/Divider.astro";
 import Icon from "./ui/Icon.astro";
 import Title from "./ui/Title.astro";
+
+const t = createTranslate(Astro.currentLocale);
 
 const socialLinksMeta = [
   {
@@ -40,7 +43,7 @@ const socialLinksMeta = [
 
 <div class="flex flex-col gap-2">
 	<Divider>
-		<Title as="h3">How to reach me</Title>
+		<Title as="h3">{t("social-links.title")}</Title>
 	</Divider>
 	<menu class="mx-auto grid grid-cols-3 gap-5">
 		{socialLinksMeta.map((socialLink) => (

@@ -10,6 +10,7 @@ import {
   sortPostsByPublishedAt,
   type TagModel,
 } from "../../../utils/content.helpers";
+import { createTranslate } from "../../../utils/i18n.helpers";
 
 export async function getStaticPaths() {
   const [tags, allPosts] = await Promise.all([
@@ -50,9 +51,11 @@ export interface Props {
 }
 
 const { tag, tagPosts } = Astro.props;
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
-<DefaultLayout title={`${tag.id} posts`}>
+<DefaultLayout title={`${tag.id} ${t("tags.title")}`}>
 	<PostList>
 		<span
 			transition:name={`tag.${tag.data.id}`}

@@ -47,6 +47,9 @@ const tags = defineCollection({
       "psychology",
       "war",
       "self-reflection",
+      "games",
+      "mmorpg",
+      "rpg",
     ].map((tag) => ({ id: tag }));
   },
   schema: z.object({

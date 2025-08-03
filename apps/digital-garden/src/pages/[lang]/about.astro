@@ -4,15 +4,18 @@ import SocialLinks from "../../components/SocialLinks.astro";
 import StayUpToDate from "../../components/StayUpToDate.astro";
 import { languages } from "../../globals/i18n";
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import { createTranslate } from "../../utils/i18n.helpers";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({
     params: { lang },
   }));
 }
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
-<DefaultLayout title="About">
+<DefaultLayout title={t("about.title")}>
 	<Hero />
 
 	<StayUpToDate />

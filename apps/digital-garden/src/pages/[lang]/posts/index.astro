@@ -10,6 +10,7 @@ import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
 } from "../../../utils/content.helpers";
+import { createTranslate } from "../../../utils/i18n.helpers";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({
@@ -27,9 +28,11 @@ const groupedPosts = Object.groupBy(sortedPosts, (post) =>
 );
 
 const sortedPostYears = Object.keys(groupedPosts).reverse();
+
+const t = createTranslate(Astro.currentLocale);
 ---
 
-<DefaultLayout title="Posts">
+<DefaultLayout title={t("posts.title")}>
 	{sortedPostYears.map((year) => (
 		<PostList>
 			<Fragment slot="title">

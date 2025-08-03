@@ -7,17 +7,20 @@ import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
 } from "../../utils/content.helpers.ts";
+import { createTranslate } from "../../utils/i18n.helpers.ts";
 
 export async function GET(ctx: APIContext) {
   const filteredPosts = await getCollection(
     "posts",
-    createFilterPostsByLang(ctx.params.lang),
+    createFilterPostsByLang(ctx.currentLocale),
   );
   const sortedPosts = sortPostsByPublishedAt(filteredPosts);
 
+  const t = createTranslate(ctx.currentLocale);
+
   return rss({
-    title: profile.title,
-    description: profile.description,
+    title: t(profile.title),
+    description: t(profile.description),
     // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
     site: ctx.site!.origin,
     items: sortedPosts.map((post) => {

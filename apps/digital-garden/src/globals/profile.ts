@@ -1,4 +1,6 @@
+import type { DictionaryKey } from "./i18n.ts";
+
 export const profile = {
-  title: "vorant94's Digital Garden",
-  description: "My personal piece of the Internet",
-} as const;
+  title: "profile.title",
+  description: "profile.description",
+} as const satisfies Record<string, DictionaryKey>;
