@@ -10,6 +10,7 @@ const basePost = z.object({
   related: z.array(reference("posts")).nullish(),
   isPinned: z.boolean().nullish().default(false),
   codeUrl: z.string().url().nullish(),
+  isDraft: z.boolean().nullish().default(false),
 });
 
 const posts = defineCollection({
@@ -50,6 +51,7 @@ const tags = defineCollection({
       "games",
       "mmorpg",
       "rpg",
+      "tcg",
     ].map((tag) => ({ id: tag }));
   },
   schema: z.object({

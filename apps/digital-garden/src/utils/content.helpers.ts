@@ -22,8 +22,12 @@ export function createFilterPostsByLang(
 ): (post: PostModel) => boolean {
   return (post) => {
     const [postLang] = post.id.split("/");
-    return lang === postLang;
+    return filterOutDraftPosts(post) && lang === postLang;
   };
+}
+
+export function filterOutDraftPosts(post: PostModel): boolean {
+  return import.meta.env.PROD ? !post.data.isDraft : true;
 }
 
 export function isPostWithCover(post: PostModel): post is PostWithCoverModel {

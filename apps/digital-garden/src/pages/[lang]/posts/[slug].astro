@@ -9,11 +9,14 @@ import ThemedImage from "../../../components/ui/ThemedImage.astro";
 import Title from "../../../components/ui/Title.astro";
 import { publishedAtFormat } from "../../../globals/published-at-format";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
-import type { PostModel } from "../../../utils/content.helpers";
-import { isPostWithCover } from "../../../utils/content.helpers";
+import {
+  filterOutDraftPosts,
+  isPostWithCover,
+  type PostModel,
+} from "../../../utils/content.helpers";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts");
+  const posts = await getCollection("posts", filterOutDraftPosts);
 
   return posts.map((post) => {
     const [lang, id] = post.id.split("/");

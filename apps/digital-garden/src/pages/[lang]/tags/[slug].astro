@@ -6,6 +6,7 @@ import { languages } from "../../../globals/i18n";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
   createFilterPostsByLang,
+  filterOutDraftPosts,
   type PostModel,
   sortPostsByPublishedAt,
   type TagModel,
@@ -15,7 +16,7 @@ import { createTranslate } from "../../../utils/i18n.helpers";
 export async function getStaticPaths() {
   const [tags, allPosts] = await Promise.all([
     getCollection("tags"),
-    getCollection("posts"),
+    getCollection("posts", filterOutDraftPosts),
   ]);
 
   const sortedPosts = sortPostsByPublishedAt(allPosts);
