@@ -8,3 +8,69 @@ publishedAt: 2024-08-05
 isDraft: true
 ---
 
+- async gameplay
+  - different factions
+  - different races
+    - lack of immersion on race theme
+      - great hunt for taurens
+  - different classes
+    - lack of immersion on class basis
+      - why should tauren druid fight night elf druid if we are all children of cenarius etc.?
+      - why the heck warlocks are even allowed in both factions anyway?
+- fixed points in time
+  - first 6-slot bag drop in starting village
+  - entering your faction capital for the first time
+  - getting your first gold
+  - starting to fill in "advanced" armor slots (shoulders, rings, helmet, etc.)
+  - saving up money and buying a first mount at lvl 40
+- multiplayer
+  - grouping up with others during single player activities (quests)
+  - being forced to group up for group-only activities (dungeons, quests)
+- addons
+  - not all 3-party solutions should be integrated into base game
+    - having a built-in quest helper from the get go alters the content of the quests themselves
+  - business model for 3-rd party tools shouldn't be direct payment or tons of ads
+    - publishers should financially and technically support such tools
+- questing
+  - quest topics flowing from one zone to another
+    - the great hunt (abandoned, replaced with just hunting)
+    - hunting (barrens, ashenvale)
+    - venture co (both as protecting environment in mulgore and stonetalon mountains and as goblin corporate war)
+    - fighting local wildlife (mulgore, barrens, stonetalone mountains (?), ashenvale)
+    - alliance horde war (barrens-ish, stonetalon mountains, ashenvale)
+    - grimtotem taurens (stonetalon mountains, thousand needles)
+    - burning blade (durotar, barrens, ashenvale (abandoned while ashenvale does have a lot of demons))
+    - twilight's hammer (ashenvale)
+    - numerous themes across dungeons
+  - quests that send you exploring across the world (venture co of stonetalon mountains)
+  - tedious runbacks and bulking quests as a solution to it but loosing quests context as a tradeoff
+  - existing quest types
+    - timer quests
+    - kill N amount of creatures, including
+      - kill 1 boss
+      - kill 1 wandering rare mob (optionally elite)
+    - bring N amount of items, including (optionally elite)
+      - bring 1 trophy from a boss (optionally elite)
+      - bring 1 trophy from wandering rare mob (optionally elite)
+    - escort (barrens, stonetalon mountains, ashenvale)
+    - defence (barrens, stonetalon mountains, ashenvale x2, thousand needles)
+    - mailman
+      - transfer to next zone to level up
+      - quests that are picked up from items
+  - class quests
+  - profession quests
+  - lacking quest types
+    - unlocking game mechanics
+- "redundant" systems
+  - xp-based progression (level + class skills) vs action-based progression (professions)
+    - get rid off two different systems and progress class skills based on character activity (so no balance is advanced if player uses feral build)
+  - class trainers vs self-taught skills
+  - soulbounded items are just dumb
+    - makes you avoid spending gold on a gear while leveling
+    - forces you to farm dungeons / raids for BiS gear instead of relying on AH
+- achievements
+  - when you give me a list it actually limits me as a player to this list. like is it all there is to it?
+  - its cool to see your "statistics" (like in minecraft there is a lack of track of discovered biomes), but it shouldn't be something goal defining
+- gold/silver/cooper vs just gold
+  - embrace "redundant" systems instead of removing them
+    - more class quests if buying skills from trainer is boring
