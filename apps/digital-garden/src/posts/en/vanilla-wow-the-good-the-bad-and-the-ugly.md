@@ -17,6 +17,9 @@ isDraft: true
     - lack of immersion on class basis
       - why should tauren druid fight night elf druid if we are all children of cenarius etc.?
       - why the heck warlocks are even allowed in both factions anyway?
+      - why the heck undead can be priest? shadow one is fine, but holy...
+      - there should be two different shaman specializations, one for Dreanor and one for Azeroth, since these branches of shamanism developed separately
+      - why the heck travel form of tauren druid is cheetah? the spell has a hoof icon, passive to decrease fall damage applied to cat form doesn't apply to travel form although cheetahs are cats
 - fixed points in time
   - first 6-slot bag drop in starting village
   - entering your faction capital for the first time
@@ -32,6 +35,9 @@ isDraft: true
   - business model for 3-rd party tools shouldn't be direct payment or tons of ads
     - publishers should financially and technically support such tools
 - questing
+  - bad payoff quest lines
+    - venture co in stonetalon mountains
+    - racing thing of thousand needles
   - quest topics flowing from one zone to another
     - the great hunt (abandoned, replaced with just hunting)
     - hunting (barrens, ashenvale)
@@ -42,9 +48,11 @@ isDraft: true
     - burning blade (durotar, barrens, ashenvale (abandoned while ashenvale does have a lot of demons))
     - twilight's hammer (ashenvale)
     - numerous themes across dungeons
-  - quests that send you exploring across the world (venture co of stonetalon mountains)
+  - quests that send you exploring across the world (venture co of stonetalon mountains, racing thing of thousand needles)
   - tedious runbacks and bulking quests as a solution to it but loosing quests context as a tradeoff
   - existing quest types
+    - quests across multiple locations
+      - re-actualizing completed zones
     - timer quests
     - kill N amount of creatures, including
       - kill 1 boss
@@ -74,3 +82,7 @@ isDraft: true
 - gold/silver/cooper vs just gold
   - embrace "redundant" systems instead of removing them
     - more class quests if buying skills from trainer is boring
+- wtf with ashenvale
+  - why worgen cave
+  - why emerald dream altar
+  - why demons
