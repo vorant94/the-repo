@@ -1,6 +1,6 @@
 import path from "node:path";
 import process from "node:process";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 import { i18nextHMRPlugin } from "i18next-hmr/vite";
@@ -35,7 +35,11 @@ export default defineConfig({
     },
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: ["babel-plugin-react-compiler"],
+      },
+    }),
     svgr(),
     dotenvConfig.NODE_ENV !== "production" &&
       i18nextHMRPlugin({

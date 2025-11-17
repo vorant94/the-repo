@@ -1,6 +1,6 @@
 import { usePrevious } from "@mantine/hooks";
 import { useLiveQuery } from "dexie-react-hooks";
-import { memo, type PropsWithChildren, useEffect } from "react";
+import { type FC, type PropsWithChildren, useEffect } from "react";
 import { useLocation } from "react-router";
 import { findCategories } from "../api/category.table.ts";
 import { findSubscriptions } from "../api/subscription.table.ts";
@@ -8,7 +8,7 @@ import { rootRoute } from "../lib/route.ts";
 import { useDefaultLayout } from "../ui/default.layout.tsx";
 import { useStore, useUpsertSubscription } from "./hooks.ts";
 
-export const StoreProvider = memo(({ children }: PropsWithChildren) => {
+export const StoreProvider: FC<PropsWithChildren> = ({ children }) => {
   // sync subscriptions from indexeddb to store
   const subscriptions = useLiveQuery(() => findSubscriptions(), [], []);
   useEffect(() => {
@@ -82,4 +82,4 @@ export const StoreProvider = memo(({ children }: PropsWithChildren) => {
   ]);
 
   return <>{children}</>;
-});
+};

@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { useMemo } from "react";
 import {
   getSubscriptionNextPaymentAt,
   type SubscriptionWithNextPaymentAt,
@@ -13,25 +12,18 @@ export function useUpcomingPayments(): Array<SubscriptionWithNextPaymentAt> {
   const isLg = useBreakpoint("lg");
   const isXl = useBreakpoint("xl");
 
-  const filteredAndSorted = useMemo(
-    () =>
-      subscriptions
-        .map((subscription) => ({
-          ...subscription,
-          nextPaymentAt: getSubscriptionNextPaymentAt(subscription),
-        }))
-        .filter(
-          (subscription): subscription is SubscriptionWithNextPaymentAt =>
-            !!subscription.nextPaymentAt,
-        )
-        .toSorted((a, b) =>
-          dayjs(a.nextPaymentAt).isBefore(b.nextPaymentAt) ? -1 : 1,
-        ),
-    [subscriptions],
-  );
+  const filteredAndSorted = subscriptions
+    .map((subscription) => ({
+      ...subscription,
+      nextPaymentAt: getSubscriptionNextPaymentAt(subscription),
+    }))
+    .filter(
+      (subscription): subscription is SubscriptionWithNextPaymentAt =>
+        !!subscription.nextPaymentAt,
+    )
+    .toSorted((a, b) =>
+      dayjs(a.nextPaymentAt).isBefore(b.nextPaymentAt) ? -1 : 1,
+    );
 
-  return useMemo(
-    () => filteredAndSorted.slice(0, isXl ? 4 : isLg ? 3 : 2),
-    [filteredAndSorted, isXl, isLg],
-  );
+  return filteredAndSorted.slice(0, isXl ? 4 : isLg ? 3 : 2);
 }

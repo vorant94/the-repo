@@ -16,7 +16,7 @@ import {
 } from "./features/i18n/model/use-language.ts";
 import { db } from "./shared/lib/db.ts";
 import "./style.css";
-import { HelmetProvider } from "react-helmet-async";
+import { HelmetProvider } from "@dr.pogodin/react-helmet";
 
 if (import.meta.env.DEV) {
   window.addEventListener("unhandledrejection", ({ reason }) => {

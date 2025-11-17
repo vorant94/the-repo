@@ -2,7 +2,7 @@ import { ActionIcon, Card, Divider, Text, Title } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { cn } from "cn";
 import dayjs from "dayjs";
-import { memo, useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Bar,
@@ -26,61 +26,48 @@ import { Icon } from "../../../shared/ui/icon.tsx";
 import { useBreakpoint } from "../../../shared/ui/use-breakpoint.tsx";
 import { ExpensesPerMonthLegendContent } from "./expenses-per-month-legend-content.tsx";
 
-export const ExpensesPerMonth = memo(() => {
+export const ExpensesPerMonth = () => {
   const [monthDate, setMonthDate] = useState(startOfMonth);
-  const monthName = useMemo(() => dayjs(monthDate).format("MMMM"), [monthDate]);
-  const goPreviousMonth = useCallback(
-    () => setMonthDate(dayjs(monthDate).subtract(1, "month").toDate()),
-    [monthDate],
-  );
-  const goNextMonth = useCallback(
-    () => setMonthDate(dayjs(monthDate).add(1, "month").toDate()),
-    [monthDate],
-  );
+  const monthName = dayjs(monthDate).format("MMMM");
+  const goPreviousMonth = () =>
+    setMonthDate(dayjs(monthDate).subtract(1, "month").toDate());
+  const goNextMonth = () =>
+    setMonthDate(dayjs(monthDate).add(1, "month").toDate());
 
   const subscriptions = useSubscriptions();
-  const aggregatedByCategory = useMemo(() => {
-    return aggregateSubscriptionsByCategory(subscriptions, (subscription) =>
+  const aggregatedByCategory = aggregateSubscriptionsByCategory(
+    subscriptions,
+    (subscription) =>
       calculateSubscriptionPriceForMonth(subscription, monthDate),
-    );
-  }, [subscriptions, monthDate]);
-  const aggregatedByCategoryPerMonth = useMemo(() => {
-    return aggregatedByCategory.reduce<SubscriptionsAggregatedByCategoryPerMonth>(
+  );
+  const aggregatedByCategoryPerMonth =
+    aggregatedByCategory.reduce<SubscriptionsAggregatedByCategoryPerMonth>(
       (prev, curr) => {
         prev[curr.category.id] = curr;
         return prev;
       },
       {},
     );
-  }, [aggregatedByCategory]);
 
-  const calculateRadius: (index: number) => [number, number, number, number] =
-    useCallback(
-      (index) => {
-        return [
-          index === 0 ? 4 : 0,
-          index === aggregatedByCategory.length - 1 ? 4 : 0,
-          index === aggregatedByCategory.length - 1 ? 4 : 0,
-          index === 0 ? 4 : 0,
-        ];
-      },
-      [aggregatedByCategory],
-    );
+  const calculateRadius: (index: number) => [number, number, number, number] = (
+    index,
+  ) => {
+    return [
+      index === 0 ? 4 : 0,
+      index === aggregatedByCategory.length - 1 ? 4 : 0,
+      index === aggregatedByCategory.length - 1 ? 4 : 0,
+      index === 0 ? 4 : 0,
+    ];
+  };
 
-  const totalExpenses = useMemo(
-    () =>
-      aggregatedByCategory.reduce(
-        (prev, { totalExpenses }) => prev + totalExpenses,
-        0,
-      ),
-    [aggregatedByCategory],
+  const totalExpenses = aggregatedByCategory.reduce(
+    (prev, { totalExpenses }) => prev + totalExpenses,
+    0,
   );
-  const subscriptionsAmount = useMemo(() => {
-    return aggregatedByCategory.reduce(
-      (prev, { subscriptions }) => prev + subscriptions.length,
-      0,
-    );
-  }, [aggregatedByCategory]);
+  const subscriptionsAmount = aggregatedByCategory.reduce(
+    (prev, { subscriptions }) => prev + subscriptions.length,
+    0,
+  );
 
   const { t } = useTranslation();
 
@@ -187,7 +174,7 @@ export const ExpensesPerMonth = memo(() => {
       </div>
     </Card>
   );
-});
+};
 
 type SubscriptionsAggregatedByCategoryPerMonth = Record<
   CategoryModel["id"],

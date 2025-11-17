@@ -41,11 +41,14 @@ export function aggregateSubscriptionsByCategory(
   );
 }
 
-export interface SubscriptionsAggregatedByCategory {
+// needs to be type specifically type and not interface because of stupid typescript
+// error when i try to pass array of it to Pie recharts component as data
+// otherwise it throws `Index signature for type string is missing in type SubscriptionsAggregatedByCategory`
+export type SubscriptionsAggregatedByCategory = {
   totalExpenses: number;
   subscriptions: Array<SubscriptionModel>;
   category: CategoryModel;
-}
+};
 
 export const noCategoryPlaceholder = {
   id: -1,

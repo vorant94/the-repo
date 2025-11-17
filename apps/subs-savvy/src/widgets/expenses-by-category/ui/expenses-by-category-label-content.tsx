@@ -1,27 +1,21 @@
-import { useMemo } from "react";
+import type { FC } from "react";
 import { useTranslation } from "react-i18next";
 import type { LabelProps } from "recharts";
-import type { PolarViewBox } from "recharts/types/util/types";
+import type { PolarViewBoxRequired } from "recharts/types/util/types";
 import {
   noCategoryPlaceholder,
   type SubscriptionsAggregatedByCategory,
 } from "../../../entities/subscription/lib/aggregate-subscriptions-by-category.ts";
 import { useCurrencyFormatter } from "../../../features/i18n/model/use-currency-formatter.ts";
 
-export const ExpensesByCategoryLabelContent = ({
-  viewBox,
-  aggregatedSubscriptions,
-  activeIndex,
-}: ExpensesByCategoryLabelContentPros) => {
-  const { cx, cy } = viewBox as PolarViewBox;
+export const ExpensesByCategoryLabelContent: FC<
+  ExpensesByCategoryLabelContentProps
+> = ({ viewBox, aggregatedSubscriptions, activeIndex }) => {
+  const { cx, cy } = viewBox as PolarViewBoxRequired;
 
-  const totalExpenses = useMemo(
-    () =>
-      aggregatedSubscriptions.reduce(
-        (prev, { totalExpenses }) => prev + totalExpenses,
-        0,
-      ),
-    [aggregatedSubscriptions],
+  const totalExpenses = aggregatedSubscriptions.reduce(
+    (prev, { totalExpenses }) => prev + totalExpenses,
+    0,
   );
 
   const { t } = useTranslation();
@@ -60,7 +54,7 @@ export const ExpensesByCategoryLabelContent = ({
   );
 };
 
-export interface ExpensesByCategoryLabelContentPros extends LabelProps {
+export interface ExpensesByCategoryLabelContentProps extends LabelProps {
   activeIndex: number;
   aggregatedSubscriptions: Array<SubscriptionsAggregatedByCategory>;
 }

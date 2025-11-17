@@ -1,6 +1,6 @@
 import { Button, Stepper } from "@mantine/core";
 import { cn } from "cn";
-import { memo, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useImportRecovery, useStore } from "../../../shared/store/hooks.ts";
 import type { ImportRecoveryStage } from "../../../shared/store/types.ts";
@@ -8,23 +8,18 @@ import { ImportRecoveryDropZone } from "./import-recovery-drop-zone.tsx";
 import { InsertCategoriesTable } from "./insert-categories-table.tsx";
 import { InsertSubscriptionsTable } from "./insert-subscriptions-table.tsx";
 
-export const ImportRecovery = memo(() => {
+export const ImportRecovery = () => {
   const { importStage, subscriptionsToImport, categoriesToImport } =
     useImportRecovery();
 
   const [subscriptionsFormId, setSubscriptionsFormId] = useState("");
-  const updateSubscriptionsFormId: (ref: HTMLFormElement | null) => void =
-    useCallback(
-      (ref) => setSubscriptionsFormId(ref?.getAttribute("id") ?? ""),
-      [],
-    );
+  const updateSubscriptionsFormId: (ref: HTMLFormElement | null) => void = (
+    ref,
+  ) => setSubscriptionsFormId(ref?.getAttribute("id") ?? "");
 
   const [categoriesFormId, setCategoriesFormId] = useState("");
-  const updateCategoriesFormId: (ref: HTMLFormElement | null) => void =
-    useCallback(
-      (ref) => setCategoriesFormId(ref?.getAttribute("id") ?? ""),
-      [],
-    );
+  const updateCategoriesFormId: (ref: HTMLFormElement | null) => void = (ref) =>
+    setCategoriesFormId(ref?.getAttribute("id") ?? "");
 
   const [active, setActive] = useState(0);
   useEffect(() => setActive(stageToActive[importStage]), [importStage]);
@@ -78,7 +73,7 @@ export const ImportRecovery = memo(() => {
       <Stepper.Completed>completed/failed</Stepper.Completed>
     </Stepper>
   );
-});
+};
 
 const stageToActive = {
   "upload-recovery": 0,

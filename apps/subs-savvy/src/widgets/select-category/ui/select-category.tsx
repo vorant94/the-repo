@@ -7,7 +7,6 @@ import {
 } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
 import { cn } from "cn";
-import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useCategories,
@@ -16,21 +15,18 @@ import {
 } from "../../../shared/store/hooks.ts";
 import { Icon } from "../../../shared/ui/icon.tsx";
 
-export const SelectCategory = memo(() => {
+export const SelectCategory = () => {
   const categories = useCategories();
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
   const selectedCategory = useSelectedCategory();
-  const handleSelectCategory = useCallback(
-    (categoryId: string | null) => {
-      const { selectCategory, deselectCategory } = useStore.getState();
-      categoryId ? selectCategory(categoryId) : deselectCategory();
-      combobox.closeDropdown();
-    },
-    [combobox],
-  );
+  const handleSelectCategory = (categoryId: string | null) => {
+    const { selectCategory, deselectCategory } = useStore.getState();
+    categoryId ? selectCategory(categoryId) : deselectCategory();
+    combobox.closeDropdown();
+  };
 
   const { t } = useTranslation();
 
@@ -93,4 +89,4 @@ export const SelectCategory = memo(() => {
       </Combobox.Dropdown>
     </Combobox>
   );
-});
+};

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useCurrency } from "./use-currency.ts";
 import { useLanguage } from "./use-language.ts";
 
@@ -9,16 +8,8 @@ export function useCurrencyFormatter(
   },
 ): Intl.NumberFormat {
   const currency = useCurrency();
-  const options: Intl.NumberFormatOptions = useMemo(
-    () => ({ ...props, currency, style: "currency" }),
-    [props, currency],
-  );
-
   const language = useLanguage();
-  return useMemo(
-    () => new Intl.NumberFormat(language, options),
-    [language, options],
-  );
+  return Intl.NumberFormat(language, { ...props, currency, style: "currency" });
 }
 
 export type UseCurrencyFormatterProps = Omit<

@@ -1,10 +1,9 @@
+import { Helmet } from "@dr.pogodin/react-helmet";
 import {
   IconChartBar,
   IconCreditCard,
   IconDatabase,
 } from "@tabler/icons-react";
-import { memo, useMemo } from "react";
-import { Helmet, type HtmlProps } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 import { rootRoute } from "../../shared/lib/route.ts";
@@ -17,17 +16,12 @@ import { DefaultLayoutProvider } from "../../shared/ui/default.layout.tsx";
 import { Icon } from "../../shared/ui/icon.tsx";
 import { BreakpointsProvider } from "../../shared/ui/use-breakpoint.tsx";
 
-export const App = memo(() => {
+export const App = () => {
   const { i18n } = useTranslation();
-
-  const htmlAttributes: HtmlProps = useMemo(
-    () => ({ dir: i18n.dir(), lang: i18n.language }),
-    [i18n.dir, i18n.language],
-  );
 
   return (
     <>
-      <Helmet htmlAttributes={htmlAttributes} />
+      <Helmet htmlAttributes={{ dir: i18n.dir(), lang: i18n.language }} />
 
       <NavLinksProvider
         topNavLinks={topNavLinks}
@@ -43,7 +37,7 @@ export const App = memo(() => {
       </NavLinksProvider>
     </>
   );
-});
+};
 
 const topNavLinks = [
   {

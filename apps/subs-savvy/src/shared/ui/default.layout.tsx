@@ -9,7 +9,7 @@ import { useDisclosure, usePrevious } from "@mantine/hooks";
 import { cn } from "cn";
 import {
   createContext,
-  memo,
+  type FC,
   type PropsWithChildren,
   type ReactElement,
   useContext,
@@ -22,78 +22,76 @@ import { Logo } from "./logo.tsx";
 import { useBreakpoint } from "./use-breakpoint.tsx";
 import type { Disclosure } from "./use-disclosure.ts";
 
-export const DefaultLayout = memo(
-  ({
-    header,
-    children,
-    drawerContent,
-    drawerTitle,
-  }: PropsWithChildren<DefaultLayoutProps>) => {
-    const { topNavLinks, bottomNavLinks } = useNavLinks();
-    const { isDrawerOpened, isNavOpened, drawer, nav } = useDefaultLayout();
-    const isMd = useBreakpoint("md");
+export const DefaultLayout: FC<PropsWithChildren<DefaultLayoutProps>> = ({
+  header,
+  children,
+  drawerContent,
+  drawerTitle,
+}) => {
+  const { topNavLinks, bottomNavLinks } = useNavLinks();
+  const { isDrawerOpened, isNavOpened, drawer, nav } = useDefaultLayout();
+  const isMd = useBreakpoint("md");
 
-    return (
-      <>
-        <AppShell
-          header={{ height: 60 }}
-          navbar={{
-            width: 200,
-            breakpoint: "sm",
-            collapsed: { mobile: !isNavOpened },
-          }}
-          padding="xl"
-        >
-          <AppShell.Header className={cn("flex items-center gap-2 px-4")}>
-            <Burger
-              opened={isNavOpened}
-              onClick={nav.toggle}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            {header}
-          </AppShell.Header>
+  return (
+    <>
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{
+          width: 200,
+          breakpoint: "sm",
+          collapsed: { mobile: !isNavOpened },
+        }}
+        padding="xl"
+      >
+        <AppShell.Header className={cn("flex items-center gap-2 px-4")}>
+          <Burger
+            opened={isNavOpened}
+            onClick={nav.toggle}
+            hiddenFrom="sm"
+            size="sm"
+          />
+          {header}
+        </AppShell.Header>
 
-          <AppShell.Navbar p="md">
-            <ol className={cn("flex flex-1 flex-col")}>
-              {topNavLinks.map((navLink) => (
-                <DefaultLayoutNavLink
-                  key={navLink.path}
-                  {...navLink}
-                />
-              ))}
+        <AppShell.Navbar p="md">
+          <ol className={cn("flex flex-1 flex-col")}>
+            {topNavLinks.map((navLink) => (
+              <DefaultLayoutNavLink
+                key={navLink.path}
+                {...navLink}
+              />
+            ))}
 
-              <div className="flex-1" />
+            <div className="flex-1" />
 
-              {bottomNavLinks.map((navLink) => (
-                <DefaultLayoutNavLink
-                  key={navLink.path}
-                  {...navLink}
-                />
-              ))}
-            </ol>
-          </AppShell.Navbar>
+            {bottomNavLinks.map((navLink) => (
+              <DefaultLayoutNavLink
+                key={navLink.path}
+                {...navLink}
+              />
+            ))}
+          </ol>
+        </AppShell.Navbar>
 
-          <AppShell.Main className={cn("flex flex-col bg-gray-100")}>
-            {children}
-          </AppShell.Main>
-        </AppShell>
+        <AppShell.Main className={cn("flex flex-col bg-gray-100")}>
+          {children}
+        </AppShell.Main>
+      </AppShell>
 
-        <Drawer
-          offset={8}
-          radius="md"
-          size={isMd ? "md" : "xl"}
-          position={isMd ? "right" : "bottom"}
-          onClose={drawer.close}
-          opened={isDrawerOpened}
-          title={drawerTitle}
-        >
-          {drawerContent}
-        </Drawer>
-      </>
-    );
-  },
-);
+      <Drawer
+        offset={8}
+        radius="md"
+        size={isMd ? "md" : "xl"}
+        position={isMd ? "right" : "bottom"}
+        onClose={drawer.close}
+        opened={isDrawerOpened}
+        title={drawerTitle}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
+  );
+};
 
 export interface DefaultLayoutProps {
   header: ReactElement<ReturnType<typeof DefaultLayoutHeader>>;
@@ -101,52 +99,54 @@ export interface DefaultLayoutProps {
   drawerContent?: ReactElement | null;
 }
 
-export const DefaultLayoutHeader = memo(
-  ({ actions, children }: PropsWithChildren<DefaultLayoutHeaderProps>) => {
-    const isMd = useBreakpoint("md");
-    const { isDrawerOpened, isNavOpened } = useDefaultLayout();
+export const DefaultLayoutHeader: FC<
+  PropsWithChildren<DefaultLayoutHeaderProps>
+> = ({ actions, children }) => {
+  const isMd = useBreakpoint("md");
+  const { isDrawerOpened, isNavOpened } = useDefaultLayout();
 
-    return (
-      <>
-        <Logo />
-        {children ? <div>{children}</div> : null}
-        <div className={cn("flex-1")} />
-        {actions ? (
-          isMd ? (
+  return (
+    <>
+      <Logo />
+      {children ? <div>{children}</div> : null}
+      <div className={cn("flex-1")} />
+      {actions ? (
+        isMd ? (
+          <div>{actions}</div>
+        ) : !isDrawerOpened && !isNavOpened ? (
+          <Affix position={{ bottom: 20, right: 20 }}>
             <div>{actions}</div>
-          ) : !isDrawerOpened && !isNavOpened ? (
-            <Affix position={{ bottom: 20, right: 20 }}>
-              <div>{actions}</div>
-            </Affix>
-          ) : null
-        ) : null}
-      </>
-    );
-  },
-);
+          </Affix>
+        ) : null
+      ) : null}
+    </>
+  );
+};
 
 export interface DefaultLayoutHeaderProps {
   actions?: ReactElement;
 }
 
-const DefaultLayoutNavLink = memo(
-  ({ path, label, icon }: DefaultLayoutNavLinkProps) => {
-    const { pathname } = useLocation();
-    const { t } = useTranslation();
+const DefaultLayoutNavLink: FC<DefaultLayoutNavLinkProps> = ({
+  path,
+  label,
+  icon,
+}) => {
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
 
-    return (
-      <li>
-        <MantineNavLink
-          component={Link}
-          to={path}
-          label={t(label)}
-          leftSection={icon}
-          active={pathname.startsWith(path)}
-        />
-      </li>
-    );
-  },
-);
+  return (
+    <li>
+      <MantineNavLink
+        component={Link}
+        to={path}
+        label={t(label)}
+        leftSection={icon}
+        active={pathname.startsWith(path)}
+      />
+    </li>
+  );
+};
 
 interface DefaultLayoutNavLinkProps extends NavLink {}
 
@@ -161,7 +161,7 @@ export interface UseDefaultLayout {
   nav: Disclosure;
 }
 
-export const DefaultLayoutProvider = memo(({ children }: PropsWithChildren) => {
+export const DefaultLayoutProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isDrawerOpened, drawer] = useDisclosure(false);
   const [isNavOpened, nav] = useDisclosure(false);
   const { pathname } = useLocation();
@@ -180,7 +180,7 @@ export const DefaultLayoutProvider = memo(({ children }: PropsWithChildren) => {
       {children}
     </defaultLayoutContext.Provider>
   );
-});
+};
 
 const defaultLayoutContext = createContext<UseDefaultLayout>({
   isDrawerOpened: false,

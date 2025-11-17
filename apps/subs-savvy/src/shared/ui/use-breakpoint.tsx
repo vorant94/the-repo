@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mantine/hooks";
 import {
   createContext,
-  memo,
+  type FC,
   type PropsWithChildren,
   useContext,
   useEffect,
@@ -12,7 +12,7 @@ export function useBreakpoint(breakpoint: Breakpoint): boolean {
   return useContext(breakpointsContext)[breakpoint];
 }
 
-export const BreakpointsProvider = memo(({ children }: PropsWithChildren) => {
+export const BreakpointsProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isSm, setIsSm] = useState(false);
   const isSmFromMediaQuery = useMediaQuery(breakpointToMediaQuery.sm);
   useEffect(() => {
@@ -75,7 +75,7 @@ export const BreakpointsProvider = memo(({ children }: PropsWithChildren) => {
       {children}
     </breakpointsContext.Provider>
   );
-});
+};
 
 const breakpointsContext = createContext<Record<Breakpoint, boolean>>({
   sm: false,

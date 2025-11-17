@@ -1,5 +1,5 @@
 import { cn } from "cn";
-import { type FC, memo } from "react";
+import type { FC } from "react";
 import { AddSubscriptionButton } from "../../../features/upsert-subscription/ui/add-subscription-button.tsx";
 import { UpsertSubscription } from "../../../features/upsert-subscription/ui/upsert-subscription.tsx";
 import { useUpsertSubscription } from "../../../shared/store/hooks.ts";
@@ -11,7 +11,7 @@ import { ManageCategories } from "../../../widgets/manage-categories/ui/manage-c
 import { SelectCategory } from "../../../widgets/select-category/ui/select-category.tsx";
 import { SubscriptionList } from "../../../widgets/subscription-list/ui/subscription-list.tsx";
 
-export const SubscriptionsPage: FC = memo(() => {
+export const SubscriptionsPage: FC = () => {
   const { upsertSubscriptionMode } = useUpsertSubscription();
 
   return (
@@ -30,4 +30,4 @@ export const SubscriptionsPage: FC = memo(() => {
       <SubscriptionList />
     </DefaultLayout>
   );
-});
+};

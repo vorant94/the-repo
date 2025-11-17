@@ -1,6 +1,6 @@
 import {
   createContext,
-  memo,
+  type FC,
   type PropsWithChildren,
   type ReactNode,
   useContext,
@@ -22,19 +22,17 @@ export interface NavLink {
   icon: ReactNode;
 }
 
-export const NavLinksProvider = memo(
-  ({
-    children,
-    topNavLinks,
-    bottomNavLinks,
-  }: PropsWithChildren<NavLinksProviderProps>) => {
-    return (
-      <navLinksContext.Provider value={{ topNavLinks, bottomNavLinks }}>
-        {children}
-      </navLinksContext.Provider>
-    );
-  },
-);
+export const NavLinksProvider: FC<PropsWithChildren<NavLinksProviderProps>> = ({
+  children,
+  topNavLinks,
+  bottomNavLinks,
+}) => {
+  return (
+    <navLinksContext.Provider value={{ topNavLinks, bottomNavLinks }}>
+      {children}
+    </navLinksContext.Provider>
+  );
+};
 
 export interface NavLinksProviderProps {
   topNavLinks: Array<NavLink>;

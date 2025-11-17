@@ -1,21 +1,21 @@
 import { Button, Switch } from "@mantine/core";
 import { cn } from "cn";
-import { memo, useCallback, useState } from "react";
+import { useState } from "react";
 import { recoverySchema } from "../../../shared/api/recovery.model.ts";
 import { dbVersion } from "../../../shared/lib/db.ts";
 import { useSubscriptions } from "../../../shared/store/hooks.ts";
 import { SelectSubscriptionsTable } from "./select-subscriptions-table.tsx";
 
-export const ExportRecovery = memo(() => {
+export const ExportRecovery = () => {
   const subscriptions = useSubscriptions();
   const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
 
   const [isPrettify, setIsPrettify] = useState(true);
-  const toggleIsPrettify = useCallback(() => {
+  const toggleIsPrettify = () => {
     setIsPrettify(!isPrettify);
-  }, [isPrettify]);
+  };
 
-  const exportSubscriptions = useCallback(() => {
+  const exportSubscriptions = () => {
     const subscriptionsToExport = subscriptions.filter((subscription) =>
       selectedIds.includes(subscription.id),
     );
@@ -35,7 +35,7 @@ export const ExportRecovery = memo(() => {
     document.body.appendChild(exportLink);
     exportLink.click();
     document.body.removeChild(exportLink);
-  }, [isPrettify, selectedIds, subscriptions]);
+  };
 
   return (
     <div className={cn("flex flex-col gap-4")}>
@@ -63,4 +63,4 @@ export const ExportRecovery = memo(() => {
       </div>
     </div>
   );
-});
+};

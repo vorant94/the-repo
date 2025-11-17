@@ -1,6 +1,6 @@
 import { CloseButton, Divider, TextInput } from "@mantine/core";
 import { cn } from "cn";
-import { memo, useCallback, useMemo, useState } from "react";
+import { type FC, useState } from "react";
 import { isSubscriptionExpired } from "../../../entities/subscription/lib/is-subscription-expired.ts";
 import {
   SubscriptionGrid,
@@ -10,54 +10,41 @@ import { SubscriptionGridItem } from "../../../features/list-subscriptions/ui/su
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { useStore, useSubscriptions } from "../../../shared/store/hooks.ts";
 
-export const SubscriptionList = memo(() => {
+export const SubscriptionList = () => {
   const [namePrefix, setNamePrefix] = useState("");
-  const changeNamePrefix: (value: string) => void = useCallback(
-    (value) => setNamePrefix(value.toLowerCase()),
-    [],
-  );
+  const changeNamePrefix: (value: string) => void = (value) =>
+    setNamePrefix(value.toLowerCase());
 
   const subscriptions = useSubscriptions();
-  const filteredSubscriptions = useMemo(
-    () =>
-      subscriptions.filter((subscription) =>
-        subscription.name.toLowerCase().startsWith(namePrefix),
-      ),
-    [subscriptions, namePrefix],
+  const filteredSubscriptions = subscriptions.filter((subscription) =>
+    subscription.name.toLowerCase().startsWith(namePrefix),
   );
-  const [activeSubscriptions, expiredSubscriptions] = useMemo(
-    () =>
-      filteredSubscriptions.reduce<
-        [Array<SubscriptionModel>, Array<SubscriptionModel>]
-      >(
-        (prev, curr) => {
-          const [active, expired] = prev;
+  const [activeSubscriptions, expiredSubscriptions] =
+    filteredSubscriptions.reduce<
+      [Array<SubscriptionModel>, Array<SubscriptionModel>]
+    >(
+      (prev, curr) => {
+        const [active, expired] = prev;
 
-          isSubscriptionExpired(curr) ? expired.push(curr) : active.push(curr);
+        isSubscriptionExpired(curr) ? expired.push(curr) : active.push(curr);
 
-          return prev;
-        },
-        [[], []],
-      ),
-    [filteredSubscriptions],
-  );
+        return prev;
+      },
+      [[], []],
+    );
 
-  const openSubscriptionUpdate = useCallback(
-    (subscription: SubscriptionModel) =>
-      useStore.getState().openUpsertSubscription(subscription),
-    [],
-  );
+  const openSubscriptionUpdate = (subscription: SubscriptionModel) =>
+    useStore.getState().openUpsertSubscription(subscription);
 
-  const subscriptionGridChildren = useCallback(
-    ({ subscription }: SubscriptionGridChildrenProps) => (
-      <SubscriptionGridItem
-        key={subscription.id}
-        subscription={subscription}
-        onClick={openSubscriptionUpdate}
-        hideNextPaymentAt={true}
-      />
-    ),
-    [openSubscriptionUpdate],
+  const SubscriptionGridChildren: FC<SubscriptionGridChildrenProps> = ({
+    subscription,
+  }) => (
+    <SubscriptionGridItem
+      key={subscription.id}
+      subscription={subscription}
+      onClick={openSubscriptionUpdate}
+      hideNextPaymentAt={true}
+    />
   );
 
   return (
@@ -86,22 +73,22 @@ export const SubscriptionList = memo(() => {
           <SubscriptionGrid
             subscriptions={activeSubscriptions}
             noSubscriptionsPlaceholder={"No Active Subscriptions"}
-          >
-            {subscriptionGridChildren}
-          </SubscriptionGrid>
+            // biome-ignore lint/correctness/noChildrenProp: component isn't executed here, but passed to be executed inside, so its more clear to pass it like that
+            children={SubscriptionGridChildren}
+          />
 
           <Divider />
 
           <SubscriptionGrid
             subscriptions={expiredSubscriptions}
             noSubscriptionsPlaceholder={"No Expired Subscriptions"}
-          >
-            {subscriptionGridChildren}
-          </SubscriptionGrid>
+            // biome-ignore lint/correctness/noChildrenProp: component isn't executed here, but passed to be executed inside, so its more clear to pass it like that
+            children={SubscriptionGridChildren}
+          />
         </>
       ) : (
         <div>No Subscriptions</div>
       )}
     </div>
   );
-});
+};
