@@ -1,6 +1,7 @@
 import process from "node:process";
 import alpine from "@astrojs/alpinejs";
 import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/postcss";
 import { defineConfig } from "astro/config";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
@@ -8,14 +9,11 @@ import type { Text } from "hast";
 import { h } from "hastscript";
 // biome-ignore lint/suspicious/noShadowRestrictedNames: 3-rd party name
 import { toString } from "mdast-util-to-string";
-import postcssNested from "postcss-nested";
 import getReadingTime from "reading-time";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeSlug from "rehype-slug";
-import tailwindcss from "tailwindcss";
-import tailwindcssNesting from "tailwindcss/nesting";
 import { z } from "zod";
 import {
   defaultLang,
@@ -106,12 +104,7 @@ export default defineConfig({
   vite: {
     css: {
       postcss: {
-        plugins: [
-          tailwindcss,
-          autoprefixer,
-          cssnano,
-          tailwindcssNesting(postcssNested),
-        ],
+        plugins: [tailwindcss, autoprefixer, cssnano],
       },
     },
   },
@@ -138,7 +131,11 @@ export default defineConfig({
         {
           behavior: "append",
           content: () => {
-            return h("span.ml-2.invisible.text-sm.group-hover:visible", "🔗");
+            // can't use directly with dots, because it fails to pass tailwindcss
+            // class detection
+            const classnames = "ml-2 invisible text-sm group-hover:visible";
+
+            return h(`span.${classnames.replace(" ", ".")}`, "🔗");
           },
           properties: ({ children }) => {
             const text = children.find(

@@ -1,12 +1,7 @@
 import { cn } from "cn";
 import type { FC } from "react";
+import { staticFile } from "remotion";
 import { z } from "zod";
-import gitLogo from "../../assets/git-logo.svg";
-import gitDarkLogo from "../../assets/git-logo-dark.svg";
-import tsLogo from "../../assets/ts-logo.svg";
-import tsDarkLogo from "../../assets/ts-logo-dark.svg";
-import yarnLogo from "../../assets/yarn-logo.svg";
-import yarnDarkLogo from "../../assets/yarn-logo-dark.svg";
 
 // biome-ignore lint/style/useNamingConvention: AMess is two word
 export const typescriptMonoreposAreAMessPropsSchema = z.object({
@@ -43,14 +38,14 @@ export const TypescriptMonoreposAreAMess: FC<
       />
       <div
         style={{
-          "--bg-image-url": `url(${yarnLogo})`,
-          "--bg-image-dark-url": `url(${yarnDarkLogo})`,
+          "--bg-image-url": `url(${staticFile("yarn-logo.svg")})`,
+          "--bg-image-dark-url": `url(${staticFile("yarn-logo-dark.svg")})`,
         }}
         className={cn(
-          "col-span-2 row-span-2 bg-[#2C8EBB] bg-[length:65%_65%] bg-center bg-no-repeat p-12",
+          "col-span-2 row-span-2 bg-[#2C8EBB] bg-center bg-size-[65%_65%] bg-no-repeat p-12",
           mode === "light"
-            ? "bg-[image:var(--bg-image-url)]"
-            : "bg-[image:var(--bg-image-dark-url)]",
+            ? "bg-(image:--bg-image-url)"
+            : "bg-(image:--bg-image-dark-url)",
         )}
       />
       <div
@@ -73,26 +68,26 @@ export const TypescriptMonoreposAreAMess: FC<
       />
       <div
         style={{
-          "--bg-image-url": `url(${gitLogo})`,
-          "--bg-image-dark-url": `url(${gitDarkLogo})`,
+          "--bg-image-url": `url(${staticFile("git-logo.svg")})`,
+          "--bg-image-dark-url": `url(${staticFile("git-logo-dark.svg")})`,
         }}
         className={cn(
-          "col-span-2 row-span-2 bg-[#f03c2e] bg-[length:65%_65%] bg-center bg-no-repeat p-12",
+          "col-span-2 row-span-2 bg-[#f03c2e] bg-center bg-size-[65%_65%] bg-no-repeat p-12",
           mode === "light"
-            ? "bg-[image:var(--bg-image-url)]"
-            : "bg-[image:var(--bg-image-dark-url)]",
+            ? "bg-(image:--bg-image-url)"
+            : "bg-(image:--bg-image-dark-url)",
         )}
       />
       <div
         style={{
-          "--bg-image-url": `url(${tsLogo})`,
-          "--bg-image-dark-url": `url(${tsDarkLogo})`,
+          "--bg-image-url": `url(${staticFile("ts-logo.svg")})`,
+          "--bg-image-dark-url": `url(${staticFile("ts-logo-dark.svg")})`,
         }}
         className={cn(
           "col-span-2 row-span-2 bg-[#3178C6] bg-cover p-12",
           mode === "light"
-            ? "bg-[image:var(--bg-image-url)]"
-            : "bg-[image:var(--bg-image-dark-url)]",
+            ? "bg-(image:--bg-image-url)"
+            : "bg-(image:--bg-image-dark-url)",
         )}
       />
       <div

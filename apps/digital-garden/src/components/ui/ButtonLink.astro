@@ -6,7 +6,7 @@ export type ButtonLinkVariant = (typeof buttonLinkVariants)[number];
 const buttonLinkVariantToStyle = {
   default: "",
   outlined:
-    "border rounded-2xl hover:outline outline-cyan-500 hover:border-cyan-500",
+    "border rounded-2xl hover:outline-solid outline-cyan-500 hover:border-cyan-500",
 } as const satisfies Record<ButtonLinkVariant, string>;
 
 export const buttonLinkSizes = ["md", "sm"] as const;

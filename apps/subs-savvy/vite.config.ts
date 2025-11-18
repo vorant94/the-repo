@@ -1,14 +1,12 @@
 import path from "node:path";
 import process from "node:process";
+import tailwindcss from "@tailwindcss/postcss";
 import react from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 import { i18nextHMRPlugin } from "i18next-hmr/vite";
-import postcssNested from "postcss-nested";
 import postcssPresetMantine from "postcss-preset-mantine";
 import postcssSimpleVars from "postcss-simple-vars";
-import tailwindcss from "tailwindcss";
-import tailwindcssNesting from "tailwindcss/nesting";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 import dotenvConfig from "./dotenv.config.ts";
@@ -20,7 +18,6 @@ export default defineConfig({
         tailwindcss,
         autoprefixer,
         cssnano,
-        tailwindcssNesting(postcssNested),
         postcssPresetMantine,
         postcssSimpleVars({
           variables: {

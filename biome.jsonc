@@ -107,7 +107,12 @@
   },
   "overrides": [
     {
-      "includes": ["**/*.config.ts", "**/*.config.mjs", "**/src/main.ts"],
+      "includes": [
+        "**/*.config.ts",
+        "**/*.config.mjs",
+        "**/src/main.ts",
+        "**/*.tailwind-plugin.ts"
+      ],
       "linter": {
         "rules": {
           "style": {

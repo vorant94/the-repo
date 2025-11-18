@@ -48,14 +48,14 @@ export const SubscriptionGridItem = ({
           <div className={cn("flex items-center gap-1")}>
             <Title
               order={5}
-              className={cn("!mb-0 truncate uppercase")}
+              className={cn("mb-0! truncate uppercase")}
             >
               {subscription.name}
             </Title>
 
             {subscription.category && (
               <Icon
-                className={cn("flex-shrink-0")}
+                className={cn("shrink-0")}
                 icon={IconCircleFilled}
                 color={subscription.category.color}
               />
@@ -65,7 +65,7 @@ export const SubscriptionGridItem = ({
 
             <Title
               order={4}
-              className={cn("!mb-0")}
+              className={cn("mb-0!")}
             >
               {currencyFormatter.format(subscription.price)}
             </Title>

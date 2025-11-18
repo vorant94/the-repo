@@ -16,7 +16,7 @@ const { post } = Astro.props;
 const [lang, id] = post.id.split("/");
 ---
 
-<li class="group flex cursor-pointer flex-col rounded-md border border-transparent text-medium duration-100 hover:scale-105 hover:border-slate-300 hover:shadow-md hover:dark:border-slate-600">
+<li class="group flex cursor-pointer flex-col rounded-md border border-transparent text-medium duration-100 hover:scale-105 hover:border-slate-300 hover:shadow-md dark:hover:border-slate-600">
 	<Link
 		href={getRelativeLocaleUrl(lang!, `/${post.collection}/${id}`)}
 		class="flex items-center p-3 gap-2"

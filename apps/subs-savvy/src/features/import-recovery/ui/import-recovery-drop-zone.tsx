@@ -67,7 +67,7 @@ export const ImportRecoveryDropZone: FC<ImportRecoveryDropZoneProps> = ({
     <button
       {...getRootProps({
         className: cn(
-          "flex min-h-48 items-center justify-center rounded border-2 border-dashed hover:bg-gray-100",
+          "flex min-h-48 items-center justify-center rounded-sm border-2 border-dashed hover:bg-gray-100",
         ),
         "aria-label": "click or drag & drop to upload file",
       })}

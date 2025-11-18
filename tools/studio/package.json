@@ -9,12 +9,10 @@
   },
   "dependencies": {
     "@remotion/cli": "4.0.277",
+    "@remotion/tailwind-v4": "4.0.277",
     "@remotion/zod-types": "4.0.277",
     "cn": "^0.0.1",
     "remotion": "4.0.277"
-  },
-  "devDependencies": {
-    "@remotion/tailwind": "4.0.277"
   },
   "sideEffects": [
     "*.css"

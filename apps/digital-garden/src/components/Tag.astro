@@ -24,7 +24,7 @@ const color = tailwindColors[tagHash % tailwindColors.length] as TailwindColor;
 	href={getRelativeLocaleUrl(Astro.currentLocale!, `/${tag.collection}/${tag.data.id}`)}
 >
 	<Badge
-		class="!inline-block max-w-24 truncate sm:max-w-none lg:max-w-24 xl:max-w-none"
+		class="inline-block! max-w-24 truncate sm:max-w-none lg:max-w-24 xl:max-w-none"
 		color={color}
 	>
 		#{tag.data.id}

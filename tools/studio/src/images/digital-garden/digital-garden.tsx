@@ -1,19 +1,18 @@
 import clsx from "clsx";
 import type { FC } from "react";
-import dark from "../../assets/dark.png";
-import light from "../../assets/light.png";
+import { staticFile } from "remotion";
 import styles from "./digital-garden.module.css";
 
 export const DigitalGarden: FC = () => {
   return (
     <>
       <img
-        src={dark}
+        src={staticFile("dark.png")}
         alt=""
         className="absolute top-0 left-0 h-full w-full"
       />
       <img
-        src={light}
+        src={staticFile("light.png")}
         alt=""
         className={clsx(
           styles.light,
