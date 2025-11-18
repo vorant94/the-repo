@@ -7,7 +7,7 @@ export default mergeConfig(
     test: {
       root: `${import.meta.dirname}/src`,
       clearMocks: true,
-      environment: "happy-dom",
+      environment: "jsdom",
       setupFiles: ["./src/test-setup.ts"],
     },
   }),
