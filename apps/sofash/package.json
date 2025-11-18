@@ -19,7 +19,7 @@
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.7.1",
     "grammy": "^1.31.2",
-    "hono": "^4.7.4",
+    "hono": "^4.10.6",
     "hono-openapi": "^0.4.6",
     "neverthrow": "^8.2.0",
     "nt": "^0.0.1",
