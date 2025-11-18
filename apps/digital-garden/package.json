@@ -16,18 +16,18 @@
     "deploy": "wrangler pages deploy"
   },
   "dependencies": {
-    "@astrojs/alpinejs": "^0.4.1",
+    "@astrojs/alpinejs": "^0.4.9",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@lottiefiles/lottie-player": "^2.0.12",
     "alpinejs": "^3.14.9",
-    "astro": "^5.5.1",
+    "astro": "^5.15.9",
     "giscus": "^1.6.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/markdown-remark": "^6.0.1",
-    "@astrojs/rss": "^4.0.11",
-    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/check": "^0.9.5",
+    "@astrojs/markdown-remark": "^6.3.9",
+    "@astrojs/rss": "^4.0.13",
+    "@astrojs/sitemap": "^3.6.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/alpinejs": "^3.13.11",
     "hast": "^1.0.0",
