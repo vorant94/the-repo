@@ -1,7 +1,7 @@
 import process from "node:process";
 import alpine from "@astrojs/alpinejs";
 import sitemap from "@astrojs/sitemap";
-import tailwindcss from "@tailwindcss/postcss";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
@@ -104,9 +104,10 @@ export default defineConfig({
   vite: {
     css: {
       postcss: {
-        plugins: [tailwindcss, autoprefixer, cssnano],
+        plugins: [autoprefixer, cssnano],
       },
     },
+    plugins: [tailwindcss()],
   },
   markdown: {
     remarkPlugins: [

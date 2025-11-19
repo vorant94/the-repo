@@ -1,6 +1,7 @@
+/// <reference types="vitest/config" />
 import path from "node:path";
 import process from "node:process";
-import tailwindcss from "@tailwindcss/postcss";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
@@ -15,7 +16,6 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        tailwindcss,
         autoprefixer,
         cssnano,
         postcssPresetMantine,
@@ -42,5 +42,12 @@ export default defineConfig({
       i18nextHMRPlugin({
         localesDir: path.resolve(process.cwd(), "public/locales"),
       }),
+    tailwindcss(),
   ],
+  test: {
+    root: `${import.meta.dirname}/src`,
+    clearMocks: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test-setup.ts"],
+  },
 });
