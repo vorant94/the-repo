@@ -1,0 +1,105 @@
+---
+import { getCollection } from "astro:content";
+import { isLanguage, languages } from "../globals/i18n.ts";
+import { createFilterPostsByLang } from "../utils/content.helpers.ts";
+import Button from "./ui/Button.astro";
+import Icon from "./ui/Icon.astro";
+
+const currentLang = Astro.currentLocale;
+if (!currentLang) {
+  throw new Error("Current language is missing");
+}
+if (!isLanguage(currentLang)) {
+  throw new Error(
+    `Current language ${currentLang} isn't supported by LanguageSwitcher`,
+  );
+}
+
+const langToSwitchTo = languages.filter((lang) => lang !== currentLang).at(0);
+if (!langToSwitchTo) {
+  throw new Error("Language to switch to is missing");
+}
+
+const [enPostIds, ruPostIds] = await Promise.all(
+  languages.map(async (lang) => {
+    const posts = await getCollection("posts", createFilterPostsByLang(lang));
+    return posts.map(({ id }) => id.split("/").at(1));
+  }),
+);
+---
+
+<va-language-switcher data-langtoswitchto={langToSwitchTo}
+                      data-enposts={JSON.stringify(enPostIds)}
+                      data-ruposts={JSON.stringify(ruPostIds)}>
+  <Button>
+    <Icon glyph={langToSwitchTo}/>
+  </Button>
+</va-language-switcher>
+
+<script>
+  import {type Language, isLanguage} from "../globals/i18n.ts";
+  import {z} from "zod";
+
+  const langPathnameIndex = 1;
+  const postIdPathnameIndex = 3;
+  const postIdsSchema = z.array(z.string());
+
+  class LanguageSwitcher extends HTMLElement {
+    #buttonEl: HTMLButtonElement | null = null;
+
+    get langToSwitchTo(): Language {
+      const raw = this.dataset.langtoswitchto;
+      if(!raw) {
+        throw new Error("Language to switch to is missing");
+      }
+      if(!isLanguage(raw)) {
+        throw new Error(
+          `Language to switch to ${raw} isn't supported by LanguageSwitcher`,
+        );
+      }
+
+      return raw;
+    }
+
+    get langToSwitchToPostIds(): string[] {
+      const lang = this.langToSwitchTo;
+
+      const postIds = {
+        en: postIdsSchema.parse(JSON.parse(this.dataset.enposts ?? "[]")),
+        ru: postIdsSchema.parse(JSON.parse(this.dataset.ruposts ?? "[]")),
+      } satisfies Record<Language, string[]>;
+
+      return postIds[lang];
+    }
+
+    connectedCallback() {
+      this.#buttonEl = this.querySelector('button');
+      if(!this.#buttonEl) {
+        throw new Error("Language switcher button is missing");
+      }
+
+      this.#buttonEl.addEventListener('click', this.#switchLanguage)
+    }
+
+    disconnectedCallback() {
+      this.#buttonEl?.removeEventListener('click', this.#switchLanguage)
+    }
+
+    #switchLanguage = () => {
+      const pathnameSplits = window.location.pathname.split('/');
+      const postId = pathnameSplits.at(postIdPathnameIndex);
+      if(postId && !this.langToSwitchToPostIds.includes(postId)) {
+        window.location.href = new URL(`${this.langToSwitchTo}/`, window.location.origin).toString();
+        return;
+      }
+
+      const newPathname = pathnameSplits
+        .map((part, index) => index === langPathnameIndex ? this.langToSwitchTo : part)
+        .join('/');
+
+      window.location.href = new URL(newPathname, window.location.origin).toString();
+    }
+  }
+
+  customElements.define('va-language-switcher', LanguageSwitcher);
+</script>

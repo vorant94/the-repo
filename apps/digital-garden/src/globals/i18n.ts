@@ -64,3 +64,7 @@ export const languageToDict = {
     "tags.title": "посты",
   },
 } satisfies Record<Language, Dictionary>;
+
+export function isLanguage(lang: string): lang is Language {
+  return languages.includes(lang);
+}
