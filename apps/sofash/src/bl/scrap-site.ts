@@ -30,7 +30,7 @@ export function scrapSite({
   const filmEvents = associationValidated.andThen(([chainName, siteName]) =>
     findQuickbookFilmEvents(
       chainNameToQuickbookChainId[chainName],
-      // @ts-ignore fuck it, i don't want to go too deep into these TS shenanigans
+      // @ts-expect-error fuck it, i don't want to go too deep into these TS shenanigans
       chainNameToSiteNameToQuickbookSiteId[chainName][siteName],
       date,
     ),

@@ -30,7 +30,7 @@ const { name, page, year } = z
 
 const config = configSchema.parse(process.env);
 
-// @ts-ignore utility script for checking stuff and both bot and db aren't needed here
+// @ts-expect-error utility script for checking stuff and both bot and db aren't needed here
 await runWithinContext({ config, bot: {}, db: {} }, async () => {
   using logger = createLogger("search-tmdb-movie");
 

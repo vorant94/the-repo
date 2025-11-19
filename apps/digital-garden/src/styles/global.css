@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@plugin './hover.tailwind-plugin.ts';
+@plugin "./hover.tailwind-plugin.ts";
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -21,16 +21,22 @@
 }
 
 [x-cloak] {
+  /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
   display: none !important;
 }
 
 @media (prefers-color-scheme: dark) {
   .astro-code,
   .astro-code span {
+    /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
     color: var(--shiki-dark) !important;
+    /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
     background-color: var(--shiki-dark-bg) !important;
+    /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
     font-style: var(--shiki-dark-font-style) !important;
+    /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
     font-weight: var(--shiki-dark-font-weight) !important;
+    /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
     text-decoration: var(--shiki-dark-text-decoration) !important;
   }
 }
