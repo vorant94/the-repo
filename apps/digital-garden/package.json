@@ -25,7 +25,6 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.5",
-    "@astrojs/markdown-remark": "^6.3.9",
     "@astrojs/rss": "^4.0.13",
     "@astrojs/sitemap": "^3.6.0",
     "@tailwindcss/typography": "^0.5.16",

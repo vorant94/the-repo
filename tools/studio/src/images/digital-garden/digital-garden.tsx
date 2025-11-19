@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "cn";
 import type { FC } from "react";
 import { staticFile } from "remotion";
 import styles from "./digital-garden.module.css";
@@ -14,7 +14,7 @@ export const DigitalGarden: FC = () => {
       <img
         src={staticFile("light.png")}
         alt=""
-        className={clsx(
+        className={cn(
           styles.light,
           "light absolute top-0 left-0 h-full w-full",
         )}

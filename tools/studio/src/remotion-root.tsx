@@ -1,4 +1,5 @@
 import "./style.css";
+import type { FC } from "react";
 import { Still } from "remotion";
 import { DigitalGarden } from "./images/digital-garden/digital-garden";
 import { ThoughtsOnModernFrameworkFeatures } from "./images/thoughts-on-modern-framework-features/thoughts-on-modern-framework.features";
@@ -7,7 +8,7 @@ import {
   typescriptMonoreposAreAMessPropsSchema,
 } from "./images/typescript-monorepos-are-a-mess/typescript-monorepos-are-a-mess";
 
-export const RemotionRoot: React.FC = () => {
+export const RemotionRoot: FC = () => {
   return (
     <>
       <Still
