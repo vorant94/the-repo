@@ -16,7 +16,7 @@ export const RemotionRoot: FC = () => {
         component={TypescriptMonoreposAreAMess}
         // @ts-expect-error
         schema={typescriptMonoreposAreAMessPropsSchema}
-        defaultProps={{}}
+        defaultProps={{ mode: "dark" }}
         width={1064}
         height={808}
       />
