@@ -20,11 +20,6 @@
   }
 }
 
-[x-cloak] {
-  /* biome-ignore lint/complexity/noImportantStyles: 3-rd party code example copy-paste */
-  display: none !important;
-}
-
 @media (prefers-color-scheme: dark) {
   .astro-code,
   .astro-code span {
