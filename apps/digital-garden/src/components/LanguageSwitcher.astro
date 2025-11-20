@@ -31,7 +31,7 @@ const [enPostIds, ruPostIds] = await Promise.all(
 <va-language-switcher data-langtoswitchto={langToSwitchTo}
                       data-enposts={JSON.stringify(enPostIds)}
                       data-ruposts={JSON.stringify(ruPostIds)}>
-  <Button>
+  <Button aria-label={`switch to ${langToSwitchTo}`}>
     <Icon glyph={langToSwitchTo}/>
   </Button>
 </va-language-switcher>
