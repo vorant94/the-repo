@@ -23,20 +23,22 @@ test(
     await page.goto("/");
 
     const desktopNav = page.getByTestId("desktop-nav");
-    const mobileNavBurger = page.getByRole("button", {
-      name: "mobile-nav-burger",
+    const mobileNavOpen = page.getByRole("button", {
+      name: "mobile-nav-open",
     });
     const mobileNav = page.getByTestId("mobile-nav");
-    const modalClose = page.getByRole("button", { name: "modal-close" });
+    const mobileNavClose = page.getByRole("button", {
+      name: "mobile-nav-close",
+    });
 
     await expect(desktopNav, "should hide desktop nav").not.toBeVisible();
     await expect(
-      mobileNavBurger,
+      mobileNavOpen,
       "should show mobile nav modal burger button",
     ).toBeVisible();
 
     await expect(
-      modalClose,
+      mobileNavClose,
       "should hide modal by default",
     ).not.toBeInViewport();
     await expect(
@@ -44,10 +46,10 @@ test(
       "should hide mobile nav by default",
     ).not.toBeInViewport();
 
-    await mobileNavBurger.click();
+    await mobileNavOpen.click();
 
     await expect(
-      modalClose,
+      mobileNavClose,
       "should show modal after burger button is clicked",
     ).toBeInViewport();
     await expect(
@@ -55,14 +57,14 @@ test(
       "should show mobile nav after burger button is clicked",
     ).toBeInViewport();
 
-    await modalClose.click();
+    await mobileNavClose.click();
 
     await expect(
       mobileNav,
       "should hide modal after modal close button is clicked",
     ).not.toBeInViewport();
     await expect(
-      modalClose,
+      mobileNavClose,
       "should hide mobile nav after modal close button is clicked",
     ).not.toBeInViewport();
   },

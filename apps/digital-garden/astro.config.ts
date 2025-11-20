@@ -1,5 +1,4 @@
 import process from "node:process";
-import alpine from "@astrojs/alpinejs";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -96,9 +95,6 @@ export default defineConfig({
 
         return item;
       },
-    }),
-    alpine({
-      entrypoint: "/src/alpine.entrypoint",
     }),
   ],
   vite: {

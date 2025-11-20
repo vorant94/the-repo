@@ -22,7 +22,7 @@ const navLinksMeta = [
 ] as const;
 ---
 
-<div x-data="true">
+<va-nav>
 	<nav
 		data-testid="desktop-nav"
 		class="hidden lg:flex"
@@ -37,42 +37,104 @@ const navLinksMeta = [
 	</nav>
 
 	<Button
-		x-on:click="$store.defaultLayout.openMobileNav()"
-		aria-label="mobile-nav-burger"
+		aria-label="mobile-nav-open"
 		class="lg:hidden"
 	>
 		<Icon glyph="menu" />
 	</Button>
 
-	<template x-teleport="body">
-		<div
-			x-bind:class="$store.defaultLayout.isMobileNavOpen ? 'translate-y-0' : '-translate-y-full'"
-			x-cloak="true"
-			class="fixed top-0 left-0 z-10 h-dvh w-dvw backdrop-blur-sm backdrop-filter transition duration-300"
-		>
-			<div class="mx-auto flex h-full flex-col sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
-				<Header>
-					<Button
-						x-on:click="$store.defaultLayout.closeMobileNav()"
-						aria-label="modal-close"
-					>
-						<Icon glyph="close" />
-					</Button>
-				</Header>
+  <template>
+    <div
+      id="mobile-nav"
+      class="fixed top-0 left-0 z-10 h-dvh w-dvw backdrop-blur-sm backdrop-filter transition duration-300 -translate-y-full"
+    >
+      <div class="mx-auto flex h-full flex-col sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
+        <Header>
+          <Button aria-label="mobile-nav-close">
+            <Icon glyph="close" />
+          </Button>
+        </Header>
 
-				<nav
-					data-testid="mobile-nav"
-					class="flex flex-1 flex-col justify-center"
-				>
-					<menu class="flex flex-col gap-3 px-6">
-						{navLinksMeta.map((navLink) => (
-							<NavLink href={navLink.url}>
-								{navLink.label}
-							</NavLink>
-						))}
-					</menu>
-				</nav>
-			</div>
-		</div>
-	</template>
-</div>
+        <nav
+          data-testid="mobile-nav"
+          class="flex flex-1 flex-col justify-center"
+        >
+          <menu class="flex flex-col gap-3 px-6">
+            {navLinksMeta.map((navLink) => (
+                <NavLink href={navLink.url}>
+                {navLink.label}
+              </NavLink>
+            ))}
+          </menu>
+        </nav>
+      </div>
+    </div>
+  </template>
+</va-nav>
+
+<script>
+  class Nav extends HTMLElement {
+    #mobileNavTemplateEl: HTMLTemplateElement | null = null;
+    #mobileNavEl: HTMLElement | null = null;
+    #openMobileNavButtonEl: HTMLButtonElement | null = null;
+    #closeMobileNavButtonEl: HTMLButtonElement | null = null;
+
+    connectedCallback() {
+      this.#openMobileNavButtonEl = this.querySelector("button[aria-label='mobile-nav-open']");
+      if (!this.#openMobileNavButtonEl) {
+        throw new Error("Can't find mobile nav open button");
+      }
+
+      this.#openMobileNavButtonEl.addEventListener("click", this.#openMobileNav);
+
+      this.#mobileNavTemplateEl = this.querySelector("template");
+      if(!this.#mobileNavTemplateEl) {
+        throw new Error("Can't find mobile nav template");
+      }
+
+      document.body.append(this.#mobileNavTemplateEl.content);
+
+      this.#mobileNavEl = document.querySelector("#mobile-nav");
+      if(!this.#mobileNavEl) {
+        throw new Error("Can't find mobile nav");
+      }
+
+      this.#closeMobileNavButtonEl = this.#mobileNavEl.querySelector("button[aria-label='mobile-nav-close']");
+      if (!this.#closeMobileNavButtonEl) {
+        throw new Error("Can't find close modal button");
+      }
+
+      this.#closeMobileNavButtonEl.addEventListener('click', this.#closeMobileNav);
+      window.addEventListener("resize", this.#closeMobileNavOnResize);
+      document.addEventListener("astro:before-preparation", this.#closeMobileNav);
+    }
+
+    disconnectedCallback() {
+      this.#openMobileNavButtonEl?.removeEventListener("click", this.#openMobileNav);
+      this.#closeMobileNavButtonEl?.removeEventListener('click', this.#closeMobileNav);
+      window.removeEventListener('resize', this.#closeMobileNavOnResize)
+      document.removeEventListener("astro:before-preparation", this.#closeMobileNav);
+    }
+
+    #openMobileNav = () => {
+      this.#mobileNavEl?.classList.remove("-translate-y-full");
+      this.#mobileNavEl?.classList.add("translate-y-0");
+    }
+
+    #closeMobileNavOnResize = () => {
+      const width = document.documentElement.clientWidth;
+      if (width < 1024) {
+        return;
+      }
+
+      this.#closeMobileNav()
+    }
+
+    #closeMobileNav = () => {
+      this.#mobileNavEl?.classList.add("-translate-y-full");
+      this.#mobileNavEl?.classList.remove("translate-y-0");
+    }
+  }
+
+  customElements.define("va-nav", Nav);
+</script>
