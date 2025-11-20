@@ -69,3 +69,5 @@ test(
     ).not.toBeInViewport();
   },
 );
+
+// TODO add tests covering that mobile nav auto closes on resize and page change
