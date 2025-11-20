@@ -89,7 +89,7 @@ const [enPostIds, ruPostIds] = await Promise.all(
       const pathnameSplits = window.location.pathname.split('/');
       const postId = pathnameSplits.at(postIdPathnameIndex);
       if(postId && !this.langToSwitchToPostIds.includes(postId)) {
-        window.location.href = new URL(`${this.langToSwitchTo}/`, window.location.origin).toString();
+        window.location.href = new URL(`${this.langToSwitchTo}`, window.location.origin).toString();
         return;
       }
 
