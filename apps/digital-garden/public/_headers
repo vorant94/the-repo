@@ -1,4 +1,4 @@
 /*
-  Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; frame-src giscus.app; script-src 'self' 'unsafe-inline' static.cloudflareinsights.com; img-src 'self' data: w3.org/svg/2000;
+  Content-Security-Policy: default-src 'self' 'unsafe-inline'; frame-ancestors 'none'; frame-src giscus.app; script-src 'self' 'unsafe-inline' static.cloudflareinsights.com; img-src 'self' data: w3.org/svg/2000;
 
 
