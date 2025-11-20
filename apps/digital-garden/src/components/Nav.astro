@@ -114,6 +114,8 @@ const navLinksMeta = [
       this.#closeMobileNavButtonEl?.removeEventListener('click', this.#closeMobileNav);
       window.removeEventListener('resize', this.#closeMobileNavOnResize)
       document.removeEventListener("astro:before-preparation", this.#closeMobileNav);
+
+      //  TODO clean up appended in connectedCallback child of body e.g. mobile nav
     }
 
     #openMobileNav = () => {
