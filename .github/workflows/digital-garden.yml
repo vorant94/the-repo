@@ -14,6 +14,19 @@ on:
       - '.editorconfig'
       - '**/README.md'
       - 'tools'
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    branches:
+      - 'master'
+    paths-ignore:
+      - 'apps/sofash/**'
+      - 'apps/subs-savvy/**'
+      - '.github/workflows/sofash.yml'
+      - '.github/workflows/subs-savvy.yml'
+      - 'biome.jsonc'
+      - '.editorconfig'
+      - '**/README.md'
+      - 'tools'
 
 jobs:
   lint:
@@ -95,8 +108,11 @@ jobs:
       - build
       - e2e
     if: |
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/master'
+      (github.event_name == 'push' &&
+        github.ref == 'refs/heads/master') ||
+      (github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'preview') &&
+        contains(github.event.pull_request.labels.*.name, 'digital-garden'))
     concurrency:
       group: digital-garden-deploy
       cancel-in-progress: false
@@ -114,9 +130,21 @@ jobs:
           name: bundle
           path: apps/digital-garden/dist
 
-      - name: Deploy Bundle
+      - name: Deploy to Production
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         working-directory: apps/digital-garden
-        run: npm run deploy --workspace digital-garden
+        run: npm run deploy:production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+
+      - name: Deploy to Preview
+        if: |
+          github.event_name == 'pull_request' &&
+          contains(github.event.pull_request.labels.*.name, 'preview') &&
+          contains(github.event.pull_request.labels.*.name, 'digital-garden')
+        working-directory: apps/digital-garden
+        run: npm run deploy:preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
