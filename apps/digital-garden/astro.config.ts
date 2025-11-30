@@ -1,4 +1,5 @@
 import process from "node:process";
+import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -61,6 +62,7 @@ export const env = z
   .parse(process.env);
 
 export default defineConfig({
+  adapter: cloudflare(),
   site:
     env.NODE_ENV === "production"
       ? "https://vorant94.dev"

@@ -6,6 +6,9 @@ test(
   async ({ page }) => {
     await page.goto("/");
 
+    // otherwise expect below fails in CI/CD of GitHub actions
+    await page.waitForLoadState("networkidle");
+
     const url = new URL(page.url());
 
     expect(url.pathname.startsWith("/en")).toBeTruthy();

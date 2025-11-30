@@ -13,9 +13,10 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:codegen": "playwright codegen",
-    "deploy": "wrangler pages deploy"
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@lottiefiles/lottie-player": "^2.0.12",
     "astro": "^5.15.9",

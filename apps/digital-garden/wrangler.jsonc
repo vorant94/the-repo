@@ -1,0 +1,20 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "main": "dist/_worker.js/index.js",
+  "name": "digital-garden",
+  "compatibility_date": "2025-11-30",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "dist"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "pattern": "vorant94.dev",
+      "custom_domain": true
+    }
+  ]
+}

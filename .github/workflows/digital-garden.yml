@@ -64,6 +64,8 @@ jobs:
           name: bundle
           path: apps/digital-garden/dist
           retention-days: 30
+          # to include .assetsignore file that is required for proper deployment to cloudflare
+          include-hidden-files: true
 
   e2e:
     name: E2E
