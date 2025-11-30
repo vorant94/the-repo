@@ -108,8 +108,11 @@ jobs:
       - build
       - e2e
     if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'preview'))
+      (github.event_name == 'push' &&
+        github.ref == 'refs/heads/master') ||
+      (github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'preview') &&
+        contains(github.event.pull_request.labels.*.name, 'digital-garden'))
     concurrency:
       group: digital-garden-deploy
       cancel-in-progress: false
@@ -136,7 +139,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
       - name: Deploy to Preview
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'preview')
+        if: |
+          github.event_name == 'pull_request' &&
+          contains(github.event.pull_request.labels.*.name, 'preview') &&
+          contains(github.event.pull_request.labels.*.name, 'digital-garden')
         working-directory: apps/digital-garden
         run: npm run deploy:preview
         env:
