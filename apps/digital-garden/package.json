@@ -13,7 +13,8 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:codegen": "playwright codegen",
-    "deploy": "wrangler deploy"
+    "deploy:production": "wrangler deploy",
+    "deploy:preview": "wrangler versions upload --preview-alias preview"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
