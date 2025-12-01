@@ -14,6 +14,7 @@ export const RemotionRoot: FC = () => {
       <Still
         id="typescript-monorepos-are-a-mess"
         component={TypescriptMonoreposAreAMess}
+        // @ts-expect-error - in runtime it works, so i don't care about ts error in tools in this case
         schema={typescriptMonoreposAreAMessPropsSchema}
         defaultProps={{ mode: "dark" }}
         width={1064}

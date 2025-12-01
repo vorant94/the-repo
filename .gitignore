@@ -17,3 +17,5 @@ data
 build
 out
 .turbo
+
+tools/studio/build

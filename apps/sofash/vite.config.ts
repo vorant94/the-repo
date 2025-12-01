@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import { builtinModules } from "node:module";
 import path from "node:path";
 import process from "node:process";
@@ -32,8 +31,4 @@ export default defineConfig({
       entry: path.resolve(process.cwd(), "src/main.ts"),
     }),
   ],
-  test: {
-    root: `${import.meta.dirname}/src`,
-    clearMocks: true,
-  },
 });

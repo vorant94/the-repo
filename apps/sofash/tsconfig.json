@@ -1,6 +1,38 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    /* Base */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+
+    /* Strictness */
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": false,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+
+    /* Bundler/Compiler */
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+
     /* Runtime/Framework */
     "lib": ["ESNext"],
     "jsx": "react-jsx",

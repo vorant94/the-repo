@@ -2,8 +2,10 @@ pre-push:
   commands:
     test:all:
       run: npm run test:all
-    knip:
-      run: npm run knip
+    unused-code:check:
+      run: npm run unused-code:check
+    deps-mismatch:check:
+      run: npm run deps-mismatch:check
 pre-commit:
   commands:
     lint:ci:
