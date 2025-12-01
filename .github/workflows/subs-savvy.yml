@@ -82,8 +82,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - ts
-    outputs:
-      bundle-cache-hit: ${{ steps.cache-bundle.outputs.cache-hit }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
