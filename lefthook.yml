@@ -2,6 +2,8 @@ pre-push:
   commands:
     test:all:
       run: npm run test:all
+    knip:
+      run: npm run knip
 pre-commit:
   commands:
     lint:ci:

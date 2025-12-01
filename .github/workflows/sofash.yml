@@ -16,6 +16,9 @@ on:
       - "**/README.md"
       - "tools"
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
