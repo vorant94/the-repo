@@ -1,10 +1,4 @@
-export const resourceTypes = [
-  "chain",
-  "user",
-  "site",
-  "release",
-  "title",
-] as const;
+const resourceTypes = ["chain", "user", "site", "release", "title"] as const;
 
 export type ResourceType = (typeof resourceTypes)[number];
 

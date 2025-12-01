@@ -97,6 +97,6 @@ export function selectTitles(): ResultAsync<
   );
 }
 
-export function generateTitleId(name: string, releasedAt: Date): string {
+function generateTitleId(name: string, releasedAt: Date): string {
   return v5(`${name}${releasedAt.getFullYear()}`, uuidNamespace);
 }

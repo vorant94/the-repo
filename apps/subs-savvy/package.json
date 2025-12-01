@@ -44,6 +44,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/expect": "^4.0.10",
     "babel-plugin-react-compiler": "^1.0.0",
     "fake-indexeddb": "^6.0.0",
     "i18next-hmr": "^3.1.2",

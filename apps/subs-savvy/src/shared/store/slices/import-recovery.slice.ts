@@ -149,7 +149,7 @@ export const createImportRecoverySlice: StateCreator<
   },
 });
 
-export class IllegalTransitionError extends Error {
+class IllegalTransitionError extends Error {
   constructor(from: ImportRecoveryStage, to: ImportRecoveryStage) {
     super(`Illegal transition from "${from}" to "${to}"`);
   }

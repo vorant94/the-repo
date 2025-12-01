@@ -10,15 +10,11 @@ export const chainNames = ["rav-hen", "planet"] as const;
 export type ChainName = (typeof chainNames)[number];
 export const chainNameSchema = z.enum(chainNames);
 
-export const ravHenSiteNames = [
-  "givatayim",
-  "dizengoff",
-  "kiryat-ono",
-] as const;
+const ravHenSiteNames = ["givatayim", "dizengoff", "kiryat-ono"] as const;
 export type RavHenSiteName = (typeof ravHenSiteNames)[number];
 export const ravHenSiteNameSchema = z.enum(ravHenSiteNames);
 
-export const planetSiteNames = [
+const planetSiteNames = [
   "ayalon",
   "beer-sheva",
   "zichron-yaakov",

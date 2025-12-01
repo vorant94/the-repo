@@ -2,7 +2,7 @@ import type { SubscriptionModel } from "../../../shared/api/subscription.model.t
 
 export const compareSubscriptionsDesc = createCompareSubscriptions("desc");
 
-export const compareSubscriptionsAsc = createCompareSubscriptions("asc");
+// export const compareSubscriptionsAsc = createCompareSubscriptions("asc");
 
 function createCompareSubscriptions(
   askOrDesc: AscOrDesc,
