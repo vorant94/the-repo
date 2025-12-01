@@ -49,5 +49,21 @@ export default defineConfig({
     clearMocks: true,
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      exclude: [
+        "**/*.d.ts",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/__mocks__/*",
+        "**/dist/*",
+        "**/build/*",
+        "**/*.pom.ts",
+        "**/*.com.ts",
+        "*.config.{ts,js}",
+        "scripts/*",
+      ],
+    },
   },
 });
