@@ -141,6 +141,6 @@ export function selectUsers(): ResultAsync<
 
 export const rootUserChatId = 0;
 
-export function generateUserId(telegramChatId: number): string {
+function generateUserId(telegramChatId: number): string {
   return v5(telegramChatId.toString(), uuidNamespace);
 }

@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'apps/subs-savvy/**'
-      - 'apps/digital-garden/**'
-      - 'apps/sofash/docs/**'
-      - '.github/workflows/digital-garden.yml'
-      - '.github/workflows/subs-savvy.yml'
-      - 'biome.jsonc'
-      - '.editorconfig'
-      - '**/README.md'
-      - 'tools'
+      - "apps/subs-savvy/**"
+      - "apps/digital-garden/**"
+      - "apps/sofash/docs/**"
+      - ".github/workflows/digital-garden.yml"
+      - ".github/workflows/subs-savvy.yml"
+      - "biome.jsonc"
+      - ".editorconfig"
+      - "**/README.md"
+      - "tools"
 
 jobs:
   lint:

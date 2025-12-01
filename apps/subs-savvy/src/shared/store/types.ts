@@ -18,7 +18,7 @@ export interface CategoriesState {
   selectedCategory: CategoryModel | null;
 }
 
-export const importRecoveryStages = [
+const importRecoveryStages = [
   "upload-recovery",
   "submit-categories",
   "submit-subscriptions",

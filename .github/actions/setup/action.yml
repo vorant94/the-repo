@@ -2,11 +2,11 @@ name: Setup Node & NPM
 
 outputs:
   node-version:
-    description: 'The installed node version.'
+    description: "The installed node version."
     value: ${{ steps.setup-node.outputs.node-version }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup Node
       id: setup-node

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  },
+  "tags": ["-lintignore"],
+  "workspaces": {
+    "apps/digital-garden": {},
+    "apps/sofash": {
+      "entry": [
+        "src/main.{ts,tsx}",
+        "scripts/*.ts",
+        "src/shared/schema/releases.ts" // need to include all schemas here since not all of them are used in code yet, but already present in db
+      ],
+      "ignoreBinaries": ["ngrok"] // it should be installed with homebrew
+    },
+    "apps/subs-savvy": {
+      "entry": ["src/main.{ts,tsx}", "scripts/*.ts", "src/**/*.spec.{ts,tsx}"],
+      "ignore": ["src/**/__mocks__/**"]
+    },
+    "libs/cn": {},
+    "libs/nt": {},
+    "tools/studio": {
+      "entry": ["*.config.ts", "src/index.ts"],
+      "ignoreDependencies": ["@remotion/zod-types"] // either it is used under the hood or i will use it at some point of time, i don't care
+    }
+  }
+}

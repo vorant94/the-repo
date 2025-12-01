@@ -19,9 +19,9 @@ export interface RawContext
   extends Partial<Omit<Context, "requestId">>,
     Pick<Context, "requestId"> {}
 
-export interface AuthenticatedContext
-  extends Omit<Context, "user">,
-    Required<Pick<Context, "user">> {}
+// export interface AuthenticatedContext
+//   extends Omit<Context, "user">,
+//     Required<Pick<Context, "user">> {}
 
 export function getRawContext(): RawContext {
   const context = storage.getStore();
@@ -43,14 +43,14 @@ export function getContext(): Context {
   return context;
 }
 
-export function getAuthenticatedContext(): AuthenticatedContext {
-  const context = getContext();
-  if (!isAuthenticatedContext(context)) {
-    throw new Error("Context is not authenticated");
-  }
+// export function getAuthenticatedContext(): AuthenticatedContext {
+//   const context = getContext();
+//   if (!isAuthenticatedContext(context)) {
+//     throw new Error("Context is not authenticated");
+//   }
 
-  return context;
-}
+//   return context;
+// }
 
 export function runWithinContext<T>(
   context: Partial<Omit<Context, "requestId">>,
@@ -80,8 +80,8 @@ function isContext(context: RawContext): context is Context {
   return "config" in context && "bot" in context && "db" in context;
 }
 
-function isAuthenticatedContext(
-  context: Context,
-): context is AuthenticatedContext {
-  return "user" in context;
-}
+// function isAuthenticatedContext(
+//   context: Context,
+// ): context is AuthenticatedContext {
+//   return "user" in context;
+// }

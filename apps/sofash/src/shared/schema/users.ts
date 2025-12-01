@@ -4,7 +4,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { resourceType } from "./resource-types.ts";
 
-export const userRoles = ["root", "admin", "user"] as const;
+const userRoles = ["root", "admin", "user"] as const;
 export type UserRole = (typeof userRoles)[number];
 
 export const userRoleSchema = z.enum(userRoles);

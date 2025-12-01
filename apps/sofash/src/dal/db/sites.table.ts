@@ -152,9 +152,6 @@ export function getSiteById(
   });
 }
 
-export function generateSiteId(
-  chainId: string,
-  siteExternalId: string,
-): string {
+function generateSiteId(chainId: string, siteExternalId: string): string {
   return v5(`${chainId}${siteExternalId}`, uuidNamespace);
 }

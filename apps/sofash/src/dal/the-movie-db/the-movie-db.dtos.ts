@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const tmdbPageSchema = z.object({
+const tmdbPageSchema = z.object({
   page: z.number(),
   results: z.array(z.unknown()),
   // biome-ignore lint/style/useNamingConvention: 3-rd party type
@@ -8,9 +8,8 @@ export const tmdbPageSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: 3-rd party type
   total_results: z.number(),
 });
-export type TmdbPageSchema = z.infer<typeof tmdbPageSchema>;
 
-export const tmdbMovieSchema = z.object({
+const tmdbMovieSchema = z.object({
   adult: z.boolean(),
   // biome-ignore lint/style/useNamingConvention: 3-rd party type
   backdrop_path: z.string(),
@@ -34,7 +33,6 @@ export const tmdbMovieSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: 3-rd party type
   vote_count: z.number(),
 });
-export type TmdbMovie = z.infer<typeof tmdbMovieSchema>;
 
 export const tmdbMoviePageSchema = tmdbPageSchema
   .omit({ results: true })

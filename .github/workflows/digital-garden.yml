@@ -4,29 +4,29 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'apps/sofash/**'
-      - 'apps/subs-savvy/**'
-      - '.github/workflows/sofash.yml'
-      - '.github/workflows/subs-savvy.yml'
-      - 'biome.jsonc'
-      - '.editorconfig'
-      - '**/README.md'
-      - 'tools'
+      - "apps/sofash/**"
+      - "apps/subs-savvy/**"
+      - ".github/workflows/sofash.yml"
+      - ".github/workflows/subs-savvy.yml"
+      - "biome.jsonc"
+      - ".editorconfig"
+      - "**/README.md"
+      - "tools"
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - 'apps/sofash/**'
-      - 'apps/subs-savvy/**'
-      - '.github/workflows/sofash.yml'
-      - '.github/workflows/subs-savvy.yml'
-      - 'biome.jsonc'
-      - '.editorconfig'
-      - '**/README.md'
-      - 'tools'
+      - "apps/sofash/**"
+      - "apps/subs-savvy/**"
+      - ".github/workflows/sofash.yml"
+      - ".github/workflows/subs-savvy.yml"
+      - "biome.jsonc"
+      - ".editorconfig"
+      - "**/README.md"
+      - "tools"
 
 jobs:
   lint:
@@ -97,7 +97,7 @@ jobs:
       - name: Run E2E Tests
         uses: ./.github/actions/e2e
         with:
-          workspace: 'digital-garden'
+          workspace: "digital-garden"
 
   deploy:
     name: Deploy

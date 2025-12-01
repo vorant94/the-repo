@@ -49,7 +49,7 @@ export function findQuickbookFilmEvents(
   });
 }
 
-export const findQuickbookFilmEventsResponseBodySchema = z.object({
+const findQuickbookFilmEventsResponseBodySchema = z.object({
   body: z.object({
     films: z.array(quickbookFilmSchema),
     events: z.array(quickbookEventSchema),
