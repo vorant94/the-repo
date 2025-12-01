@@ -1,7 +1,7 @@
 pre-push:
   commands:
-    test:all:
-      run: npm run test:all
+    test:
+      run: npx turbo test
     unused-code:check:
       run: npm run unused-code:check
     deps-mismatch:check:

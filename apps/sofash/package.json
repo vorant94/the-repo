@@ -36,7 +36,6 @@
     "migrate:prod": "wrangler d1 migrations apply DB --remote",
     "proxy:dev": "ngrok http 5173",
     "start:dev": "vite",
-    "test": "echo \"placeholder to allow turbo to run tests on this app dependencies\"",
     "ts:check": "tsc"
   },
   "type": "module"
