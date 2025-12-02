@@ -1,11 +1,9 @@
-import process from "node:process";
 import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
-import dotenv from "dotenv";
 import type { Text } from "hast";
 import { h } from "hastscript";
 // biome-ignore lint/suspicious/noShadowRestrictedNames: 3-rd party name
@@ -15,7 +13,6 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeSlug from "rehype-slug";
-import z from "zod";
 import {
   defaultLang,
   languages,
@@ -55,21 +52,9 @@ const legacyI18nRedirects = {
   "/tags/self-reflection/": `/${defaultLang}/tags/self-reflection`,
 };
 
-const { error, parsed } = dotenv.config();
-
-export const env = z
-  .object({
-    // biome-ignore lint/style/useNamingConvention: env variables have different convention
-    NODE_ENV: z.enum(["development", "production"]).default("development"),
-  })
-  .parse(error ? process.env : parsed);
-
 export default defineConfig({
   adapter: cloudflare(),
-  site:
-    env.NODE_ENV === "production"
-      ? "https://vorant94.dev"
-      : "http://localhost:4321",
+  site: "https://vorant94.dev",
   trailingSlash: "never",
   prefetch: true,
   env: {
