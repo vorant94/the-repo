@@ -14,7 +14,7 @@ import {
   filterOutDraftPosts,
   isPostWithCover,
   type PostModel,
-} from "../../../utils/content.helpers";
+} from "../../../lib/content";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", filterOutDraftPosts);

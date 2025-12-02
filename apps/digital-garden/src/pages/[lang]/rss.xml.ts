@@ -6,8 +6,8 @@ import { profile } from "../../globals/profile.ts";
 import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
-} from "../../utils/content.helpers.ts";
-import { createTranslate } from "../../utils/i18n.helpers.ts";
+} from "../../lib/content.ts";
+import { createTranslate } from "../../lib/i18n.ts";
 
 export async function GET(ctx: APIContext): Promise<Response> {
   const filteredPosts = await getCollection(

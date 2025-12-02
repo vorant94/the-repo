@@ -4,8 +4,8 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
-} from "../utils/content.helpers";
-import { createTranslate } from "../utils/i18n.helpers";
+} from "../lib/content";
+import { createTranslate } from "../lib/i18n";
 import PostTiledList from "./PostTiledList.astro";
 import PostTiledListEmptyItem from "./PostTiledListEmptyItem.astro";
 import PostTiledListItem from "./PostTiledListItem.astro";

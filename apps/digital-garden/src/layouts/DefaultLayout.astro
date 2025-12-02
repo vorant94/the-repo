@@ -7,7 +7,7 @@ import Nav from "../components/Nav.astro";
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import Seo, { type Props as SeoProps } from "../components/Seo.astro";
-import { getFullTitle } from "../utils/seo.helpers";
+import { getFullTitle } from "../lib/seo";
 
 export interface Props extends Omit<SeoProps, "fullTitle"> {
   title?: string;
