@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntries, render } from "astro:content";
 import { format } from "date-fns";
+import CommentForm from "../../../components/CommentForm.astro";
 import RelatedPosts from "../../../components/RelatedPosts.astro";
 import Tag from "../../../components/Tag.astro";
 import Caption from "../../../components/ui/Caption.astro";
@@ -106,23 +107,5 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-	<giscus-widget
-		id="comments"
-		repo="vorant94/the-repo"
-		repoid="R_kgDOKWcyPw="
-		category="Digital Garden Post Comments"
-		categoryid="DIC_kwDON7ttjc4CoCVG"
-		mapping="specific"
-		term={id}
-		reactionsenabled="1"
-		emitmetadata="0"
-		inputposition="bottom"
-		theme="preferred_color_scheme"
-		lang="en"
-		loading="lazy"
-	/>
+  <CommentForm />
 </DefaultLayout>
-
-<script>
-	import 'giscus';
-</script>

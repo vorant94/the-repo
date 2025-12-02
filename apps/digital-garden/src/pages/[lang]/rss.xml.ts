@@ -9,7 +9,7 @@ import {
 } from "../../utils/content.helpers.ts";
 import { createTranslate } from "../../utils/i18n.helpers.ts";
 
-export async function GET(ctx: APIContext) {
+export async function GET(ctx: APIContext): Promise<Response> {
   const filteredPosts = await getCollection(
     "posts",
     createFilterPostsByLang(ctx.currentLocale),

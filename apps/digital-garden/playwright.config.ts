@@ -1,5 +1,20 @@
+import process from "node:process";
 import { defineConfig, devices } from "@playwright/test";
-import dotenvConfig from "./dotenv.config";
+import dotenv from "dotenv";
+import { z } from "zod";
+
+const { error, parsed } = dotenv.config();
+
+const dotenvConfig = z
+  .object({
+    // biome-ignore lint/style/useNamingConvention: env variables have different convention
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
+    // biome-ignore lint/style/useNamingConvention: env variables have different convention
+    CI: z.coerce.boolean().default(false),
+  })
+  .parse(error ? process.env : parsed);
 
 export default defineConfig({
   testDir: "./e2e",
