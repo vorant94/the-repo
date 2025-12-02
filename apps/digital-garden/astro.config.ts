@@ -58,6 +58,10 @@ export default defineConfig({
   trailingSlash: "never",
   prefetch: true,
   env: {
+    // everything on the server is a secret even stuff that can be public,
+    // motivation here is to avoid bundling env vars so they can be changed without redeployment.
+    // additionally since astro middleware is ran at buildtime it evaluates secrets as well there
+    // in order to avoid keeping env vars in the GitHub Actions everything should have a default dummy value at least.
     schema: {
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       DB_FILE_NAME: envField.string({
@@ -68,12 +72,14 @@ export default defineConfig({
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_ID: envField.string({
         context: "server",
-        access: "secret", // its not actually secret, but making it public here would mean that it should be accessible in buildtime for astro to in-line it in the bundle and i want to control it in runtime
+        access: "secret",
+        default: "DUMMY_GITHUB_CLIENT_ID",
       }),
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_SECRET: envField.string({
         context: "server",
         access: "secret",
+        default: "DUMMY_GITHUB_CLIENT_SECRET",
       }),
     },
   },
