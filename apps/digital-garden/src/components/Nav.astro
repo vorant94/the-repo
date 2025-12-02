@@ -73,7 +73,7 @@ const navLinksMeta = [
 </va-nav>
 
 <script>
-  class Nav extends HTMLElement {
+  customElements.define("va-nav", class extends HTMLElement {
     #mobileNavTemplateEl: HTMLTemplateElement | null = null;
     #mobileNavEl: HTMLElement | null = null;
     #openMobileNavButtonEl: HTMLButtonElement | null = null;
@@ -92,7 +92,8 @@ const navLinksMeta = [
         throw new Error("Can't find mobile nav template");
       }
 
-      document.body.append(this.#mobileNavTemplateEl.content);
+      const clone = this.#mobileNavTemplateEl.content.cloneNode(true);
+      document.body.appendChild(clone);
 
       this.#mobileNavEl = document.querySelector("#mobile-nav");
       if(!this.#mobileNavEl) {
@@ -134,7 +135,5 @@ const navLinksMeta = [
       this.#mobileNavEl?.classList.add("-translate-y-full");
       this.#mobileNavEl?.classList.remove("translate-y-0");
     }
-  }
-
-  customElements.define("va-nav", Nav);
+  });
 </script>

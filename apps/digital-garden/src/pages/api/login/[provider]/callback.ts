@@ -3,6 +3,10 @@ import { Octokit } from "@octokit/rest";
 import { GitHub } from "arctic";
 import type { APIContext } from "astro";
 import { isProvider, type Provider } from "../../../../lib/oauth";
+import {
+  createSession,
+  sessionExpiresInSeconds,
+} from "../../../../lib/sessions";
 
 export const prerender = false;
 
@@ -52,8 +56,15 @@ async function handleGithubCallback(
   console.info(data);
 
   // get or create user
-  // create session
-  // set user data and session id cookies (http only)
+
+  const session = await createSession(ctx);
+
+  ctx.cookies.set("session", session.token, {
+    secure: ctx.url.hostname !== "localhost",
+    path: "/",
+    httpOnly: true,
+    maxAge: sessionExpiresInSeconds,
+  });
 
   const internalRedirectUri = ctx.url.searchParams.get("redirect_uri") ?? "/";
 

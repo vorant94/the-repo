@@ -6,4 +6,24 @@ const loginUrl = new URL("/api/login/github", Astro.url.origin);
 loginUrl.searchParams.set("redirect_uri", href);
 ---
 
-<a href={loginUrl.toString()} data-astro-prefetch="false">click me</button>
+<va-comment-form>
+  <a href={loginUrl.toString()}
+     data-astro-prefetch="false">
+    click me
+  </a>
+</va-comment-form>
+
+<script>
+  import { actions } from 'astro:actions';
+
+  customElements.define("va-comment-form", class extends HTMLElement {
+    async connectedCallback() {
+      const { data } = await actions.getMe();
+      if(data) {
+        console.info('logged in', data);
+      } else {
+        console.info('logged out');
+      }
+    }
+  })
+</script>
