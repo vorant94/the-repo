@@ -74,8 +74,6 @@ jobs:
       - name: Build App Bundle
         working-directory: apps/digital-garden
         run: npm run build
-        env:
-          GITHUB_CLIENT_ID: ${{ vars.DIGITAL_GARDEN_GITHUB_CLIENT_ID }}
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4

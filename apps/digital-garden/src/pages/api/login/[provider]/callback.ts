@@ -1,8 +1,8 @@
-import { GITHUB_CLIENT_ID } from "astro:env/client";
-import { GITHUB_CLIENT_SECRET } from "astro:env/server";
-import { OAuthApp } from "@octokit/oauth-app";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "astro:env/server";
 import { Octokit } from "@octokit/rest";
+import { GitHub } from "arctic";
 import type { APIContext } from "astro";
+import { isProvider, type Provider } from "../../../../lib/oauth";
 
 export const prerender = false;
 
@@ -25,36 +25,39 @@ export async function GET(ctx: APIContext<Props, Params>): Promise<Response> {
   return await providerToHandler[provider](ctx);
 }
 
-const providers = ["github"] as const;
-
-type Provider = (typeof providers)[number];
-
-function isProvider(maybeProvider: string): maybeProvider is Provider {
-  return providers.includes(maybeProvider);
-}
-
 async function handleGithubCallback(
   ctx: APIContext<Props, Params>,
 ): Promise<Response> {
-  const app = new OAuthApp({
-    clientId: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET,
-  });
+  const storedOauthState = ctx.cookies.get("state")?.value ?? "";
+  const receivedOauthState = ctx.url.searchParams.get("state");
+  const oauthCode = ctx.url.searchParams.get("code") ?? "";
 
-  const redirectUri = ctx.url.searchParams.get("redirect_uri") ?? "/";
-  const code = ctx.url.searchParams.get("code") ?? "";
+  if (
+    !oauthCode ||
+    !storedOauthState ||
+    !receivedOauthState ||
+    receivedOauthState !== storedOauthState
+  ) {
+    return new Response(null, {
+      status: 400,
+      statusText: "Bad Request",
+    });
+  }
 
-  const { authentication } = await app.createToken({ code });
-  const octokit = new Octokit({ auth: authentication.token });
+  const oauthClient = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, null);
+  const tokens = await oauthClient.validateAuthorizationCode(oauthCode);
 
-  const { data } = await octokit.rest.users.getAuthenticated();
+  const githubClient = new Octokit({ auth: tokens.accessToken() });
+  const { data } = await githubClient.rest.users.getAuthenticated();
   console.info(data);
 
   // get or create user
   // create session
   // set user data and session id cookies (http only)
 
-  return ctx.redirect(redirectUri);
+  const internalRedirectUri = ctx.url.searchParams.get("redirect_uri") ?? "/";
+
+  return ctx.redirect(internalRedirectUri);
 }
 
 const providerToHandler = {
