@@ -27,13 +27,11 @@ export function GET(ctx: APIContext<Props, Params>): Response {
 function handleGithubRedirect(ctx: APIContext<Props, Params>): Response {
   const internalRedirectUrl = new URL(
     ctx.url.searchParams.get("redirect_uri") ?? "/",
-    // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-    ctx.site!.origin,
+    ctx.url.origin,
   );
   const oauthRedirectUrl = new URL(
     "/api/login/github/callback",
-    // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-    ctx.site!.origin,
+    ctx.url.origin,
   );
   oauthRedirectUrl.searchParams.set(
     "redirect_uri",
@@ -52,8 +50,7 @@ function handleGithubRedirect(ctx: APIContext<Props, Params>): Response {
   ]);
 
   ctx.cookies.set("state", oauthState, {
-    // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-    secure: ctx.site!.hostname !== "localhost",
+    secure: ctx.url.hostname !== "localhost",
     path: "/",
     httpOnly: true,
     maxAge: 60 * 10, // 10 minutes

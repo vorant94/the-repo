@@ -21,8 +21,7 @@ export async function GET(ctx: APIContext): Promise<Response> {
   return rss({
     title: t(profile.title),
     description: t(profile.description),
-    // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-    site: ctx.site!.origin,
+    site: ctx.url.origin,
     items: sortedPosts.map((post) => {
       const { title, description, publishedAt, tags } = post.data;
 
@@ -32,8 +31,7 @@ export async function GET(ctx: APIContext): Promise<Response> {
         title,
         description,
         pubDate: publishedAt,
-        // biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-        link: `${ctx.site!.origin}/${lang}/${post.collection}/${id}`,
+        link: `${ctx.url.origin}/${lang}/${post.collection}/${id}`,
         categories: tags.map((tag) => tag.id),
         author: "vorant94@pm.me",
       };

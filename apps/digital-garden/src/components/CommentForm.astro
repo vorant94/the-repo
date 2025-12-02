@@ -2,8 +2,7 @@
 
 const { href } = Astro.url;
 
-// biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
-const loginUrl = new URL("/api/login/github", Astro.site!.origin);
+const loginUrl = new URL("/api/login/github", Astro.url.origin);
 loginUrl.searchParams.set("redirect_uri", href);
 ---
 
