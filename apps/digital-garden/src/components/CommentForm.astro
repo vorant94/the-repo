@@ -1,47 +1,10 @@
-<va-comment-form>
-  <button type="button">click me</button>
-</va-comment-form>
+---
 
-<script>
-import { actions } from "astro:actions";
-import { GITHUB_CLIENT_ID } from "astro:env/client";
+const { href } = Astro.url;
 
-  class CommentForm extends HTMLElement {
-    #loginWithGithubButtonEl: HTMLButtonElement | null = null;
+// biome-ignore lint/style/noNonNullAssertion: we know Astro.site is defined since site is present in config
+const loginUrl = new URL("/api/login/github", Astro.site!.origin);
+loginUrl.searchParams.set("redirect_uri", href);
+---
 
-    connectedCallback() {
-      this.#loginWithGithubButtonEl = this.querySelector("button");
-      if (!this.#loginWithGithubButtonEl) {
-        throw new Error("Button not found");
-      }
-
-      this.#loginWithGithubButtonEl.addEventListener("click", this.#loginWithGithub);
-    }
-
-    disconnectedCallback() {
-      this.#loginWithGithubButtonEl?.removeEventListener("click", this.#loginWithGithub);
-    }
-
-    #loginWithGithub = async () => {
-      const {data, error} = await actions.getGreeting({ name: "World" });
-      if(error) {
-        console.error(error);
-        return;
-      }
-
-      console.info('action result', data);
-
-      const redirectUrl = new URL('/api/login/github/callback', window.location.origin);
-      redirectUrl.searchParams.set("redirect_uri", window.location.href);
-
-      const githubAuthUrl = new URL("https://github.com/login/oauth/authorize");
-      githubAuthUrl.searchParams.set("client_id", GITHUB_CLIENT_ID);
-      githubAuthUrl.searchParams.set("redirect_uri", redirectUrl.toString());
-      githubAuthUrl.searchParams.set("scope", "read:user");
-
-      window.location.href = githubAuthUrl.toString();
-    }
-  }
-
-  customElements.define("va-comment-form", CommentForm);
-</script>
+<a href={loginUrl.toString()} data-astro-prefetch="false">click me</button>

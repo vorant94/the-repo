@@ -76,7 +76,7 @@ export default defineConfig({
     schema: {
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_ID: envField.string({
-        context: "client",
+        context: "server",
         access: "public",
       }),
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
