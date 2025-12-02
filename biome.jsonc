@@ -111,7 +111,8 @@
       "!**/.husky/_",
       "!**/build",
       "!**/out",
-      "!**/.turbo"
+      "!**/.turbo",
+      "!**/worker-configuration.d.ts"
     ]
   },
   "overrides": [
