@@ -77,7 +77,7 @@ export default defineConfig({
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_ID: envField.string({
         context: "server",
-        access: "public",
+        access: "secret", // its not actually secret, but making it public here would mean that it should be accessible in buildtime for astro to in-line it in the bundle and i want to control it in runtime
       }),
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_SECRET: envField.string({
