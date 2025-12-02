@@ -72,7 +72,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build App Bundle
-        run: npm run build --workspace digital-garden
+        working-directory: apps/digital-garden
+        run: npm run build
+        env:
+          GITHUB_CLIENT_ID: ${{ vars.DIGITAL_GARDEN_GITHUB_CLIENT_ID }}
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4
