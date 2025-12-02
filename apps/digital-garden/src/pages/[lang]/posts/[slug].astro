@@ -107,5 +107,5 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-  <CommentForm />
+  <CommentForm server:defer />
 </DefaultLayout>
