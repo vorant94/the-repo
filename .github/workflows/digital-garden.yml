@@ -87,6 +87,12 @@ jobs:
     name: E2E
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' &&
+        github.ref == 'refs/heads/master') ||
+      (github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'preview') &&
+        contains(github.event.pull_request.labels.*.name, 'digital-garden'))
     needs:
       - build
     steps:
