@@ -7,6 +7,7 @@ import {
   createSession,
   sessionExpiresInSeconds,
 } from "../../../../lib/sessions";
+import { createUser, findUserByGithubId } from "../../../../lib/users";
 
 export const prerender = false;
 
@@ -53,11 +54,12 @@ async function handleGithubCallback(
 
   const githubClient = new Octokit({ auth: tokens.accessToken() });
   const { data } = await githubClient.rest.users.getAuthenticated();
-  console.info(data);
 
-  // get or create user
+  const user =
+    (await findUserByGithubId(ctx, data.id)) ??
+    (await createUser(ctx, data.id, data.login));
 
-  const session = await createSession(ctx);
+  const session = await createSession(ctx, user.id);
 
   ctx.cookies.set("session", session.token, {
     secure: ctx.url.hostname !== "localhost",

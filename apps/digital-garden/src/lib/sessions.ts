@@ -11,6 +11,7 @@ export const sessionExpiresInSeconds = 60 * 60 * 24;
 
 export async function createSession(
   ctx: APIContext,
+  userId: Session["userId"],
 ): Promise<SessionWithToken> {
   const { db } = ctx.locals;
 
@@ -22,7 +23,7 @@ export async function createSession(
 
   const [rawSession] = await db
     .insert(sessions)
-    .values({ id, secretHash: Buffer.from(secretHash) })
+    .values({ id, userId, secretHash: Buffer.from(secretHash) })
     .returning();
 
   const session = sessionSchema.parse(rawSession);

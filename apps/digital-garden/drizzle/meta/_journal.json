@@ -8,6 +8,20 @@
       "when": 1764688524103,
       "tag": "0000_clever_robbie_robertson",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1764773533987,
+      "tag": "0001_easy_mandrill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1764773611631,
+      "tag": "0002_mean_red_wolf",
+      "breakpoints": true
     }
   ]
 }
