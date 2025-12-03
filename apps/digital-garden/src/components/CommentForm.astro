@@ -9,10 +9,10 @@ const url = new URL(referer);
 const loginUrl = new URL("/api/login/github", Astro.url.origin);
 loginUrl.searchParams.set("redirect_uri", url.href);
 
-const isLoggedIn = Astro.locals.session !== null;
+const { user } = Astro.locals;
 ---
 
 <a href={loginUrl.toString()}
     data-astro-prefetch="false">
-  click me {isLoggedIn ? 'logout' : 'login'}
+  click me, {user?.username ?? 'user'}
 </a>
