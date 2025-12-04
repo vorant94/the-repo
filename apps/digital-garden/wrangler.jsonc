@@ -17,5 +17,12 @@
       "pattern": "vorant94.dev",
       "custom_domain": true
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "digital-garden",
+      "database_id": "4cf10012-d3fb-4e62-8f64-6d4af55c0cb8"
+    }
   ]
 }

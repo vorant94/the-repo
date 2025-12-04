@@ -1,0 +1,18 @@
+---
+
+const referer = Astro.request.headers.get("Referer");
+if (!referer) {
+  throw new Error("Referer is required");
+}
+const url = new URL(referer);
+
+const loginUrl = new URL("/api/login/github", Astro.url.origin);
+loginUrl.searchParams.set("redirect_uri", url.href);
+
+const { user } = Astro.locals;
+---
+
+<a href={loginUrl.toString()}
+    data-astro-prefetch="false">
+  click me, {user?.username ?? 'user'}
+</a>

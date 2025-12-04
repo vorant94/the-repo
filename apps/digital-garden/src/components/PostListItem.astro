@@ -3,7 +3,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import type { HTMLAttributes } from "astro/types";
 import { format } from "date-fns";
 import { publishedAtFormat } from "../globals/published-at-format";
-import type { PostModel } from "../utils/content.helpers";
+import type { PostModel } from "../lib/content";
 import Link from "./ui/Link.astro";
 
 export interface Props extends HTMLAttributes<"li"> {
