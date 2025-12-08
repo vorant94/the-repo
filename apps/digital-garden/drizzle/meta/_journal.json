@@ -43,6 +43,13 @@
       "when": 1765187166750,
       "tag": "0005_nappy_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1765206133961,
+      "tag": "0006_sticky_morph",
+      "breakpoints": true
     }
   ]
 }
