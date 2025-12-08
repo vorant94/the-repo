@@ -22,6 +22,27 @@
       "when": 1764773611631,
       "tag": "0002_mean_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1765186114824,
+      "tag": "0003_light_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1765186213031,
+      "tag": "0004_first_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1765187166750,
+      "tag": "0005_nappy_vanisher",
+      "breakpoints": true
     }
   ]
 }

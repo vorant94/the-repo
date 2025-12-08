@@ -40,6 +40,8 @@ const [_, id] = post.id.split("/");
 const postTags = await getEntries(post.data.tags);
 
 const { Content, remarkPluginFrontmatter } = await render(post);
+
+const loginRedirectUri = Astro.url;
 ---
 
 <DefaultLayout
@@ -107,5 +109,5 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-  <CommentForm server:defer />
+  <CommentForm server:defer loginRedirectUri={loginRedirectUri.toString()} />
 </DefaultLayout>

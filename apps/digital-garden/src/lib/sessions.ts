@@ -1,13 +1,14 @@
 import crypto from "node:crypto";
 import type { APIContext } from "astro";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { type Session, sessionSchema, sessions } from "../schema/sessions";
 
 export interface SessionWithToken extends Session {
   token: string;
 }
 
-export const sessionExpiresInSeconds = 60 * 60 * 24;
+const inactivityTimeoutInSeconds = 60 * 60 * 24 * 10; // 10 days
+const validatedAtUpdateIntervalInSeconds = 60 * 60; // 1 hour
 
 export async function createSession(
   ctx: APIContext,
@@ -51,9 +52,10 @@ async function getSession(
 
   const session = sessionSchema.parse(rawSession);
 
+  // inactivity timeout
   if (
-    now.getTime() - new Date(session.createdAt).getTime() >=
-    sessionExpiresInSeconds * 1000
+    now.getTime() - new Date(session.lastValidatedAt).getTime() >=
+    inactivityTimeoutInSeconds * 1000
   ) {
     await deleteSession(ctx, sessionId);
     return null;
@@ -74,38 +76,45 @@ async function deleteSession(
 export async function validateSessionToken(
   ctx: APIContext,
   token: string,
-): Promise<Session | null> {
+): Promise<[Session | null, boolean]> {
+  const now = new Date();
   const { db } = ctx.locals;
 
   const tokenSplits = token.split(".");
   if (tokenSplits.length !== 2) {
-    return null;
+    return [null, false];
   }
   const [sessionId, sessionSecret] = tokenSplits;
   if (!sessionId || !sessionSecret) {
-    return null;
-  }
-
-  const [rawSession] = await db
-    .select()
-    .from(sessions)
-    .where(eq(sessions.id, sessionId));
-  if (!rawSession) {
-    return null;
+    return [null, false];
   }
 
   const session = await getSession(ctx, sessionId);
   if (!session) {
-    return null;
+    return [null, false];
   }
 
   const tokenSecretHash = await hashSecret(sessionSecret);
   const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
   if (!validSecret) {
-    return null;
+    return [null, false];
   }
 
-  return session;
+  let updated: Session | null = null;
+  if (
+    now.getTime() - new Date(session.lastValidatedAt).getTime() >=
+    validatedAtUpdateIntervalInSeconds * 1000
+  ) {
+    const [rawUpdated] = await db
+      .update(sessions)
+      .set({ lastValidatedAt: sql`(CURRENT_TIMESTAMP)` })
+      .where(eq(sessions.id, session.id))
+      .returning();
+
+    updated = sessionSchema.parse(rawUpdated);
+  }
+
+  return [updated ?? session, !!updated];
 }
 
 async function hashSecret(secret: string): Promise<Uint8Array> {
@@ -124,4 +133,13 @@ function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
     c |= a[i]! ^ b[i]!;
   }
   return c === 0;
+}
+
+export function setSessionCookie(ctx: APIContext, sessionToken: string): void {
+  ctx.cookies.set("session", sessionToken, {
+    secure: ctx.url.hostname !== "localhost",
+    path: "/",
+    httpOnly: true,
+    maxAge: inactivityTimeoutInSeconds,
+  });
 }

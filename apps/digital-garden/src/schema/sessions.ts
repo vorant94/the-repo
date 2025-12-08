@@ -11,6 +11,7 @@ export const sessions = sqliteTable("sessions", {
     .references(() => users.id),
   secretHash: blob({ mode: "buffer" }).notNull(),
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  lastValidatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const sessionSchema = createSelectSchema(sessions);

@@ -1,10 +1,15 @@
 ---
 
-const referer = Astro.request.headers.get("Referer");
-if (!referer) {
-  throw new Error("Referer is required");
+interface Props {
+  // can't take it from Referer header like Astro docs suggests, because
+  // link preload makes it so Referer is the page where preload started (/en)
+  // not page that renders CommentForm (/en/posts/{post-slug})
+  loginRedirectUri: string;
 }
-const url = new URL(referer);
+
+const { loginRedirectUri } = Astro.props;
+
+const url = new URL(loginRedirectUri);
 
 const loginUrl = new URL("/api/login/github", Astro.url.origin);
 loginUrl.searchParams.set("redirect_uri", url.href);
