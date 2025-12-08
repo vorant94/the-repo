@@ -7,13 +7,17 @@ const { postSlug } = Astro.props;
 ---
 
 <va-comment-list data-postslug={postSlug}>
-  comments
+  <div class="flex flex-col gap-2">
+    <div>comments</div>
 
-  <div id="comment-list-outlet" class="flex flex-col"></div>
+    <div id="comment-list-outlet" class="flex flex-col"></div>
+  </div>
 
   <template id="comment-list-item-template">
-    <div class="flex flex-col">
-      <div id="comment-text-outlet"></div>
+    <div class="flex gap-2">
+      <span id="comment-author-outlet"></span>
+      :
+      <span id="comment-text-outlet"></span>
     </div>
   </template>
 </va-comment-list>
@@ -21,7 +25,7 @@ const { postSlug } = Astro.props;
 
 <script>
 import { actions } from "astro:actions";
-import type { Comment } from '../schema/comments';
+import type { CommentWithAuthor } from '../lib/comments';
 import { customEvents } from '../globals/custom-events';
 
 customElements.define('va-comment-list', class extends HTMLElement {
@@ -76,7 +80,7 @@ customElements.define('va-comment-list', class extends HTMLElement {
     }
   }
 
-  #renderComment(comment: Comment): DocumentFragment {
+  #renderComment(comment: CommentWithAuthor): DocumentFragment {
     const clone = document.importNode(this.#commentListItemTemplateEl.content, true);
 
     const textEl = clone.getElementById('comment-text-outlet');
@@ -85,6 +89,13 @@ customElements.define('va-comment-list', class extends HTMLElement {
     }
     textEl.removeAttribute('id')
     textEl.textContent = comment.text;
+
+    const authorEl = clone.getElementById('comment-author-outlet');
+    if(!authorEl) {
+      throw new Error("Can't find comment author outlet")
+    }
+    authorEl.removeAttribute('id')
+    authorEl.textContent = comment.author?.username ?? 'username';
 
     return clone;
   }
