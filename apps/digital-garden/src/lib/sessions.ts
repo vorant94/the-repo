@@ -76,7 +76,7 @@ async function deleteSession(
 export async function validateSessionToken(
   ctx: APIContext,
   token: string,
-): Promise<[Session | null, boolean]> {
+): Promise<[session: Session | null, validatedAtWasUpdated: boolean]> {
   const now = new Date();
   const { db } = ctx.locals;
 
