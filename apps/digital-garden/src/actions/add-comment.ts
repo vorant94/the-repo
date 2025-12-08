@@ -1,5 +1,6 @@
 import { ActionError, defineAction } from "astro:actions";
 import z from "zod";
+import type { CommentWithAuthor } from "../lib/comments";
 import { commentSchema, comments } from "../schema/comments";
 
 export const addComment = defineAction({
@@ -8,7 +9,7 @@ export const addComment = defineAction({
     text: z.string(),
     postSlug: z.string(),
   }),
-  handler: async (input, ctx) => {
+  handler: async ({ text, postSlug }, ctx): Promise<CommentWithAuthor> => {
     const { user, db } = ctx.locals;
     if (!user) {
       throw new ActionError({
@@ -20,12 +21,17 @@ export const addComment = defineAction({
       .insert(comments)
       .values({
         id: crypto.randomUUID(),
-        text: input.text,
+        text,
         authorId: user.id,
-        postSlug: input.postSlug,
+        postSlug,
       })
       .returning();
 
-    return commentSchema.parse(rawComment);
+    const { authorId: _, ...comment } = commentSchema.parse(rawComment);
+
+    return {
+      ...comment,
+      author: user,
+    };
   },
 });
