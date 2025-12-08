@@ -5,9 +5,10 @@ interface Props {
   // link preload makes it so Referer is the page where preload started (/en)
   // not page that renders CommentForm (/en/posts/{post-slug})
   loginRedirectUri: string;
+  postSlug: string;
 }
 
-const { loginRedirectUri } = Astro.props;
+const { loginRedirectUri, postSlug } = Astro.props;
 
 const url = new URL(loginRedirectUri);
 
@@ -17,7 +18,78 @@ loginUrl.searchParams.set("redirect_uri", url.href);
 const { user } = Astro.locals;
 ---
 
-<a href={loginUrl.toString()}
-    data-astro-prefetch="false">
-  click me, {user?.username ?? 'user'}
-</a>
+<va-comment-form data-postslug={postSlug}>
+  <form class="flex flex-col">
+    <textarea name="text" id="text" required></textarea>
+
+    {!user && (
+      <a href={loginUrl.toString()}
+          data-astro-prefetch="false">
+          login
+      </a>
+    )}
+    {user && (
+      <button type="submit">comment</button>
+    )}
+  </form>
+</va-comment-form>
+
+<script>
+import { actions } from 'astro:actions';
+import {customEvents} from '../globals/custom-events';
+
+// HTML-only action submissions are enabled only for on-demand pages
+// (even inside server islands). since post page is prerendered and is desired
+// to stay so, the only option to left is to submit action with JS
+customElements.define('va-comment-form', class extends HTMLElement {
+  #formEl!: HTMLFormElement;
+
+  get postSlug() {
+    const value = this.dataset.postslug;
+    if(!value) {
+      throw new Error('postslug is missing')
+    }
+
+    return value;
+  }
+
+  connectedCallback() {
+    this.#queryElements();
+
+    this.#formEl.addEventListener('submit', this.#submitForm)
+  }
+
+  disconnectedCallback() {
+    this.#formEl.removeEventListener('submit', this.#submitForm)
+  }
+
+  #queryElements() {
+    const form = this.querySelector('form');
+    if(!form) {
+      throw new Error("Can't find comment form");
+    }
+    this.#formEl = form;
+  }
+
+  #submitForm = async (event: SubmitEvent): Promise<void> => {
+    event.preventDefault();
+
+    const data = new FormData(this.#formEl);
+    data.append('postSlug', this.postSlug);
+
+
+    const result = await actions.addComment(data);
+    if(result.error) {
+      return;
+    }
+
+    this.#formEl.reset();
+    this.dispatchEvent(
+      new CustomEvent(customEvents.commentAdded, {
+        detail: result.data,
+        bubbles: true,
+      }),
+    );
+  }
+});
+</script>

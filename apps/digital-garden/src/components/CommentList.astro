@@ -1,0 +1,92 @@
+---
+interface Props {
+  postSlug: string;
+}
+
+const { postSlug } = Astro.props;
+---
+
+<va-comment-list data-postslug={postSlug}>
+  comments
+
+  <div id="comment-list-outlet" class="flex flex-col"></div>
+
+  <template id="comment-list-item-template">
+    <div class="flex flex-col">
+      <div id="comment-text-outlet"></div>
+    </div>
+  </template>
+</va-comment-list>
+
+
+<script>
+import { actions } from "astro:actions";
+import type { Comment } from '../schema/comments';
+import { customEvents } from '../globals/custom-events';
+
+customElements.define('va-comment-list', class extends HTMLElement {
+  #commentListOutletEl!: HTMLElement;
+  #commentListItemTemplateEl!: HTMLTemplateElement;
+
+  get postSlug() {
+    const value = this.dataset.postslug;
+    if(!value) {
+      throw new Error('postslug is missing')
+    }
+
+    return value;
+  }
+
+  connectedCallback() {
+    this.#queryElements();
+
+    void this.#fetchComments();
+
+    document.addEventListener(customEvents.commentAdded, this.#fetchComments);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener(customEvents.commentAdded, this.#fetchComments);
+  }
+
+  #queryElements() {
+    const commentListOutletEl = this.querySelector<HTMLElement>("#comment-list-outlet");
+    if (!commentListOutletEl) {
+      throw new Error("Can't find comment list outlet");
+    }
+    this.#commentListOutletEl = commentListOutletEl;
+
+    const commentListItemTemplateEl = this.querySelector<HTMLTemplateElement>("#comment-list-item-template");
+    if (!commentListItemTemplateEl) {
+      throw new Error("Can't find comment list item template");
+    }
+    this.#commentListItemTemplateEl = commentListItemTemplateEl;
+  }
+
+  #fetchComments = async (): Promise<void> => {
+    const result = await actions.fetchComments({postSlug: this.postSlug});
+    if(result.error) {
+      return;
+    }
+
+    this.#commentListOutletEl.textContent = '';
+
+    for (const comment of result.data) {
+      this.#commentListOutletEl.appendChild(this.#renderComment(comment))
+    }
+  }
+
+  #renderComment(comment: Comment): DocumentFragment {
+    const clone = document.importNode(this.#commentListItemTemplateEl.content, true);
+
+    const textEl = clone.getElementById('comment-text-outlet');
+    if(!textEl) {
+      throw new Error("Can't find comment text outlet")
+    }
+    textEl.removeAttribute('id')
+    textEl.textContent = comment.text;
+
+    return clone;
+  }
+})
+</script>
