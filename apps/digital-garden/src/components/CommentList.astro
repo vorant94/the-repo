@@ -44,13 +44,13 @@ customElements.define('va-comment-list', class extends HTMLElement {
   connectedCallback() {
     this.#queryElements();
 
-    void this.#fetchComments();
+    void this.#fetchAndRenderComments();
 
-    document.addEventListener(customEvents.commentAdded, this.#fetchComments);
+    document.addEventListener(customEvents.commentAdded, this.#renderNewlyAddedComment);
   }
 
   disconnectedCallback() {
-    document.removeEventListener(customEvents.commentAdded, this.#fetchComments);
+    document.removeEventListener(customEvents.commentAdded, this.#renderNewlyAddedComment);
   }
 
   #queryElements() {
@@ -67,7 +67,7 @@ customElements.define('va-comment-list', class extends HTMLElement {
     this.#commentListItemTemplateEl = commentListItemTemplateEl;
   }
 
-  #fetchComments = async (): Promise<void> => {
+  #fetchAndRenderComments = async (): Promise<void> => {
     const result = await actions.fetchComments({postSlug: this.postSlug});
     if(result.error) {
       return;
@@ -78,6 +78,10 @@ customElements.define('va-comment-list', class extends HTMLElement {
     for (const comment of result.data) {
       this.#commentListOutletEl.appendChild(this.#renderComment(comment))
     }
+  }
+
+  #renderNewlyAddedComment = ({detail}: CustomEvent<CommentWithAuthor>): void => {
+    this.#commentListOutletEl.appendChild(this.#renderComment(detail));
   }
 
   #renderComment(comment: CommentWithAuthor): DocumentFragment {

@@ -37,6 +37,7 @@ const { user } = Astro.locals;
 <script>
 import { actions } from 'astro:actions';
 import {customEvents} from '../globals/custom-events';
+import type { CommentWithAuthor } from '../lib/comments';
 
 // HTML-only action submissions are enabled only for on-demand pages
 // (even inside server islands). since post page is prerendered and is desired
@@ -85,7 +86,7 @@ customElements.define('va-comment-form', class extends HTMLElement {
 
     this.#formEl.reset();
     this.dispatchEvent(
-      new CustomEvent(customEvents.commentAdded, {
+      new CustomEvent<CommentWithAuthor>(customEvents.commentAdded, {
         detail: result.data,
         bubbles: true,
       }),

@@ -10,3 +10,7 @@ declare namespace App {
     user: import("./schema/users").User | null;
   }
 }
+
+interface DocumentEventMap {
+  "va:comment-added": CustomEvent<import("./lib/comments").CommentWithAuthor>;
+}
