@@ -1,7 +1,7 @@
 import { DB_FILE_NAME } from "astro:env/server";
 import { defineMiddleware, sequence } from "astro:middleware";
 import { dbConfig } from "./globals/db";
-import { validateSessionToken } from "./lib/sessions";
+import { setSessionCookie, validateSessionToken } from "./lib/sessions";
 import { findUserById } from "./lib/users";
 
 const defineMiddlewarePrerenderFalse: typeof defineMiddleware = (fn) => {
@@ -29,9 +29,13 @@ const setupDb = defineMiddlewarePrerenderFalse(async (ctx, next) => {
 const setupAuth = defineMiddlewarePrerenderFalse(async (ctx, next) => {
   const sessionToken = ctx.cookies.get("session")?.value;
 
-  ctx.locals.session = sessionToken
+  const [session, validatedAtWasUpdated] = sessionToken
     ? await validateSessionToken(ctx, sessionToken)
-    : null;
+    : [null, false];
+  ctx.locals.session = session;
+  if (sessionToken && validatedAtWasUpdated) {
+    setSessionCookie(ctx, sessionToken);
+  }
 
   ctx.locals.user = ctx.locals.session
     ? await findUserById(ctx, ctx.locals.session.userId)
