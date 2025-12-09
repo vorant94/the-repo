@@ -7,17 +7,21 @@ const { postSlug } = Astro.props;
 ---
 
 <va-comment-list data-postslug={postSlug}>
-  <div class="flex flex-col gap-2">
-    <div>comments</div>
+  <div class="mt-8 space-y-4">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+      Comments
+    </h3>
 
-    <div id="comment-list-outlet" class="flex flex-col"></div>
+    <div id="comment-list-outlet" class="space-y-3"></div>
   </div>
 
   <template id="comment-list-item-template">
-    <div class="flex gap-2">
-      <span id="comment-author-outlet"></span>
-      :
-      <span id="comment-text-outlet"></span>
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+      <div class="flex items-center justify-between mb-2">
+        <span id="comment-author-outlet" class="font-semibold text-gray-900 dark:text-gray-100"></span>
+        <time id="comment-date-outlet" class="text-xs text-gray-500 dark:text-gray-400"></time>
+      </div>
+      <p id="comment-text-outlet" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"></p>
     </div>
   </template>
 </va-comment-list>
@@ -27,6 +31,7 @@ const { postSlug } = Astro.props;
 import { actions } from "astro:actions";
 import type { CommentWithAuthor } from '../lib/comments';
 import { customEvents } from '../globals/custom-events';
+import { formatDistanceToNow } from 'date-fns';
 
 customElements.define('va-comment-list', class extends HTMLElement {
   #commentListOutletEl!: HTMLElement;
@@ -99,7 +104,16 @@ customElements.define('va-comment-list', class extends HTMLElement {
       throw new Error("Can't find comment author outlet")
     }
     authorEl.removeAttribute('id')
-    authorEl.textContent = comment.author?.username ?? 'username';
+    authorEl.textContent = comment.author?.username ?? 'Anonymous';
+
+    const dateEl = clone.getElementById('comment-date-outlet');
+    if(!dateEl) {
+      throw new Error("Can't find comment date outlet")
+    }
+    dateEl.removeAttribute('id')
+    const date = new Date(comment.createdAt);
+    dateEl.setAttribute('datetime', comment.createdAt);
+    dateEl.textContent = formatDistanceToNow(date, { addSuffix: true });
 
     return clone;
   }
