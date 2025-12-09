@@ -80,7 +80,7 @@ const navLinksMeta = [
     #closeMobileNavButtonEl!: HTMLButtonElement;
 
     connectedCallback() {
-      this.#initElements()
+      this.#queryElements()
 
       this.#openMobileNavButtonEl.addEventListener("click", this.#openMobileNav);
       this.#closeMobileNavButtonEl.addEventListener('click', this.#closeMobileNav);
@@ -95,7 +95,7 @@ const navLinksMeta = [
       document.removeEventListener("astro:before-preparation", this.#closeMobileNav);
     }
 
-    #initElements() {
+    #queryElements() {
       const openMobileNavButtonEl = this.querySelector<HTMLButtonElement>("button[aria-label='mobile-nav-open']");
       if (!openMobileNavButtonEl) {
         throw new Error("Can't find mobile nav open button");
