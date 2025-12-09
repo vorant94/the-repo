@@ -17,8 +17,10 @@ const { postSlug } = Astro.props;
 
   <template id="comment-list-item-template">
     <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-      <div class="flex items-center justify-between mb-2">
-        <span id="comment-author-outlet" class="font-semibold text-gray-900 dark:text-gray-100"></span>
+      <div class="flex items-center mb-2 gap-2">
+        <img  id="comment-author-avatar-outlet" class="w-5 h-5 rounded-full" src="" alt="comment author avatar">
+        <span id="comment-author-username-outlet" class="font-semibold text-gray-900 dark:text-gray-100"></span>
+        <span class="flex-1"></span>
         <time id="comment-date-outlet" class="text-xs text-gray-500 dark:text-gray-400"></time>
       </div>
       <p id="comment-text-outlet" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"></p>
@@ -99,12 +101,19 @@ customElements.define('va-comment-list', class extends HTMLElement {
     textEl.removeAttribute('id')
     textEl.textContent = comment.text;
 
-    const authorEl = clone.getElementById('comment-author-outlet');
-    if(!authorEl) {
-      throw new Error("Can't find comment author outlet")
+    const authorUsernameEl = clone.getElementById('comment-author-username-outlet');
+    if(!authorUsernameEl) {
+      throw new Error("Can't find comment author username outlet")
     }
-    authorEl.removeAttribute('id')
-    authorEl.textContent = comment.author?.username ?? 'Anonymous';
+    authorUsernameEl.removeAttribute('id')
+    authorUsernameEl.textContent = comment.author?.username ?? 'Anonymous';
+
+    const authorAvatarEl = clone.getElementById('comment-author-avatar-outlet') as HTMLImageElement;
+    if(!authorAvatarEl) {
+      throw new Error("Can't find comment author avatar outlet")
+    }
+    authorAvatarEl.removeAttribute('id')
+    authorAvatarEl.src = comment.author ? `https://avatars.githubusercontent.com/u/${comment.author.githubId}` : `https://placehold.co/460x460`;
 
     const dateEl = clone.getElementById('comment-date-outlet');
     if(!dateEl) {
