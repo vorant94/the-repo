@@ -1,10 +1,34 @@
----
-import type { HTMLAttributes } from "astro/types";
+import { cn } from "cn";
+import type { FC, HTMLAttributes, PropsWithChildren } from "react";
 import type {
   TailWindThemedStyle,
   TailwindBackgroundColor,
   TailwindColor,
 } from "../../lib/tailwind";
+
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  color: TailwindColor;
+}
+
+export const Badge: FC<PropsWithChildren<BadgeProps>> = ({
+  color,
+  className,
+  children,
+  ...rest
+}) => {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 font-semibold text-slate-800 text-xs dark:text-slate-100",
+        ...badgeColorToBg[color],
+        className,
+      )}
+      {...rest}
+    >
+      {children}
+    </span>
+  );
+};
 
 const badgeColorToBg = {
   slate: ["bg-slate-100", "dark:bg-slate-800"],
@@ -33,21 +57,3 @@ const badgeColorToBg = {
   TailwindColor,
   TailWindThemedStyle<TailwindBackgroundColor>
 >;
-
-export interface Props extends HTMLAttributes<"span"> {
-  color: TailwindColor;
-}
-
-const { color, class: className, ...rest } = Astro.props;
----
-
-<span
-	class:list={[
-		"inline-flex items-center rounded-full px-2.5 py-0.5 font-semibold text-slate-800 text-xs dark:text-slate-100",
-		...badgeColorToBg[color],
-		className,
-	]}
-	{...rest}
->
-	<slot/>
-</span>

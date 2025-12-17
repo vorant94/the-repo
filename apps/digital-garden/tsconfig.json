@@ -35,7 +35,8 @@
 
     /* Runtime/Framework */
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
 
     /* Misc */
     "types": [

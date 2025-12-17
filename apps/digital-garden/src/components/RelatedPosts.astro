@@ -3,8 +3,8 @@ import { getEntries } from "astro:content";
 import { type PostModel, sortPostsByPublishedAt } from "../lib/content";
 import PostList from "./PostList.astro";
 import PostListItem from "./PostListItem.astro";
-import StandOut from "./ui/StandOut.astro";
-import Title from "./ui/Title.astro";
+import { StandOut } from "./ui/stand-out";
+import { Title } from "./ui/title";
 
 export interface Props {
   post: PostModel;
@@ -17,12 +17,12 @@ const posts = post.data.related
   : [];
 ---
 
-<StandOut class="flex-col">
+<StandOut className="flex-col">
 	<details class="text-slate-800 dark:text-slate-100 details">
 		<summary class="hover:cursor-pointer">
 			<Title
 				as="h6"
-				class="mb-0 inline-block"
+				className="mb-0 inline-block"
 			>
 				<span class="pl-2">Related posts</span>
 			</Title>

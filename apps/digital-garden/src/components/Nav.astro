@@ -3,8 +3,8 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import { createTranslate } from "../lib/i18n";
 import Header from "./Header.astro";
 import NavLink from "./NavLink.astro";
-import Button from "./ui/Button.astro";
-import Icon from "./ui/Icon.astro";
+import { Button } from "./ui/button.tsx";
+import { Icon } from "./ui/icon";
 
 const t = createTranslate(Astro.currentLocale);
 
@@ -38,7 +38,7 @@ const navLinksMeta = [
 
 	<Button
 		aria-label="mobile-nav-open"
-		class="lg:hidden"
+		className="lg:hidden"
 	>
 		<Icon glyph="menu" />
 	</Button>
