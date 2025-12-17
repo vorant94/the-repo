@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import type { FC } from "react";
 import type { CommentWithAuthor } from "../lib/comments";
 
-export interface CommentListItemProps {
+interface CommentListItemProps {
   comment: CommentWithAuthor;
 }
 

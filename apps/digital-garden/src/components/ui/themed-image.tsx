@@ -1,7 +1,7 @@
 import type { ImageMetadata } from "astro";
 import type { FC, ImgHTMLAttributes } from "react";
 
-export interface ThemedImageProps
+interface ThemedImageProps
   extends Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src: ImageMetadata | string;
   srcDark?: ImageMetadata | string | null;

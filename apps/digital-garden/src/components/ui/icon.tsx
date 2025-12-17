@@ -5,7 +5,7 @@ import "flag-icons/css/flag-icons.css";
 import { cn } from "cn";
 import type { FC, HTMLAttributes } from "react";
 
-export const iconGlyphs = [
+const iconGlyphs = [
   "linked-in",
   "github",
   "medium",
@@ -20,9 +20,9 @@ export const iconGlyphs = [
   "en",
   "ru",
 ] as const;
-export type IconGlyph = (typeof iconGlyphs)[number];
+type IconGlyph = (typeof iconGlyphs)[number];
 
-export interface IconProps extends HTMLAttributes<HTMLElement> {
+interface IconProps extends HTMLAttributes<HTMLElement> {
   glyph: IconGlyph;
 }
 

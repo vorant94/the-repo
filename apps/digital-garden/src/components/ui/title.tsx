@@ -1,10 +1,10 @@
 import { cn } from "cn";
 import type { FC, HTMLAttributes, PropsWithChildren } from "react";
 
-export const titleTags = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
-export type TitleTag = (typeof titleTags)[number];
+const titleTags = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
+type TitleTag = (typeof titleTags)[number];
 
-export interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
+interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
   as: TitleTag;
 }
 

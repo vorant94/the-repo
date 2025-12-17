@@ -6,7 +6,7 @@ import type {
   TailwindColor,
 } from "../../lib/tailwind";
 
-export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   color: TailwindColor;
 }
 

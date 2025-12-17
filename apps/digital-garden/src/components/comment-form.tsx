@@ -6,7 +6,7 @@ import type { AddCommentInput, AddCommentOutput } from "../actions/add-comment";
 import { query, queryClient } from "../globals/query";
 import type { User } from "../schema/users";
 
-export interface CommentFormProps {
+interface CommentFormProps {
   postSlug: string;
   user?: User | null;
 }

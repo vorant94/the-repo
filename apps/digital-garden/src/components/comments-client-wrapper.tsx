@@ -5,7 +5,7 @@ import type { User } from "../schema/users";
 import { CommentForm } from "./comment-form";
 import { CommentList } from "./comment-list";
 
-export interface CommentsClientWrapperProps {
+interface CommentsClientWrapperProps {
   user?: User | null;
   postSlug: string;
 }

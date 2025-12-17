@@ -1,10 +1,10 @@
 import { cn } from "cn";
 import type { ButtonHTMLAttributes, FC, PropsWithChildren } from "react";
 
-export const buttonVariants = ["default", "outlined"] as const;
-export type ButtonVariant = (typeof buttonVariants)[number];
+const buttonVariants = ["default", "outlined"] as const;
+type ButtonVariant = (typeof buttonVariants)[number];
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
 }
 
