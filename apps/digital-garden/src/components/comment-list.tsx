@@ -6,7 +6,7 @@ import type { CommentWithAuthor } from "../lib/comments";
 import { CommentListItem } from "./comment-list-item";
 import { Title } from "./ui/title";
 
-export interface CommentListProps {
+interface CommentListProps {
   postSlug: string;
 }
 

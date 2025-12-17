@@ -3,7 +3,7 @@ import type { APIContext } from "astro";
 import { eq, sql } from "drizzle-orm";
 import { type Session, sessionSchema, sessions } from "../schema/sessions";
 
-export interface SessionWithToken extends Session {
+interface SessionWithToken extends Session {
   token: string;
 }
 

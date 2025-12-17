@@ -2,7 +2,7 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { cn } from "cn";
 import type { FC, HTMLAttributes } from "react";
 
-export interface ThemedLottieProps extends HTMLAttributes<HTMLElement> {
+interface ThemedLottieProps extends HTMLAttributes<HTMLElement> {
   src: string;
   srcDark: string;
   autoplay?: boolean;

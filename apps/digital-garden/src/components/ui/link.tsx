@@ -1,8 +1,8 @@
 import { cn } from "cn";
 import type { AnchorHTMLAttributes, FC, PropsWithChildren } from "react";
 
-export const linkSizes = ["sm", "md"] as const;
-export type LinkSize = (typeof linkSizes)[number];
+const linkSizes = ["sm", "md"] as const;
+type LinkSize = (typeof linkSizes)[number];
 
 export interface LinkProps
   extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {

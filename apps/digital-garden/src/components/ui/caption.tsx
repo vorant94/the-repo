@@ -1,7 +1,7 @@
 import { cn } from "cn";
 import type { FC, HTMLAttributes, PropsWithChildren } from "react";
 
-export interface CaptionProps extends HTMLAttributes<HTMLSpanElement> {}
+interface CaptionProps extends HTMLAttributes<HTMLSpanElement> {}
 
 export const Caption: FC<PropsWithChildren<CaptionProps>> = ({
   className,

@@ -18,8 +18,8 @@
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.7.1",
     "flag-icons": "^7.5.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.1",
     "zod": "^3.24.2"
   },
@@ -30,7 +30,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^22.19.1",
-    "@types/react": "^19.2.7",
+    "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.21",
     "cssnano": "^7.0.6",
@@ -58,10 +58,10 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:ui": "playwright test --ui",
+    "migrate:prod": "wrangler d1 migrations apply DB --remote",
     "start:dev": "astro dev",
     "start:prod": "astro preview",
-    "ts:check": "wrangler types && astro check",
-    "migrate:prod": "wrangler d1 migrations apply DB --remote"
+    "ts:check": "wrangler types && astro check"
   },
   "type": "module"
 }

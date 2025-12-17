@@ -2,7 +2,7 @@ import { cn } from "cn";
 import type { FC, PropsWithChildren } from "react";
 import { Card, type CardProps } from "./card";
 
-export interface StandOutProps extends CardProps {}
+interface StandOutProps extends CardProps {}
 
 export const StandOut: FC<PropsWithChildren<StandOutProps>> = ({
   className,

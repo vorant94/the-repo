@@ -1,7 +1,7 @@
 import { cn } from "cn";
 import type { FC, HTMLAttributes, PropsWithChildren } from "react";
 
-export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+interface DividerProps extends HTMLAttributes<HTMLDivElement> {
   isLeft?: boolean;
   isRight?: boolean;
 }

@@ -1,10 +1,10 @@
 import { cn } from "cn";
 import type { FC, HTMLAttributes, PropsWithChildren } from "react";
 
-export const textTags = ["span", "strong", "em"] as const;
-export type TextTag = (typeof textTags)[number];
+const textTags = ["span", "strong", "em"] as const;
+type TextTag = (typeof textTags)[number];
 
-export interface TextProps extends HTMLAttributes<HTMLSpanElement> {
+interface TextProps extends HTMLAttributes<HTMLSpanElement> {
   as: TextTag;
 }
 

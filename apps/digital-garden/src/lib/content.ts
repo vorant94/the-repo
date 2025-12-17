@@ -5,7 +5,7 @@ import { defaultLang } from "../globals/i18n.ts";
 export type PostModel = CollectionEntry<"posts">;
 export type TagModel = CollectionEntry<"tags">;
 
-export type PostWithCoverModel = Omit<PostModel, "data"> & {
+type PostWithCoverModel = Omit<PostModel, "data"> & {
   data: Extract<PostModel["data"], { coverImage: unknown }>;
 };
 

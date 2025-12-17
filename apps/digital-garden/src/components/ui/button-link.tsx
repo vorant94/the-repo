@@ -1,14 +1,13 @@
 import { cn } from "cn";
 import type { AnchorHTMLAttributes, FC, PropsWithChildren } from "react";
 
-export const buttonLinkVariants = ["default", "outlined"] as const;
-export type ButtonLinkVariant = (typeof buttonLinkVariants)[number];
+const buttonLinkVariants = ["default", "outlined"] as const;
+type ButtonLinkVariant = (typeof buttonLinkVariants)[number];
 
-export const buttonLinkSizes = ["md", "sm"] as const;
-export type ButtonLinkSize = (typeof buttonLinkSizes)[number];
+const buttonLinkSizes = ["md", "sm"] as const;
+type ButtonLinkSize = (typeof buttonLinkSizes)[number];
 
-export interface ButtonLinkProps
-  extends AnchorHTMLAttributes<HTMLAnchorElement> {
+interface ButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   variant?: ButtonLinkVariant;
   size?: ButtonLinkSize;
 }
