@@ -1,8 +1,7 @@
 ---
 import { getCollection, getEntries, render } from "astro:content";
 import { format } from "date-fns";
-import CommentForm from "../../../components/CommentForm.astro";
-import CommentList from "../../../components/CommentList.astro";
+import CommentsServerWrapper from "../../../components/CommentsServerWrapper.astro";
 import RelatedPosts from "../../../components/RelatedPosts.astro";
 import Tag from "../../../components/Tag.astro";
 import { Caption } from "../../../components/ui/caption";
@@ -44,8 +43,6 @@ if (!id) {
 const postTags = await getEntries(post.data.tags);
 
 const { Content, remarkPluginFrontmatter } = await render(post);
-
-const currentUrl = Astro.url.toString();
 ---
 
 <DefaultLayout
@@ -113,11 +110,8 @@ const currentUrl = Astro.url.toString();
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-	<CommentList postSlug={id} />
-
-  <CommentForm
-    server:defer
-    loginRedirectUri={currentUrl}
-    postSlug={id}
-  />
+	<CommentsServerWrapper
+   	server:defer
+   	postSlug={id}
+	/>
 </DefaultLayout>

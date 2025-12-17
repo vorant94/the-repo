@@ -6,12 +6,14 @@ export interface ThemedLottieProps extends HTMLAttributes<HTMLElement> {
   src: string;
   srcDark: string;
   autoplay?: boolean;
+  keepLastFrame?: boolean;
 }
 
 export const ThemedLottie: FC<ThemedLottieProps> = ({
   src,
   srcDark,
   autoplay = true,
+  keepLastFrame = true,
   className,
   ...rest
 }) => {
@@ -21,12 +23,14 @@ export const ThemedLottie: FC<ThemedLottieProps> = ({
         className={cn("dark:hidden", className)}
         src={src}
         autoplay={autoplay}
+        keepLastFrame={true}
         {...rest}
       />
       <Player
         className={cn("hidden dark:flex", className)}
         src={srcDark}
         autoplay={autoplay}
+        keepLastFrame={true}
         {...rest}
       />
     </>
