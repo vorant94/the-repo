@@ -2,8 +2,8 @@
 import { getCollection } from "astro:content";
 import { isLanguage, type Language, languages } from "../globals/i18n.ts";
 import { createFilterPostsByLang } from "../lib/content.ts";
-import ButtonLink from "./ui/ButtonLink.astro";
-import Icon from "./ui/Icon.astro";
+import { ButtonLink } from "./ui/button-link.tsx";
+import { Icon } from "./ui/icon";
 
 const currentLang = Astro.currentLocale;
 if (!currentLang) {

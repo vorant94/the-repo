@@ -1,14 +1,40 @@
----
 import "@fortawesome/fontawesome-free/css/brands.css";
 import "@fortawesome/fontawesome-free/css/fontawesome.css";
 import "@fortawesome/fontawesome-free/css/solid.css";
 import "flag-icons/css/flag-icons.css";
+import { cn } from "cn";
+import type { FC, HTMLAttributes } from "react";
 
-// - https://github.com/withastro/astro/issues/12961
-// - https://github.com/withastro/compiler/issues/863
-// biome-ignore format: splitting this into multiple lines breaks astro, see above
-export const iconGlyphs = ["linked-in", "github", "medium", "stack-overflow", "telegram", "twitter", "rss", "menu", "close", "globe", "bluesky", "en", "ru"] as const;
+export const iconGlyphs = [
+  "linked-in",
+  "github",
+  "medium",
+  "stack-overflow",
+  "telegram",
+  "twitter",
+  "rss",
+  "menu",
+  "close",
+  "globe",
+  "bluesky",
+  "en",
+  "ru",
+] as const;
 export type IconGlyph = (typeof iconGlyphs)[number];
+
+export interface IconProps extends HTMLAttributes<HTMLElement> {
+  glyph: IconGlyph;
+}
+
+export const Icon: FC<IconProps> = ({ glyph, className, ...rest }) => {
+  return (
+    <i
+      className={cn(iconGlyphToFaIcon[glyph], className)}
+      {...rest}
+    />
+  );
+};
+
 const iconGlyphToFaIcon = {
   "linked-in": "fa-brands fa-linkedin",
   github: "fa-brands fa-github",
@@ -24,12 +50,3 @@ const iconGlyphToFaIcon = {
   en: "fi fi-us",
   ru: "fi fi-ru",
 } as const satisfies Record<IconGlyph, string>;
-
-export interface Props {
-  glyph: IconGlyph;
-}
-
-const { glyph } = Astro.props;
----
-
-<i class={iconGlyphToFaIcon[glyph]} />

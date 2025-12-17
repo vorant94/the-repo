@@ -1,10 +1,10 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { createTranslate } from "../lib/i18n";
-import Divider from "./ui/Divider.astro";
-import Link from "./ui/Link.astro";
-import Text from "./ui/Text.astro";
-import Title from "./ui/Title.astro";
+import { Divider } from "./ui/divider";
+import { Link } from "./ui/link";
+import { Text } from "./ui/text";
+import { Title } from "./ui/title";
 
 const t = createTranslate(Astro.currentLocale);
 ---
