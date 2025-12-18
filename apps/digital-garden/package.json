@@ -7,6 +7,7 @@
     "@astrojs/rss": "^4.0.13",
     "@astrojs/sitemap": "^3.6.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@octokit/rest": "^22.0.1",
     "@tailwindcss/typography": "^0.5.16",
@@ -20,6 +21,7 @@
     "flag-icons": "^7.5.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.66.0",
     "tailwindcss": "^4.1.1",
     "zod": "^3.24.2"
   },

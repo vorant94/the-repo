@@ -127,7 +127,8 @@ export const Counter: FC = () => {
       <p>{doubleCounter}</p>
       <button onClick={increaseCounter}>Increase Counter</button>
       <button onClick={logCounter}>Log Counter</button>
-    </div>  );
+    </div>
+  );
 };
 ```
 
