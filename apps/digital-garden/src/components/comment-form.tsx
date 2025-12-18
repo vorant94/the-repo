@@ -1,9 +1,10 @@
-import { actions, type SafeResult } from "astro:actions";
-import { withState } from "@astrojs/react/actions";
+import { actions } from "astro:actions";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "cn";
-import { type FC, useActionState, useEffect } from "react";
-import type { AddCommentInput, AddCommentOutput } from "../actions/add-comment";
+import type { FC } from "react";
+import { useForm } from "react-hook-form";
 import { query, queryClient } from "../globals/query";
+import { type AddCommentInput, addCommentInputSchema } from "../lib/api";
 import type { User } from "../schema/users";
 
 interface CommentFormProps {
@@ -15,29 +16,22 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug, user }) => {
   const loginUrl = new URL("/api/login/github", window.location.origin);
   loginUrl.searchParams.set("redirect_uri", window.location.href);
 
-  const [state, action, pending] = useActionState<
-    SafeResult<AddCommentInput, AddCommentOutput>,
-    FormData
-  >(
-    (prev, formData) => {
-      formData.append("postSlug", postSlug);
+  const defaultValues = { postSlug, text: "" } satisfies AddCommentInput;
 
-      return withState(actions.addComment)(prev, formData);
-    },
-    { data: null, error: undefined },
-  );
+  const { register, handleSubmit, formState, reset } = useForm({
+    resolver: zodResolver(addCommentInputSchema),
+    defaultValues,
+  });
 
-  useEffect(() => {
-    if (!state.data) {
-      return;
-    }
-
+  const onSubmit = async (data: AddCommentInput) => {
+    await actions.addComment(data);
+    reset(defaultValues);
     queryClient.invalidateQueries({ queryKey: [query.comments, postSlug] });
-  }, [state, postSlug]);
+  };
 
   return (
     <form
-      action={action}
+      onSubmit={handleSubmit(onSubmit)}
       className={cn(
         "flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm",
         "dark:border-gray-700 dark:bg-gray-800",
@@ -51,7 +45,6 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug, user }) => {
           Add a comment
         </label>
         <textarea
-          name="text"
           id="text"
           required
           rows={4}
@@ -62,6 +55,7 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug, user }) => {
             "dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100",
             "dark:focus:border-blue-400 dark:focus:ring-blue-400",
           )}
+          {...register("text")}
         />
       </div>
 
@@ -107,7 +101,7 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug, user }) => {
         )}
         {user && (
           <button
-            disabled={pending}
+            disabled={formState.isSubmitting}
             type="submit"
             className={cn(
               "inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-sm text-white transition-colors",
