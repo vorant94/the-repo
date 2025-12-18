@@ -42,7 +42,7 @@ export const CommentListItem: FC<CommentListItemProps> = ({ comment }) => {
           {formattedDate}
         </time>
       </div>
-      <p className="text-gray-700 text-sm leading-relaxed dark:text-gray-300">
+      <p className="whitespace-pre-wrap text-gray-700 text-sm leading-relaxed dark:text-gray-300">
         {comment.text}
       </p>
     </div>
