@@ -54,6 +54,9 @@ function handleGithubRedirect(ctx: APIContext<Props, Params>): Response {
     path: "/",
     httpOnly: true,
     maxAge: 60 * 10, // 10 minutes
+    // can't be strict because cookie should be attached to GET request
+    // of navigation callback from oauth provider after successfull login
+    sameSite: "lax",
   });
 
   return ctx.redirect(oauthAuthorizationUrl.toString());
