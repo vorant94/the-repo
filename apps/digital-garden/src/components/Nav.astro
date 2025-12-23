@@ -1,10 +1,10 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
-import { createTranslate } from "../utils/i18n.helpers";
+import { createTranslate } from "../lib/i18n";
 import Header from "./Header.astro";
 import NavLink from "./NavLink.astro";
-import Button from "./ui/Button.astro";
-import Icon from "./ui/Icon.astro";
+import { Button } from "./ui/button.tsx";
+import { Icon } from "./ui/icon";
 
 const t = createTranslate(Astro.currentLocale);
 
@@ -38,7 +38,7 @@ const navLinksMeta = [
 
 	<Button
 		aria-label="mobile-nav-open"
-		class="lg:hidden"
+		className="lg:hidden"
 	>
 		<Icon glyph="menu" />
 	</Button>
@@ -73,52 +73,59 @@ const navLinksMeta = [
 </va-nav>
 
 <script>
-  class Nav extends HTMLElement {
-    #mobileNavTemplateEl: HTMLTemplateElement | null = null;
-    #mobileNavEl: HTMLElement | null = null;
-    #openMobileNavButtonEl: HTMLButtonElement | null = null;
-    #closeMobileNavButtonEl: HTMLButtonElement | null = null;
+  customElements.define("va-nav", class extends HTMLElement {
+    #mobileNavTemplateEl!: HTMLTemplateElement;
+    #mobileNavEl!: HTMLElement;
+    #openMobileNavButtonEl!: HTMLButtonElement;
+    #closeMobileNavButtonEl!: HTMLButtonElement;
 
     connectedCallback() {
-      this.#openMobileNavButtonEl = this.querySelector("button[aria-label='mobile-nav-open']");
-      if (!this.#openMobileNavButtonEl) {
-        throw new Error("Can't find mobile nav open button");
-      }
+      this.#queryElements()
 
       this.#openMobileNavButtonEl.addEventListener("click", this.#openMobileNav);
-
-      this.#mobileNavTemplateEl = this.querySelector("template");
-      if(!this.#mobileNavTemplateEl) {
-        throw new Error("Can't find mobile nav template");
-      }
-
-      document.body.append(this.#mobileNavTemplateEl.content);
-
-      this.#mobileNavEl = document.querySelector("#mobile-nav");
-      if(!this.#mobileNavEl) {
-        throw new Error("Can't find mobile nav");
-      }
-
-      this.#closeMobileNavButtonEl = this.#mobileNavEl.querySelector("button[aria-label='mobile-nav-close']");
-      if (!this.#closeMobileNavButtonEl) {
-        throw new Error("Can't find close modal button");
-      }
-
       this.#closeMobileNavButtonEl.addEventListener('click', this.#closeMobileNav);
       window.addEventListener("resize", this.#closeMobileNavOnResize);
       document.addEventListener("astro:before-preparation", this.#closeMobileNav);
     }
 
     disconnectedCallback() {
-      this.#openMobileNavButtonEl?.removeEventListener("click", this.#openMobileNav);
-      this.#closeMobileNavButtonEl?.removeEventListener('click', this.#closeMobileNav);
+      this.#openMobileNavButtonEl.removeEventListener("click", this.#openMobileNav);
+      this.#closeMobileNavButtonEl.removeEventListener('click', this.#closeMobileNav);
       window.removeEventListener('resize', this.#closeMobileNavOnResize)
       document.removeEventListener("astro:before-preparation", this.#closeMobileNav);
     }
 
+    #queryElements() {
+      const openMobileNavButtonEl = this.querySelector<HTMLButtonElement>("button[aria-label='mobile-nav-open']");
+      if (!openMobileNavButtonEl) {
+        throw new Error("Can't find mobile nav open button");
+      }
+      this.#openMobileNavButtonEl = openMobileNavButtonEl;
+
+      const mobileNavTemplateEl = this.querySelector("template");
+      if(!mobileNavTemplateEl) {
+        throw new Error("Can't find mobile nav template");
+      }
+      this.#mobileNavTemplateEl = mobileNavTemplateEl;
+
+      const clone = document.importNode(this.#mobileNavTemplateEl.content, true);
+      document.body.appendChild(clone);
+      const mobileNavEl = document.querySelector<HTMLElement>("#mobile-nav");
+      if(!mobileNavEl) {
+        throw new Error("Can't find mobile nav");
+      }
+      this.#mobileNavEl = mobileNavEl;
+
+      const closeMobileNavButtonEl = this.#mobileNavEl.querySelector<HTMLButtonElement>("button[aria-label='mobile-nav-close']");
+      if (!closeMobileNavButtonEl) {
+        throw new Error("Can't find close modal button");
+      }
+      this.#closeMobileNavButtonEl = closeMobileNavButtonEl;
+    }
+
     #openMobileNav = () => {
-      this.#mobileNavEl?.classList.remove("-translate-y-full");
-      this.#mobileNavEl?.classList.add("translate-y-0");
+      this.#mobileNavEl.classList.remove("-translate-y-full");
+      this.#mobileNavEl.classList.add("translate-y-0");
     }
 
     #closeMobileNavOnResize = () => {
@@ -131,10 +138,8 @@ const navLinksMeta = [
     }
 
     #closeMobileNav = () => {
-      this.#mobileNavEl?.classList.add("-translate-y-full");
-      this.#mobileNavEl?.classList.remove("translate-y-0");
+      this.#mobileNavEl.classList.add("-translate-y-full");
+      this.#mobileNavEl.classList.remove("translate-y-0");
     }
-  }
-
-  customElements.define("va-nav", Nav);
+  });
 </script>

@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1764688524103,
+      "tag": "0000_clever_robbie_robertson",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1764773533987,
+      "tag": "0001_easy_mandrill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1764773611631,
+      "tag": "0002_mean_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1765186114824,
+      "tag": "0003_light_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1765186213031,
+      "tag": "0004_first_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1765187166750,
+      "tag": "0005_nappy_vanisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1765206133961,
+      "tag": "0006_sticky_morph",
+      "breakpoints": true
+    }
+  ]
+}

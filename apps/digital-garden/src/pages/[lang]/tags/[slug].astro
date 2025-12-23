@@ -10,8 +10,8 @@ import {
   type PostModel,
   sortPostsByPublishedAt,
   type TagModel,
-} from "../../../utils/content.helpers";
-import { createTranslate } from "../../../utils/i18n.helpers";
+} from "../../../lib/content";
+import { createTranslate } from "../../../lib/i18n";
 
 export async function getStaticPaths() {
   const [tags, allPosts] = await Promise.all([

@@ -1,9 +1,9 @@
 ---
-import { createTranslate } from "../utils/i18n.helpers";
-import ButtonLink from "./ui/ButtonLink.astro";
-import Divider from "./ui/Divider.astro";
-import Icon from "./ui/Icon.astro";
-import Title from "./ui/Title.astro";
+import { createTranslate } from "../lib/i18n";
+import { ButtonLink } from "./ui/button-link.tsx";
+import { Divider } from "./ui/divider";
+import { Icon } from "./ui/icon";
+import { Title } from "./ui/title";
 
 const t = createTranslate(Astro.currentLocale);
 
@@ -52,7 +52,7 @@ const socialLinksMeta = [
 					variant="outlined"
 					href={socialLink.url}
 					target="_blank"
-					class="flex h-24 w-24 flex-col items-center justify-center gap-2 p-2 text-slate-800 dark:text-slate-100"
+					className="flex h-24 w-24 flex-col items-center justify-center gap-2 p-2 text-slate-800 dark:text-slate-100"
 				>
 					<span class="text-xl">
 						<Icon glyph={socialLink.glyph} />

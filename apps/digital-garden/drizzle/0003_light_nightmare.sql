@@ -1,0 +1,1 @@
+ALTER TABLE `sessions` ADD `last_verified_at` text NOT NULL;

@@ -1,19 +1,20 @@
 ---
 import { getCollection, getEntries, render } from "astro:content";
 import { format } from "date-fns";
+import CommentsServerWrapper from "../../../components/CommentsServerWrapper.astro";
 import RelatedPosts from "../../../components/RelatedPosts.astro";
 import Tag from "../../../components/Tag.astro";
-import Caption from "../../../components/ui/Caption.astro";
-import Text from "../../../components/ui/Text.astro";
-import ThemedImage from "../../../components/ui/ThemedImage.astro";
-import Title from "../../../components/ui/Title.astro";
+import { Caption } from "../../../components/ui/caption";
+import { Text } from "../../../components/ui/text";
+import { ThemedImage } from "../../../components/ui/themed-image";
+import { Title } from "../../../components/ui/title";
 import { publishedAtFormat } from "../../../globals/published-at-format";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
   filterOutDraftPosts,
   isPostWithCover,
   type PostModel,
-} from "../../../utils/content.helpers";
+} from "../../../lib/content";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", filterOutDraftPosts);
@@ -35,6 +36,9 @@ export interface Props {
 const { post } = Astro.props;
 
 const [_, id] = post.id.split("/");
+if (!id) {
+  throw new Error("Can't get post id!");
+}
 
 const postTags = await getEntries(post.data.tags);
 
@@ -106,23 +110,8 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 
 	{!!post.data.related?.length && <RelatedPosts post={post} />}
 
-	<giscus-widget
-		id="comments"
-		repo="vorant94/the-repo"
-		repoid="R_kgDOKWcyPw="
-		category="Digital Garden Post Comments"
-		categoryid="DIC_kwDON7ttjc4CoCVG"
-		mapping="specific"
-		term={id}
-		reactionsenabled="1"
-		emitmetadata="0"
-		inputposition="bottom"
-		theme="preferred_color_scheme"
-		lang="en"
-		loading="lazy"
+	<CommentsServerWrapper
+   	server:defer
+   	postSlug={id}
 	/>
 </DefaultLayout>
-
-<script>
-	import 'giscus';
-</script>

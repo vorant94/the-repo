@@ -1,0 +1,1 @@
+ALTER TABLE `sessions` RENAME COLUMN "last_verified_at" TO "last_validated_at";

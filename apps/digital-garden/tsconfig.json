@@ -35,10 +35,22 @@
 
     /* Runtime/Framework */
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
 
     /* Misc */
-    "types": ["vite/client", "@total-typescript/ts-reset"]
+    "types": [
+      "vite/client",
+      "@total-typescript/ts-reset",
+      "node",
+      "@cloudflare/workers-types"
+    ]
   },
-  "include": ["src", "e2e", "*.config.ts", ".astro/types.d.ts"]
+  "include": [
+    "src",
+    "e2e",
+    "*.config.ts",
+    ".astro/types.d.ts",
+    "./worker-configuration.d.ts"
+  ]
 }
