@@ -141,5 +141,8 @@ export function setSessionCookie(ctx: APIContext, sessionToken: string): void {
     path: "/",
     httpOnly: true,
     maxAge: inactivityTimeoutInSeconds,
+    // can be strict because all auth protected requests (server islands and actions)
+    // are subsequent requests after initial navigation
+    sameSite: "strict",
   });
 }
