@@ -194,6 +194,61 @@ Drizzle config points to src/shared/schema for schema definitions and ./drizzle 
 - Runs `npm run unused-code:check`
 - Runs `npm run deps-mismatch:check`
 
+## Programming Preferences & Patterns
+
+### Code Philosophy
+
+**Strong preference for simplicity over abstraction:**
+- Don't wrap simple native APIs unless there's clear benefit
+- Don't create enum-like constants when literals suffice
+- Only abstract when there's demonstrated value
+- Remove abstractions until they're actually needed
+
+**Minimal dependencies:**
+- Only add dependencies when immediately needed (avoid premature additions)
+- Reuse existing monorepo dependencies when available
+- Prefer native platform APIs over third-party libraries
+
+### TypeScript Patterns
+
+**Type safety with `satisfies`:**
+```typescript
+// For variables
+const format = "Pauper" satisfies Format;
+
+// For enum-like objects
+export const Format = {
+  pauper: "Pauper",
+} as const satisfies Record<string, Format>;
+```
+
+**Import patterns:**
+- Use type-only imports: `import type { Format }`
+- Explicitly import Node built-ins: `import process from "node:process"` (don't rely on globals)
+- Prefer `node:` protocol for Node built-ins
+
+**Modern TypeScript:**
+- Top-level await preferred (no main function wrappers)
+- `erasableSyntaxOnly: true` means no enums allowed (use type unions + const objects instead)
+
+### Project Organization
+
+**Future-proof structure:**
+- Organize for extensibility even with single implementation
+- Group by logical concern (e.g., `sites/mtgdecks/`, `formatters/`)
+- Output organized by source: `output/{site}/{format}-staples.txt`
+
+**Configuration clarity:**
+- Define configuration variables at top of entry files
+- Use clear, explicit variable names
+- Centralize behavior changes in one obvious place
+
+### Git Workflow
+
+- Co-authored commits with AI: `Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>`
+- Gitignore generated/output files by default
+- Descriptive commit messages focusing on "what" and "why"
+
 ## Requirements
 
 - **Node.js:** >= 23 (specified in package.json engines)
