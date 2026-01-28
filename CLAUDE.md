@@ -191,7 +191,7 @@ Drizzle config points to src/shared/schema for schema definitions and ./drizzle 
 
 **pre-push:**
 - Runs `npx turbo test`
-- Runs `npm run unused-code:check`
+- Runs `npm run unused-code:check` (Knip)
 - Runs `npm run deps-mismatch:check`
 
 ## Programming Preferences & Patterns
@@ -208,6 +208,11 @@ Drizzle config points to src/shared/schema for schema definitions and ./drizzle 
 - Only add dependencies when immediately needed (avoid premature additions)
 - Reuse existing monorepo dependencies when available
 - Prefer native platform APIs over third-party libraries
+
+**Avoid unnecessary exports:**
+- Don't export constants/functions that are only used within their file
+- Keep module scope minimal - only export what's needed by other files
+- Knip will catch unused exports during pre-push checks
 
 ### TypeScript Patterns
 
