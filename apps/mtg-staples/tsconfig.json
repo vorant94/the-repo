@@ -34,7 +34,7 @@
     "allowImportingTsExtensions": true,
 
     /* Runtime */
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
 
     /* Misc */
     "types": ["@total-typescript/ts-reset", "node"]

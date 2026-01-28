@@ -164,6 +164,14 @@ This repository enforces strict Biome rules:
 - **No namespace imports** except in test files (for mocking)
 - **Sorted Tailwind classes** using the `cn` function
 - **No console.log** (use console.error, console.info, or console.debug instead)
+- **Array type syntax**: Use `Array<T>` instead of `T[]` (e.g., `Array<string>` not `string[]`)
+- **Block statements required**: Always use braces for control flow statements, even single-line ones (e.g., `if (!value) { continue; }` not `if (!value) continue;`)
+- **Formatting**: Biome will auto-fix indentation (2 spaces) and other formatting issues with `npm run lint:write`
+
+**Fixing lint errors:**
+- Run `npm run lint:write` to auto-fix safe issues
+- Run `npm run lint:write:unsafe` to apply unsafe fixes (required for array types and block statements)
+- Run `npm run lint:check` to verify all issues are resolved
 
 ### Testing
 
@@ -215,10 +223,21 @@ Drizzle config points to src/shared/schema for schema definitions and ./drizzle 
 - Knip will catch unused exports during pre-push checks
 
 **Prefer early returns (guard clauses):**
-- Check for negative/error conditions first and return/continue early
-- Avoid nesting by handling edge cases at the top of functions/loops
+- ALWAYS check for negative/error conditions first and return/continue early
+- Apply this pattern consistently: in functions (early return), in loops (continue), in all nested blocks
+- Avoid ALL unnecessary nesting - if you see `if (condition) { doSomething(); }` at the end of a block, use `if (!condition) return/continue;` instead
 - Main logic should flow without deep nesting
 - Example: `if (!value) continue;` instead of `if (value) { ... }`
+- Example: `if (!cardName) continue; cardNames.add(cardName);` instead of `if (cardName) { cardNames.add(cardName); }`
+
+**When initial approach fails:**
+- Investigate the reason and present findings as outcome
+- Mention possible alternative solutions
+- Stop and wait for user response (don't go deep trying to fix it autonomously)
+
+**HTML parsing and string manipulation:**
+- Prefer semantic selectors (class names like `card-hover`) over regex patterns
+- Prefer simple string methods (`split`, `slice`, `join`) over regex when possible
 
 ### TypeScript Patterns
 
