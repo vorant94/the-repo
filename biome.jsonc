@@ -108,6 +108,7 @@
       "!**/.obsidian",
       "!**/.astro",
       "!**/.vscode",
+      "!**/.claude",
       "!**/.husky/_",
       "!**/build",
       "!**/out",
