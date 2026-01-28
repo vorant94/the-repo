@@ -248,6 +248,7 @@ export const Format = {
 - Co-authored commits with AI: `Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>`
 - Gitignore generated/output files by default
 - Descriptive commit messages focusing on "what" and "why"
+- **IMPORTANT: Do not commit files unless explicitly asked.** Edit files and leave them for user review instead.
 
 ## Requirements
 
