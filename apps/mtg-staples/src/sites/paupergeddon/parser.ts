@@ -1,5 +1,18 @@
 import { parseHTML } from "linkedom";
 
+const basicLands = new Set([
+  "Plains",
+  "Island",
+  "Swamp",
+  "Mountain",
+  "Forest",
+  "Snow-Covered Plains",
+  "Snow-Covered Island",
+  "Snow-Covered Swamp",
+  "Snow-Covered Mountain",
+  "Snow-Covered Forest",
+]);
+
 export function parseTop64Cards(html: string): Array<string> {
   const { document } = parseHTML(html);
 
@@ -17,6 +30,10 @@ export function parseTop64Cards(html: string): Array<string> {
     const parts = text.split(" ");
     const cardName = parts.slice(1).join(" ");
     if (!cardName) {
+      continue;
+    }
+
+    if (basicLands.has(cardName)) {
       continue;
     }
 

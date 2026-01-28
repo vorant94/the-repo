@@ -1,11 +1,12 @@
-import { TOP64_URL } from "./config.ts";
+import { top64Url } from "./config.ts";
 import { parseTop64Cards } from "./parser.ts";
 
 export async function scrapeTop64Cards(): Promise<Array<string>> {
-  console.info(`Fetching ${TOP64_URL}...`);
-  const response = await fetch(TOP64_URL);
+  console.info(`Fetching ${top64Url}...`);
+
+  const response = await fetch(top64Url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${TOP64_URL}: ${response.status}`);
+    throw new Error(`Failed to fetch ${top64Url}: ${response.status}`);
   }
 
   const html = await response.text();
