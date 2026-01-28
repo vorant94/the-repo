@@ -257,6 +257,11 @@ export const Format = {
 - Explicitly import Node built-ins: `import process from "node:process"` (don't rely on globals)
 - Prefer `node:` protocol for Node built-ins
 
+**Naming conventions:**
+- Use lowerCamelCase for all variables, including constants (e.g., `basicLands`, not `BASIC_LANDS`)
+- SCREAMING_CASE creates a false sense of immutability since constant objects are still mutable (properties can be changed)
+- Consistent casing makes code more readable and aligns with modern JavaScript conventions
+
 **Modern TypeScript:**
 - Top-level await preferred (no main function wrappers)
 - `erasableSyntaxOnly: true` means no enums allowed (use type unions + const objects instead)

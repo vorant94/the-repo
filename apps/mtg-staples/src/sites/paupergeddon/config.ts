@@ -1,1 +1,1 @@
-export const TOP64_URL = "https://paupergeddon.com/Top64.html";
+export const top64Url = "https://paupergeddon.com/Top64.html";
