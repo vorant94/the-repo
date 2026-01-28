@@ -1,0 +1,20 @@
+{
+  "name": "mtg-staples",
+  "version": "0.0.1",
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "linkedom": "^0.18.5"
+  },
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.19.1",
+    "typescript": "^5.9.3"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node --experimental-strip-types src/main.ts",
+    "ts:check": "tsc"
+  },
+  "type": "module"
+}
