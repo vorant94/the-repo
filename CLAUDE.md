@@ -214,6 +214,12 @@ Drizzle config points to src/shared/schema for schema definitions and ./drizzle 
 - Keep module scope minimal - only export what's needed by other files
 - Knip will catch unused exports during pre-push checks
 
+**Prefer early returns (guard clauses):**
+- Check for negative/error conditions first and return/continue early
+- Avoid nesting by handling edge cases at the top of functions/loops
+- Main logic should flow without deep nesting
+- Example: `if (!value) continue;` instead of `if (value) { ... }`
+
 ### TypeScript Patterns
 
 **Type safety with `satisfies`:**
