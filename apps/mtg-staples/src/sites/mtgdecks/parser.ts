@@ -9,9 +9,11 @@ export function parseCardNames(html: string): Array<string> {
 
   for (const element of cardNameElements) {
     const cardName = element.textContent?.trim();
-    if (cardName) {
-      cardNames.push(cardName);
+    if (!cardName) {
+      continue;
     }
+
+    cardNames.push(cardName);
   }
 
   return cardNames;
