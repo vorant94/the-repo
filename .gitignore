@@ -19,5 +19,5 @@ build
 out
 .turbo
 
-apps/mtg-staples/output/
+apps/grimoire/output/
 tools/studio/build

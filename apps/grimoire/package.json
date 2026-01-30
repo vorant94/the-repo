@@ -1,5 +1,5 @@
 {
-  "name": "mtg-staples",
+  "name": "grimoire",
   "version": "0.0.1",
   "dependencies": {
     "fs-extra": "^11.3.0",

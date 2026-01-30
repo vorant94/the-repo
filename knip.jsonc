@@ -7,7 +7,7 @@
   "tags": ["-lintignore"],
   "workspaces": {
     "apps/digital-garden": {},
-    "apps/mtg-staples": {
+    "apps/grimoire": {
       "entry": ["src/main.ts"]
     },
     "apps/sofash": {
