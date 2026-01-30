@@ -168,10 +168,15 @@ This repository enforces strict Biome rules:
 - **Block statements required**: Always use braces for control flow statements, even single-line ones (e.g., `if (!value) { continue; }` not `if (!value) continue;`)
 - **Formatting**: Biome will auto-fix indentation (2 spaces) and other formatting issues with `npm run lint:write`
 
+**IMPORTANT: Always run Biome from repository root:**
+- All Biome commands must be run from the repository root, not from individual project directories
+- Biome is fast enough to handle the entire monorepo in a single run
+- This avoids redundant boilerplate of setting up Biome separately in each project
+
 **Fixing lint errors:**
-- Run `npm run lint:write` to auto-fix safe issues
-- Run `npm run lint:write:unsafe` to apply unsafe fixes (required for array types and block statements)
-- Run `npm run lint:check` to verify all issues are resolved
+- Run `npm run lint:write` (from root) to auto-fix safe issues
+- Run `npm run lint:write:unsafe` (from root) to apply unsafe fixes (required for array types and block statements)
+- Run `npm run lint:check` (from root) to verify all issues are resolved
 
 **Biome-ignore annotations:**
 - It is forbidden to "solve" linter warnings by simply ignoring them
