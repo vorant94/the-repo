@@ -1,10 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { outputFile } from "fs-extra";
-import Papa from "papaparse";
+import { parse } from "papaparse";
 import { z } from "zod";
 
 const inputPath = "ManaBox_Collection.csv";
-const outputDir = "output/manabox";
+const outputDir = "output/lists";
 
 const manaBoxRowSchema = z.object({
   "Binder Name": z.string(),
@@ -33,7 +33,7 @@ const csvContent = await readFile(inputPath, "utf-8");
 
 console.info("Parsing CSV...");
 
-const parsed = Papa.parse(csvContent, {
+const parsed = parse(csvContent, {
   header: true,
   skipEmptyLines: true,
 });
