@@ -10,6 +10,7 @@ This is a monorepo containing a collection of personal projects, shared librarie
 
 - **apps/** - Personal projects
   - **digital-garden/** - Personal blog built with Astro, deployed to Cloudflare Pages
+  - **grimoire/** - Collection of Node scripts for managing MTG (Magic: The Gathering) card collection. Includes scripts for converting between collection management tools (ManaBox to Archidekt) and scraping card staples lists
   - **sofash/** - Early-stage WIP Telegram bot for local weekend events. Currently focused on scraping movie showtimes from local theater networks. Built with Hono and Grammy, uses Drizzle ORM with D1/LibSQL database
   - **subs-savvy/** - Abandoned budget management webapp focused on tracking recurring payments (subscriptions, house bills). React SPA using Dexie (IndexedDB) for client-side storage
 - **libs/** - Shared functionality across multiple projects
@@ -64,6 +65,16 @@ npm run e2e:ui                  # Run with UI
 # Deployment (Cloudflare)
 npm run deploy:preview          # Deploy preview
 npm run deploy:production       # Deploy to production
+```
+
+### grimoire
+
+```bash
+cd apps/grimoire
+
+npm run export-manabox-to-archidekt  # Convert ManaBox CSV export to Archidekt format
+npm run scrap-pauper-staples         # Scrape Pauper format staples from paupergeddon.com
+npm run ts:check                     # TypeScript check
 ```
 
 ### sofash
@@ -152,6 +163,19 @@ Astro-based blog with:
 - Posts stored in src/posts/ with MDX support
 - Internationalization with multiple language support
 - Custom rehype/remark plugins for markdown processing
+
+### grimoire - Simple Scripts
+
+Collection of standalone Node scripts:
+- **export-manabox-to-archidekt.ts** - Parses ManaBox CSV exports using PapaParse and converts to Archidekt format. Outputs separate files for wishlist and bulk cards
+- **scrap-pauper-staples.ts** - Scrapes paupergeddon.com using linkedom, extracts card names from HTML, filters out basic lands, and outputs sorted card list
+
+Architecture:
+- Flat structure with scripts directly in src/
+- Each script is self-contained with configuration at the top
+- Uses Zod schemas for CSV validation and type inference
+- Output organized by purpose: `output/lists/` for exports, `output/staples/` for scraped data
+- Uses Node's experimental `--experimental-strip-types` for direct TypeScript execution
 
 ## Development Guidelines
 
