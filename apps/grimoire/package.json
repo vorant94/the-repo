@@ -3,16 +3,20 @@
   "version": "0.0.1",
   "dependencies": {
     "fs-extra": "^11.3.0",
-    "linkedom": "^0.18.5"
+    "linkedom": "^0.18.5",
+    "papaparse": "^5.5.3",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.1",
+    "@types/papaparse": "^5.5.2",
     "typescript": "^5.9.3"
   },
   "private": true,
   "scripts": {
+    "export-manabox-to-archidekt": "node --experimental-strip-types src/export-manabox-to-archidekt.ts",
     "scrap-pauper-staples": "node --experimental-strip-types src/scrap-pauper-staples.ts",
     "ts:check": "tsc"
   },

@@ -1,22 +1,25 @@
 import { readFile } from "node:fs/promises";
 import { outputFile } from "fs-extra";
 import Papa from "papaparse";
+import { z } from "zod";
 
 const inputPath = "ManaBox_Collection.csv";
 const outputDir = "output/manabox";
 
-interface ManaBoxRow {
-  "Binder Name": string;
-  "Binder Type": string;
+const manaBoxRowSchema = z.object({
+  "Binder Name": z.string(),
+  "Binder Type": z.string(),
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Name: string;
-  "Set code": string;
-  "Collector number": string;
+  Name: z.string(),
+  "Set code": z.string(),
+  "Collector number": z.string(),
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Foil: string;
+  Foil: z.string(),
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Quantity: string;
-}
+  Quantity: z.string(),
+});
+
+type ManaBoxRow = z.infer<typeof manaBoxRowSchema>;
 
 function formatCardForArchidekt(row: ManaBoxRow): string {
   const setCode = row["Set code"].toLowerCase();
@@ -30,7 +33,7 @@ const csvContent = await readFile(inputPath, "utf-8");
 
 console.info("Parsing CSV...");
 
-const parsed = Papa.parse<ManaBoxRow>(csvContent, {
+const parsed = Papa.parse(csvContent, {
   header: true,
   skipEmptyLines: true,
 });
@@ -39,17 +42,17 @@ const wishlistCards: Array<string> = [];
 const bulkCards: Array<string> = [];
 
 for (const row of parsed.data) {
-  if (!row.Name || !row["Set code"] || !row["Collector number"]) {
-    continue;
-  }
+  const validRow = manaBoxRowSchema.parse(row);
+  const formattedCard = formatCardForArchidekt(validRow);
 
-  const formattedCard = formatCardForArchidekt(row);
-
-  if (row["Binder Type"] === "list") {
+  if (validRow["Binder Type"] === "list") {
     wishlistCards.push(formattedCard);
   }
 
-  if (row["Binder Type"] === "binder" && row["Binder Name"] === "Bulk") {
+  if (
+    validRow["Binder Type"] === "binder" &&
+    validRow["Binder Name"] === "Bulk"
+  ) {
     bulkCards.push(formattedCard);
   }
 }
