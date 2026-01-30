@@ -1,3 +1,4 @@
+import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
 
 const basicLands = new Set([
@@ -13,7 +14,7 @@ const basicLands = new Set([
   "Snow-Covered Forest",
 ]);
 
-export function parseTop64Cards(html: string): Array<string> {
+function parseTop64Cards(html: string): Array<string> {
   const { document } = parseHTML(html);
 
   const cardElements = document.querySelectorAll("span.card-hover");
@@ -42,3 +43,27 @@ export function parseTop64Cards(html: string): Array<string> {
 
   return Array.from(cardNames).sort();
 }
+
+const top64Url = "https://paupergeddon.com/Top64.html";
+
+console.info(`Fetching ${top64Url}...`);
+
+const response = await fetch(top64Url);
+if (!response.ok) {
+  throw new Error(`Failed to fetch ${top64Url}: ${response.status}`);
+}
+
+const html = await response.text();
+const cardNames = parseTop64Cards(html);
+
+console.info(`Found ${cardNames.length} unique cards`);
+
+console.info("Formatting output...");
+const output = cardNames.join("\n");
+
+const outputPath = "output/pauper-staples.txt";
+
+console.info(`Writing to ${outputPath}...`);
+await outputFile(outputPath, output, "utf-8");
+
+console.info("Done!");

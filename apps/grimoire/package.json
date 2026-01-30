@@ -13,7 +13,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node --experimental-strip-types src/main.ts",
+    "scrap-pauper-staples": "node --experimental-strip-types src/scrap-pauper-staples.ts",
     "ts:check": "tsc"
   },
   "type": "module"
