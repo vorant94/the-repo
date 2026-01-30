@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { outputFile } from "fs-extra";
-import { parse } from "papaparse";
+import Papa from "papaparse";
 import { z } from "zod";
 
 const inputPath = "ManaBox_Collection.csv";
@@ -33,7 +33,7 @@ const csvContent = await readFile(inputPath, "utf-8");
 
 console.info("Parsing CSV...");
 
-const parsed = parse(csvContent, {
+const parsed = Papa.parse(csvContent, {
   header: true,
   skipEmptyLines: true,
 });
