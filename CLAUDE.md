@@ -173,6 +173,11 @@ This repository enforces strict Biome rules:
 - Run `npm run lint:write:unsafe` to apply unsafe fixes (required for array types and block statements)
 - Run `npm run lint:check` to verify all issues are resolved
 
+**Biome-ignore annotations:**
+- It is forbidden to "solve" linter warnings by simply ignoring them
+- Biome-ignore should only be used for edge cases with external, uncontrollable naming conventions (CSV headers, third-party API responses, etc.)
+- Must annotate each non-conforming property individually (interface-level ignores don't work)
+
 ### Testing
 
 **subs-savvy** uses Vitest:
@@ -265,6 +270,18 @@ export const Format = {
 **Modern TypeScript:**
 - Top-level await preferred (no main function wrappers)
 - `erasableSyntaxOnly: true` means no enums allowed (use type unions + const objects instead)
+
+**Zod schema type inference:**
+- Define schema once, infer type from it (DRY principle)
+- Schema serves as both runtime validation AND TypeScript type source
+```typescript
+const rowSchema = z.object({
+  name: z.string().min(1),
+  value: z.number(),
+});
+
+type Row = z.infer<typeof rowSchema>;
+```
 
 ### Project Organization
 
