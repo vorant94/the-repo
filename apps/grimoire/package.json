@@ -12,13 +12,15 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.19.1",
     "@types/papaparse": "^5.5.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10"
   },
   "private": true,
   "scripts": {
     "create-wish-and-trade-lists": "node --experimental-strip-types src/create-wish-and-trade-lists.ts",
     "merge-decklists": "node --experimental-strip-types src/merge-decklists.ts",
     "scrap-paupergeddon-top64": "node --experimental-strip-types src/scrap-paupergeddon-top64.ts",
+    "test": "vitest run",
     "ts:check": "tsc"
   },
   "type": "module"
