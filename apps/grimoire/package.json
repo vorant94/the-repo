@@ -16,8 +16,9 @@
   },
   "private": true,
   "scripts": {
-    "export-manabox-to-archidekt": "node --experimental-strip-types src/export-manabox-to-archidekt.ts",
-    "scrap-pauper-staples": "node --experimental-strip-types src/scrap-pauper-staples.ts",
+    "create-wish-and-trade-lists": "node --experimental-strip-types src/create-wish-and-trade-lists.ts",
+    "merge-decklists": "node --experimental-strip-types src/merge-decklists.ts",
+    "scrap-paupergeddon-top64": "node --experimental-strip-types src/scrap-paupergeddon-top64.ts",
     "ts:check": "tsc"
   },
   "type": "module"
