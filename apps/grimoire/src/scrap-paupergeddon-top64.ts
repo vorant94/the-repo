@@ -1,5 +1,8 @@
+import { parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
+import { z } from "zod";
+import { formatDecklistCard } from "./formatters/decklist.ts";
 
 const basicLands = new Set([
   "Plains",
@@ -13,14 +16,29 @@ const basicLands = new Set([
   "Snow-Covered Mountain",
   "Snow-Covered Forest",
 ]);
-const top64Url = "https://paupergeddon.com/Top64.html";
-const outputPath = "output/staples/pauper.txt";
 
-console.info(`Fetching ${top64Url}...`);
+// CLI argument schema
+const argsSchema = z.object({
+  url: z.string().url().default("https://paupergeddon.com/Top64.html"),
+  outputPath: z.string().default("output/staples/pauper.txt"),
+});
 
-const response = await fetch(top64Url);
+// Parse and validate command-line arguments
+const { values } = parseArgs({
+  options: {
+    url: { type: "string" },
+    outputPath: { type: "string" },
+  },
+  strict: true,
+});
+
+const { url, outputPath } = argsSchema.parse(values);
+
+console.info(`Fetching ${url}...`);
+
+const response = await fetch(url);
 if (!response.ok) {
-  throw new Error(`Failed to fetch ${top64Url}: ${response.status}`);
+  throw new Error(`Failed to fetch ${url}: ${response.status}`);
 }
 
 console.info("Parsing...");
@@ -55,7 +73,10 @@ console.info(`Found ${cardNames.size} unique cards`);
 
 console.info("Formatting output...");
 
-const output = Array.from(cardNames).sort().join("\n");
+const output = Array.from(cardNames)
+  .sort()
+  .map((name) => formatDecklistCard({ quantity: 1, name }))
+  .join("\n");
 
 console.info(`Writing to ${outputPath}...`);
 

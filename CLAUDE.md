@@ -72,8 +72,8 @@ npm run deploy:production       # Deploy to production
 ```bash
 cd apps/grimoire
 
-npm run export-manabox-to-archidekt  # Convert ManaBox CSV export to Archidekt format
-npm run scrap-pauper-staples         # Scrape Pauper format staples from paupergeddon.com
+npm run create-wish-and-trade-lists  # Convert ManaBox CSV export to Archidekt format
+npm run scrap-paupergeddon-top64     # Scrape Pauper format staples from paupergeddon.com
 npm run ts:check                     # TypeScript check
 ```
 
