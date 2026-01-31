@@ -312,6 +312,64 @@ const rowSchema = z.object({
 type Row = z.infer<typeof rowSchema>;
 ```
 
+### CLI Argument Patterns
+
+**Match CLI arg names to schema field names for direct mapping:**
+- Use camelCase for CLI argument names (even though kebab-case is traditional in CLI tools)
+- This allows direct pass-through from `parseArgs` to Zod without manual mapping
+- The simplicity gain outweighs adherence to CLI conventions
+```typescript
+// Good: Direct pass-through
+const { values } = parseArgs({
+  options: { deckPathA: { type: "string" } }
+});
+const { deckPathA } = argsSchema.parse(values);
+
+// Avoid: Manual mapping adds boilerplate
+const { values } = parseArgs({
+  options: { "deck-path-a": { type: "string" } }
+});
+const { deckPathA } = argsSchema.parse({
+  deckPathA: values["deck-path-a"]
+});
+```
+
+**Be explicit with variable names from the start:**
+- Don't introduce naming transformations mid-flow (avoid `deckA: deckPathA`)
+- Name things for what they represent: `deckPathA` (it's a file path) not `deckA` (ambiguous)
+- Avoiding destructuring renames makes code easier to trace and search
+
+**Avoid unnecessary validation:**
+- Don't add validation constraints that provide no real value
+- `z.string()` is sufficient for required string arguments (will fail on undefined)
+- Only add `.min()`, `.max()`, `.url()`, etc. when the constraint provides actual safety
+```typescript
+// Good: Simple and sufficient
+const argsSchema = z.object({
+  inputPath: z.string().default("input.csv"),
+  url: z.string().url().default("https://example.com"), // .url() adds value
+});
+
+// Avoid: Unnecessary validation noise
+const argsSchema = z.object({
+  inputPath: z.string().min(1).default("input.csv"), // .min(1) redundant
+});
+```
+
+**Consistent patterns across similar scripts:**
+- Follow identical structure for similar functionality
+- Once you understand one script, you understand them all
+- Don't abstract until you have 5+ instances or truly complex shared logic
+- Example structure for CLI scripts:
+  ```typescript
+  // 1. Imports
+  // 2. Constants (like basicLands, configuration)
+  // 3. CLI argument schema
+  // 4. parseArgs call
+  // 5. Zod validation
+  // 6. Main execution
+  ```
+
 ### Project Organization
 
 **Future-proof structure:**
