@@ -37,7 +37,7 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
 
     /* Misc */
-    "types": ["@total-typescript/ts-reset", "node", "vite/client"]
+    "types": ["@total-typescript/ts-reset", "node"]
   },
   "include": ["src", "*.config.ts"]
 }

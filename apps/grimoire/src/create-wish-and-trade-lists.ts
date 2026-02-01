@@ -28,6 +28,7 @@ const { values } = parseArgs({
 
 const { inputPath, outputDir } = argsSchema.parse(values);
 
+// Main execution
 console.info(`Reading ${inputPath}...`);
 
 const csvContent = await readFile(inputPath, "utf-8");
