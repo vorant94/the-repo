@@ -35,6 +35,7 @@ const { values } = parseArgs({
 
 const { url, outputPath } = argsSchema.parse(values);
 
+// Main execution
 console.info(`Fetching ${url}...`);
 
 const response = await fetch(url);
