@@ -1,3 +1,4 @@
+#!/usr/bin/env -S node --experimental-strip-types
 import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
@@ -10,7 +11,7 @@ import {
 // CLI argument schema
 const argsSchema = z.object({
   deckPaths: z.array(z.string()).min(2),
-  outputPath: z.string().default("output/merged/merged-decklist.txt"),
+  outputPath: z.string().default("merged-decklist.txt"),
 });
 
 // Parse and validate command-line arguments

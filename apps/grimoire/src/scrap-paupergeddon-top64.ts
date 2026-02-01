@@ -1,3 +1,4 @@
+#!/usr/bin/env -S node --experimental-strip-types
 import { parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
@@ -20,7 +21,7 @@ const basicLands = new Set([
 // CLI argument schema
 const argsSchema = z.object({
   url: z.string().url().default("https://paupergeddon.com/Top64.html"),
-  outputPath: z.string().default("output/staples/pauper.txt"),
+  outputPath: z.string().default("pauper-staples.txt"),
 });
 
 // Parse and validate command-line arguments

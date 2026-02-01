@@ -1,3 +1,4 @@
+#!/usr/bin/env -S node --experimental-strip-types
 import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
@@ -13,7 +14,7 @@ import { manaBoxCollectionCardSchema } from "./formatters/manabox-collection.ts"
 // CLI argument schema
 const argsSchema = z.object({
   inputPath: z.string().default("ManaBox_Collection.csv"),
-  outputDir: z.string().default("output/lists"),
+  outputDir: z.string().default("."),
 });
 
 // Parse and validate command-line arguments

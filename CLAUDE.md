@@ -72,9 +72,17 @@ npm run deploy:production       # Deploy to production
 ```bash
 cd apps/grimoire
 
-npm run create-wish-and-trade-lists  # Convert ManaBox CSV export to Archidekt format
-npm run scrap-paupergeddon-top64     # Scrape Pauper format staples from paupergeddon.com
+# Install globally (one-time setup)
+npm link
+
+# Global CLI commands (run from anywhere)
+grimoire-wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
+grimoire-merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
+grimoire-scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath pauper-staples.txt]
+
+# Development
 npm run ts:check                     # TypeScript check
+npm test                             # Run unit tests
 ```
 
 ### sofash
@@ -164,18 +172,21 @@ Astro-based blog with:
 - Internationalization with multiple language support
 - Custom rehype/remark plugins for markdown processing
 
-### grimoire - Simple Scripts
+### grimoire - CLI Tool for MTG Collection Management
 
-Collection of standalone Node scripts:
-- **export-manabox-to-archidekt.ts** - Parses ManaBox CSV exports using PapaParse and converts to Archidekt format. Outputs separate files for wishlist and bulk cards
-- **scrap-pauper-staples.ts** - Scrapes paupergeddon.com using linkedom, extracts card names from HTML, filters out basic lands, and outputs sorted card list
+Globally installable CLI tool with three commands:
+- **grimoire-wish-trade** (create-wish-and-trade-lists.ts) - Parses ManaBox CSV exports using PapaParse and converts to Archidekt format. Outputs separate files for wishlist and bulk cards
+- **grimoire-merge** (merge-decklists.ts) - Merges multiple decklists by taking the maximum count per card across all input decks
+- **grimoire-scrap-pauper** (scrap-paupergeddon-top64.ts) - Scrapes paupergeddon.com using linkedom, extracts card names from HTML, filters out basic lands, and outputs sorted card list
 
 Architecture:
 - Flat structure with scripts directly in src/
 - Each script is self-contained with configuration at the top
 - Uses Zod schemas for CSV validation and type inference
-- Output organized by purpose: `output/lists/` for exports, `output/staples/` for scraped data
+- Outputs to current working directory by default (CLI-friendly)
 - Uses Node's experimental `--experimental-strip-types` for direct TypeScript execution
+- Shebang allows scripts to run as executables via npm bin
+- Install globally with `npm link` from apps/grimoire directory
 
 ## Development Guidelines
 
