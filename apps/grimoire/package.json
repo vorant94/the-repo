@@ -16,10 +16,12 @@
     "vitest": "^4.0.10"
   },
   "private": true,
+  "bin": {
+    "grimoire-wish-trade": "src/create-wish-and-trade-lists.ts",
+    "grimoire-merge": "src/merge-decklists.ts",
+    "grimoire-scrap-pauper": "src/scrap-paupergeddon-top64.ts"
+  },
   "scripts": {
-    "create-wish-and-trade-lists": "node --experimental-strip-types src/create-wish-and-trade-lists.ts",
-    "merge-decklists": "node --experimental-strip-types src/merge-decklists.ts",
-    "scrap-paupergeddon-top64": "node --experimental-strip-types src/scrap-paupergeddon-top64.ts",
     "test": "vitest run",
     "ts:check": "tsc"
   },
