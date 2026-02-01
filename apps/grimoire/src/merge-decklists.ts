@@ -9,68 +9,52 @@ import {
 
 // CLI argument schema
 const argsSchema = z.object({
-  deckPathA: z.string(),
-  deckPathB: z.string(),
+  deckPaths: z.array(z.string()).min(2),
   outputPath: z.string().default("output/merged/merged-decklist.txt"),
 });
 
 // Parse and validate command-line arguments
-const { values } = parseArgs({
+const { values, positionals } = parseArgs({
   options: {
-    deckPathA: { type: "string" },
-    deckPathB: { type: "string" },
     outputPath: { type: "string" },
   },
+  allowPositionals: true,
   strict: true,
 });
 
-const { deckPathA, deckPathB, outputPath } = argsSchema.parse(values);
+const { deckPaths, outputPath } = argsSchema.parse({
+  deckPaths: positionals,
+  outputPath: values.outputPath,
+});
 
-function parseDecklistFile(content: string): Map<string, number> {
-  const cards = new Map<string, number>();
+// Main execution
+const decks: Array<Map<string, number>> = [];
+for (const deckPath of deckPaths) {
+  console.info(`Reading ${deckPath}...`);
+  const deckContent = await readFile(deckPath, "utf-8");
 
-  for (const line of content.split("\n")) {
+  const deck = new Map<string, number>();
+  for (const line of deckContent.split("\n")) {
     const parsed = parseDecklistCard(line);
     if (!parsed) {
       continue;
     }
 
-    const existing = cards.get(parsed.name) ?? 0;
-    cards.set(parsed.name, existing + parsed.quantity);
+    const existing = deck.get(parsed.name) ?? 0;
+    deck.set(parsed.name, existing + parsed.quantity);
   }
 
-  return cards;
+  console.info(`Parsed ${deck.size} unique cards from ${deckPath}`);
+  decks.push(deck);
 }
-
-function mergeDecklists(
-  deckA: Map<string, number>,
-  deckB: Map<string, number>,
-): Map<string, number> {
-  const merged = new Map<string, number>();
-  const allCards = new Set([...deckA.keys(), ...deckB.keys()]);
-
-  for (const card of allCards) {
-    const countA = deckA.get(card) ?? 0;
-    const countB = deckB.get(card) ?? 0;
-    merged.set(card, Math.max(countA, countB));
-  }
-
-  return merged;
-}
-
-// Main execution
-console.info(`Reading ${deckPathA}...`);
-const deckContentA = await readFile(deckPathA, "utf-8");
-const deckA = parseDecklistFile(deckContentA);
-console.info(`Parsed ${deckA.size} unique cards from deck A`);
-
-console.info(`Reading ${deckPathB}...`);
-const deckContentB = await readFile(deckPathB, "utf-8");
-const deckB = parseDecklistFile(deckContentB);
-console.info(`Parsed ${deckB.size} unique cards from deck B`);
 
 console.info("Merging decklists...");
-const merged = mergeDecklists(deckA, deckB);
+const allCards = new Set(decks.flatMap((deck) => Array.from(deck.keys())));
+const merged = new Map<string, number>();
+for (const card of allCards) {
+  const maxCount = Math.max(...decks.map((deck) => deck.get(card) ?? 0));
+  merged.set(card, maxCount);
+}
 
 const output = Array.from(merged.entries())
   .sort(([a], [b]) => a.localeCompare(b))
