@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { CollectionCard } from "./collection.ts";
 import { formatCollectionCard, parseCollectionCard } from "./collection.ts";
 
@@ -61,7 +61,7 @@ describe("formatCollectionCard", () => {
 });
 
 describe("parseCollectionCard", () => {
-  test("parses normal card", () => {
+  it("parses normal card", () => {
     const result = parseCollectionCard("1 Fiery Temper (mom) 142");
     expect(result).toEqual({
       quantity: 1,
@@ -72,7 +72,7 @@ describe("parseCollectionCard", () => {
     });
   });
 
-  test("parses foil card", () => {
+  it("parses foil card", () => {
     const result = parseCollectionCard("1 Lightning Bolt (2xm) 117 *F*");
     expect(result).toEqual({
       quantity: 1,
@@ -83,7 +83,7 @@ describe("parseCollectionCard", () => {
     });
   });
 
-  test("parses card with multiple quantity", () => {
+  it("parses card with multiple quantity", () => {
     const result = parseCollectionCard("4 Mountain (m21) 311");
     expect(result).toEqual({
       quantity: 4,
@@ -94,42 +94,42 @@ describe("parseCollectionCard", () => {
     });
   });
 
-  test("returns null for empty line", () => {
+  it("returns null for empty line", () => {
     const result = parseCollectionCard("");
     expect(result).toBeNull();
   });
 
-  test("returns null for whitespace-only line", () => {
+  it("returns null for whitespace-only line", () => {
     const result = parseCollectionCard("   ");
     expect(result).toBeNull();
   });
 
-  test("returns null for line without set code pattern", () => {
+  it("returns null for line without set code pattern", () => {
     const result = parseCollectionCard("4 Lightning Bolt");
     expect(result).toBeNull();
   });
 
-  test("returns null for invalid quantity (non-numeric)", () => {
+  it("returns null for invalid quantity (non-numeric)", () => {
     const result = parseCollectionCard("x Lightning Bolt (2xm) 117");
     expect(result).toBeNull();
   });
 
-  test("returns null for invalid quantity (zero)", () => {
+  it("returns null for invalid quantity (zero)", () => {
     const result = parseCollectionCard("0 Lightning Bolt (2xm) 117");
     expect(result).toBeNull();
   });
 
-  test("returns null for invalid quantity (negative)", () => {
+  it("returns null for invalid quantity (negative)", () => {
     const result = parseCollectionCard("-1 Lightning Bolt (2xm) 117");
     expect(result).toBeNull();
   });
 
-  test("returns null for line with missing collector number", () => {
+  it("returns null for line with missing collector number", () => {
     const result = parseCollectionCard("1 Lightning Bolt (2xm)");
     expect(result).toBeNull();
   });
 
-  test("returns null for line with malformed set code", () => {
+  it("returns null for line with malformed set code", () => {
     const result = parseCollectionCard("1 Lightning Bolt ( 117");
     expect(result).toBeNull();
   });

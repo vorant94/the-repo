@@ -226,7 +226,15 @@ This repository enforces strict Biome rules:
 - Test setup: src/test-setup.ts configures jsdom and fake-indexeddb
 - Run single test: `cd apps/subs-savvy && npx vitest run path/to/file.spec.ts`
 
+**grimoire** uses Vitest:
+- Test files: `*.spec.ts`
+- Run tests: `cd apps/grimoire && npm test`
+
 **digital-garden** uses Playwright for E2E tests.
+
+**Test style preferences:**
+- Prefer `it()` over `test()` for unit tests
+- Use `describe()` blocks to group related tests
 
 ### Database Migrations (sofash)
 
