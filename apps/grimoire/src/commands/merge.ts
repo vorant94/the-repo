@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { type ParseArgsConfig, parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
 import { z } from "zod";
+import { parseCollectionCard } from "../formatters/collection.ts";
 import {
   formatDecklistCard,
   parseDecklistCard,
@@ -27,7 +28,8 @@ export async function merge() {
 
     const deck = new Map<string, number>();
     for (const line of deckContent.split("\n")) {
-      const parsed = parseDecklistCard(line);
+      // Try collection format first (more specific pattern)
+      const parsed = parseCollectionCard(line) ?? parseDecklistCard(line);
       if (!parsed) {
         continue;
       }
