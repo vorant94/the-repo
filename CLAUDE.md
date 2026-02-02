@@ -10,7 +10,7 @@ This is a monorepo containing a collection of personal projects, shared librarie
 
 - **apps/** - Personal projects
   - **digital-garden/** - Personal blog built with Astro, deployed to Cloudflare Pages
-  - **grimoire/** - Collection of Node scripts for managing MTG (Magic: The Gathering) card collection. Includes scripts for converting between collection management tools (ManaBox to Archidekt) and scraping card staples lists
+  - **grimoire/** - CLI tool for managing MTG (Magic: The Gathering) card collection. Includes subcommands for converting between collection management tools (ManaBox to Archidekt) and scraping card staples lists
   - **sofash/** - Early-stage WIP Telegram bot for local weekend events. Currently focused on scraping movie showtimes from local theater networks. Built with Hono and Grammy, uses Drizzle ORM with D1/LibSQL database
   - **subs-savvy/** - Abandoned budget management webapp focused on tracking recurring payments (subscriptions, house bills). React SPA using Dexie (IndexedDB) for client-side storage
 - **libs/** - Shared functionality across multiple projects
@@ -76,9 +76,9 @@ cd apps/grimoire
 npm link
 
 # Global CLI commands (run from anywhere)
-grimoire-wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
-grimoire-merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
-grimoire-scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath pauper-staples.txt]
+grimoire wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
+grimoire merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
+grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath pauper-staples.txt]
 
 # Development
 npm run ts:check                     # TypeScript check
@@ -174,18 +174,19 @@ Astro-based blog with:
 
 ### grimoire - CLI Tool for MTG Collection Management
 
-Globally installable CLI tool with three commands:
-- **grimoire-wish-trade** (create-wish-and-trade-lists.ts) - Parses ManaBox CSV exports using PapaParse and converts to Archidekt format. Outputs separate files for wishlist and bulk cards
-- **grimoire-merge** (merge-decklists.ts) - Merges multiple decklists by taking the maximum count per card across all input decks
-- **grimoire-scrap-pauper** (scrap-paupergeddon-top64.ts) - Scrapes paupergeddon.com using linkedom, extracts card names from HTML, filters out basic lands, and outputs sorted card list
+Globally installable CLI tool with three subcommands:
+- **grimoire wish-trade** (commands/wish-trade.ts) - Parses ManaBox CSV exports using PapaParse and converts to Archidekt format. Outputs separate files for wishlist and bulk cards
+- **grimoire merge** (commands/merge.ts) - Merges multiple decklists by taking the maximum count per card across all input decks
+- **grimoire scrap-pauper** (commands/scrap-pauper.ts) - Scrapes paupergeddon.com using linkedom, extracts card names from HTML, filters out basic lands, and outputs sorted card list
 
 Architecture:
-- Flat structure with scripts directly in src/
-- Each script is self-contained with configuration at the top
+- Single entry point (main.ts) with subcommand routing
+- Subcommands organized in src/commands/ directory
+- Each subcommand is self-contained with configuration at the top
 - Uses Zod schemas for CSV validation and type inference
 - Outputs to current working directory by default (CLI-friendly)
 - Uses Node's experimental `--experimental-strip-types` for direct TypeScript execution
-- Shebang allows scripts to run as executables via npm bin
+- Shebang in main.ts allows execution via npm bin
 - Install globally with `npm link` from apps/grimoire directory
 
 ## Development Guidelines
