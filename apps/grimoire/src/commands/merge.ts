@@ -39,21 +39,20 @@ const options = {
   outputPath: { type: "string" },
 } as const satisfies ParseArgsOptionsConfig;
 
-async function readAndParseDecks(
+function readAndParseDecks(
   deckPaths: Array<string>,
 ): Promise<Array<Map<string, number>>> {
-  const decks: Array<Map<string, number>> = [];
+  return Promise.all(
+    deckPaths.map(async (deckPath) => {
+      console.info(`Reading ${deckPath}...`);
+      const deckContent = await readFile(deckPath, "utf-8");
 
-  for (const deckPath of deckPaths) {
-    console.info(`Reading ${deckPath}...`);
-    const deckContent = await readFile(deckPath, "utf-8");
-    const deck = parseDeck(deckContent);
+      const deck = parseDeck(deckContent);
+      console.info(`Parsed ${deck.size} unique cards from ${deckPath}`);
 
-    console.info(`Parsed ${deck.size} unique cards from ${deckPath}`);
-    decks.push(deck);
-  }
-
-  return decks;
+      return deck;
+    }),
+  );
 }
 
 function parseDeck(deckContent: string): Map<string, number> {
