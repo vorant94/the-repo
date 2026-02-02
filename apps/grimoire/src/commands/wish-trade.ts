@@ -12,11 +12,11 @@ import { manaBoxCollectionCardSchema } from "../formatters/manabox-collection.ts
 
 export async function wishTrade() {
   const { values } = parseArgs({
-    options: wishTradeOptions,
+    options,
     strict: true,
   });
 
-  const { inputPath, outputDir } = wishTradesArgsSchema.parse(values);
+  const { inputPath, outputDir } = argsSchema.parse(values);
 
   console.info(`Reading ${inputPath}...`);
 
@@ -80,12 +80,12 @@ export async function wishTrade() {
   console.info("Done!");
 }
 
-const wishTradesArgsSchema = z.object({
+const argsSchema = z.object({
   inputPath: z.string().default("ManaBox_Collection.csv"),
   outputDir: z.string().default("."),
 });
 
-const wishTradeOptions = {
+const options = {
   inputPath: { type: "string" },
   outputDir: { type: "string" },
 } as const satisfies ParseArgsConfig["options"];

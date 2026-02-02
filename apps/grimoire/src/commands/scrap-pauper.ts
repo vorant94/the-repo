@@ -6,11 +6,11 @@ import { formatDecklistCard } from "../formatters/decklist.ts";
 
 export async function scrapPauper() {
   const { values } = parseArgs({
-    options: scrapPauperOptions,
+    options,
     strict: true,
   });
 
-  const { url, outputPath } = scrapPauperArgsSchema.parse(values);
+  const { url, outputPath } = argsSchema.parse(values);
 
   console.info(`Fetching ${url}...`);
 
@@ -63,12 +63,12 @@ export async function scrapPauper() {
   console.info("Done!");
 }
 
-const scrapPauperArgsSchema = z.object({
+const argsSchema = z.object({
   url: z.string().url().default("https://paupergeddon.com/Top64.html"),
   outputPath: z.string().default("pauper-staples.txt"),
 });
 
-const scrapPauperOptions = {
+const options = {
   url: { type: "string" },
   outputPath: { type: "string" },
 } as const satisfies ParseArgsConfig["options"];
