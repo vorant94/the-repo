@@ -1,4 +1,5 @@
 #!/usr/bin/env -S node --experimental-strip-types
+import process from "node:process";
 import { parseArgs } from "node:util";
 import { z } from "zod";
 import { merge } from "./commands/merge.ts";
