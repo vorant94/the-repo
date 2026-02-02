@@ -306,6 +306,22 @@ export const Format = {
 } as const satisfies Record<string, Format>;
 ```
 
+**Prefer `interface` over `type` for object shapes:**
+- Use `interface` for defining object structures (especially when they might be extended)
+- Reserve `type` for unions, intersections, and type aliases that aren't object shapes
+- Interfaces have better error messages and are more explicit about intent
+```typescript
+// Good: Interface for object shapes
+export interface TempDir {
+  path: string;
+  cleanup: () => Promise<void>;
+}
+
+// Acceptable: Type for unions/aliases
+type Status = "pending" | "completed";
+type Result = Success | Error;
+```
+
 **Import patterns:**
 - Use type-only imports: `import type { Format }`
 - Explicitly import Node built-ins: `import process from "node:process"` (don't rely on globals)
@@ -330,6 +346,22 @@ const rowSchema = z.object({
 });
 
 type Row = z.infer<typeof rowSchema>;
+```
+
+**Zod parsing strategy:**
+- Use `.parse()` by default, not `.safeParse()`
+- Let validation errors throw naturally - they indicate programming errors that should fail fast
+- Only use `.safeParse()` when explicitly handling user input that needs graceful error messages
+- Most internal validation should use `.parse()` for simplicity
+```typescript
+// Good: Direct parse for internal validation
+const validRow = rowSchema.parse(row);
+
+// Only when needed: safeParse for user-facing validation
+const result = rowSchema.safeParse(userInput);
+if (!result.success) {
+  return { error: "Invalid input format" };
+}
 ```
 
 ### CLI Argument Patterns
