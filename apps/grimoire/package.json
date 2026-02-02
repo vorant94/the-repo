@@ -17,9 +17,7 @@
   },
   "private": true,
   "bin": {
-    "grimoire-wish-trade": "src/create-wish-and-trade-lists.ts",
-    "grimoire-merge": "src/merge-decklists.ts",
-    "grimoire-scrap-pauper": "src/scrap-paupergeddon-top64.ts"
+    "grimoire": "src/main.ts"
   },
   "scripts": {
     "test": "vitest run",
