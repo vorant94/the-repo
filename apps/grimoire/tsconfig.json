@@ -39,5 +39,5 @@
     /* Misc */
     "types": ["@total-typescript/ts-reset", "node"]
   },
-  "include": ["src", "*.config.ts"]
+  "include": ["src", "e2e", "*.config.ts"]
 }
