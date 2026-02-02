@@ -3,6 +3,7 @@ import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
 import { z } from "zod";
 import { formatDecklistCard } from "../formatters/decklist.ts";
+import { accent } from "../logger/text.ts";
 
 export async function scrapPauper() {
   const { values } = parseArgs({
@@ -10,18 +11,46 @@ export async function scrapPauper() {
     strict: true,
   });
 
-  const { url, outputPath } = argsSchema.parse(values);
+  const { outputPath } = argsSchema.parse(values);
 
-  console.info(`Fetching ${url}...`);
+  const html = await fetchTop64Page();
+
+  const cardNames = parseUniqueCardsFromHtml(html);
+
+  const output = formatOutput(cardNames);
+
+  console.info(`Writing to ${accent(outputPath)}...`);
+
+  await outputFile(outputPath, output, "utf-8");
+
+  console.info("Done!");
+}
+
+const argsSchema = z.object({
+  outputPath: z.string().default("pauper-staples.txt"),
+});
+
+const options = {
+  url: { type: "string" },
+  outputPath: { type: "string" },
+} as const satisfies ParseArgsConfig["options"];
+
+async function fetchTop64Page(): Promise<string> {
+  console.info(`Fetching ${accent(url)}...`);
 
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${url}: ${response.status}`);
   }
 
+  return await response.text();
+}
+
+const url = "https://paupergeddon.com/Top64.html";
+
+function parseUniqueCardsFromHtml(html: string): Set<string> {
   console.info("Parsing...");
 
-  const html = await response.text();
   const { document } = parseHTML(html);
 
   const cardElements = document.querySelectorAll("span.card-hover");
@@ -47,31 +76,9 @@ export async function scrapPauper() {
     cardNames.add(cardName);
   }
 
-  console.info(`Found ${cardNames.size} unique cards`);
-
-  console.info("Formatting output...");
-
-  const output = Array.from(cardNames)
-    .sort()
-    .map((name) => formatDecklistCard({ quantity: 1, name }))
-    .join("\n");
-
-  console.info(`Writing to ${outputPath}...`);
-
-  await outputFile(outputPath, output, "utf-8");
-
-  console.info("Done!");
+  console.info(`Found ${accent(cardNames.size)} unique cards`);
+  return cardNames;
 }
-
-const argsSchema = z.object({
-  url: z.string().url().default("https://paupergeddon.com/Top64.html"),
-  outputPath: z.string().default("pauper-staples.txt"),
-});
-
-const options = {
-  url: { type: "string" },
-  outputPath: { type: "string" },
-} as const satisfies ParseArgsConfig["options"];
 
 const basicLands = new Set([
   "Plains",
@@ -85,3 +92,12 @@ const basicLands = new Set([
   "Snow-Covered Mountain",
   "Snow-Covered Forest",
 ]);
+
+function formatOutput(cardNames: Set<string>): string {
+  console.info("Formatting output...");
+
+  return Array.from(cardNames)
+    .sort()
+    .map((name) => formatDecklistCard({ quantity: 1, name }))
+    .join("\n");
+}

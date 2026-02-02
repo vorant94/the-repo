@@ -7,6 +7,7 @@ import {
   formatDecklistCard,
   parseDecklistCard,
 } from "../formatters/decklist.ts";
+import { accent } from "../logger/text.ts";
 
 export async function merge() {
   const { values, positionals } = parseArgs({
@@ -24,8 +25,12 @@ export async function merge() {
 
   const output = formatOutput(merged);
 
-  console.info(`Writing ${merged.size} cards to ${outputPath}...`);
+  console.info(
+    `Writing ${accent(merged.size)} cards to ${accent(outputPath)}...`,
+  );
+
   await outputFile(outputPath, output, "utf-8");
+
   console.info("Done!");
 }
 
@@ -42,14 +47,18 @@ const options = {
 function readAndParseDecks(
   deckPaths: Array<string>,
 ): Promise<Array<Map<string, number>>> {
+  console.info(`Reading ${accent(deckPaths.length)} decks`);
+
   return Promise.all(
     deckPaths.map(async (deckPath) => {
-      console.info(`Reading ${deckPath}...`);
+      console.info(`Reading ${accent(deckPath)}...`);
       const deckContent = await readFile(deckPath, "utf-8");
 
       const deck = parseDeck(deckContent);
-      console.info(`Parsed ${deck.size} unique cards from ${deckPath}`);
 
+      console.info(
+        `Parsed ${accent(deck.size)} unique cards from ${accent(deckPath)}`,
+      );
       return deck;
     }),
   );
