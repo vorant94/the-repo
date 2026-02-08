@@ -2,6 +2,8 @@
   "name": "grimoire",
   "version": "0.0.1",
   "dependencies": {
+    "@danielxceron/youtube-transcript": "^1.2.6",
+    "date-fns": "^4.1.0",
     "fs-extra": "^11.3.0",
     "linkedom": "^0.18.5",
     "papaparse": "^5.5.3",

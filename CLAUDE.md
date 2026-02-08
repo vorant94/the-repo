@@ -34,6 +34,7 @@ npm run unused-code:check                 # Knip unused code analysis
 grimoire wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
 grimoire merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
 grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath pauper-staples.txt]
+grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 ```
 
 **sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:prod` for production D1. Drizzle config points to src/shared/schema for schema definitions and ./drizzle for migrations output.
