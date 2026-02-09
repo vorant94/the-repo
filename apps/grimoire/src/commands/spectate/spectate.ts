@@ -8,7 +8,7 @@ import {
   buildSystemPromptForFullVideo,
 } from "./prompts.ts";
 import { formatTimestamp, splitSrtByChapters } from "./srt.ts";
-import type { chapterSchema } from "./transcript.ts";
+import type { Chapter } from "./transcript.ts";
 import { fetchTranscript } from "./transcript.ts";
 
 export async function spectate() {
@@ -20,15 +20,15 @@ export async function spectate() {
   const hasChapters = chapters && chapters.length > 0;
 
   await (hasChapters
-    ? analyzeWithChapters(srtContent, chapters, title, model)
-    : analyzeWithoutChapters(srtContent, title, model));
+    ? analyzeWithChapters(srtContent, chapters, model, title)
+    : analyzeWithoutChapters(srtContent, model, title));
 }
 
 async function analyzeWithChapters(
   srtContent: string,
-  chapters: Array<z.infer<typeof chapterSchema>>,
-  videoTitle: string | undefined,
+  chapters: Array<Chapter>,
   model: string,
+  videoTitle?: string,
 ): Promise<void> {
   const chapterTranscripts = splitSrtByChapters(srtContent, chapters);
 
@@ -51,8 +51,8 @@ async function analyzeWithChapters(
     console.info(`Analyzing with ${accent(model)}...\n`);
 
     const systemPrompt = buildSystemPromptForChapter(
-      videoTitle,
       chapterTranscript.title,
+      videoTitle,
     );
     await analyzeWithOllama(chapterTranscript.srtContent, systemPrompt, model);
 
@@ -64,8 +64,8 @@ async function analyzeWithChapters(
 
 async function analyzeWithoutChapters(
   srtContent: string,
-  videoTitle: string | undefined,
   model: string,
+  videoTitle?: string,
 ): Promise<void> {
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
