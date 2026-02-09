@@ -2,11 +2,11 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { execFile } from "../src/shared/exec.ts";
-import { createTempDir } from "./helpers/temp-dir.ts";
+import { createTempDir } from "../src/shared/temp-dir.ts";
 
 describe("wish-trade command", () => {
   it("should create wishlist.txt and bulk.txt from valid CSV", async () => {
-    await using tempDir = await createTempDir("wish-trade");
+    await using tempDir = await createTempDir("grimoire-e2e-wish-trade");
     const inputPath = join(tempDir.path, "input.csv");
     const csvContent = [
       "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
@@ -36,7 +36,7 @@ describe("wish-trade command", () => {
   });
 
   it("should aggregate quantities for duplicate wishlist cards", async () => {
-    await using tempDir = await createTempDir("wish-trade");
+    await using tempDir = await createTempDir("grimoire-e2e-wish-trade");
     const inputPath = join(tempDir.path, "input.csv");
     const csvContent = [
       "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
@@ -65,7 +65,7 @@ describe("wish-trade command", () => {
   });
 
   it("should handle foil cards in bulk output", async () => {
-    await using tempDir = await createTempDir("wish-trade");
+    await using tempDir = await createTempDir("grimoire-e2e-wish-trade");
     const inputPath = join(tempDir.path, "input.csv");
     const csvContent = [
       "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
@@ -90,7 +90,7 @@ describe("wish-trade command", () => {
   });
 
   it("should handle empty CSV (only headers)", async () => {
-    await using tempDir = await createTempDir("wish-trade");
+    await using tempDir = await createTempDir("grimoire-e2e-wish-trade");
     const inputPath = join(tempDir.path, "input.csv");
     const csvContent =
       "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity";
