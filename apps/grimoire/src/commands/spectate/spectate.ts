@@ -1,14 +1,22 @@
 import console from "node:console";
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
+import { slugify } from "../../shared/slugify.ts";
+import { createTempDir } from "../../shared/temp-dir.ts";
 import { getContext, runWithinContext } from "./context.ts";
 import { analyzeWithOllama } from "./ollama.ts";
 import {
   buildSystemPromptForChapter,
   buildSystemPromptForFullVideo,
 } from "./prompts.ts";
-import { formatTimestamp, splitSrtByChapters } from "./srt.ts";
+import {
+  type ChapterTranscript,
+  formatTimestamp,
+  splitSrtByChapters,
+} from "./srt.ts";
 import type { Chapter } from "./transcript.ts";
 import { fetchTranscript } from "./transcript.ts";
 
@@ -16,8 +24,20 @@ export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
   const args = argsSchema.parse(values);
 
-  await runWithinContext(args, async () => {
+  let debugDir: string | undefined;
+
+  if (args.debug) {
+    await using tempDir = await createTempDir("grimoire-spectate-debug", true);
+    debugDir = tempDir.path;
+    console.info(
+      `Debug mode enabled. Files will be saved to: ${accent(debugDir)}\n`,
+    );
+  }
+
+  await runWithinContext({ ...args, debugDir }, async () => {
     const { srtContent, title, chapters } = await fetchTranscript();
+
+    void writeTranscriptContentDebugFile(srtContent);
 
     const hasChapters = chapters && chapters.length > 0;
 
@@ -46,6 +66,16 @@ async function analyzeWithChapters(
       continue;
     }
 
+    const chapterDebugFileName = getChapterTranscriptDebugFileName(
+      i + 1,
+      chapterTranscript,
+    );
+
+    void writeChapterTranscriptDebugFile(
+      chapterDebugFileName,
+      chapterTranscript,
+    );
+
     const startTime = formatTimestamp(chapter.start_time);
     const endTime = formatTimestamp(chapter.end_time);
     const timeRange = `[${startTime} - ${endTime}]`;
@@ -57,7 +87,11 @@ async function analyzeWithChapters(
       chapterTranscript.title,
       videoTitle,
     );
-    await analyzeWithOllama(chapterTranscript.srtContent, systemPrompt);
+    await analyzeWithOllama(
+      chapterTranscript.srtContent,
+      systemPrompt,
+      `${chapterDebugFileName}.md`,
+    );
 
     console.info("\n");
   }
@@ -73,17 +107,56 @@ async function analyzeWithoutChapters(
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
   const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
-  await analyzeWithOllama(srtContent, systemPrompt);
+  await analyzeWithOllama(srtContent, systemPrompt, "analysis.md");
 
   console.info("\n\nDone!");
+}
+
+async function writeTranscriptContentDebugFile(
+  srtContent: string,
+): Promise<void> {
+  const { debugDir } = getContext();
+  if (!debugDir) {
+    return;
+  }
+
+  await writeFile(join(debugDir, "transcript.srt"), srtContent, "utf-8");
+}
+
+function getChapterTranscriptDebugFileName(
+  chapterIndex: number,
+  chapterTranscript: ChapterTranscript,
+): string {
+  const paddedIndex = String(chapterIndex).padStart(2, "0");
+  const titleSlug = slugify(chapterTranscript.title);
+
+  return `chapter-${paddedIndex}-${titleSlug}`;
+}
+
+async function writeChapterTranscriptDebugFile(
+  fileName: string,
+  chapterTranscript: ChapterTranscript,
+): Promise<void> {
+  const { debugDir } = getContext();
+  if (!debugDir) {
+    return;
+  }
+
+  await writeFile(
+    join(debugDir, `${fileName}.srt`),
+    chapterTranscript.srtContent,
+    "utf-8",
+  );
 }
 
 const argsSchema = z.object({
   url: z.string(),
   model: z.string().default("llama3.1"),
+  debug: z.boolean().default(false),
 });
 
 const options = {
   url: { type: "string" },
   model: { type: "string" },
+  debug: { type: "boolean" },
 } as const satisfies ParseArgsOptionsConfig;

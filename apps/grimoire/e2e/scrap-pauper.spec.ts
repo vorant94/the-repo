@@ -2,11 +2,11 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { execFile } from "../src/shared/exec.ts";
-import { createTempDir } from "./helpers/temp-dir.ts";
+import { createTempDir } from "../src/shared/temp-dir.ts";
 
 describe("scrap-pauper command", () => {
   it("should fetch real paupergeddon.com URL and create output file", async () => {
-    await using tempDir = await createTempDir("scrap-pauper");
+    await using tempDir = await createTempDir("grimoire-e2e-scrap-pauper");
     await execFile("grimoire", [
       "scrap-pauper",
       "--outputPath",
@@ -22,7 +22,7 @@ describe("scrap-pauper command", () => {
   });
 
   it("should output expected format with sorted decklist lines", async () => {
-    await using tempDir = await createTempDir("scrap-pauper");
+    await using tempDir = await createTempDir("grimoire-e2e-scrap-pauper");
     await execFile("grimoire", [
       "scrap-pauper",
       "--outputPath",
@@ -46,7 +46,7 @@ describe("scrap-pauper command", () => {
   });
 
   it("should not contain basic lands in output", async () => {
-    await using tempDir = await createTempDir("scrap-pauper");
+    await using tempDir = await createTempDir("grimoire-e2e-scrap-pauper");
     await execFile("grimoire", [
       "scrap-pauper",
       "--outputPath",
@@ -77,7 +77,7 @@ describe("scrap-pauper command", () => {
   });
 
   it("should support custom output path", async () => {
-    await using tempDir = await createTempDir("scrap-pauper");
+    await using tempDir = await createTempDir("grimoire-e2e-scrap-pauper");
     const customPath = join(tempDir.path, "custom-output.txt");
 
     await execFile("grimoire", ["scrap-pauper", "--outputPath", customPath]);

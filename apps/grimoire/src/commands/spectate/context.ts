@@ -3,6 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 export interface SpectateContext {
   url: string;
   model: string;
+  debugDir?: string;
 }
 
 export function getContext(): SpectateContext {

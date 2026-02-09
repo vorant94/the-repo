@@ -78,10 +78,13 @@ Always run Biome from repo root. Rules enforced:
 - Simplicity over abstraction—remove abstractions until needed
 - Minimal dependencies—prefer native APIs, reuse monorepo deps
 - Only export what other files need (Knip catches unused exports)
-- Early returns always: `if (!value) { continue; }` not `if (value) { ... }`
+- Early returns always: `if (!value) { return; }` not `if (value) { ... }` — applies to all contexts including small functions, disposal handlers, etc.
 - Avoid unnecessary nesting—main logic flows without deep nesting
 - When approach fails: investigate, present findings, stop and wait
 - Use `dedent` package for multiline strings (enables proper indentation in source code while removing it at runtime)
+- Prefer optional chaining (`?.`) over explicit null/undefined checks when supported by language spec
+- Use `null` for explicit "nothing" values, not `undefined` — `undefined` is for implicit absence (optional params)
+- Don't add default values to optional parameters when implicit `undefined` is acceptable: `param?: Type` not `param?: Type = defaultValue`
 
 **HTML parsing:** Prefer semantic selectors (class names) over regex, simple string methods over regex when possible.
 
@@ -98,6 +101,9 @@ type Status = "pending" | "completed";
 // Optional properties/params: use ?: not | undefined
 export interface Foo { title?: string; }  // not title: string | undefined
 function bar(title?: string) {}           // not title: string | undefined
+
+// Optional and nullable: parameters can be both
+function baz(debugFileName?: string | null) {}  // accepts string, null, or undefined (omitted)
 
 // Type-only imports, explicit node: protocol
 import type { Format } from "./types";
@@ -133,8 +139,6 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 
 ## Git Workflow
 
-- Co-author: `Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>`
-- Gitignore generated/output files by default
 - Do not commit unless explicitly asked—edit files and leave for user review
 
 ## Requirements
