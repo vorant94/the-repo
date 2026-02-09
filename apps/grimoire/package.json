@@ -6,6 +6,7 @@
     "date-fns": "^4.1.0",
     "fs-extra": "^11.3.0",
     "linkedom": "^0.18.5",
+    "ollama": "^0.6.3",
     "papaparse": "^5.5.3",
     "zod": "^3.24.2"
   },
@@ -23,7 +24,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "ts:check": "tsc"
+    "ts:check": "tsc",
+    "llm:dev": "ollama serve"
   },
   "type": "module"
 }
