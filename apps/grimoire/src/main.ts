@@ -4,7 +4,7 @@ import { parseArgs } from "node:util";
 import { z } from "zod";
 import { merge } from "./commands/merge.ts";
 import { scrapPauper } from "./commands/scrap-pauper.ts";
-import { spectate } from "./commands/spectate.ts";
+import { spectate } from "./commands/spectate/spectate.ts";
 import { wishTrade } from "./commands/wish-trade.ts";
 
 const {
