@@ -1,13 +1,14 @@
 import process from "node:process";
 import { Ollama } from "ollama";
+import { getContext } from "./context.ts";
 
 const ollama = new Ollama();
 
 export async function analyzeWithOllama(
   transcript: string,
   systemPrompt: string,
-  model: string,
 ): Promise<void> {
+  const { model } = getContext();
   const response = await ollama.chat({
     model,
     messages: [

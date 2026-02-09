@@ -2,6 +2,7 @@ import console from "node:console";
 import { z } from "zod";
 import { execFile } from "../../shared/exec.ts";
 import { accent } from "../../shared/logger.ts";
+import { getContext } from "./context.ts";
 
 export interface TranscriptData {
   srtContent: string;
@@ -19,10 +20,11 @@ const chapterSchema = z.object({
 
 export type Chapter = z.infer<typeof chapterSchema>;
 
-export async function fetchTranscript(url: string): Promise<TranscriptData> {
+export async function fetchTranscript(): Promise<TranscriptData> {
+  const { url } = getContext();
   console.info(`Fetching transcript from ${accent(url)}...`);
 
-  const metadata = await fetchYtDlpMetadata(url);
+  const metadata = await fetchYtDlpMetadata();
   const srtUrl = findSrtUrl(metadata);
 
   if (!srtUrl) {
@@ -56,7 +58,8 @@ const ytDlpMetadataSchema = z.object({
 
 type YtDlpMetadata = z.infer<typeof ytDlpMetadataSchema>;
 
-async function fetchYtDlpMetadata(url: string): Promise<YtDlpMetadata> {
+async function fetchYtDlpMetadata(): Promise<YtDlpMetadata> {
+  const { url } = getContext();
   const { stdout } = await execFile("yt-dlp", [
     "--dump-json",
     "--skip-download",
