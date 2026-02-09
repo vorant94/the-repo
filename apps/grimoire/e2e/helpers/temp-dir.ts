@@ -2,9 +2,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-export interface TempDir {
+export interface TempDir extends AsyncDisposable {
   path: string;
-  cleanup: () => Promise<void>;
 }
 
 export async function createTempDir(prefix: string): Promise<TempDir> {
@@ -12,7 +11,7 @@ export async function createTempDir(prefix: string): Promise<TempDir> {
 
   return {
     path,
-    cleanup: async () => {
+    [Symbol.asyncDispose]: async () => {
       await rm(path, { recursive: true, force: true });
     },
   };
