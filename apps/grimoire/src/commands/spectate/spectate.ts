@@ -2,6 +2,7 @@ import console from "node:console";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
+import { getContext, runWithinContext } from "./context.ts";
 import { analyzeWithOllama } from "./ollama.ts";
 import {
   buildSystemPromptForChapter,
@@ -13,23 +14,25 @@ import { fetchTranscript } from "./transcript.ts";
 
 export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
-  const { url, model } = argsSchema.parse(values);
+  const args = argsSchema.parse(values);
 
-  const { srtContent, title, chapters } = await fetchTranscript(url);
+  await runWithinContext(args, async () => {
+    const { srtContent, title, chapters } = await fetchTranscript();
 
-  const hasChapters = chapters && chapters.length > 0;
+    const hasChapters = chapters && chapters.length > 0;
 
-  await (hasChapters
-    ? analyzeWithChapters(srtContent, chapters, model, title)
-    : analyzeWithoutChapters(srtContent, model, title));
+    await (hasChapters
+      ? analyzeWithChapters(srtContent, chapters, title)
+      : analyzeWithoutChapters(srtContent, title));
+  });
 }
 
 async function analyzeWithChapters(
   srtContent: string,
   chapters: Array<Chapter>,
-  model: string,
   videoTitle?: string,
 ): Promise<void> {
+  const { model } = getContext();
   const chapterTranscripts = splitSrtByChapters(srtContent, chapters);
 
   for (let i = 0; i < chapterTranscripts.length; i++) {
@@ -54,7 +57,7 @@ async function analyzeWithChapters(
       chapterTranscript.title,
       videoTitle,
     );
-    await analyzeWithOllama(chapterTranscript.srtContent, systemPrompt, model);
+    await analyzeWithOllama(chapterTranscript.srtContent, systemPrompt);
 
     console.info("\n");
   }
@@ -64,13 +67,13 @@ async function analyzeWithChapters(
 
 async function analyzeWithoutChapters(
   srtContent: string,
-  model: string,
   videoTitle?: string,
 ): Promise<void> {
+  const { model } = getContext();
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
   const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
-  await analyzeWithOllama(srtContent, systemPrompt, model);
+  await analyzeWithOllama(srtContent, systemPrompt);
 
   console.info("\n\nDone!");
 }
