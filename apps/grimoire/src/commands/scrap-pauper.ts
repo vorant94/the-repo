@@ -1,3 +1,4 @@
+import console from "node:console";
 import { type ParseArgsConfig, parseArgs } from "node:util";
 import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";

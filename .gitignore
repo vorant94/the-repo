@@ -13,11 +13,11 @@ data
 .obsidian
 .astro
 .vscode
-.claude
+.claude/*
+!.claude/skills
 .husky/_
 build
 out
 .turbo
 
-apps/grimoire/output/
 tools/studio/build
