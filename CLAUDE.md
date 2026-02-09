@@ -81,6 +81,7 @@ Always run Biome from repo root. Rules enforced:
 - Early returns always: `if (!value) { continue; }` not `if (value) { ... }`
 - Avoid unnecessary nesting—main logic flows without deep nesting
 - When approach fails: investigate, present findings, stop and wait
+- Use `dedent` package for multiline strings (enables proper indentation in source code while removing it at runtime)
 
 **HTML parsing:** Prefer semantic selectors (class names) over regex, simple string methods over regex when possible.
 
