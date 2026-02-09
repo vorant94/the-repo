@@ -1,5 +1,4 @@
-import type { z } from "zod";
-import type { chapterSchema } from "./transcript.ts";
+import type { Chapter } from "./transcript.ts";
 
 export interface ChapterTranscript {
   title: string;
@@ -8,7 +7,7 @@ export interface ChapterTranscript {
 
 export function splitSrtByChapters(
   srtContent: string,
-  chapters: Array<z.infer<typeof chapterSchema>>,
+  chapters: Array<Chapter>,
 ): Array<ChapterTranscript> {
   const blocks = srtContent.split("\n\n").filter((block) => block.trim());
   const result: Array<ChapterTranscript> = [];

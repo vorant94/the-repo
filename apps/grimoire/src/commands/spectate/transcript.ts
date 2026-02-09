@@ -5,17 +5,19 @@ import { accent } from "../../shared/logger.ts";
 
 export interface TranscriptData {
   srtContent: string;
-  title: string | undefined;
-  chapters: Array<z.infer<typeof chapterSchema>> | null | undefined;
+  title?: string;
+  chapters?: Array<Chapter> | null;
 }
 
-export const chapterSchema = z.object({
+const chapterSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: external API field name from yt-dlp
   start_time: z.number(),
   // biome-ignore lint/style/useNamingConvention: external API field name from yt-dlp
   end_time: z.number(),
   title: z.string(),
 });
+
+export type Chapter = z.infer<typeof chapterSchema>;
 
 export async function fetchTranscript(url: string): Promise<TranscriptData> {
   console.info(`Fetching transcript from ${accent(url)}...`);

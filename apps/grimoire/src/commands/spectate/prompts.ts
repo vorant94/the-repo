@@ -1,8 +1,8 @@
 import dedent from "dedent";
 
 export function buildSystemPromptForChapter(
-  videoTitle: string | undefined,
   chapterTitle: string,
+  videoTitle?: string,
 ): string {
   const titleContext = videoTitle ? `Video: ${videoTitle}\n` : "";
 
@@ -29,9 +29,7 @@ export function buildSystemPromptForChapter(
   `;
 }
 
-export function buildSystemPromptForFullVideo(
-  videoTitle: string | undefined,
-): string {
+export function buildSystemPromptForFullVideo(videoTitle?: string): string {
   const titleContext = videoTitle ? `Video: ${videoTitle}\n` : "";
 
   return dedent`

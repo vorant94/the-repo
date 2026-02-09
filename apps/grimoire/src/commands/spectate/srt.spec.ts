@@ -1,8 +1,7 @@
 import dedent from "dedent";
 import { describe, expect, it } from "vitest";
-import type { z } from "zod";
 import { formatTimestamp, splitSrtByChapters } from "./srt.ts";
-import type { chapterSchema } from "./transcript.ts";
+import type { Chapter } from "./transcript.ts";
 
 describe("formatTimestamp", () => {
   it("should format zero seconds", () => {
@@ -59,7 +58,7 @@ describe("splitSrtByChapters", () => {
       { title: "Chapter 2", start_time: 60, end_time: 120 },
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 3", start_time: 120, end_time: 180 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters(srtContent, chapters);
 
@@ -102,7 +101,7 @@ describe("splitSrtByChapters", () => {
       { title: "Chapter 1", start_time: 0, end_time: 60 },
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 2", start_time: 60, end_time: 120 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters(srtContent, chapters);
 
@@ -120,7 +119,7 @@ describe("splitSrtByChapters", () => {
     const chapters = [
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 1", start_time: 60, end_time: 120 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters(srtContent, chapters);
 
@@ -138,7 +137,7 @@ describe("splitSrtByChapters", () => {
     const chapters = [
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 1", start_time: 60, end_time: 120 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters(srtContent, chapters);
 
@@ -149,7 +148,7 @@ describe("splitSrtByChapters", () => {
     const chapters = [
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 1", start_time: 0, end_time: 60 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters("", chapters);
 
@@ -168,7 +167,7 @@ describe("splitSrtByChapters", () => {
     const chapters = [
       // biome-ignore lint/style/useNamingConvention: external API field names from yt-dlp
       { title: "Chapter 1", start_time: 0, end_time: 60 },
-    ] as Array<z.infer<typeof chapterSchema>>;
+    ] as Array<Chapter>;
 
     const result = splitSrtByChapters(srtContent, chapters);
 

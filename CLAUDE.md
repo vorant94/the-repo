@@ -95,13 +95,22 @@ export const Format = { pauper: "Pauper" } as const satisfies Record<string, For
 export interface TempDir { path: string; cleanup: () => Promise<void>; }
 type Status = "pending" | "completed";
 
+// Optional properties/params: use ?: not | undefined
+export interface Foo { title?: string; }  // not title: string | undefined
+function bar(title?: string) {}           // not title: string | undefined
+
 // Type-only imports, explicit node: protocol
 import type { Format } from "./types";
 import process from "node:process";
 
-// Zod: schema once, infer type
+// Zod: schema once, infer type, export both
 const rowSchema = z.object({ name: z.string(), value: z.number() });
 type Row = z.infer<typeof rowSchema>;
+
+// Use type aliases instead of inline inference
+export const chapterSchema = z.object({ title: z.string() });
+export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everywhere
+// NOT: Array<z.infer<typeof chapterSchema>> at each usage site
 ```
 
 **Zod parsing:** Use `.parse()` by default—let validation errors throw naturally. Only use `.safeParse()` for user-facing validation needing graceful error messages.
