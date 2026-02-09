@@ -1,6 +1,8 @@
 import console from "node:console";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import process from "node:process";
+import { createInterface } from "node:readline/promises";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
@@ -24,11 +26,12 @@ export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
   const args = argsSchema.parse(values);
 
-  let debugDir: string | undefined;
+  await using tempDir = args.debug
+    ? await createTempDir("grimoire-spectate-debug")
+    : null;
+  const debugDir = tempDir?.path;
 
-  if (args.debug) {
-    await using tempDir = await createTempDir("grimoire-spectate-debug", true);
-    debugDir = tempDir.path;
+  if (debugDir) {
     console.info(
       `Debug mode enabled. Files will be saved to: ${accent(debugDir)}\n`,
     );
@@ -44,7 +47,25 @@ export async function spectate() {
     await (hasChapters
       ? analyzeWithChapters(srtContent, chapters, title)
       : analyzeWithoutChapters(srtContent, title));
+
+    await promptForDebugCleanup();
   });
+}
+
+async function promptForDebugCleanup(): Promise<void> {
+  const { debugDir } = getContext();
+  if (!debugDir) {
+    return;
+  }
+
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    await rl.question(
+      `\nDebug files in ${accent(debugDir)} will be deleted. Press Enter to continue...`,
+    );
+  } finally {
+    rl.close();
+  }
 }
 
 async function analyzeWithChapters(
