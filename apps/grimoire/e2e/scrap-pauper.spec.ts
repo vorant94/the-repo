@@ -1,15 +1,17 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { exec } from "./helpers/exec.ts";
+import { execFile } from "../src/shared/exec.ts";
 import { createTempDir } from "./helpers/temp-dir.ts";
 
 describe("scrap-pauper command", () => {
   it("should fetch real paupergeddon.com URL and create output file", async () => {
     await using tempDir = await createTempDir("scrap-pauper");
-    await exec(
-      `grimoire scrap-pauper --outputPath ${tempDir.path}/staples.txt`,
-    );
+    await execFile("grimoire", [
+      "scrap-pauper",
+      "--outputPath",
+      `${tempDir.path}/staples.txt`,
+    ]);
 
     const staplesContent = await readFile(
       join(tempDir.path, "staples.txt"),
@@ -21,9 +23,11 @@ describe("scrap-pauper command", () => {
 
   it("should output expected format with sorted decklist lines", async () => {
     await using tempDir = await createTempDir("scrap-pauper");
-    await exec(
-      `grimoire scrap-pauper --outputPath ${tempDir.path}/staples.txt`,
-    );
+    await execFile("grimoire", [
+      "scrap-pauper",
+      "--outputPath",
+      `${tempDir.path}/staples.txt`,
+    ]);
 
     const staplesContent = await readFile(
       join(tempDir.path, "staples.txt"),
@@ -43,9 +47,11 @@ describe("scrap-pauper command", () => {
 
   it("should not contain basic lands in output", async () => {
     await using tempDir = await createTempDir("scrap-pauper");
-    await exec(
-      `grimoire scrap-pauper --outputPath ${tempDir.path}/staples.txt`,
-    );
+    await execFile("grimoire", [
+      "scrap-pauper",
+      "--outputPath",
+      `${tempDir.path}/staples.txt`,
+    ]);
 
     const staplesContent = await readFile(
       join(tempDir.path, "staples.txt"),
@@ -74,7 +80,7 @@ describe("scrap-pauper command", () => {
     await using tempDir = await createTempDir("scrap-pauper");
     const customPath = join(tempDir.path, "custom-output.txt");
 
-    await exec(`grimoire scrap-pauper --outputPath ${customPath}`);
+    await execFile("grimoire", ["scrap-pauper", "--outputPath", customPath]);
 
     const staplesContent = await readFile(customPath, "utf-8");
 

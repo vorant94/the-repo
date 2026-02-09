@@ -8,7 +8,7 @@ import {
   formatDecklistCard,
   parseDecklistCard,
 } from "../formatters/decklist.ts";
-import { accent } from "../logger/text.ts";
+import { accent } from "../shared/logger.ts";
 
 export async function merge() {
   const { values, positionals } = parseArgs({
