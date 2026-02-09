@@ -1,21 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { exec } from "./helpers/exec.ts";
-import { createTempDir, type TempDir } from "./helpers/temp-dir.ts";
+import { createTempDir } from "./helpers/temp-dir.ts";
 
 describe("merge command", () => {
-  let tempDir: TempDir;
-
-  beforeEach(async () => {
-    tempDir = await createTempDir("merge");
-  });
-
-  afterEach(async () => {
-    await tempDir.cleanup();
-  });
-
   it("should merge two decklists taking max quantity per card", async () => {
+    await using tempDir = await createTempDir("merge");
     const deck1Path = join(tempDir.path, "deck1.txt");
     const deck2Path = join(tempDir.path, "deck2.txt");
 
@@ -46,6 +37,7 @@ describe("merge command", () => {
   });
 
   it("should output sorted alphabetically", async () => {
+    await using tempDir = await createTempDir("merge");
     const deck1Path = join(tempDir.path, "deck1.txt");
     const deck2Path = join(tempDir.path, "deck2.txt");
 
@@ -73,6 +65,7 @@ describe("merge command", () => {
   });
 
   it("should handle collection format input", async () => {
+    await using tempDir = await createTempDir("merge");
     const deck1Path = join(tempDir.path, "deck1.txt");
     const deck2Path = join(tempDir.path, "deck2.txt");
 
@@ -102,6 +95,7 @@ describe("merge command", () => {
   });
 
   it("should merge 3+ decklists", async () => {
+    await using tempDir = await createTempDir("merge");
     const deck1Path = join(tempDir.path, "deck1.txt");
     const deck2Path = join(tempDir.path, "deck2.txt");
     const deck3Path = join(tempDir.path, "deck3.txt");
