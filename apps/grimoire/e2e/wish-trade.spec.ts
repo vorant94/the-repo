@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { exec } from "./helpers/exec.ts";
+import { execFile } from "../src/shared/exec.ts";
 import { createTempDir } from "./helpers/temp-dir.ts";
 
 describe("wish-trade command", () => {
@@ -17,9 +17,13 @@ describe("wish-trade command", () => {
 
     await writeFile(inputPath, csvContent, "utf-8");
 
-    await exec(
-      `grimoire wish-trade --inputPath ${inputPath} --outputDir ${tempDir.path}`,
-    );
+    await execFile("grimoire", [
+      "wish-trade",
+      "--inputPath",
+      inputPath,
+      "--outputDir",
+      tempDir.path,
+    ]);
 
     const wishlistContent = await readFile(
       join(tempDir.path, "wishlist.txt"),
@@ -43,9 +47,13 @@ describe("wish-trade command", () => {
 
     await writeFile(inputPath, csvContent, "utf-8");
 
-    await exec(
-      `grimoire wish-trade --inputPath ${inputPath} --outputDir ${tempDir.path}`,
-    );
+    await execFile("grimoire", [
+      "wish-trade",
+      "--inputPath",
+      inputPath,
+      "--outputDir",
+      tempDir.path,
+    ]);
 
     const wishlistContent = await readFile(
       join(tempDir.path, "wishlist.txt"),
@@ -67,9 +75,13 @@ describe("wish-trade command", () => {
 
     await writeFile(inputPath, csvContent, "utf-8");
 
-    await exec(
-      `grimoire wish-trade --inputPath ${inputPath} --outputDir ${tempDir.path}`,
-    );
+    await execFile("grimoire", [
+      "wish-trade",
+      "--inputPath",
+      inputPath,
+      "--outputDir",
+      tempDir.path,
+    ]);
 
     const bulkContent = await readFile(join(tempDir.path, "bulk.txt"), "utf-8");
 
@@ -85,9 +97,13 @@ describe("wish-trade command", () => {
 
     await writeFile(inputPath, csvContent, "utf-8");
 
-    await exec(
-      `grimoire wish-trade --inputPath ${inputPath} --outputDir ${tempDir.path}`,
-    );
+    await execFile("grimoire", [
+      "wish-trade",
+      "--inputPath",
+      inputPath,
+      "--outputDir",
+      tempDir.path,
+    ]);
 
     const wishlistContent = await readFile(
       join(tempDir.path, "wishlist.txt"),

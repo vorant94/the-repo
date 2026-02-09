@@ -4,7 +4,7 @@ import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
 import { z } from "zod";
 import { formatDecklistCard } from "../formatters/decklist.ts";
-import { accent } from "../logger/text.ts";
+import { accent } from "../shared/logger.ts";
 
 export async function scrapPauper() {
   const { values } = parseArgs({

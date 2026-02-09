@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { exec } from "./helpers/exec.ts";
+import { execFile } from "../src/shared/exec.ts";
 import { createTempDir } from "./helpers/temp-dir.ts";
 
 describe("merge command", () => {
@@ -21,9 +21,13 @@ describe("merge command", () => {
       "utf-8",
     );
 
-    await exec(
-      `grimoire merge ${deck1Path} ${deck2Path} --outputPath ${tempDir.path}/merged.txt`,
-    );
+    await execFile("grimoire", [
+      "merge",
+      deck1Path,
+      deck2Path,
+      "--outputPath",
+      `${tempDir.path}/merged.txt`,
+    ]);
 
     const mergedContent = await readFile(
       join(tempDir.path, "merged.txt"),
@@ -48,9 +52,13 @@ describe("merge command", () => {
     );
     await writeFile(deck2Path, ["1 Brainstorm"].join("\n"), "utf-8");
 
-    await exec(
-      `grimoire merge ${deck1Path} ${deck2Path} --outputPath ${tempDir.path}/merged.txt`,
-    );
+    await execFile("grimoire", [
+      "merge",
+      deck1Path,
+      deck2Path,
+      "--outputPath",
+      `${tempDir.path}/merged.txt`,
+    ]);
 
     const mergedContent = await readFile(
       join(tempDir.path, "merged.txt"),
@@ -80,9 +88,13 @@ describe("merge command", () => {
       "utf-8",
     );
 
-    await exec(
-      `grimoire merge ${deck1Path} ${deck2Path} --outputPath ${tempDir.path}/merged.txt`,
-    );
+    await execFile("grimoire", [
+      "merge",
+      deck1Path,
+      deck2Path,
+      "--outputPath",
+      `${tempDir.path}/merged.txt`,
+    ]);
 
     const mergedContent = await readFile(
       join(tempDir.path, "merged.txt"),
@@ -112,9 +124,14 @@ describe("merge command", () => {
       "utf-8",
     );
 
-    await exec(
-      `grimoire merge ${deck1Path} ${deck2Path} ${deck3Path} --outputPath ${tempDir.path}/merged.txt`,
-    );
+    await execFile("grimoire", [
+      "merge",
+      deck1Path,
+      deck2Path,
+      deck3Path,
+      "--outputPath",
+      `${tempDir.path}/merged.txt`,
+    ]);
 
     const mergedContent = await readFile(
       join(tempDir.path, "merged.txt"),
