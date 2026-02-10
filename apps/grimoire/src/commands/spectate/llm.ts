@@ -41,22 +41,18 @@ export async function analyzeChapterWithLlm(
     chapterTranscript.srtContent,
   );
 
-  const fileHandle = await createChapterAnalysisDebugFileHandle(
+  await using fileHandle = await createChapterAnalysisDebugFileHandle(
     chapterIndex,
     chapterTranscript,
   );
 
   const parts: Array<string> = [];
 
-  try {
-    for await (const chunk of result.stream) {
-      const text = chunk.text();
-      parts.push(text);
-      process.stdout.write(text);
-      await fileHandle?.write(text);
-    }
-  } finally {
-    await fileHandle?.close();
+  for await (const chunk of result.stream) {
+    const text = chunk.text();
+    parts.push(text);
+    process.stdout.write(text);
+    await fileHandle?.write(text);
   }
 
   return parts.join("");
@@ -80,19 +76,15 @@ export async function analyzeFullVideoWithLlm(
 
   const result = await agent.generateContentStream(transcript);
 
-  const fileHandle = await createFullVideoDebugFileHandle();
+  await using fileHandle = await createFullVideoDebugFileHandle();
 
   const parts: Array<string> = [];
 
-  try {
-    for await (const chunk of result.stream) {
-      const text = chunk.text();
-      parts.push(text);
-      process.stdout.write(text);
-      await fileHandle?.write(text);
-    }
-  } finally {
-    await fileHandle?.close();
+  for await (const chunk of result.stream) {
+    const text = chunk.text();
+    parts.push(text);
+    process.stdout.write(text);
+    await fileHandle?.write(text);
   }
 
   return parts.join("");
