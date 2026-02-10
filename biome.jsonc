@@ -112,7 +112,8 @@
       "!**/.husky/_",
       "!**/build",
       "!**/out",
-      "!**/.turbo"
+      "!**/.turbo",
+      "!**/*-fixture.html"
     ]
   },
   "overrides": [
@@ -132,7 +133,12 @@
       }
     },
     {
-      "includes": ["**/*.spec.ts", "**/*.spec.tsx"], // because in order to mock top-level function, the test suite should import the whole ESModule
+      "includes": [
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx"
+      ], // because in order to mock top-level function, the test suite should import the whole ESModule
       "linter": {
         "rules": {
           "performance": {
