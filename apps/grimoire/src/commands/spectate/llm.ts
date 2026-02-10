@@ -17,7 +17,7 @@ export async function analyzeChapterWithLlm(
   chapterIndex: number,
   chapterTranscript: ChapterTranscript,
   videoTitle?: string,
-): Promise<void> {
+): Promise<string> {
   const { model, llmApiKey } = getContext();
 
   const systemPrompt = buildSystemPromptForChapter(
@@ -46,21 +46,26 @@ export async function analyzeChapterWithLlm(
     chapterTranscript,
   );
 
+  const parts: Array<string> = [];
+
   try {
     for await (const chunk of result.stream) {
       const text = chunk.text();
+      parts.push(text);
       process.stdout.write(text);
       await fileHandle?.write(text);
     }
   } finally {
     await fileHandle?.close();
   }
+
+  return parts.join("");
 }
 
 export async function analyzeFullVideoWithLlm(
   transcript: string,
   videoTitle?: string,
-): Promise<void> {
+): Promise<string> {
   const { model, llmApiKey } = getContext();
 
   const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
@@ -77,13 +82,18 @@ export async function analyzeFullVideoWithLlm(
 
   const fileHandle = await createFullVideoDebugFileHandle();
 
+  const parts: Array<string> = [];
+
   try {
     for await (const chunk of result.stream) {
       const text = chunk.text();
+      parts.push(text);
       process.stdout.write(text);
       await fileHandle?.write(text);
     }
   } finally {
     await fileHandle?.close();
   }
+
+  return parts.join("");
 }

@@ -1,8 +1,10 @@
 import console from "node:console";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
+import { confirm } from "@inquirer/prompts";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
+import { getCachedAnalysis, setCachedAnalysis } from "./cache.ts";
 import { getOrPromptLlmApiKey } from "./config.ts";
 import { getContext, runWithinContext } from "./context.ts";
 import {
@@ -14,10 +16,30 @@ import { analyzeChapterWithLlm, analyzeFullVideoWithLlm } from "./llm.ts";
 import { formatTimestamp, splitSrtByChapters } from "./srt.ts";
 import type { Chapter } from "./transcript.ts";
 import { fetchTranscript } from "./transcript.ts";
+import { extractVideoId } from "./youtube-url.ts";
 
 export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
   const args = argsSchema.parse(values);
+
+  const videoId = extractVideoId(args.url);
+  const cached = await getCachedAnalysis(videoId);
+
+  if (cached) {
+    console.info(`\n--- Cached Analysis (${accent(cached.model)}) ---\n`);
+    console.info(cached.analysis);
+    console.info("\n");
+
+    const shouldRegenerate = await confirm({
+      message: "Re-generate analysis?",
+      default: false,
+    });
+
+    if (!shouldRegenerate) {
+      return;
+    }
+  }
+
   const llmApiKey = await getOrPromptLlmApiKey();
 
   await using tempDir = args.debug
@@ -38,9 +60,11 @@ export async function spectate() {
 
     const hasChapters = chapters && chapters.length > 0;
 
-    await (hasChapters
+    const analysis = await (hasChapters
       ? analyzeWithChapters(srtContent, chapters, title)
       : analyzeWithoutChapters(srtContent, title));
+
+    await setCachedAnalysis(videoId, args.model, analysis);
 
     await promptForDebugCleanup();
   });
@@ -50,9 +74,10 @@ async function analyzeWithChapters(
   srtContent: string,
   chapters: Array<Chapter>,
   videoTitle?: string,
-): Promise<void> {
+): Promise<string> {
   const { model } = getContext();
   const chapterTranscripts = splitSrtByChapters(srtContent, chapters);
+  const parts: Array<string> = [];
 
   for (let i = 0; i < chapterTranscripts.length; i++) {
     const chapterTranscript = chapterTranscripts[i];
@@ -69,29 +94,41 @@ async function analyzeWithChapters(
     const endTime = formatTimestamp(chapter.end_time);
     const timeRange = `[${startTime} - ${endTime}]`;
 
-    console.info(`\n--- ${accent(chapterTranscript.title)} ${timeRange} ---\n`);
+    const header = `--- ${chapterTranscript.title} ${timeRange} ---`;
+
+    console.info(`\n${header}\n`);
     console.info(`Analyzing with ${accent(model)}...\n`);
 
     void writeChapterTranscriptDebugFile(i + 1, chapterTranscript);
 
-    await analyzeChapterWithLlm(i + 1, chapterTranscript, videoTitle);
+    const chapterAnalysis = await analyzeChapterWithLlm(
+      i + 1,
+      chapterTranscript,
+      videoTitle,
+    );
+
+    parts.push(`${header}\n\n${chapterAnalysis}`);
 
     console.info("\n");
   }
 
   console.info("Done!");
+
+  return parts.join("\n\n");
 }
 
 async function analyzeWithoutChapters(
   transcript: string,
   videoTitle?: string,
-): Promise<void> {
+): Promise<string> {
   const { model } = getContext();
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
-  await analyzeFullVideoWithLlm(transcript, videoTitle);
+  const analysis = await analyzeFullVideoWithLlm(transcript, videoTitle);
 
   console.info("\n\nDone!");
+
+  return analysis;
 }
 
 const argsSchema = z.object({
