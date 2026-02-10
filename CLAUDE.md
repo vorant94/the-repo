@@ -63,7 +63,21 @@ Always run Biome from repo root. Rules enforced:
 
 ## Testing
 
-- Vitest for subs-savvy and grimoire (`*.spec.ts` or `*.spec.tsx`)
+**Test naming convention:**
+- `*.unit.test.ts` - Pure logic, no I/O (formatters, parsers, utilities)
+- `*.int.test.ts` - Direct function calls with mocked I/O (fetch, fs, process)
+- `*.e2e.test.ts` - Full process execution (spawn CLI binary)
+- Legacy `*.spec.ts` patterns still supported but prefer the above
+
+**Mocking pattern:**
+- Use `vi.spyOn(target, "method").mockImplementationOnce()` for one-time mocks (auto-expires after first call, no manual cleanup needed)
+
+**Integration test pattern:**
+- Call functions directly with mocked I/O instead of spawning processes
+- Store fixtures in `@app/grimoire/assets/` folder (e.g., `assets/scrap-pauper-fixture.html`)
+
+**General:**
+- Vitest for subs-savvy and grimoire
 - Playwright for digital-garden E2E
 - Prefer `it()` over `test()`, use `describe()` blocks
 
