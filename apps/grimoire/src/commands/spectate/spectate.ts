@@ -9,7 +9,7 @@ import { accent } from "../../shared/logger.ts";
 import { slugify } from "../../shared/slugify.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
 import { getContext, runWithinContext } from "./context.ts";
-import { analyzeWithOllama } from "./ollama.ts";
+import { analyzeWithLlm } from "./llm.ts";
 import {
   buildSystemPromptForChapter,
   buildSystemPromptForFullVideo,
@@ -108,10 +108,13 @@ async function analyzeWithChapters(
       chapterTranscript.title,
       videoTitle,
     );
-    await analyzeWithOllama(
+
+    void writeChapterSystemPromptDebugFile(chapterDebugFileName, systemPrompt);
+
+    await analyzeWithLlm(
       chapterTranscript.srtContent,
       systemPrompt,
-      `${chapterDebugFileName}.md`,
+      `${chapterDebugFileName}-analysis.md`,
     );
 
     console.info("\n");
@@ -128,7 +131,7 @@ async function analyzeWithoutChapters(
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
   const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
-  await analyzeWithOllama(srtContent, systemPrompt, "analysis.md");
+  await analyzeWithLlm(srtContent, systemPrompt, "analysis.md");
 
   console.info("\n\nDone!");
 }
@@ -166,6 +169,22 @@ async function writeChapterTranscriptDebugFile(
   await writeFile(
     join(debugDir, `${fileName}.srt`),
     chapterTranscript.srtContent,
+    "utf-8",
+  );
+}
+
+async function writeChapterSystemPromptDebugFile(
+  fileName: string,
+  systemPrompt: string,
+): Promise<void> {
+  const { debugDir } = getContext();
+  if (!debugDir) {
+    return;
+  }
+
+  await writeFile(
+    join(debugDir, `${fileName}-system-prompt.md`),
+    systemPrompt,
     "utf-8",
   );
 }

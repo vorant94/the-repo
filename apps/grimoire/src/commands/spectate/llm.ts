@@ -1,12 +1,11 @@
 import { open } from "node:fs/promises";
 import { join } from "node:path";
 import process from "node:process";
-import { Ollama } from "ollama";
+import { streamText } from "ai";
+import { ollama } from "ollama-ai-provider";
 import { getContext } from "./context.ts";
 
-const ollama = new Ollama();
-
-export async function analyzeWithOllama(
+export async function analyzeWithLlm(
   transcript: string,
   systemPrompt: string,
   debugFileName?: string | null,
@@ -17,13 +16,10 @@ export async function analyzeWithOllama(
     throw new Error("Debug mode is enabled but no debug filename was provided");
   }
 
-  const response = await ollama.chat({
-    model,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: transcript },
-    ],
-    stream: true,
+  const { textStream } = streamText({
+    model: ollama(model),
+    system: systemPrompt,
+    prompt: transcript,
   });
 
   const fileHandle =
@@ -32,13 +28,9 @@ export async function analyzeWithOllama(
       : null;
 
   try {
-    for await (const part of response) {
-      if (!part.message.content) {
-        continue;
-      }
-
-      process.stdout.write(part.message.content);
-      await fileHandle?.write(part.message.content);
+    for await (const chunk of textStream) {
+      process.stdout.write(chunk);
+      await fileHandle?.write(chunk);
     }
   } finally {
     await fileHandle?.close();
