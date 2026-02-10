@@ -1,24 +1,17 @@
 import console from "node:console";
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import process from "node:process";
 import { createInterface } from "node:readline/promises";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
-import { slugify } from "../../shared/slugify.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
 import { getContext, runWithinContext } from "./context.ts";
-import { analyzeWithLlm } from "./llm.ts";
 import {
-  buildSystemPromptForChapter,
-  buildSystemPromptForFullVideo,
-} from "./prompts.ts";
-import {
-  type ChapterTranscript,
-  formatTimestamp,
-  splitSrtByChapters,
-} from "./srt.ts";
+  writeChapterTranscriptDebugFile,
+  writeFullVideoTranscriptDebugFile,
+} from "./debug.ts";
+import { analyzeChapterWithLlm, analyzeFullVideoWithLlm } from "./llm.ts";
+import { formatTimestamp, splitSrtByChapters } from "./srt.ts";
 import type { Chapter } from "./transcript.ts";
 import { fetchTranscript } from "./transcript.ts";
 
@@ -40,7 +33,7 @@ export async function spectate() {
   await runWithinContext({ ...args, debugDir }, async () => {
     const { srtContent, title, chapters } = await fetchTranscript();
 
-    void writeTranscriptContentDebugFile(srtContent);
+    void writeFullVideoTranscriptDebugFile(srtContent);
 
     const hasChapters = chapters && chapters.length > 0;
 
@@ -87,16 +80,6 @@ async function analyzeWithChapters(
       continue;
     }
 
-    const chapterDebugFileName = getChapterTranscriptDebugFileName(
-      i + 1,
-      chapterTranscript,
-    );
-
-    void writeChapterTranscriptDebugFile(
-      chapterDebugFileName,
-      chapterTranscript,
-    );
-
     const startTime = formatTimestamp(chapter.start_time);
     const endTime = formatTimestamp(chapter.end_time);
     const timeRange = `[${startTime} - ${endTime}]`;
@@ -104,18 +87,9 @@ async function analyzeWithChapters(
     console.info(`\n--- ${accent(chapterTranscript.title)} ${timeRange} ---\n`);
     console.info(`Analyzing with ${accent(model)}...\n`);
 
-    const systemPrompt = buildSystemPromptForChapter(
-      chapterTranscript.title,
-      videoTitle,
-    );
+    void writeChapterTranscriptDebugFile(i + 1, chapterTranscript);
 
-    void writeChapterSystemPromptDebugFile(chapterDebugFileName, systemPrompt);
-
-    await analyzeWithLlm(
-      chapterTranscript.srtContent,
-      systemPrompt,
-      `${chapterDebugFileName}-analysis.md`,
-    );
+    await analyzeChapterWithLlm(i + 1, chapterTranscript, videoTitle);
 
     console.info("\n");
   }
@@ -124,69 +98,15 @@ async function analyzeWithChapters(
 }
 
 async function analyzeWithoutChapters(
-  srtContent: string,
+  transcript: string,
   videoTitle?: string,
 ): Promise<void> {
   const { model } = getContext();
   console.info(`Analyzing transcript with ${accent(model)}...\n`);
 
-  const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
-  await analyzeWithLlm(srtContent, systemPrompt, "analysis.md");
+  await analyzeFullVideoWithLlm(transcript, videoTitle);
 
   console.info("\n\nDone!");
-}
-
-async function writeTranscriptContentDebugFile(
-  srtContent: string,
-): Promise<void> {
-  const { debugDir } = getContext();
-  if (!debugDir) {
-    return;
-  }
-
-  await writeFile(join(debugDir, "transcript.srt"), srtContent, "utf-8");
-}
-
-function getChapterTranscriptDebugFileName(
-  chapterIndex: number,
-  chapterTranscript: ChapterTranscript,
-): string {
-  const paddedIndex = String(chapterIndex).padStart(2, "0");
-  const titleSlug = slugify(chapterTranscript.title);
-
-  return `chapter-${paddedIndex}-${titleSlug}`;
-}
-
-async function writeChapterTranscriptDebugFile(
-  fileName: string,
-  chapterTranscript: ChapterTranscript,
-): Promise<void> {
-  const { debugDir } = getContext();
-  if (!debugDir) {
-    return;
-  }
-
-  await writeFile(
-    join(debugDir, `${fileName}.srt`),
-    chapterTranscript.srtContent,
-    "utf-8",
-  );
-}
-
-async function writeChapterSystemPromptDebugFile(
-  fileName: string,
-  systemPrompt: string,
-): Promise<void> {
-  const { debugDir } = getContext();
-  if (!debugDir) {
-    return;
-  }
-
-  await writeFile(
-    join(debugDir, `${fileName}-system-prompt.md`),
-    systemPrompt,
-    "utf-8",
-  );
 }
 
 const argsSchema = z.object({
