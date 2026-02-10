@@ -1,12 +1,12 @@
 import console from "node:console";
-import process from "node:process";
-import { createInterface } from "node:readline/promises";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
+import { getOrPromptLlmApiKey } from "./config.ts";
 import { getContext, runWithinContext } from "./context.ts";
 import {
+  promptForDebugCleanup,
   writeChapterTranscriptDebugFile,
   writeFullVideoTranscriptDebugFile,
 } from "./debug.ts";
@@ -18,7 +18,7 @@ import { fetchTranscript } from "./transcript.ts";
 export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
   const args = argsSchema.parse(values);
-  const { GOOGLE_API_KEY: llmApiKey } = envSchema.parse(process.env);
+  const llmApiKey = await getOrPromptLlmApiKey();
 
   await using tempDir = args.debug
     ? await createTempDir("grimoire-spectate-debug")
@@ -44,22 +44,6 @@ export async function spectate() {
 
     await promptForDebugCleanup();
   });
-}
-
-async function promptForDebugCleanup(): Promise<void> {
-  const { debugDir } = getContext();
-  if (!debugDir) {
-    return;
-  }
-
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  try {
-    await rl.question(
-      `\nDebug files in ${accent(debugDir)} will be deleted. Press Enter to continue...`,
-    );
-  } finally {
-    rl.close();
-  }
 }
 
 async function analyzeWithChapters(
@@ -109,11 +93,6 @@ async function analyzeWithoutChapters(
 
   console.info("\n\nDone!");
 }
-
-const envSchema = z.object({
-  // biome-ignore lint/style/useNamingConvention: environment variable naming convention
-  GOOGLE_API_KEY: z.string(),
-});
 
 const argsSchema = z.object({
   url: z.string(),
