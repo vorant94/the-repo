@@ -1,6 +1,5 @@
 import process from "node:process";
-import { streamText } from "ai";
-import { ollama } from "ollama-ai-provider";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getContext } from "./context.ts";
 import {
   createChapterAnalysisDebugFileHandle,
@@ -19,7 +18,7 @@ export async function analyzeChapterWithLlm(
   chapterTranscript: ChapterTranscript,
   videoTitle?: string,
 ): Promise<void> {
-  const { model } = getContext();
+  const { model, llmApiKey } = getContext();
 
   const systemPrompt = buildSystemPromptForChapter(
     chapterTranscript.title,
@@ -32,11 +31,15 @@ export async function analyzeChapterWithLlm(
     systemPrompt,
   );
 
-  const { textStream } = streamText({
-    model: ollama(model),
-    system: systemPrompt,
-    prompt: chapterTranscript.srtContent,
+  const client = new GoogleGenerativeAI(llmApiKey);
+  const agent = client.getGenerativeModel({
+    model,
+    systemInstruction: systemPrompt,
   });
+
+  const result = await agent.generateContentStream(
+    chapterTranscript.srtContent,
+  );
 
   const fileHandle = await createChapterAnalysisDebugFileHandle(
     chapterIndex,
@@ -44,9 +47,10 @@ export async function analyzeChapterWithLlm(
   );
 
   try {
-    for await (const chunk of textStream) {
-      process.stdout.write(chunk);
-      await fileHandle?.write(chunk);
+    for await (const chunk of result.stream) {
+      const text = chunk.text();
+      process.stdout.write(text);
+      await fileHandle?.write(text);
     }
   } finally {
     await fileHandle?.close();
@@ -57,24 +61,27 @@ export async function analyzeFullVideoWithLlm(
   transcript: string,
   videoTitle?: string,
 ): Promise<void> {
-  const { model } = getContext();
+  const { model, llmApiKey } = getContext();
 
   const systemPrompt = buildSystemPromptForFullVideo(videoTitle);
 
   void writeFullVideoSystemPromptDebugFile(systemPrompt);
 
-  const { textStream } = streamText({
-    model: ollama(model),
-    system: systemPrompt,
-    prompt: transcript,
+  const client = new GoogleGenerativeAI(llmApiKey);
+  const agent = client.getGenerativeModel({
+    model,
+    systemInstruction: systemPrompt,
   });
+
+  const result = await agent.generateContentStream(transcript);
 
   const fileHandle = await createFullVideoDebugFileHandle();
 
   try {
-    for await (const chunk of textStream) {
-      process.stdout.write(chunk);
-      await fileHandle?.write(chunk);
+    for await (const chunk of result.stream) {
+      const text = chunk.text();
+      process.stdout.write(text);
+      await fileHandle?.write(text);
     }
   } finally {
     await fileHandle?.close();
