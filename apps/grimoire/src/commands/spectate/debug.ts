@@ -1,5 +1,7 @@
 import { type FileHandle, open, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { input } from "@inquirer/prompts";
+import { accent } from "../../shared/logger.ts";
 import { slugify } from "../../shared/slugify.ts";
 import { getContext } from "./context.ts";
 import type { ChapterTranscript } from "./srt.ts";
@@ -98,4 +100,15 @@ export async function createChapterAnalysisDebugFileHandle(
     join(debugDir, `chapter-${paddedIndex}-${titleSlug}-analysis.md`),
     "w",
   );
+}
+
+export async function promptForDebugCleanup(): Promise<void> {
+  const { debugDir } = getContext();
+  if (!debugDir) {
+    return;
+  }
+
+  await input({
+    message: `Debug files in ${accent(debugDir)} will be deleted. Press Enter to continue...`,
+  });
 }
