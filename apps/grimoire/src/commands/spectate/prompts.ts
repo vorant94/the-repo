@@ -1,10 +1,21 @@
 import dedent from "dedent";
+import { getContext } from "./context.ts";
 
 export function buildSystemPromptForChapter(
   chapterTitle: string,
   videoTitle?: string,
 ): string {
+  const { debugDir } = getContext();
+
   const titleContext = videoTitle ? `Video: ${videoTitle}\n` : "";
+
+  const debugContext = debugDir
+    ? "In the end of analysis provide a short reasoning for how you came up to the your conclusion\n"
+    : "";
+
+  const debugExample = debugDir
+    ? "Notes: (how you come up to the conclusion that result of the game is what you say)"
+    : "";
 
   return dedent`
     ${titleContext}Chapter: ${chapterTitle}
@@ -58,8 +69,7 @@ export function buildSystemPromptForChapter(
 
     Format your response clearly with each game on a separate line.
 
-    In the end of analysis provide a short reasoning for how you came up to the your conclusion
-
+    ${debugContext}
     Here is a template for analysis you should follow:
 
     ###
@@ -72,7 +82,7 @@ export function buildSystemPromptForChapter(
       Ends at: (timestamp of end of the game)
       Result: (Player won / Player loss)
 
-    Notes: (how you come up to the conclusion that result of the game is what you say)
+    ${debugExample}
     ###
   `;
 }

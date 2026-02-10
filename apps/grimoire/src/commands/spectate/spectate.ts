@@ -18,6 +18,7 @@ import { fetchTranscript } from "./transcript.ts";
 export async function spectate() {
   const { values } = parseArgs({ options, strict: true });
   const args = argsSchema.parse(values);
+  const { GOOGLE_API_KEY: llmApiKey } = envSchema.parse(process.env);
 
   await using tempDir = args.debug
     ? await createTempDir("grimoire-spectate-debug")
@@ -30,7 +31,7 @@ export async function spectate() {
     );
   }
 
-  await runWithinContext({ ...args, debugDir }, async () => {
+  await runWithinContext({ ...args, llmApiKey, debugDir }, async () => {
     const { srtContent, title, chapters } = await fetchTranscript();
 
     void writeFullVideoTranscriptDebugFile(srtContent);
@@ -109,9 +110,14 @@ async function analyzeWithoutChapters(
   console.info("\n\nDone!");
 }
 
+const envSchema = z.object({
+  // biome-ignore lint/style/useNamingConvention: environment variable naming convention
+  GOOGLE_API_KEY: z.string(),
+});
+
 const argsSchema = z.object({
   url: z.string(),
-  model: z.string().default("llama3.1"),
+  model: z.string().default("gemini-2.5-flash"),
   debug: z.boolean().default(false),
 });
 
