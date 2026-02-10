@@ -1,20 +1,52 @@
+import { join } from "node:path";
 import { password } from "@inquirer/prompts";
-import Configstore from "configstore";
+import fs from "fs-extra";
 import z from "zod";
+import { paths } from "../../shared/paths.ts";
 
-const config = new Configstore("grimoire");
+const configPath = join(paths.config, "config.json");
+
+const configSchema = z.object({
+  googleApiKey: z.string().optional(),
+});
+
+type Config = z.infer<typeof configSchema>;
+
+async function readConfig(): Promise<Config> {
+  try {
+    const content = await fs.readJSON(configPath);
+    return configSchema.parse(content);
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ) {
+      return {};
+    }
+    throw error;
+  }
+}
+
+async function writeConfig(config: Config): Promise<void> {
+  await fs.ensureDir(paths.config);
+  await fs.writeJSON(configPath, config, { spaces: 2 });
+}
 
 export async function getOrPromptLlmApiKey(): Promise<string> {
-  const rawExistingKey = config.get("googleApiKey");
+  const config = await readConfig();
 
-  if (rawExistingKey) {
-    return z.string().parse(rawExistingKey);
+  if (config.googleApiKey) {
+    return config.googleApiKey;
   }
 
   const key = await password({
     message: "Enter your Google API key:",
     mask: "*",
   });
-  config.set("googleApiKey", key);
+
+  await writeConfig({ ...config, googleApiKey: key });
+
   return key;
 }
