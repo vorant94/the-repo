@@ -2,7 +2,6 @@ import { Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconFileCode } from "@tabler/icons-react";
 import { cn } from "cn";
-import { ntJsonParse, ntParseWithZod } from "nt";
 import { type FC, useEffect, useState } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
 import {
@@ -43,10 +42,10 @@ export const ImportRecoveryDropZone: FC<ImportRecoveryDropZoneProps> = ({
           throw new Error("type of result should be string");
         }
 
-        const parsedResult = ntJsonParse(result).andThen((result) =>
-          ntParseWithZod(result, recoverySchema),
-        );
-        if (parsedResult.isErr()) {
+        let parsed: unknown;
+        try {
+          parsed = JSON.parse(result);
+        } catch {
           notifications.show({
             color: notificationColor.error,
             title: "Recovery is malformed",
@@ -55,7 +54,17 @@ export const ImportRecoveryDropZone: FC<ImportRecoveryDropZoneProps> = ({
           return;
         }
 
-        onRecoveryParsed(parsedResult.value);
+        const recoveryResult = recoverySchema.safeParse(parsed);
+        if (!recoveryResult.success) {
+          notifications.show({
+            color: notificationColor.error,
+            title: "Recovery is malformed",
+            message: "Failed to parse recovery file, cannot proceed",
+          });
+          return;
+        }
+
+        onRecoveryParsed(recoveryResult.data);
       },
       { signal: controller.signal },
     );

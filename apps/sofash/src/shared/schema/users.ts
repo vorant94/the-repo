@@ -24,6 +24,8 @@ export const users = sqliteTable("users", {
   role: text({ enum: userRoles }).notNull().default("user"),
 });
 
+export type RawUser = typeof users.$inferSelect;
+
 export const userSchema = createSelectSchema(users, {
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

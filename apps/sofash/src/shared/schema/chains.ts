@@ -20,6 +20,8 @@ export const chains = sqliteTable("chains", {
   externalId: text().notNull(),
 });
 
+export type RawChain = typeof chains.$inferSelect;
+
 export const chainSchema = createSelectSchema(chains, {
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

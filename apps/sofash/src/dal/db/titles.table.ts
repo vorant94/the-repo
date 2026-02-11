@@ -1,6 +1,4 @@
 import { format } from "date-fns";
-import { ResultAsync } from "neverthrow";
-import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
@@ -16,85 +14,82 @@ import {
 import {
   type InsertTitle,
   insertTitleSchema,
+  type RawTitle,
   type Title,
   titleSchema,
   titles,
 } from "../../shared/schema/titles.ts";
 
-export function upsertTitle(
-  toUpsertRaw: InsertTitle,
-): ResultAsync<
-  Title,
-  BadInputException | BadOutputException | UnexpectedBranchException
-> {
+export async function upsertTitle(toUpsertRaw: InsertTitle): Promise<Title> {
   const { db } = getContext();
 
-  const toUpsert = ntParseWithZod(toUpsertRaw, insertTitleSchema).mapErr(
-    (err) =>
-      new BadInputException("Failed validation of title to upsert", {
-        cause: err,
-      }),
-  );
+  const toUpsertResult = insertTitleSchema.safeParse(toUpsertRaw);
+  if (!toUpsertResult.success) {
+    throw new BadInputException("Failed validation of title to upsert", {
+      cause: toUpsertResult.error,
+    });
+  }
 
-  const upsertedRaw = toUpsert.asyncAndThen(({ releasedAt, ...rest }) =>
-    ResultAsync.fromPromise(
-      db
-        .insert(titles)
-        .values({
-          id: generateTitleId(rest.name, releasedAt),
-          releasedAt: format(releasedAt, sqliteDatetimeFormat),
-          ...rest,
-        })
-        .onConflictDoUpdate({
-          target: titles.id,
-          set: createConflictUpdateColumns(titles, ["updatedAt"]),
-        })
-        .returning(),
-      (err) => {
-        using logger = createLogger("upsertTitle::toUpsert.asyncAndThen::err");
+  const { releasedAt, ...rest } = toUpsertResult.data;
 
-        logger.error("Unexpected error while upserting a title", err);
-        return new UnexpectedBranchException(
-          "Unexpected error while inserting a title",
-          { cause: err },
-        );
-      },
-    ),
-  );
+  let upsertedRaw: Array<RawTitle>;
+  try {
+    upsertedRaw = await db
+      .insert(titles)
+      .values({
+        id: generateTitleId(rest.name, releasedAt),
+        releasedAt: format(releasedAt, sqliteDatetimeFormat),
+        ...rest,
+      })
+      .onConflictDoUpdate({
+        target: titles.id,
+        set: createConflictUpdateColumns(titles, ["updatedAt"]),
+      })
+      .returning();
+  } catch (err) {
+    using logger = createLogger("upsertTitle::err");
 
-  return upsertedRaw.andThen(([upsertedRaw]) =>
-    ntParseWithZod(upsertedRaw, titleSchema).mapErr(
-      (err) =>
-        new BadOutputException(
-          "Failed to validate upsert result after title upsert",
-          { cause: err },
-        ),
-    ),
-  );
+    logger.error("Unexpected error while upserting a title", err);
+    throw new UnexpectedBranchException(
+      "Unexpected error while inserting a title",
+      { cause: err },
+    );
+  }
+
+  const upsertedResult = titleSchema.safeParse(upsertedRaw[0]);
+  if (!upsertedResult.success) {
+    throw new BadOutputException(
+      "Failed to validate upsert result after title upsert",
+      { cause: upsertedResult.error },
+    );
+  }
+
+  return upsertedResult.data;
 }
 
-export function selectTitles(): ResultAsync<
-  Array<Title>,
-  UnexpectedBranchException | BadOutputException
-> {
+export async function selectTitles(): Promise<Array<Title>> {
   const { db } = getContext();
 
-  const rawTitles = ResultAsync.fromPromise(
-    db.select().from(titles),
-    (err) =>
-      new UnexpectedBranchException("Failed to retrieve titles from db", {
-        cause: err,
-      }),
-  );
+  let rawTitles: Array<RawTitle>;
+  try {
+    rawTitles = await db.select().from(titles);
+  } catch (cause) {
+    throw new UnexpectedBranchException("Failed to retrieve titles from db", {
+      cause,
+    });
+  }
 
-  return rawTitles.andThen((rawSites) =>
-    ntParseWithZod(rawSites, z.array(titleSchema)).mapErr(
-      (err) =>
-        new BadOutputException("Failed to validate retrieved from db titles", {
-          cause: err,
-        }),
-    ),
-  );
+  const titlesResult = z.array(titleSchema).safeParse(rawTitles);
+  if (!titlesResult.success) {
+    throw new BadOutputException(
+      "Failed to validate retrieved from db titles",
+      {
+        cause: titlesResult.error,
+      },
+    );
+  }
+
+  return titlesResult.data;
 }
 
 function generateTitleId(name: string, releasedAt: Date): string {

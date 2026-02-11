@@ -38,17 +38,12 @@ await runWithinContext({ config, bot: {}, db: {} }, async () => {
 
   const moviePage = await searchTmdbMovie({ name, page, year });
 
-  moviePage.match(
-    (filmEvents) => {
-      logger.info(
-        "response",
-        inspect(filmEvents, {
-          colors: true,
-          depth: Number.POSITIVE_INFINITY,
-          maxArrayLength: Number.POSITIVE_INFINITY,
-        }),
-      );
-    },
-    (error) => logger.error(error),
+  logger.info(
+    "response",
+    inspect(moviePage, {
+      colors: true,
+      depth: Number.POSITIVE_INFINITY,
+      maxArrayLength: Number.POSITIVE_INFINITY,
+    }),
   );
 });

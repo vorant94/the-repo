@@ -28,6 +28,8 @@ export const sites = sqliteTable("sites", {
   name: text().notNull(),
 });
 
+export type RawSite = typeof sites.$inferSelect;
+
 export const siteSchema = createSelectSchema(sites, {
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
