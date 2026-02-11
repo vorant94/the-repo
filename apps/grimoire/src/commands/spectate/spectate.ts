@@ -1,5 +1,6 @@
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
 import { confirm, isCancel, log } from "@clack/prompts";
+import { outputFile } from "fs-extra";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
@@ -34,6 +35,8 @@ export async function spectate() {
     });
 
     if (!shouldRegenerate || isCancel(shouldRegenerate)) {
+      log.step(`Writing to ${accent(args.outputPath)}...`);
+      await outputFile(args.outputPath, cached.analysis, "utf-8");
       return;
     }
   }
@@ -63,6 +66,9 @@ export async function spectate() {
       : analyzeWithoutChapters(srtContent, title));
 
     await setCachedAnalysis(videoId, args.model, analysis);
+
+    log.step(`Writing to ${accent(args.outputPath)}...`);
+    await outputFile(args.outputPath, analysis, "utf-8");
 
     await pauseBeforeDebugCleanup();
   });
@@ -131,10 +137,12 @@ const argsSchema = z.object({
   url: z.string(),
   model: z.string().default("gemini-2.5-flash"),
   debug: z.boolean().default(false),
+  outputPath: z.string().default("./spectate-analysis.md"),
 });
 
 const options = {
   url: { type: "string" },
   model: { type: "string" },
   debug: { type: "boolean" },
+  outputPath: { type: "string" },
 } as const satisfies ParseArgsOptionsConfig;
