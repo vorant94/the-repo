@@ -1,13 +1,10 @@
 import { Hono } from "hono";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
-import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import { chainNameSchema } from "../../bl/quickbook/name-to-external-id-mappings.ts";
 import { insertChain, selectChains } from "../../dal/db/chains.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
-import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { chainSchema, insertChainSchema } from "../../shared/schema/chains.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
@@ -54,21 +51,18 @@ chainsRoute.get(
     },
   }),
   async (hc) => {
-    const chains = await selectChains();
-
-    const dtos = chains.andThen((chains) =>
-      ntParseWithZod(chains, z.array(chainDtoSchema)).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dtos.match(
-      (value) => hc.json(value),
-      (error) => hc.text(error.message, 500),
-    );
+    try {
+      const chains = await selectChains();
+      const dtosResult = z.array(chainDtoSchema).safeParse(chains);
+      if (!dtosResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtosResult.data);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );
 
@@ -100,27 +94,20 @@ chainsRoute.post(
   }),
   validator("json", insertChainDtoSchema),
   async (hc) => {
-    const chain = await insertChain(hc.req.valid("json"));
-
-    const dto = chain.andThen((inserted) =>
-      ntParseWithZod(inserted, chainDtoSchema).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dto.match(
-      (value) => hc.json(value, 201),
-      (error) => {
-        let status: ContentfulStatusCode = 500;
-        if (error instanceof BadInputException) {
-          status = 400;
-        }
-
-        return hc.text(error.message, status);
-      },
-    );
+    try {
+      const chain = await insertChain(hc.req.valid("json"));
+      const dtoResult = chainDtoSchema.safeParse(chain);
+      if (!dtoResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtoResult.data, 201);
+    } catch (error) {
+      if (error instanceof BadInputException) {
+        return hc.text(error.message, 400);
+      }
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );

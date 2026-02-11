@@ -32,19 +32,21 @@ export const ensureRootMiddleware: MiddlewareHandler<HonoEnv> = async (
       requestUser.username === config.ROOT_USERNAME &&
       requestUser.password === config.ROOT_PASSWORD;
     if (isEqual) {
-      const user = await upsertUserByTelegramChatId({
-        telegramChatId: rootUserChatId,
-        role: "root",
-      });
+      try {
+        const user = await upsertUserByTelegramChatId({
+          telegramChatId: rootUserChatId,
+          role: "root",
+        });
 
-      return user.match(
-        (user) =>
-          runWithinPatchedContext({ user }, () => {
-            logger.info("context is authenticated, user id is", user.id);
-            return next();
-          }),
-        (error) => hc.text(error.message, 500),
-      );
+        return await runWithinPatchedContext({ user }, () => {
+          logger.info("context is authenticated, user id is", user.id);
+          return next();
+        });
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Internal Server Error";
+        return hc.text(message, 500);
+      }
     }
   }
 

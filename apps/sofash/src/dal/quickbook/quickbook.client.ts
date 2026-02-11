@@ -1,8 +1,6 @@
 import { URL } from "node:url";
 import { format } from "date-fns";
-import type { ResultAsync } from "neverthrow";
-import { ntFetchJsonWithZod } from "nt";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { UnexpectedBranchException } from "../../shared/exceptions/unexpected-branch.exception.ts";
 import { createLogger } from "../../shared/logger/logger.ts";
@@ -13,14 +11,11 @@ import {
   quickbookFilmSchema,
 } from "./quickbook.dtos.ts";
 
-export function findQuickbookFilmEvents(
+export async function findQuickbookFilmEvents(
   chainId: QuickbookChainId,
   siteId: QuickbookSiteId,
   date: Date,
-): ResultAsync<
-  FindQuickbookFilmEventsResponseBodyDto,
-  UnexpectedBranchException
-> {
+): Promise<FindQuickbookFilmEventsResponseBodyDto> {
   using logger = createLogger("findQuickbookFilmEvents");
   logger.debug("chain", chainId);
   logger.debug("site", siteId);
@@ -34,19 +29,24 @@ export function findQuickbookFilmEvents(
   );
   logger.debug("url", url.toString());
 
-  return ntFetchJsonWithZod(
-    url,
-    findQuickbookFilmEventsResponseBodySchema,
-  ).mapErr((err) => {
-    if (err instanceof ZodError) {
-      return new BadOutputException("Failed to parse quickbook response", {
-        cause: err,
-      });
-    }
-    return new UnexpectedBranchException("Failed to fetch film events", {
-      cause: err,
+  let json: unknown;
+  try {
+    const response = await fetch(url);
+    json = await response.json();
+  } catch (cause) {
+    throw new UnexpectedBranchException("Failed to fetch film events", {
+      cause,
     });
-  });
+  }
+
+  const result = findQuickbookFilmEventsResponseBodySchema.safeParse(json);
+  if (!result.success) {
+    throw new BadOutputException("Failed to parse quickbook response", {
+      cause: result.error,
+    });
+  }
+
+  return result.data;
 }
 
 const findQuickbookFilmEventsResponseBodySchema = z.object({
