@@ -1,4 +1,4 @@
-import console from "node:console";
+import { log } from "@clack/prompts";
 import { z } from "zod";
 import { execFile } from "../../shared/exec.ts";
 import { accent } from "../../shared/logger.ts";
@@ -22,7 +22,7 @@ export type Chapter = z.infer<typeof chapterSchema>;
 
 export async function fetchTranscript(): Promise<TranscriptData> {
   const { url } = getContext();
-  console.info(`Fetching transcript from ${accent(url)}...`);
+  log.step(`Fetching transcript from ${accent(url)}...`);
 
   const metadata = await fetchYtDlpMetadata();
   const srtUrl = findSrtUrl(metadata);
@@ -32,7 +32,7 @@ export async function fetchTranscript(): Promise<TranscriptData> {
   }
 
   const srtContent = await fetchSrt(srtUrl);
-  console.info("Transcript fetched successfully");
+  log.success("Transcript fetched successfully");
 
   return {
     srtContent,

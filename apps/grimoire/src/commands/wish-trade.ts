@@ -1,6 +1,6 @@
-import console from "node:console";
 import { readFile } from "node:fs/promises";
 import { type ParseArgsConfig, parseArgs } from "node:util";
+import { log } from "@clack/prompts";
 import { outputFile } from "fs-extra";
 import Papa from "papaparse";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import {
 } from "../formatters/collection.ts";
 import { formatDecklistCard } from "../formatters/decklist.ts";
 import { manaBoxCollectionCardSchema } from "../formatters/manabox-collection.ts";
+import { accent } from "../shared/logger.ts";
 
 export async function wishTrade() {
   const { values } = parseArgs({
@@ -19,11 +20,11 @@ export async function wishTrade() {
 
   const { inputPath, outputDir } = argsSchema.parse(values);
 
-  console.info(`Reading ${inputPath}...`);
+  log.step(`Reading ${inputPath}...`);
 
   const csvContent = await readFile(inputPath, "utf-8");
 
-  console.info("Parsing CSV...");
+  log.step("Parsing CSV...");
 
   const parsed = Papa.parse(csvContent, {
     header: true,
@@ -56,10 +57,10 @@ export async function wishTrade() {
     }
   }
 
-  console.info(`Found ${wishlistCards.size} wishlist cards`);
-  console.info(`Found ${bulkCards.length} bulk cards`);
+  log.info(`Found ${accent(wishlistCards.size)} wishlist cards`);
+  log.info(`Found ${accent(bulkCards.length)} bulk cards`);
 
-  console.info("Writing output files...");
+  log.step("Formatting output...");
 
   const wishlistPath = `${outputDir}/wishlist.txt`;
   const bulkPath = `${outputDir}/bulk.txt`;
@@ -69,16 +70,16 @@ export async function wishTrade() {
     .toArray()
     .map(([name, quantity]) => formatDecklistCard({ name, quantity }))
     .join("\n");
+  log.info(`Writing to ${accent(wishlistPath)}...`);
   await outputFile(wishlistPath, wishlistContent, "utf-8");
 
   const bulkContent = bulkCards
     .map((card) => formatCollectionCard(card))
     .join("\n");
+  log.info(`Writing to ${accent(bulkPath)}...`);
   await outputFile(bulkPath, bulkContent, "utf-8");
 
-  console.info(`Wrote ${wishlistPath}`);
-  console.info(`Wrote ${bulkPath}`);
-  console.info("Done!");
+  log.success("Done!");
 }
 
 const argsSchema = z.object({

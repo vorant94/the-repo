@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { password } from "@inquirer/prompts";
+import { isCancel, password } from "@clack/prompts";
 import fs from "fs-extra";
 import z from "zod";
 import { paths } from "../../shared/paths.ts";
@@ -45,6 +45,10 @@ export async function getOrPromptLlmApiKey(): Promise<string> {
     message: "Enter your Google API key:",
     mask: "*",
   });
+
+  if (isCancel(key)) {
+    throw new Error("You need to provide API key in order to continue");
+  }
 
   await writeConfig({ ...config, googleApiKey: key });
 

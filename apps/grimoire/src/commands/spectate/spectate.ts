@@ -1,6 +1,5 @@
-import console from "node:console";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
-import { confirm } from "@inquirer/prompts";
+import { confirm, isCancel, log } from "@clack/prompts";
 import { z } from "zod";
 import { accent } from "../../shared/logger.ts";
 import { createTempDir } from "../../shared/temp-dir.ts";
@@ -8,7 +7,7 @@ import { getCachedAnalysis, setCachedAnalysis } from "./cache.ts";
 import { getOrPromptLlmApiKey } from "./config.ts";
 import { getContext, runWithinContext } from "./context.ts";
 import {
-  promptForDebugCleanup,
+  pauseBeforeDebugCleanup,
   writeChapterTranscriptDebugFile,
   writeFullVideoTranscriptDebugFile,
 } from "./debug.ts";
@@ -26,16 +25,15 @@ export async function spectate() {
   const cached = await getCachedAnalysis(videoId);
 
   if (cached) {
-    console.info(`\n--- Cached Analysis (${accent(cached.model)}) ---\n`);
-    console.info(cached.analysis);
-    console.info("\n");
+    log.info(`--- Cached Analysis (${accent(cached.model)}) ---`);
+    log.message(cached.analysis);
 
     const shouldRegenerate = await confirm({
       message: "Re-generate analysis?",
-      default: false,
+      initialValue: false,
     });
 
-    if (!shouldRegenerate) {
+    if (!shouldRegenerate || isCancel(shouldRegenerate)) {
       return;
     }
   }
@@ -48,7 +46,7 @@ export async function spectate() {
   const debugDir = tempDir?.path;
 
   if (debugDir) {
-    console.info(
+    log.info(
       `Debug mode enabled. Files will be saved to: ${accent(debugDir)}\n`,
     );
   }
@@ -66,7 +64,7 @@ export async function spectate() {
 
     await setCachedAnalysis(videoId, args.model, analysis);
 
-    await promptForDebugCleanup();
+    await pauseBeforeDebugCleanup();
   });
 }
 
@@ -96,8 +94,8 @@ async function analyzeWithChapters(
 
     const header = `--- ${chapterTranscript.title} ${timeRange} ---`;
 
-    console.info(`\n${header}\n`);
-    console.info(`Analyzing with ${accent(model)}...\n`);
+    log.info(`${header}`);
+    log.info(`Analyzing with ${accent(model)}...`);
 
     void writeChapterTranscriptDebugFile(i + 1, chapterTranscript);
 
@@ -108,11 +106,9 @@ async function analyzeWithChapters(
     );
 
     parts.push(`${header}\n\n${chapterAnalysis}`);
-
-    console.info("\n");
   }
 
-  console.info("Done!");
+  log.success("Done!");
 
   return parts.join("\n\n");
 }
@@ -122,11 +118,11 @@ async function analyzeWithoutChapters(
   videoTitle?: string,
 ): Promise<string> {
   const { model } = getContext();
-  console.info(`Analyzing transcript with ${accent(model)}...\n`);
+  log.info(`Analyzing transcript with ${accent(model)}...`);
 
   const analysis = await analyzeFullVideoWithLlm(transcript, videoTitle);
 
-  console.info("\n\nDone!");
+  log.success("Done!");
 
   return analysis;
 }

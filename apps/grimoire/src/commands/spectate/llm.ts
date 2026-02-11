@@ -1,5 +1,8 @@
-import process from "node:process";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { stream } from "@clack/prompts";
+import {
+  type GenerateContentStreamResult,
+  GoogleGenerativeAI,
+} from "@google/generative-ai";
 import { getContext } from "./context.ts";
 import {
   createChapterAnalysisDebugFileHandle,
@@ -48,12 +51,16 @@ export async function analyzeChapterWithLlm(
 
   const parts: Array<string> = [];
 
-  for await (const chunk of result.stream) {
-    const text = chunk.text();
-    parts.push(text);
-    process.stdout.write(text);
-    await fileHandle?.write(text);
-  }
+  await stream.info(
+    (async function* (result: GenerateContentStreamResult) {
+      for await (const chunk of result.stream) {
+        const text = chunk.text();
+        parts.push(text);
+        await fileHandle?.write(text);
+        yield text;
+      }
+    })(result),
+  );
 
   return parts.join("");
 }
@@ -80,12 +87,16 @@ export async function analyzeFullVideoWithLlm(
 
   const parts: Array<string> = [];
 
-  for await (const chunk of result.stream) {
-    const text = chunk.text();
-    parts.push(text);
-    process.stdout.write(text);
-    await fileHandle?.write(text);
-  }
+  await stream.info(
+    (async function* (result: GenerateContentStreamResult) {
+      for await (const chunk of result.stream) {
+        const text = chunk.text();
+        parts.push(text);
+        await fileHandle?.write(text);
+        yield text;
+      }
+    })(result),
+  );
 
   return parts.join("");
 }
