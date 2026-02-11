@@ -2,8 +2,8 @@
   "name": "grimoire",
   "version": "0.0.1",
   "dependencies": {
+    "@clack/prompts": "^1.0.0",
     "@google/generative-ai": "^0.21.0",
-    "@inquirer/prompts": "^8.2.0",
     "dedent": "^1.7.1",
     "env-paths": "^3.0.0",
     "fs-extra": "^11.3.0",

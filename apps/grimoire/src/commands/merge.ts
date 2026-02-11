@@ -1,6 +1,6 @@
-import console from "node:console";
 import { readFile } from "node:fs/promises";
 import { type ParseArgsOptionsConfig, parseArgs } from "node:util";
+import { log } from "@clack/prompts";
 import { outputFile } from "fs-extra";
 import { z } from "zod";
 import { parseCollectionCard } from "../formatters/collection.ts";
@@ -26,19 +26,17 @@ export async function merge() {
 
   const output = formatOutput(merged);
 
-  console.info(
-    `Writing ${accent(merged.size)} cards to ${accent(outputPath)}...`,
-  );
+  log.step(`Writing ${accent(merged.size)} cards to ${accent(outputPath)}...`);
 
   await outputFile(outputPath, output, "utf-8");
 
-  console.info("Done!");
+  log.success("Done!");
 }
 
 const positionalsSchema = z.array(z.string()).min(2);
 
 const argsSchema = z.object({
-  outputPath: z.string().default("merged-decklist.txt"),
+  outputPath: z.string().default("./merged-decklist.txt"),
 });
 
 const options = {
@@ -48,16 +46,16 @@ const options = {
 function readAndParseDecks(
   deckPaths: Array<string>,
 ): Promise<Array<Map<string, number>>> {
-  console.info(`Reading ${accent(deckPaths.length)} decks`);
+  log.step(`Reading ${accent(deckPaths.length)} decks`);
 
   return Promise.all(
     deckPaths.map(async (deckPath) => {
-      console.info(`Reading ${accent(deckPath)}...`);
+      log.step(`Reading ${accent(deckPath)}...`);
       const deckContent = await readFile(deckPath, "utf-8");
 
       const deck = parseDeck(deckContent);
 
-      console.info(
+      log.info(
         `Parsed ${accent(deck.size)} unique cards from ${accent(deckPath)}`,
       );
       return deck;
@@ -83,7 +81,7 @@ function parseDeck(deckContent: string): Map<string, number> {
 }
 
 function mergeDecks(decks: Array<Map<string, number>>): Map<string, number> {
-  console.info("Merging decklists...");
+  log.step("Merging decklists...");
 
   const allCards = new Set(decks.flatMap((deck) => Array.from(deck.keys())));
   const merged = new Map<string, number>();

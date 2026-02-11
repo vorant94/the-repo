@@ -1,5 +1,5 @@
-import console from "node:console";
 import { type ParseArgsConfig, parseArgs } from "node:util";
+import { log } from "@clack/prompts";
 import { outputFile } from "fs-extra";
 import { parseHTML } from "linkedom";
 import { z } from "zod";
@@ -20,15 +20,15 @@ export async function scrapPauper() {
 
   const output = formatOutput(cardNames);
 
-  console.info(`Writing to ${accent(outputPath)}...`);
+  log.step(`Writing to ${accent(outputPath)}...`);
 
   await outputFile(outputPath, output, "utf-8");
 
-  console.info("Done!");
+  log.success("Done!");
 }
 
 const argsSchema = z.object({
-  outputPath: z.string().default("pauper-staples.txt"),
+  outputPath: z.string().default("./pauper-staples.txt"),
 });
 
 const options = {
@@ -37,7 +37,7 @@ const options = {
 } as const satisfies ParseArgsConfig["options"];
 
 async function fetchTop64Page(): Promise<string> {
-  console.info(`Fetching ${accent(url)}...`);
+  log.step(`Fetching ${accent(url)}...`);
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -50,7 +50,7 @@ async function fetchTop64Page(): Promise<string> {
 const url = "https://paupergeddon.com/Top64.html";
 
 function parseUniqueCardsFromHtml(html: string): Set<string> {
-  console.info("Parsing...");
+  log.step("Parsing...");
 
   const { document } = parseHTML(html);
 
@@ -77,7 +77,7 @@ function parseUniqueCardsFromHtml(html: string): Set<string> {
     cardNames.add(cardName);
   }
 
-  console.info(`Found ${accent(cardNames.size)} unique cards`);
+  log.info(`Found ${accent(cardNames.size)} unique cards`);
   return cardNames;
 }
 
@@ -95,7 +95,7 @@ const basicLands = new Set([
 ]);
 
 function formatOutput(cardNames: Set<string>): string {
-  console.info("Formatting output...");
+  log.step("Formatting output...");
 
   return Array.from(cardNames)
     .sort()
