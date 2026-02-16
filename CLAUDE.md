@@ -9,6 +9,7 @@ Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linti
 **Structure:**
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
 - `apps/grimoire` - MTG collection CLI (ManaBox→Archidekt conversion, deck merging, staples scraping)
+- `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
 - `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1/LibSQL)
 - `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
 - `libs/cn` - TailwindCSS className utility (clsx + tailwind-merge)
@@ -44,6 +45,8 @@ grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 **sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:prod` for production D1. Drizzle config points to src/shared/schema for schema definitions and ./drizzle for migrations output.
 
 ## Architecture
+
+**mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. Uses React Compiler (babel-plugin-react-compiler) for automatic optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars for Mantine/Tailwind integration.
 
 **sofash (layered):** `api/` (Hono routes, Grammy handlers) → `bl/` (business logic) → `dal/` (data access). Uses AsyncLocalStorage for request-scoped context management.
 
