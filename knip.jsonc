@@ -6,13 +6,15 @@
   },
   "tags": ["-lintignore"],
   "workspaces": {
+    ".": {
+      "ignoreDependencies": ["chrome-devtools-mcp"]
+    },
     "apps/digital-garden": {},
     "apps/mana-forge": {
       "entry": ["src/main.{ts,tsx}"]
     },
     "apps/grimoire": {
-      "entry": ["src/main.ts"],
-      "ignoreBinaries": ["yt-dlp", "ollama"] // should be installed with homebrew
+      "entry": ["src/main.ts"]
     },
     "apps/sofash": {
       "entry": [
