@@ -17,6 +17,8 @@ Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linti
 
 ## Commands
 
+**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check the `name` field in the target `package.json` before using `npm -w <name>`.
+
 **Root:**
 ```bash
 npm install

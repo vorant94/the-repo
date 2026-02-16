@@ -7,6 +7,6 @@ allowed-tools: AskUserQuestion
 
 Analyze the current session for new insights and lessons you learned about the project. Don't include any "business logic" related info. Concentrate purely on tech side of things: programming patters and preferences of the user he gave to you as a feedback
 
-Then go over all your findings one by one and AskUserQuestion whether he wants you to persist it in [project memory](../../../CLAUDE.md)
+Then go over all your findings one by one and AskUserQuestion whether he wants you to persist it in [project memory](../../../CLAUDE.md). Always use memory files that are part of the project repo to persist your knowledge across different devices!
 
 
