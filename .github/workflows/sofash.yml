@@ -17,6 +17,8 @@ on:
       - ".editorconfig"
       - "**/README.md"
       - "tools"
+      - "CLAUDE.md"
+      - ".claude"
 
 permissions:
   contents: read
