@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - "apps/subs-savvy/**"
       - "apps/digital-garden/**"
+      - "apps/grimoire/**"
       - "apps/sofash/docs/**"
       - ".github/workflows/digital-garden.yml"
       - ".github/workflows/subs-savvy.yml"

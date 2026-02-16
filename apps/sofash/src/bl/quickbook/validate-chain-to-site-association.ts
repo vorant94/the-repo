@@ -1,5 +1,3 @@
-import { Result } from "neverthrow";
-import { ntParseWithZod } from "nt";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception";
 import {
   type ChainName,
@@ -15,33 +13,42 @@ import {
 export function validateChainToSiteAssociation(
   chainName: string,
   siteName: string,
-): Result<[ChainName, SiteName], BadInputException> {
-  const chainNameValidated = ntParseWithZod(chainName, chainNameSchema).mapErr(
-    (err) =>
-      new BadInputException(`Allowed chain names are: [${chainNames.join()}]`, {
-        cause: err,
-      }),
-  );
+): [ChainName, SiteName] {
+  const chainNameResult = chainNameSchema.safeParse(chainName);
+  if (!chainNameResult.success) {
+    throw new BadInputException(
+      `Allowed chain names are: [${chainNames.join()}]`,
+      {
+        cause: chainNameResult.error,
+      },
+    );
+  }
 
-  const siteNameValidated = ntParseWithZod(siteName, siteNameSchema).mapErr(
-    (err) =>
-      new BadInputException(`Allowed site names are: [${siteNames.join()}]`, {
-        cause: err,
-      }),
-  );
+  const siteNameResult = siteNameSchema.safeParse(siteName);
+  if (!siteNameResult.success) {
+    throw new BadInputException(
+      `Allowed site names are: [${siteNames.join()}]`,
+      {
+        cause: siteNameResult.error,
+      },
+    );
+  }
 
-  return Result.combine([chainNameValidated, siteNameValidated]).andThrough(
-    ([chainName, siteName]) =>
-      ntParseWithZod(
-        siteName,
-        // TODO create a dedicated map of chain name to site name schema
-        chainName === "rav-hen" ? ravHenSiteNameSchema : planetSiteNameSchema,
-      ).mapErr(
-        (err) =>
-          new BadInputException(
-            `Site with name [${siteName}] isn't associated with chain with name [${chainName}]`,
-            { cause: err },
-          ),
-      ),
-  );
+  const chainNameValidated = chainNameResult.data;
+  const siteNameValidated = siteNameResult.data;
+
+  // TODO create a dedicated map of chain name to site name schema
+  const siteSchema =
+    chainNameValidated === "rav-hen"
+      ? ravHenSiteNameSchema
+      : planetSiteNameSchema;
+  const associationResult = siteSchema.safeParse(siteNameValidated);
+  if (!associationResult.success) {
+    throw new BadInputException(
+      `Site with name [${siteNameValidated}] isn't associated with chain with name [${chainNameValidated}]`,
+      { cause: associationResult.error },
+    );
+  }
+
+  return [chainNameValidated, siteNameValidated];
 }

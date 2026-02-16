@@ -41,17 +41,12 @@ await runWithinContext({}, async () => {
     date,
   );
 
-  filmEvents.match(
-    (filmEvents) => {
-      logger.info(
-        "response",
-        inspect(filmEvents, {
-          colors: true,
-          depth: Number.POSITIVE_INFINITY,
-          maxArrayLength: Number.POSITIVE_INFINITY,
-        }),
-      );
-    },
-    (error) => logger.error(error),
+  logger.info(
+    "response",
+    inspect(filmEvents, {
+      colors: true,
+      depth: Number.POSITIVE_INFINITY,
+      maxArrayLength: Number.POSITIVE_INFINITY,
+    }),
   );
 });

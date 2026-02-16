@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - "apps/sofash/**"
       - "apps/subs-savvy/**"
+      - "apps/grimoire/**"
       - ".github/workflows/sofash.yml"
       - ".github/workflows/subs-savvy.yml"
       - "biome.jsonc"
@@ -21,6 +22,7 @@ on:
     paths-ignore:
       - "apps/sofash/**"
       - "apps/subs-savvy/**"
+      - "apps/grimoire/**"
       - ".github/workflows/sofash.yml"
       - ".github/workflows/subs-savvy.yml"
       - "biome.jsonc"
