@@ -7,6 +7,20 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { App } from "./app.tsx";
 import { route } from "./globals/route.ts";
 
+if (import.meta.env.DEV) {
+  window.addEventListener("unhandledrejection", ({ reason }) => {
+    if (reason instanceof Error) {
+      console.error(reason.message);
+    }
+  });
+
+  window.addEventListener("error", ({ error }) => {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  });
+}
+
 const rootElement = document.getElementById("root");
 if (!rootElement) {
   throw new Error("Root element not found!");
@@ -18,6 +32,8 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    // biome-ignore lint/style/useNamingConvention: 3-rd party type
+    HydrateFallback: () => null,
     children: [
       {
         index: true,

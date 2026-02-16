@@ -9,6 +9,7 @@ on:
       - "apps/sofash/**"
       - "apps/subs-savvy/**"
       - "apps/grimoire/**"
+      - "apps/mana-forge/**"
       - ".github/workflows/sofash.yml"
       - ".github/workflows/subs-savvy.yml"
       - "biome.jsonc"

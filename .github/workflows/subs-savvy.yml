@@ -10,6 +10,7 @@ on:
       - "apps/digital-garden/**"
       - "apps/grimoire/**"
       - "apps/subs-savvy/docs/**"
+      - "apps/mana-forge/**"
       - ".github/workflows/sofash.yml"
       - ".github/workflows/digital-garden.yml"
       - "biome.jsonc"
