@@ -1,10 +1,8 @@
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
-import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import { selectTitles } from "../../dal/db/titles.table.ts";
-import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { titleSchema } from "../../shared/schema/titles.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
@@ -44,20 +42,17 @@ titlesRoute.get(
     },
   }),
   async (hc) => {
-    const sites = await selectTitles();
-
-    const dtos = sites.andThen((sites) =>
-      ntParseWithZod(sites, z.array(titleDtoSchema)).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dtos.match(
-      (value) => hc.json(value),
-      (error) => hc.text(error.message, 500),
-    );
+    try {
+      const titles = await selectTitles();
+      const dtosResult = z.array(titleDtoSchema).safeParse(titles);
+      if (!dtosResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtosResult.data);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );

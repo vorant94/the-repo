@@ -1,12 +1,9 @@
 import { Hono } from "hono";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
-import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import { selectUsers, setUserRole } from "../../dal/db/users.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
-import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { userSchema } from "../../shared/schema/users.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
 
@@ -43,23 +40,20 @@ usersRoute.get(
     },
   }),
   async (hc) => {
-    const users = await selectUsers();
-
-    // can't use validateResponse of hono-openapi/zod#describeRoute since it doesn't
-    // trim unknown to response schema fields like createdAt or resourceType
-    const dtos = users.andThen((users) =>
-      ntParseWithZod(users, z.array(userDtoSchema)).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dtos.match(
-      (value) => hc.json(value),
-      (error) => hc.text(error.message, 500),
-    );
+    try {
+      const users = await selectUsers();
+      // can't use validateResponse of hono-openapi/zod#describeRoute since it doesn't
+      // trim unknown to response schema fields like createdAt or resourceType
+      const dtosResult = z.array(userDtoSchema).safeParse(users);
+      if (!dtosResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtosResult.data);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );
 
@@ -99,27 +93,20 @@ usersRoute.post(
     }),
   ),
   async (hc) => {
-    const user = await setUserRole(hc.req.param("id"), "admin");
-
-    const dto = user.andThen((inserted) =>
-      ntParseWithZod(inserted, userDtoSchema).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dto.match(
-      (value) => hc.json(value, 201),
-      (error) => {
-        let status: ContentfulStatusCode = 500;
-        if (error instanceof BadInputException) {
-          status = 400;
-        }
-
-        return hc.text(error.message, status);
-      },
-    );
+    try {
+      const user = await setUserRole(hc.req.param("id"), "admin");
+      const dtoResult = userDtoSchema.safeParse(user);
+      if (!dtoResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtoResult.data, 201);
+    } catch (error) {
+      if (error instanceof BadInputException) {
+        return hc.text(error.message, 400);
+      }
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );

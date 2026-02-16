@@ -21,6 +21,8 @@ export const titles = sqliteTable("titles", {
   externalId: text().notNull(),
 });
 
+export type RawTitle = typeof titles.$inferSelect;
+
 export const titleSchema = createSelectSchema(titles, {
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

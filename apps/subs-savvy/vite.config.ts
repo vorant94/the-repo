@@ -45,7 +45,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   test: {
-    root: `${import.meta.dirname}/src`,
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     clearMocks: true,
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],

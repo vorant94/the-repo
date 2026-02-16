@@ -15,14 +15,18 @@ export const ensureUserMiddleware: MiddlewareFn<GrammyContext> = async (
     return;
   }
 
-  const user = await upsertUserByTelegramChatId({ telegramChatId: gc.chat.id });
+  try {
+    const user = await upsertUserByTelegramChatId({
+      telegramChatId: gc.chat.id,
+    });
 
-  await user.match(
-    (user) =>
-      runWithinPatchedContext({ user }, async () => {
-        logger.info("context is authenticated, user id is", user.id);
-        await next();
-      }),
-    (error) => gc.reply(error.message),
-  );
+    await runWithinPatchedContext({ user }, async () => {
+      logger.info("context is authenticated, user id is", user.id);
+      await next();
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Internal Server Error";
+    await gc.reply(message);
+  }
 };

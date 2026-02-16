@@ -1,8 +1,6 @@
 import { Hono } from "hono";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator } from "hono-openapi/zod";
-import { ntParseWithZod } from "nt";
 import { z } from "zod";
 import {
   chainNameSchema,
@@ -12,7 +10,6 @@ import { scrapSite } from "../../bl/scrap-site.ts";
 import { createSite } from "../../bl/sites.ts";
 import { selectSites } from "../../dal/db/sites.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
-import { BadOutputException } from "../../shared/exceptions/bad-output.exception.ts";
 import { NotFoundException } from "../../shared/exceptions/not-found.exception.ts";
 import { insertSiteSchema, siteSchema } from "../../shared/schema/sites.ts";
 import { ensureRootMiddleware } from "./ensure-root.middleware.ts";
@@ -53,21 +50,18 @@ sitesRoute.get(
     },
   }),
   async (hc) => {
-    const sites = await selectSites();
-
-    const dtos = sites.andThen((sites) =>
-      ntParseWithZod(sites, z.array(siteDtoSchema)).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dtos.match(
-      (value) => hc.json(value),
-      (error) => hc.text(error.message, 500),
-    );
+    try {
+      const sites = await selectSites();
+      const dtosResult = z.array(siteDtoSchema).safeParse(sites);
+      if (!dtosResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtosResult.data);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );
 
@@ -106,28 +100,21 @@ sitesRoute.post(
   }),
   validator("json", insertSiteDtoSchema),
   async (hc) => {
-    const site = await createSite(hc.req.valid("json"));
-
-    const dto = site.andThen((inserted) =>
-      ntParseWithZod(inserted, siteDtoSchema).mapErr(
-        (err) =>
-          new BadOutputException("Failed to parse response to DTO", {
-            cause: err,
-          }),
-      ),
-    );
-
-    return dto.match(
-      (value) => hc.json(value, 201),
-      (error) => {
-        let status: ContentfulStatusCode = 500;
-        if (error instanceof BadInputException) {
-          status = 400;
-        }
-
-        return hc.text(error.message, status);
-      },
-    );
+    try {
+      const site = await createSite(hc.req.valid("json"));
+      const dtoResult = siteDtoSchema.safeParse(site);
+      if (!dtoResult.success) {
+        return hc.text("Failed to parse response to DTO", 500);
+      }
+      return hc.json(dtoResult.data, 201);
+    } catch (error) {
+      if (error instanceof BadInputException) {
+        return hc.text(error.message, 400);
+      }
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );
 
@@ -166,21 +153,19 @@ sitesRoute.post(
   ),
   validator("json", scrapSiteDtoSchema),
   async (hc) => {
-    const result = await scrapSite({
-      id: hc.req.valid("param").id,
-      date: hc.req.valid("json").date,
-    });
-
-    return result.match(
-      (value) => hc.json(value),
-      (error) => {
-        let status: ContentfulStatusCode = 500;
-        if (error instanceof NotFoundException) {
-          status = 404;
-        }
-
-        return hc.text(error.message, status);
-      },
-    );
+    try {
+      const result = await scrapSite({
+        id: hc.req.valid("param").id,
+        date: hc.req.valid("json").date,
+      });
+      return hc.json(result);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return hc.text(error.message, 404);
+      }
+      const message =
+        error instanceof Error ? error.message : "Internal Server Error";
+      return hc.text(message, 500);
+    }
   },
 );

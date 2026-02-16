@@ -1,6 +1,4 @@
 import { eq } from "drizzle-orm";
-import { ResultAsync } from "neverthrow";
-import { ntParseWithZod } from "nt";
 import { v5 } from "uuid";
 import { z } from "zod";
 import { getContext } from "../../shared/context/context.ts";
@@ -13,6 +11,7 @@ import { uuidNamespace } from "../../shared/schema/db-extra.ts";
 import {
   type InsertUser,
   insertUserSchema,
+  type RawUser,
   type User,
   type UserRole,
   userRoleSchema,
@@ -20,123 +19,117 @@ import {
   users,
 } from "../../shared/schema/users.ts";
 
-export function upsertUserByTelegramChatId(
+export async function upsertUserByTelegramChatId(
   toUpsertRaw: InsertUser,
-): ResultAsync<
-  User,
-  BadInputException | BadOutputException | UnexpectedBranchException
-> {
+): Promise<User> {
   const { db } = getContext();
 
-  const toUpsert = ntParseWithZod(toUpsertRaw, insertUserSchema).mapErr(
-    (err) =>
-      new BadInputException("Failed validation of user to upsert", {
-        cause: err,
-      }),
-  );
+  const toUpsertResult = insertUserSchema.safeParse(toUpsertRaw);
+  if (!toUpsertResult.success) {
+    throw new BadInputException("Failed validation of user to upsert", {
+      cause: toUpsertResult.error,
+    });
+  }
 
-  const upsertedRaw = toUpsert.asyncAndThen((toUpsert) =>
-    ResultAsync.fromPromise(
-      db
-        .insert(users)
-        .values({
-          id: generateUserId(toUpsert.telegramChatId),
-          ...toUpsert,
-        })
-        .onConflictDoUpdate({
-          target: users.id,
-          set: createConflictUpdateColumns(users, ["role", "updatedAt"]),
-        })
-        .returning(),
-      (err) => {
-        using logger = createLogger(
-          "upsertUserByTelegramChatId::toUpsert.asyncAndThen::err",
-        );
+  const toUpsert = toUpsertResult.data;
 
-        logger.error("Unexpected error while upserting a user", err);
-        return new UnexpectedBranchException(
-          "Unexpected error while inserting a user",
-          { cause: err },
-        );
-      },
-    ),
-  );
+  let upsertedRaw: Array<RawUser>;
+  try {
+    upsertedRaw = await db
+      .insert(users)
+      .values({
+        id: generateUserId(toUpsert.telegramChatId),
+        ...toUpsert,
+      })
+      .onConflictDoUpdate({
+        target: users.id,
+        set: createConflictUpdateColumns(users, ["role", "updatedAt"]),
+      })
+      .returning();
+  } catch (err) {
+    using logger = createLogger("upsertUserByTelegramChatId::err");
 
-  return upsertedRaw.andThen(([upsertedRaw]) =>
-    ntParseWithZod(upsertedRaw, userSchema).mapErr(
-      (err) =>
-        new BadOutputException(
-          "Failed to validate upsert result after user upsert",
-          { cause: err },
-        ),
-    ),
-  );
+    logger.error("Unexpected error while upserting a user", err);
+    throw new UnexpectedBranchException(
+      "Unexpected error while inserting a user",
+      { cause: err },
+    );
+  }
+
+  const upsertedResult = userSchema.safeParse(upsertedRaw[0]);
+  if (!upsertedResult.success) {
+    throw new BadOutputException(
+      "Failed to validate upsert result after user upsert",
+      { cause: upsertedResult.error },
+    );
+  }
+
+  return upsertedResult.data;
 }
 
-export function setUserRole(
+export async function setUserRole(
   id: User["id"],
   toSetRaw: UserRole,
-): ResultAsync<
-  User,
-  BadInputException | BadOutputException | UnexpectedBranchException
-> {
+): Promise<User> {
   const { db } = getContext();
 
-  const toSet = ntParseWithZod(toSetRaw, userRoleSchema).mapErr(
-    (err) =>
-      new BadInputException("Failed validation of user role to set", {
-        cause: err,
-      }),
-  );
+  const toSetResult = userRoleSchema.safeParse(toSetRaw);
+  if (!toSetResult.success) {
+    throw new BadInputException("Failed validation of user role to set", {
+      cause: toSetResult.error,
+    });
+  }
 
-  const setRaw = toSet.asyncAndThen((toSet) =>
-    ResultAsync.fromPromise(
-      db.update(users).set({ role: toSet }).where(eq(users.id, id)).returning(),
-      (err) => {
-        using logger = createLogger("setUserRole::toSet.asyncAndThen::err");
+  const toSet = toSetResult.data;
 
-        logger.error("Unexpected error while setting role to user", err);
-        return new UnexpectedBranchException(
-          "Unexpected error while setting role to user",
-          { cause: err },
-        );
-      },
-    ),
-  );
+  let setRaw: Array<RawUser>;
+  try {
+    setRaw = await db
+      .update(users)
+      .set({ role: toSet })
+      .where(eq(users.id, id))
+      .returning();
+  } catch (err) {
+    using logger = createLogger("setUserRole::err");
 
-  return setRaw.andThen(([setRaw]) =>
-    ntParseWithZod(setRaw, userSchema).mapErr(
-      (err) =>
-        new BadOutputException(
-          "Failed to validate set result after user role was set",
-          { cause: err },
-        ),
-    ),
-  );
+    logger.error("Unexpected error while setting role to user", err);
+    throw new UnexpectedBranchException(
+      "Unexpected error while setting role to user",
+      { cause: err },
+    );
+  }
+
+  const setResult = userSchema.safeParse(setRaw[0]);
+  if (!setResult.success) {
+    throw new BadOutputException(
+      "Failed to validate set result after user role was set",
+      { cause: setResult.error },
+    );
+  }
+
+  return setResult.data;
 }
 
-export function selectUsers(): ResultAsync<
-  Array<User>,
-  UnexpectedBranchException | BadOutputException
-> {
+export async function selectUsers(): Promise<Array<User>> {
   const { db } = getContext();
 
-  const rawUsers = ResultAsync.fromPromise(
-    db.select().from(users),
-    (err) =>
-      new UnexpectedBranchException("Failed to retrieve users from db", {
-        cause: err,
-      }),
-  );
+  let rawUsers: Array<RawUser>;
+  try {
+    rawUsers = await db.select().from(users);
+  } catch (cause) {
+    throw new UnexpectedBranchException("Failed to retrieve users from db", {
+      cause,
+    });
+  }
 
-  return rawUsers.andThen((rawUsers) =>
-    ntParseWithZod(rawUsers, z.array(userSchema)).mapErr(
-      (err) =>
-        new BadOutputException("Failed to validate retrieved from db users", {
-          cause: err,
-        }),
-    ),
-  );
+  const usersResult = z.array(userSchema).safeParse(rawUsers);
+  if (!usersResult.success) {
+    throw new BadOutputException("Failed to validate retrieved from db users", {
+      cause: usersResult.error,
+    });
+  }
+
+  return usersResult.data;
 }
 
 export const rootUserChatId = 0;
