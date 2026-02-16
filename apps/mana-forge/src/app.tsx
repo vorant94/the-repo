@@ -1,9 +1,10 @@
-import { AppShellLayout } from "./app-shell-layout.tsx";
+import { Outlet } from "react-router";
+import { DefaultLayout } from "./layouts/default.layout.tsx";
 
 export function App() {
   return (
-    <AppShellLayout>
-      <h1>mana-forge</h1>
-    </AppShellLayout>
+    <DefaultLayout>
+      <Outlet />
+    </DefaultLayout>
   );
 }

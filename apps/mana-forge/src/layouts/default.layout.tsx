@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { cn } from "cn";
 import type { FC, PropsWithChildren } from "react";
 
-export const AppShellLayout: FC<PropsWithChildren> = ({ children }) => {
+export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
   const [navOpened, nav] = useDisclosure(false);
 
   return (
