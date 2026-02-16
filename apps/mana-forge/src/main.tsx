@@ -36,6 +36,22 @@ const router = createBrowserRouter([
             Component: m.HomePage,
           })),
       },
+      {
+        path: route.split,
+        lazy: () =>
+          import("./pages/split.page.tsx").then((m) => ({
+            // biome-ignore lint/style/useNamingConvention: 3-rd party type
+            Component: m.SplitPage,
+          })),
+      },
+      {
+        path: route.merge,
+        lazy: () =>
+          import("./pages/merge.page.tsx").then((m) => ({
+            // biome-ignore lint/style/useNamingConvention: 3-rd party type
+            Component: m.MergePage,
+          })),
+      },
     ],
   },
 ]);
