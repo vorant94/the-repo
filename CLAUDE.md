@@ -158,6 +158,13 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - Organize for extensibility even with single implementation
 - Define configuration variables at top of entry files
 - Use clear, explicit variable names
+- Non-exported entities (constants, helpers) go after all exported entities in a file
+
+**Zustand patterns:**
+- Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
+- Components call `useSplitStore.getState().action()` directly in event handlers instead of accepting callbacks as props
+- Compute derived state inline in `useStore((s) => ...)` selectors—don't store computed selectors as functions in the store, as calling them outside the selector does not subscribe to state changes
+- Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, a new reference on every selector call triggers `useSyncExternalStore` to loop indefinitely
 
 **Bootstrapping new apps:**
 - Use the framework's CLI scaffolder rather than manually creating files (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
