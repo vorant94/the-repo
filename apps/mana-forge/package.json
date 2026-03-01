@@ -1,13 +1,6 @@
 {
   "name": "mana-forge",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "build": "vite build",
-    "start:dev": "vite",
-    "ts:check": "tsc"
-  },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@mantine/core": "^8.3.8",
@@ -37,5 +30,13 @@
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
     "wrangler": "^4.2.0"
-  }
+  },
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "deploy": "wrangler pages deploy",
+    "start:dev": "vite",
+    "ts:check": "tsc"
+  },
+  "type": "module"
 }
