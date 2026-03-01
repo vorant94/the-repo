@@ -9,6 +9,7 @@ Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linti
 **Structure:**
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
 - `apps/grimoire` - MTG collection CLI (ManaBox→Archidekt conversion, deck merging, staples scraping)
+- `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
 - `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1/LibSQL)
 - `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
 - `libs/cn` - TailwindCSS className utility (clsx + tailwind-merge)
@@ -16,6 +17,10 @@ Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linti
 - `tools/studio` - Remotion studio for asset generation
 
 ## Commands
+
+**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check the `name` field in the target `package.json` before using `npm -w <name>`.
+
+**Internal lib dependencies:** Reference workspace libs by exact version (e.g. `"cn": "0.0.1"`), not with `workspace:*` protocol.
 
 **Root:**
 ```bash
@@ -41,9 +46,11 @@ grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 
 ## Architecture
 
+**mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. Uses React Compiler (babel-plugin-react-compiler) for automatic optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars for Mantine/Tailwind integration.
+
 **sofash (layered):** `api/` (Hono routes, Grammy handlers) → `bl/` (business logic) → `dal/` (data access). Uses AsyncLocalStorage for request-scoped context management.
 
-**subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops with Zod validation. (Abandoned but reference patterns.)
+**subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops with Zod validation. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`), not via a standalone `postcss.config.*` file. (Abandoned but reference patterns.)
 
 **digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n support, custom rehype/remark plugins.
 
@@ -95,6 +102,7 @@ Always run Biome from repo root. Rules enforced:
 - Early returns always: `if (!value) { return; }` not `if (value) { ... }` — applies to all contexts including small functions, disposal handlers, etc.
 - Avoid unnecessary nesting—main logic flows without deep nesting
 - When approach fails: investigate, present findings, stop and wait
+- Prefer library-native APIs over custom workarounds—check if the library already provides a solution before implementing one
 - Use `dedent` package for multiline strings (enables proper indentation in source code while removing it at runtime)
 - Prefer optional chaining (`?.`) over explicit null/undefined checks when supported by language spec
 - Use `null` for explicit "nothing" values, not `undefined` — `undefined` is for implicit absence (optional params)
@@ -150,6 +158,18 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - Organize for extensibility even with single implementation
 - Define configuration variables at top of entry files
 - Use clear, explicit variable names
+- Non-exported entities (constants, helpers) go after all exported entities in a file
+- One component per file—never define more than one component (exported or local) in the same file
+
+**Zustand patterns:**
+- Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
+- Call actions via `store.getState().action()` in event handlers—never select actions with `useStore((s) => s.action)`. Selectors are for state values only.
+- Compute derived state inline in `useStore((s) => ...)` selectors—don't store computed selectors as functions in the store, as calling them outside the selector does not subscribe to state changes
+- Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, a new reference on every selector call triggers `useSyncExternalStore` to loop indefinitely
+
+**Bootstrapping new apps:**
+- Use the framework's CLI scaffolder rather than manually creating files (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
+- Pin to the version already used in the workspace, not latest
 
 ## Git Workflow
 
