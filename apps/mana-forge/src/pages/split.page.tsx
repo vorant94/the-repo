@@ -88,12 +88,24 @@ export const SplitPage: FC = () => {
           className={cn("h-full")}
         >
           <Stack className={cn("flex-1 overflow-y-auto")}>
-            <AssignmentZone assignmentId={assignmentId.collection} />
+            <AssignmentZone
+              assignmentId={assignmentId.collection}
+              showTypeFilter
+            />
           </Stack>
           <Stack className={cn("flex-1 overflow-y-auto")}>
-            <AssignmentZone assignmentId={assignmentId.tradeOrBuy} />
-            <AssignmentZone assignmentId={assignmentId.tradeOnly} />
-            <AssignmentZone assignmentId={assignmentId.bulk} />
+            <AssignmentZone
+              assignmentId={assignmentId.tradeOrBuy}
+              showDownload
+            />
+            <AssignmentZone
+              assignmentId={assignmentId.tradeOnly}
+              showDownload
+            />
+            <AssignmentZone
+              assignmentId={assignmentId.bulk}
+              showDownload
+            />
           </Stack>
         </Group>
 

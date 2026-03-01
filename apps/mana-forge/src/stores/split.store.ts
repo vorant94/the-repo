@@ -21,7 +21,7 @@ export interface Card {
 export interface Binder {
   id: string;
   name: string;
-  binderType: string;
+  binderType: BinderType;
   cards: Array<Card>;
   cardCount: number;
 }
@@ -47,8 +47,7 @@ export const useSplitStore = create<SplitStore>()(
         for (const row of parsed.data) {
           const validRow = manaBoxRowSchema.parse(row);
           const binderName = validRow["Binder Name"];
-          const binderType = validRow["Binder Type"];
-          const binderId = `${binderName}${binderType}`;
+          const binderId = `${binderName}${validRow["Binder Type"]}`;
 
           let binder = binders[binderId];
           if (!binder) {
@@ -104,6 +103,14 @@ export const useSplitStore = create<SplitStore>()(
   })),
 );
 
+export const binderType = {
+  binder: "binder",
+  deck: "deck",
+  list: "list",
+} as const;
+
+export type BinderType = (typeof binderType)[keyof typeof binderType];
+
 export const assignmentId = {
   collection: "collection",
   tradeOnly: "tradeOnly",
@@ -130,7 +137,7 @@ export function formatCard(card: Card): string {
 
 const manaBoxRowSchema = z.object({
   "Binder Name": z.string(),
-  "Binder Type": z.string(),
+  "Binder Type": z.enum(["binder", "deck", "list"]),
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
   Name: z.string(),
   "Set code": z.string(),

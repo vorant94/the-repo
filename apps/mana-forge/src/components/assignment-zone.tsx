@@ -1,16 +1,18 @@
 import { useDndMonitor, useDroppable } from "@dnd-kit/core";
-import { Button, Text, Title } from "@mantine/core";
+import { Button, Chip, Group, Text, Title } from "@mantine/core";
 import { cn } from "cn";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
   type AssignmentId,
+  type BinderType,
+  binderType,
   formatCard,
   mergeBinders,
   useSplitStore,
 } from "../stores/split.store.ts";
 import { downloadTextFile } from "../utils/download-text-file.ts";
-import { BinderCard, type Position } from "./binder-card.tsx";
+import { BinderCard, binderTypeColor, type Position } from "./binder-card.tsx";
 
 const cardWidth = 180;
 const cardHeight = 50;
@@ -68,11 +70,22 @@ function findInitialPosition(
   return { x: centerX, y: centerY };
 }
 
-export const AssignmentZone: FC<AssignmentZoneProps> = ({ assignmentId }) => {
+export const AssignmentZone: FC<AssignmentZoneProps> = ({
+  assignmentId,
+  showTypeFilter,
+  showDownload,
+}) => {
   const { setNodeRef, isOver } = useDroppable({ id: assignmentId });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const binders = useSplitStore(useShallow((s) => s.assignments[assignmentId]));
+
+  const [visibleBinderTypes, setVisibleBinderTypes] = useState<Set<BinderType>>(
+    new Set(Object.values(binderType)),
+  );
+  const filteredBinders = binders.filter((b) =>
+    visibleBinderTypes.has(b.binderType),
+  );
 
   const [positions, setPositions] = useState<Record<string, Position>>({});
   const positionsRef = useRef(positions);
@@ -183,14 +196,38 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({ assignmentId }) => {
     >
       <div className={cn("flex items-center justify-between")}>
         <Title order={4}>{listLabels[assignmentId]}</Title>
-        <Button
-          size="xs"
-          variant="light"
-          disabled={binders.length === 0}
-          onClick={handleDownload}
-        >
-          Download
-        </Button>
+        {showTypeFilter && (
+          <Chip.Group
+            multiple
+            value={Array.from(visibleBinderTypes)}
+            onChange={(values) =>
+              setVisibleBinderTypes(new Set(values as Array<BinderType>))
+            }
+          >
+            <Group gap="xs">
+              {Object.values(binderType).map((type) => (
+                <Chip
+                  key={type}
+                  value={type}
+                  color={binderTypeColor[type]}
+                  size="xs"
+                >
+                  {type}
+                </Chip>
+              ))}
+            </Group>
+          </Chip.Group>
+        )}
+        {showDownload && (
+          <Button
+            size="xs"
+            variant="light"
+            disabled={binders.length === 0}
+            onClick={handleDownload}
+          >
+            Download
+          </Button>
+        )}
       </div>
       {binders.length === 0 ? (
         <Text
@@ -204,7 +241,7 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({ assignmentId }) => {
           ref={containerRef}
           className="relative h-full overflow-auto"
         >
-          {binders.map((binder) => (
+          {filteredBinders.map((binder) => (
             <BinderCard
               key={binder.id}
               binder={binder}
@@ -221,6 +258,8 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({ assignmentId }) => {
 
 export interface AssignmentZoneProps {
   assignmentId: AssignmentId;
+  showTypeFilter?: boolean;
+  showDownload?: boolean;
 }
 
 const listLabels: Record<AssignmentId, string> = {

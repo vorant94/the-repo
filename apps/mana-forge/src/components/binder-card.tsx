@@ -3,7 +3,7 @@ import type { MantineColor, MantineStyleProp } from "@mantine/core";
 import { Badge, Card, Group, Text } from "@mantine/core";
 import { cn } from "cn";
 import type { FC } from "react";
-import type { Binder } from "../stores/split.store.ts";
+import type { Binder, BinderType } from "../stores/split.store.ts";
 
 export const BinderCard: FC<BinderCardProps> = ({
   binder,
@@ -14,7 +14,7 @@ export const BinderCard: FC<BinderCardProps> = ({
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id: binder.id });
 
-  const color = binderTypeColor[binder.binderType] ?? "gray";
+  const color = binderTypeColor[binder.binderType];
 
   const style: MantineStyleProp = {
     borderLeft: `4px solid var(--mantine-color-${color}-filled)`,
@@ -73,7 +73,7 @@ export interface Position {
   y: number;
 }
 
-const binderTypeColor: Record<string, MantineColor> = {
+export const binderTypeColor: Record<BinderType, MantineColor> = {
   binder: "blue",
   deck: "violet",
   list: "teal",
