@@ -125,8 +125,21 @@ export function isAssignmentId(value: string): value is AssignmentId {
 }
 
 export function mergeBinders(binders: Array<Binder>): Array<Card> {
-  // TODO unify cards into one record if name, set number and foil are equal
-  return binders.flatMap((b) => b.cards);
+  const cardMap = new Map<string, Card>();
+
+  for (const binder of binders) {
+    for (const card of binder.cards) {
+      const key = `${card.name}|${card.setCode}|${card.collectorNumber}|${card.foil}`;
+      const existing = cardMap.get(key);
+      if (existing) {
+        existing.quantity += card.quantity;
+      } else {
+        cardMap.set(key, { ...card });
+      }
+    }
+  }
+
+  return Array.from(cardMap.values());
 }
 
 export function formatCard(card: Card): string {
