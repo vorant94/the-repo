@@ -5,7 +5,12 @@ import { cn } from "cn";
 import type { FC } from "react";
 import type { Binder } from "../stores/split.store.ts";
 
-export const BinderCard: FC<BinderCardProps> = ({ binder }) => {
+export const BinderCard: FC<BinderCardProps> = ({
+  binder,
+  position,
+  zIndex,
+  onBringToFront,
+}) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id: binder.id });
 
@@ -13,10 +18,13 @@ export const BinderCard: FC<BinderCardProps> = ({ binder }) => {
 
   const style: MantineStyleProp = {
     borderLeft: `4px solid var(--mantine-color-${color}-filled)`,
+    position: "absolute",
+    left: position.x,
+    top: position.y,
+    zIndex,
     ...(transform
       ? {
           transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-          position: "absolute",
         }
       : null),
   };
@@ -25,6 +33,7 @@ export const BinderCard: FC<BinderCardProps> = ({ binder }) => {
     <Card
       ref={setNodeRef}
       style={style}
+      onClick={onBringToFront}
       {...listeners}
       {...attributes}
       shadow="sm"
@@ -54,6 +63,14 @@ export const BinderCard: FC<BinderCardProps> = ({ binder }) => {
 
 export interface BinderCardProps {
   binder: Binder;
+  position: Position;
+  zIndex: number;
+  onBringToFront: () => void;
+}
+
+export interface Position {
+  x: number;
+  y: number;
 }
 
 const binderTypeColor: Record<string, MantineColor> = {

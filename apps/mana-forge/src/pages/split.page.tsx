@@ -3,8 +3,11 @@ import {
   type DragEndEvent,
   DragOverlay,
   type DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
-import { Stack, Title } from "@mantine/core";
+import { Group, Stack, Title } from "@mantine/core";
 import { cn } from "cn";
 import { type FC, useState } from "react";
 import { AssignmentZone } from "../components/assignment-zone.tsx";
@@ -22,6 +25,12 @@ export const SplitPage: FC = () => {
   const [activeBinder, setActiveBinder] = useState<Binder | null>(null);
   const [fromAssignment, setFromAssignment] = useState<AssignmentId | null>(
     null,
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
   );
 
   const handleDragStart = ({ active }: DragStartEvent) => {
@@ -70,26 +79,33 @@ export const SplitPage: FC = () => {
       <CsvDropZone />
 
       <DndContext
+        sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className={cn("flex min-h-0 flex-1 gap-4")}>
-          <div className={cn("flex-1 overflow-y-auto")}>
-            <Stack>
-              <AssignmentZone assignmentId={assignmentId.collection} />
-            </Stack>
-          </div>
-          <div className={cn("flex-1 overflow-y-auto")}>
-            <Stack>
-              <AssignmentZone assignmentId={assignmentId.tradeOrBuy} />
-              <AssignmentZone assignmentId={assignmentId.tradeOnly} />
-              <AssignmentZone assignmentId={assignmentId.bulk} />
-            </Stack>
-          </div>
-        </div>
+        <Group
+          align="stretch"
+          className={cn("h-full")}
+        >
+          <Stack className={cn("flex-1 overflow-y-auto")}>
+            <AssignmentZone assignmentId={assignmentId.collection} />
+          </Stack>
+          <Stack className={cn("flex-1 overflow-y-auto")}>
+            <AssignmentZone assignmentId={assignmentId.tradeOrBuy} />
+            <AssignmentZone assignmentId={assignmentId.tradeOnly} />
+            <AssignmentZone assignmentId={assignmentId.bulk} />
+          </Stack>
+        </Group>
 
         <DragOverlay>
-          {activeBinder ? <BinderCard binder={activeBinder} /> : null}
+          {activeBinder ? (
+            <BinderCard
+              binder={activeBinder}
+              position={{ x: 0, y: 0 }}
+              zIndex={0}
+              onBringToFront={() => {}}
+            />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </div>
