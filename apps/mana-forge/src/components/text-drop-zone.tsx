@@ -3,21 +3,12 @@ import { IconFileText, IconX } from "@tabler/icons-react";
 import { cn } from "cn";
 import type { FC } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
+import { useShallow } from "zustand/react/shallow";
+import { useCompareStore } from "../stores/compare.store.ts";
 
-export interface TextFile {
-  name: string;
-  content: string;
-}
+export const TextDropZone: FC = () => {
+  const files = useCompareStore(useShallow((s) => s.files));
 
-interface TextDropZoneProps {
-  files: Array<TextFile>;
-  onFilesChange: (files: Array<TextFile>) => void;
-}
-
-export const TextDropZone: FC<TextDropZoneProps> = ({
-  files,
-  onFilesChange,
-}) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (dropped: Array<FileWithPath>) => {
       const newFiles = await Promise.all(
@@ -26,16 +17,12 @@ export const TextDropZone: FC<TextDropZoneProps> = ({
           content: await file.text(),
         })),
       );
-      onFilesChange([...files, ...newFiles]);
+      useCompareStore.getState().addFiles(newFiles);
     },
     multiple: true,
     useFsAccessApi: false,
     accept: { "text/plain": [".txt"] },
   });
-
-  const handleRemove = (index: number) => {
-    onFilesChange(files.filter((_, i) => i !== index));
-  };
 
   return (
     <Stack gap="sm">
@@ -92,7 +79,7 @@ export const TextDropZone: FC<TextDropZoneProps> = ({
           <ActionIcon
             variant="subtle"
             color="red"
-            onClick={() => handleRemove(index)}
+            onClick={() => useCompareStore.getState().removeFile(index)}
             aria-label={`Remove ${file.name}`}
           >
             <IconX size="1em" />

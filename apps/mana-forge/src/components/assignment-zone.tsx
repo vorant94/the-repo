@@ -1,7 +1,7 @@
 import { useDndMonitor, useDroppable } from "@dnd-kit/core";
 import { Button, Chip, Group, Text, Title } from "@mantine/core";
 import { cn } from "cn";
-import { type FC, useEffect, useRef, useState } from "react";
+import { type FC, type RefObject, useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
   type AssignmentId,
@@ -14,60 +14,10 @@ import {
 import { downloadTextFile } from "../utils/download-text-file.ts";
 import { BinderCard, binderTypeColor, type Position } from "./binder-card.tsx";
 
-const cardWidth = 180;
-const cardHeight = 50;
-
-function isOverlapping(pos1: Position, pos2: Position): boolean {
-  return !(
-    pos1.x + cardWidth <= pos2.x ||
-    pos2.x + cardWidth <= pos1.x ||
-    pos1.y + cardHeight <= pos2.y ||
-    pos2.y + cardHeight <= pos1.y
-  );
-}
-
-function findInitialPosition(
-  existingPositions: Array<Position>,
-  containerRef: React.RefObject<HTMLDivElement | null>,
-): Position {
-  const container = containerRef.current;
-  const containerWidth = container?.clientWidth ?? 400;
-  const containerHeight = container?.clientHeight ?? 200;
-
-  const centerX = (containerWidth - cardWidth) / 2;
-  const centerY = (containerHeight - cardHeight) / 2;
-
-  const step = 20;
-  const maxRadius = Math.max(containerWidth, containerHeight);
-
-  for (let radius = 0; radius < maxRadius; radius += step) {
-    const angleStep = radius === 0 ? 1 : Math.PI / 4;
-    for (let angle = 0; angle < 2 * Math.PI; angle += angleStep) {
-      const candidate: Position = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-      };
-
-      if (candidate.x < 0 || candidate.y < 0) {
-        continue;
-      }
-      if (candidate.x + cardWidth > containerWidth) {
-        continue;
-      }
-      if (candidate.y + cardHeight > containerHeight) {
-        continue;
-      }
-
-      const hasOverlap = existingPositions.some((pos) =>
-        isOverlapping(candidate, pos),
-      );
-      if (!hasOverlap) {
-        return candidate;
-      }
-    }
-  }
-
-  return { x: centerX, y: centerY };
+export interface AssignmentZoneProps {
+  assignmentId: AssignmentId;
+  showTypeFilter?: boolean;
+  showDownload?: boolean;
 }
 
 export const AssignmentZone: FC<AssignmentZoneProps> = ({
@@ -256,12 +206,6 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({
   );
 };
 
-export interface AssignmentZoneProps {
-  assignmentId: AssignmentId;
-  showTypeFilter?: boolean;
-  showDownload?: boolean;
-}
-
 const listLabels: Record<AssignmentId, string> = {
   tradeOrBuy: "Trade or Buy",
   tradeOnly: "Only Trade",
@@ -275,3 +219,59 @@ const listFilenames: Record<AssignmentId, string> = {
   bulk: "bulk.txt",
   collection: "collection.txt",
 };
+
+const cardWidth = 180;
+const cardHeight = 50;
+
+function isOverlapping(pos1: Position, pos2: Position): boolean {
+  return !(
+    pos1.x + cardWidth <= pos2.x ||
+    pos2.x + cardWidth <= pos1.x ||
+    pos1.y + cardHeight <= pos2.y ||
+    pos2.y + cardHeight <= pos1.y
+  );
+}
+
+function findInitialPosition(
+  existingPositions: Array<Position>,
+  containerRef: RefObject<HTMLDivElement | null>,
+): Position {
+  const container = containerRef.current;
+  const containerWidth = container?.clientWidth ?? 400;
+  const containerHeight = container?.clientHeight ?? 200;
+
+  const centerX = (containerWidth - cardWidth) / 2;
+  const centerY = (containerHeight - cardHeight) / 2;
+
+  const step = 20;
+  const maxRadius = Math.max(containerWidth, containerHeight);
+
+  for (let radius = 0; radius < maxRadius; radius += step) {
+    const angleStep = radius === 0 ? 1 : Math.PI / 4;
+    for (let angle = 0; angle < 2 * Math.PI; angle += angleStep) {
+      const candidate: Position = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+      };
+
+      if (candidate.x < 0 || candidate.y < 0) {
+        continue;
+      }
+      if (candidate.x + cardWidth > containerWidth) {
+        continue;
+      }
+      if (candidate.y + cardHeight > containerHeight) {
+        continue;
+      }
+
+      const hasOverlap = existingPositions.some((pos) =>
+        isOverlapping(candidate, pos),
+      );
+      if (!hasOverlap) {
+        return candidate;
+      }
+    }
+  }
+
+  return { x: centerX, y: centerY };
+}

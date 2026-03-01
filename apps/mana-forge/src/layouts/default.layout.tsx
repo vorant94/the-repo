@@ -1,10 +1,6 @@
 import { AppShell, Burger, NavLink, Text } from "@mantine/core";
 import { useDisclosure, usePrevious } from "@mantine/hooks";
-import {
-  IconBlendMode,
-  IconFileTypeCsv,
-  IconLayersIntersect,
-} from "@tabler/icons-react";
+import { IconFileTypeCsv, IconLayersIntersect } from "@tabler/icons-react";
 import { cn } from "cn";
 import {
   type FC,
@@ -60,11 +56,6 @@ export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
             label="Split"
             path={route.split}
             icon={<IconFileTypeCsv />}
-          />
-          <DefaultLayoutNavLink
-            label="Merge"
-            path={route.merge}
-            icon={<IconBlendMode />}
           />
           <DefaultLayoutNavLink
             label="Compare"

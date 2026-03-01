@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import z from "zod";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { cardKey } from "../utils/card-key.ts";
 
 interface SplitStore {
   assignments: Record<AssignmentId, Array<Binder>>;
@@ -129,7 +130,7 @@ export function mergeBinders(binders: Array<Binder>): Array<Card> {
 
   for (const binder of binders) {
     for (const card of binder.cards) {
-      const key = `${card.name}|${card.setCode}|${card.collectorNumber}|${card.foil}`;
+      const key = cardKey(card);
       const existing = cardMap.get(key);
       if (existing) {
         existing.quantity += card.quantity;
