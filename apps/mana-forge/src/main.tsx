@@ -68,6 +68,14 @@ const router = createBrowserRouter([
             Component: m.MergePage,
           })),
       },
+      {
+        path: route.compare,
+        lazy: () =>
+          import("./pages/compare.page.tsx").then((m) => ({
+            // biome-ignore lint/style/useNamingConvention: 3-rd party type
+            Component: m.ComparePage,
+          })),
+      },
     ],
   },
 ]);
