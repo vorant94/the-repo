@@ -180,7 +180,7 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({
 
   const handleDownload = () => {
     const mergedCards = mergeBinders(binders);
-    const content = mergedCards.map((card) => formatCard(card)).join("/n");
+    const content = mergedCards.map((card) => formatCard(card)).join("\n");
     downloadTextFile(listFilenames[assignmentId], content);
   };
 
