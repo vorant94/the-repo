@@ -1,4 +1,4 @@
-name: Subs Savvy CI/CD
+name: Mana Forge CI/CD
 
 on:
   workflow_dispatch:
