@@ -138,7 +138,7 @@ export const AssignmentZone: FC<AssignmentZoneProps> = ({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex h-full flex-col gap-2 rounded-md border-2 border-dashed p-3 transition-colors",
+        "flex h-full flex-col gap-2 overflow-y-visible rounded-md border-2 border-dashed p-3 transition-colors sm:overflow-y-auto",
         isOver
           ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20"
           : "border-gray-300 dark:border-gray-600",
