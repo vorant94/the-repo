@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import postcssPresetMantine from "postcss-preset-mantine";
@@ -29,4 +30,7 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    include: ["src/**/*.test.ts"],
+  },
 });

@@ -67,8 +67,8 @@ export const SplitPage: FC = () => {
   };
 
   return (
-    <div
-      className={cn("flex flex-col gap-4 overflow-hidden")}
+    <Stack
+      className={cn("overflow-hidden")}
       style={{
         height:
           "calc(100dvh - var(--app-shell-header-height) - 2 * var(--mantine-spacing-md))",
@@ -85,15 +85,15 @@ export const SplitPage: FC = () => {
       >
         <Group
           align="stretch"
-          className={cn("h-full")}
+          className={cn("flex-1")}
         >
-          <Stack className={cn("flex-1 overflow-y-auto")}>
+          <Stack className={cn("flex-1")}>
             <AssignmentZone
               assignmentId={assignmentId.collection}
               showTypeFilter
             />
           </Stack>
-          <Stack className={cn("flex-1 overflow-y-auto")}>
+          <Stack className={cn("flex-1")}>
             <AssignmentZone
               assignmentId={assignmentId.tradeOrBuy}
               showDownload
@@ -120,7 +120,7 @@ export const SplitPage: FC = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
-    </div>
+    </Stack>
   );
 };
 

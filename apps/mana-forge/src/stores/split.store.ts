@@ -9,6 +9,7 @@ interface SplitStore {
 
   parseCollection: (csvContent: string) => void;
   moveBinder: (binderId: string, from: AssignmentId, to: AssignmentId) => void;
+  reset: () => void;
 }
 
 export interface Card {
@@ -101,6 +102,14 @@ export const useSplitStore = create<SplitStore>()(
         toAssignment.push(binder);
       });
     },
+
+    reset: () =>
+      set((state) => {
+        state.assignments.collection = [];
+        state.assignments.tradeOnly = [];
+        state.assignments.tradeOrBuy = [];
+        state.assignments.bulk = [];
+      }),
   })),
 );
 
