@@ -2,11 +2,15 @@
 .idea
 node_modules
 dist
+dist-ssr
 coverage
 playwright-report
 test-results
 .react-router
 .env
+*.local
+*.log
+*.sw?
 .wrangler
 .vercel
 data
