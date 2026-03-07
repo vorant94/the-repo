@@ -1,12 +1,13 @@
 ---
 import notFound from "../assets/lottie-404.json";
 import notFoundDark from "../assets/lottie-404-dark.json";
-import ThemedLottie from "../components/ui/ThemedLottie.astro";
+import { ThemedLottie } from "../components/ui/themed-lottie";
 import CenteredLayout from "../layouts/CenteredLayout.astro";
 ---
 
 <CenteredLayout title="404 Not found">
 	<ThemedLottie
+	  client:only
 		src={JSON.stringify(notFound)}
 		srcDark={JSON.stringify(notFoundDark)}
 	/>

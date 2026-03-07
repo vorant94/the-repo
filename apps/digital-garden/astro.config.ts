@@ -1,8 +1,8 @@
-import process from "node:process";
 import cloudflare from "@astrojs/cloudflare";
+import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 import type { Text } from "hast";
@@ -14,7 +14,6 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeSlug from "rehype-slug";
-import { z } from "zod";
 import {
   defaultLang,
   languages,
@@ -54,21 +53,37 @@ const legacyI18nRedirects = {
   "/tags/self-reflection/": `/${defaultLang}/tags/self-reflection`,
 };
 
-export const env = z
-  .object({
-    // biome-ignore lint/style/useNamingConvention: env variables have different convention
-    NODE_ENV: z.enum(["development", "production"]).default("development"),
-  })
-  .parse(process.env);
-
 export default defineConfig({
   adapter: cloudflare(),
-  site:
-    env.NODE_ENV === "production"
-      ? "https://vorant94.dev"
-      : "http://localhost:4321",
+  site: "https://vorant94.dev",
   trailingSlash: "never",
   prefetch: true,
+  env: {
+    // everything on the server is a secret even stuff that can be public,
+    // motivation here is to avoid bundling env vars so they can be changed without redeployment.
+    // additionally since astro middleware is ran at buildtime it evaluates secrets as well there
+    // in order to avoid keeping env vars in the GitHub Actions everything should have a default dummy value at least.
+    schema: {
+      // biome-ignore lint/style/useNamingConvention: env variables have different convention
+      DB_FILE_NAME: envField.string({
+        context: "server",
+        access: "secret",
+        default: ":memory:",
+      }),
+      // biome-ignore lint/style/useNamingConvention: env variables have different convention
+      GITHUB_CLIENT_ID: envField.string({
+        context: "server",
+        access: "secret",
+        default: "DUMMY_GITHUB_CLIENT_ID",
+      }),
+      // biome-ignore lint/style/useNamingConvention: env variables have different convention
+      GITHUB_CLIENT_SECRET: envField.string({
+        context: "server",
+        access: "secret",
+        default: "DUMMY_GITHUB_CLIENT_SECRET",
+      }),
+    },
+  },
   i18n: {
     locales: [...languages],
     defaultLocale: defaultLang,
@@ -99,6 +114,7 @@ export default defineConfig({
         return item;
       },
     }),
+    react(),
   ],
   vite: {
     css: {
