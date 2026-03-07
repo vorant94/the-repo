@@ -1,6 +1,9 @@
 {
   "name": "grimoire",
   "version": "0.0.1",
+  "bin": {
+    "grimoire": "src/main.ts"
+  },
   "dependencies": {
     "@clack/prompts": "^1.0.0",
     "@google/generative-ai": "^0.21.0",
@@ -21,9 +24,6 @@
     "vitest": "^4.0.10"
   },
   "private": true,
-  "bin": {
-    "grimoire": "src/main.ts"
-  },
   "scripts": {
     "test": "vitest run",
     "ts:check": "tsc"

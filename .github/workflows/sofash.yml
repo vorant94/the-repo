@@ -9,13 +9,17 @@ on:
       - "apps/subs-savvy/**"
       - "apps/digital-garden/**"
       - "apps/grimoire/**"
+      - "apps/mana-forge/**"
       - "apps/sofash/docs/**"
       - ".github/workflows/digital-garden.yml"
       - ".github/workflows/subs-savvy.yml"
+      - ".github/workflows/mana-forge.yml"
       - "biome.jsonc"
       - ".editorconfig"
       - "**/README.md"
       - "tools"
+      - "CLAUDE.md"
+      - ".claude"
 
 permissions:
   contents: read
