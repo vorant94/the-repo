@@ -10,6 +10,7 @@ export const comments = sqliteTable("comments", {
     .notNull()
     .references(() => users.id),
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text(),
   postSlug: text().notNull(),
   text: text().notNull(),
 });

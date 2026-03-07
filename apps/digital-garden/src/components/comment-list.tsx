@@ -13,7 +13,7 @@ interface CommentListProps {
 export const CommentList: FC<CommentListProps> = ({ postSlug }) => {
   const comments = useQuery({
     queryKey: [query.comments, postSlug],
-    queryFn: () => unwrapAction(postSlug),
+    queryFn: () => unwrapFetchAction(postSlug),
   });
 
   return (
@@ -34,7 +34,7 @@ export const CommentList: FC<CommentListProps> = ({ postSlug }) => {
   );
 };
 
-async function unwrapAction(
+async function unwrapFetchAction(
   postSlug: string,
 ): Promise<Array<CommentWithAuthor>> {
   const { data, error } = await actions.fetchComments({ postSlug });

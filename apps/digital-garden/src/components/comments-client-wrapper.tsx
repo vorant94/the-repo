@@ -4,6 +4,7 @@ import { queryClient } from "../globals/query";
 import type { User } from "../schema/users";
 import { CommentForm } from "./comment-form";
 import { CommentList } from "./comment-list";
+import { UserProvider } from "./user-context";
 
 interface CommentsClientWrapperProps {
   user?: User | null;
@@ -16,11 +17,10 @@ export const CommentsClientWrapper: FC<CommentsClientWrapperProps> = ({
 }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <CommentList postSlug={postSlug} />
-      <CommentForm
-        postSlug={postSlug}
-        user={user}
-      />
+      <UserProvider user={user}>
+        <CommentList postSlug={postSlug} />
+        <CommentForm postSlug={postSlug} />
+      </UserProvider>
     </QueryClientProvider>
   );
 };

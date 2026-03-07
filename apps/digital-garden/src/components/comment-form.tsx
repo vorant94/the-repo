@@ -5,14 +5,14 @@ import type { FC } from "react";
 import { useForm } from "react-hook-form";
 import { query, queryClient } from "../globals/query";
 import { type AddCommentInput, addCommentInputSchema } from "../lib/api";
-import type { User } from "../schema/users";
+import { useUser } from "./user-context";
 
 interface CommentFormProps {
   postSlug: string;
-  user?: User | null;
 }
 
-export const CommentForm: FC<CommentFormProps> = ({ postSlug, user }) => {
+export const CommentForm: FC<CommentFormProps> = ({ postSlug }) => {
+  const user = useUser();
   const loginUrl = new URL("/api/login/github", window.location.origin);
   loginUrl.searchParams.set("redirect_uri", window.location.href);
 

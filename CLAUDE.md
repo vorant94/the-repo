@@ -175,6 +175,17 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - Non-exported entities (constants, helpers) go after all exported entities in file
 - One component per file — never define multiple components (exported or local) in same file
 
+**React patterns:**
+- For components with children, define interface with only component-specific props, apply `PropsWithChildren` at component type level:
+```typescript
+interface UserProviderProps {
+  user?: User | null;
+}
+export const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({ user, children }) => { ... };
+```
+- Never add `children?: ReactNode` to the props interface—use `PropsWithChildren` wrapper instead
+- Never use type aliases for props—always use interfaces
+
 **Zustand patterns:**
 - Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
 - Call actions via `store.getState().action()` in event handlers — never select actions with `useStore((s) => s.action)`. Selectors for state values only.
