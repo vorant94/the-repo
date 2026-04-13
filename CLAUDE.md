@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance to Claude Code (claude.ai/code) for this repo.
 
 ## Repository Overview
 
-Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linting/formatting.
+Monorepo: npm workspaces, Turbo for build, Biome for lint/format.
 
 **Structure:**
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
@@ -18,9 +18,9 @@ Monorepo with npm workspaces, Turbo for build orchestration, and Biome for linti
 
 ## Commands
 
-**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check the `name` field in the target `package.json` before using `npm -w <name>`.
+**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `npm -w <name>`.
 
-**Internal lib dependencies:** Reference workspace libs by exact version (e.g. `"cn": "0.0.1"`), not with `workspace:*` protocol.
+**Internal lib dependencies:** Reference workspace libs by exact version (e.g. `"cn": "0.0.1"`), not `workspace:*`.
 
 **Root:**
 ```bash
@@ -42,23 +42,23 @@ grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath 
 grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 ```
 
-**sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:prod` for production D1. Drizzle config points to src/shared/schema for schema definitions and ./drizzle for migrations output.
+**sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:prod` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
 
 ## Architecture
 
-**mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. Uses React Compiler (babel-plugin-react-compiler) for automatic optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars for Mantine/Tailwind integration.
+**mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. React Compiler (babel-plugin-react-compiler) for auto-optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars.
 
-**sofash (layered):** `api/` (Hono routes, Grammy handlers) → `bl/` (business logic) → `dal/` (data access). Uses AsyncLocalStorage for request-scoped context management.
+**sofash (layered):** `api/` (Hono routes, Grammy handlers) → `bl/` (business logic) → `dal/` (data access). AsyncLocalStorage for request-scoped context.
 
-**subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops with Zod validation. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`), not via a standalone `postcss.config.*` file. (Abandoned but reference patterns.)
+**subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops + Zod validation. PostCSS inline in `vite.config.ts` (`css.postcss.plugins`), not `postcss.config.*`. (Abandoned, reference only.)
 
-**digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n support, custom rehype/remark plugins.
+**digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n, custom rehype/remark plugins.
 
-**grimoire:** Single entry main.ts with subcommand routing. Commands in src/commands/, each self-contained with config at top. Uses `--experimental-strip-types` for direct TS execution. Shebang in main.ts allows execution via npm bin.
+**grimoire:** Single entry main.ts, subcommand routing. Commands in src/commands/, self-contained with config at top. `--experimental-strip-types` for direct TS execution. Shebang in main.ts for npm bin execution.
 
 ## Code Style (Biome)
 
-Always run Biome from repo root. Rules enforced:
+Always run Biome from repo root. Rules:
 - No default exports (except config files, main.ts, Astro files)
 - Kebab-case filenames
 - No barrel files (except `libs/*/src/index.ts`)
@@ -74,14 +74,14 @@ Always run Biome from repo root. Rules enforced:
 - `*.unit.test.ts` - Pure logic, no I/O (formatters, parsers, utilities)
 - `*.int.test.ts` - Direct function calls with mocked I/O (fetch, fs, process)
 - `*.e2e.test.ts` - Full process execution (spawn CLI binary)
-- Legacy `*.spec.ts` patterns still supported but prefer the above
+- Legacy `*.spec.ts` still supported, prefer above
 
 **Mocking pattern:**
-- Use `vi.spyOn(target, "method").mockImplementationOnce()` for one-time mocks (auto-expires after first call, no manual cleanup needed)
+- Use `vi.spyOn(target, "method").mockImplementationOnce()` for one-time mocks (auto-expires after first call, no cleanup needed)
 
 **Integration test pattern:**
-- Call functions directly with mocked I/O instead of spawning processes
-- Store fixtures in `@app/grimoire/assets/` folder (e.g., `assets/scrap-pauper-fixture.html`)
+- Call functions directly with mocked I/O, don't spawn processes
+- Store fixtures in `@app/grimoire/assets/` (e.g. `assets/scrap-pauper-fixture.html`)
 
 **General:**
 - Vitest for subs-savvy and grimoire
@@ -96,17 +96,17 @@ Always run Biome from repo root. Rules enforced:
 ## Programming Preferences
 
 **Philosophy:**
-- Simplicity over abstraction—remove abstractions until needed
-- Minimal dependencies—prefer native APIs, reuse monorepo deps
+- Simplicity over abstraction — remove abstractions until needed
+- Minimal dependencies — prefer native APIs, reuse monorepo deps
 - Only export what other files need (Knip catches unused exports)
-- Early returns always: `if (!value) { return; }` not `if (value) { ... }` — applies to all contexts including small functions, disposal handlers, etc.
-- Avoid unnecessary nesting—main logic flows without deep nesting
+- Early returns always: `if (!value) { return; }` not `if (value) { ... }` — all contexts including small functions, disposal handlers
+- Avoid unnecessary nesting — main logic flows without deep nesting
 - When approach fails: investigate, present findings, stop and wait
-- Prefer library-native APIs over custom workarounds—check if the library already provides a solution before implementing one
-- Use `dedent` package for multiline strings (enables proper indentation in source code while removing it at runtime)
-- Prefer optional chaining (`?.`) over explicit null/undefined checks when supported by language spec
-- Use `null` for explicit "nothing" values, not `undefined` — `undefined` is for implicit absence (optional params)
-- Don't add default values to optional parameters when implicit `undefined` is acceptable: `param?: Type` not `param?: Type = defaultValue`
+- Prefer library-native APIs over custom workarounds — check library first before implementing
+- Use `dedent` for multiline strings (proper indentation in source, removed at runtime)
+- Prefer optional chaining (`?.`) over explicit null/undefined checks when supported
+- Use `null` for explicit "nothing", not `undefined` — `undefined` for implicit absence (optional params)
+- Don't add default values to optional params when implicit `undefined` acceptable: `param?: Type` not `param?: Type = defaultValue`
 
 **HTML parsing:** Prefer semantic selectors (class names) over regex, simple string methods over regex when possible.
 
@@ -141,39 +141,39 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 // NOT: Array<z.infer<typeof chapterSchema>> at each usage site
 ```
 
-**Zod parsing:** Use `.parse()` by default—let validation errors throw naturally. Only use `.safeParse()` for user-facing validation needing graceful error messages.
+**Zod parsing:** Use `.parse()` by default — let validation errors throw. Only `.safeParse()` for user-facing validation needing graceful errors.
 
-**Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE creates false immutability since objects remain mutable.
+**Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE implies false immutability — objects stay mutable.
 
-**Modern TypeScript:** Top-level await (no main wrappers). No enums (`erasableSyntaxOnly: true`)—use type unions + const objects.
+**Modern TypeScript:** Top-level await (no main wrappers). No enums (`erasableSyntaxOnly: true`) — use type unions + const objects.
 
 **CLI patterns:**
 - camelCase CLI args matching schema fields for direct `parseArgs` → Zod pass-through
-- Avoid unnecessary `.min(1)` validation—`z.string()` suffices for required args
-- Don't rename in destructuring—name things explicitly from the start
+- Avoid unnecessary `.min(1)` — `z.string()` suffices for required args
+- Don't rename in destructuring — name things right from start
 - Consistent structure: imports → constants → schema → parseArgs → validation → execution
 - Don't abstract until 5+ instances or truly complex shared logic
 
 **Project organization:**
 - Organize for extensibility even with single implementation
-- Define configuration variables at top of entry files
+- Define config vars at top of entry files
 - Use clear, explicit variable names
-- Non-exported entities (constants, helpers) go after all exported entities in a file
-- One component per file—never define more than one component (exported or local) in the same file
+- Non-exported entities (constants, helpers) go after all exported entities in file
+- One component per file — never define multiple components (exported or local) in same file
 
 **Zustand patterns:**
 - Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
-- Call actions via `store.getState().action()` in event handlers—never select actions with `useStore((s) => s.action)`. Selectors are for state values only.
-- Compute derived state inline in `useStore((s) => ...)` selectors—don't store computed selectors as functions in the store, as calling them outside the selector does not subscribe to state changes
-- Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, a new reference on every selector call triggers `useSyncExternalStore` to loop indefinitely
+- Call actions via `store.getState().action()` in event handlers — never select actions with `useStore((s) => s.action)`. Selectors for state values only.
+- Compute derived state inline in `useStore((s) => ...)` selectors — don't store computed selectors as functions in store; calling them outside selector skips subscription
+- Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, new ref on every selector call triggers `useSyncExternalStore` to loop
 
 **Bootstrapping new apps:**
-- Use the framework's CLI scaffolder rather than manually creating files (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
-- Pin to the version already used in the workspace, not latest
+- Use framework's CLI scaffolder, not manual file creation (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
+- Pin to version already in workspace, not latest
 
 ## Git Workflow
 
-- Do not commit unless explicitly asked—edit files and leave for user review
+Don't commit unless explicitly asked — edit files, leave for user review.
 
 ## Requirements
 
