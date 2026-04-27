@@ -1,9 +1,9 @@
 import Papa from "papaparse";
-import z from "zod";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Card } from "../utils/card.ts";
 import { cardKey } from "../utils/card.ts";
+import { manaBoxCollectionRowSchema } from "../utils/manabox-csv.ts";
 
 interface SplitStore {
   assignments: Record<AssignmentId, Array<Binder>>;
@@ -40,7 +40,7 @@ export const useSplitStore = create<SplitStore>()(
         const binders: Record<string, Binder> = {};
 
         for (const row of parsed.data) {
-          const validRow = manaBoxRowSchema.parse(row);
+          const validRow = manaBoxCollectionRowSchema.parse(row);
           const binderName = validRow["Binder Name"];
           const binderId = `${binderName}${validRow["Binder Type"]}`;
 
@@ -144,16 +144,3 @@ export function mergeBinders(binders: Array<Binder>): Array<Card> {
 
   return Array.from(cardMap.values());
 }
-
-const manaBoxRowSchema = z.object({
-  "Binder Name": z.string(),
-  "Binder Type": z.enum(["binder", "deck", "list"]),
-  // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Name: z.string(),
-  "Set code": z.string(),
-  "Collector number": z.string(),
-  // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Foil: z.string().transform((raw) => raw === "foil"),
-  // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
-  Quantity: z.coerce.number(),
-});
