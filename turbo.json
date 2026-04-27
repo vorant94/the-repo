@@ -9,6 +9,30 @@
     },
     "test": {
       "dependsOn": ["^test"]
+    },
+    "are-translations-sorted": {
+      "dependsOn": []
+    },
+    "migrate:production": {
+      "dependsOn": [],
+      "passThroughEnv": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"]
+    },
+    "e2e:install": {
+      "dependsOn": []
+    },
+    "e2e:install-deps": {
+      "dependsOn": []
+    },
+    "e2e": {
+      "dependsOn": []
+    },
+    "deploy:production": {
+      "dependsOn": [],
+      "passThroughEnv": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"]
+    },
+    "deploy:preview": {
+      "dependsOn": [],
+      "passThroughEnv": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"]
     }
   }
 }
