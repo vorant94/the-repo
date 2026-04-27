@@ -30,8 +30,8 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "deploy": "wrangler deploy",
-    "migrate:prod": "wrangler d1 migrations apply DB --remote",
+    "deploy:production": "wrangler deploy",
+    "migrate:production": "wrangler d1 migrations apply DB --remote",
     "proxy:dev": "ngrok http 5173",
     "start:dev": "vite",
     "ts:check": "tsc"

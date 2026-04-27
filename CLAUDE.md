@@ -42,7 +42,7 @@ grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath 
 grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 ```
 
-**sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:prod` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
+**sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
 
 ## Architecture
 
