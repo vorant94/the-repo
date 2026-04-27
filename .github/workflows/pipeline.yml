@@ -38,7 +38,7 @@ jobs:
       - name: Check E2E
         id: check-e2e
         run: |
-          [ -f "apps/${{ inputs.workspace }}/playwright.config.ts" ] \
+          jq -e '.scripts["e2e"]' apps/${{ inputs.workspace }}/package.json > /dev/null 2>&1 \
             && echo "has_e2e=true" >> $GITHUB_OUTPUT \
             || echo "has_e2e=false" >> $GITHUB_OUTPUT
 
