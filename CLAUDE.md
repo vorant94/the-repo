@@ -171,6 +171,10 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - Use framework's CLI scaffolder, not manual file creation (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
 - Pin to version already in workspace, not latest
 
+## CI/CD
+
+**Pipeline:** `.github/workflows/ci-cd.yml` detects affected apps via `npx turbo --dry=json --filter=...[SHA]`, runs workspace-wide checks, then calls `.github/workflows/pipeline.yml` per app (ci → e2e → deploy). Deploy gated by presence of `deploy:production` script in app's `package.json`.
+
 ## Git Workflow
 
 Don't commit unless explicitly asked — edit files, leave for user review.
