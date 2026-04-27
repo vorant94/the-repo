@@ -12,7 +12,7 @@ import { cn } from "cn";
 import { type FC, useState } from "react";
 import { AssignmentZone } from "../components/assignment-zone.tsx";
 import { BinderCard } from "../components/binder-card.tsx";
-import { CsvDropZone } from "../components/csv-drop-zone.tsx";
+import { TextDropZone } from "../components/text-drop-zone.tsx";
 import {
   type AssignmentId,
   assignmentId,
@@ -22,6 +22,7 @@ import {
 } from "../stores/split.store.ts";
 
 export const SplitPage: FC = () => {
+  const file = useSplitStore((s) => s.file);
   const [activeBinder, setActiveBinder] = useState<Binder | null>(null);
   const [fromAssignment, setFromAssignment] = useState<AssignmentId | null>(
     null,
@@ -76,7 +77,20 @@ export const SplitPage: FC = () => {
     >
       <Title order={2}>Split Collection</Title>
 
-      <CsvDropZone />
+      <TextDropZone
+        files={file ? [file] : []}
+        onAddFiles={([newFile]) => {
+          if (!newFile) {
+            return;
+          }
+          useSplitStore.getState().setFile(newFile);
+        }}
+        onRemoveFile={() => useSplitStore.getState().setFile(null)}
+        multiple={false}
+        accept={{ "text/csv": [".csv"] }}
+        label="Drag ManaBox CSV here or click to select it"
+        description="Attach one file of CSV format"
+      />
 
       <DndContext
         sensors={sensors}
