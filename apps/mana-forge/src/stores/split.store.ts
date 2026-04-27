@@ -2,7 +2,8 @@ import Papa from "papaparse";
 import z from "zod";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { cardKey } from "../utils/card-key.ts";
+import type { Card } from "../utils/card.ts";
+import { cardKey } from "../utils/card.ts";
 
 interface SplitStore {
   assignments: Record<AssignmentId, Array<Binder>>;
@@ -10,14 +11,6 @@ interface SplitStore {
   parseCollection: (csvContent: string) => void;
   moveBinder: (binderId: string, from: AssignmentId, to: AssignmentId) => void;
   reset: () => void;
-}
-
-export interface Card {
-  quantity: number;
-  name: string;
-  setCode: string;
-  collectorNumber: string;
-  foil: boolean;
 }
 
 export interface Binder {
@@ -150,12 +143,6 @@ export function mergeBinders(binders: Array<Binder>): Array<Card> {
   }
 
   return Array.from(cardMap.values());
-}
-
-export function formatCard(card: Card): string {
-  const setCode = card.setCode.toLowerCase();
-  const foilMarker = card.foil ? " *F*" : "";
-  return `${card.quantity} ${card.name} (${setCode}) ${card.collectorNumber}${foilMarker}`;
 }
 
 const manaBoxRowSchema = z.object({

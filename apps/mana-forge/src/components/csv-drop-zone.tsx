@@ -1,42 +1,19 @@
 import { Text } from "@mantine/core";
 import { IconFileSpreadsheet } from "@tabler/icons-react";
 import { cn } from "cn";
-import { type FC, useEffect, useState } from "react";
+import type { FC } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
 import { useSplitStore } from "../stores/split.store.ts";
 
 export const CsvDropZone: FC = () => {
-  const [reader] = useState(() => new FileReader());
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    reader.addEventListener(
-      "load",
-      ({ target }: ProgressEvent<FileReader>) => {
-        if (!target) {
-          throw new Error("currentTarget is missing");
-        }
-
-        if (typeof target.result !== "string") {
-          throw new Error("type of result should be string");
-        }
-
-        useSplitStore.getState().parseCollection(target.result);
-      },
-      { signal: controller.signal },
-    );
-
-    return () => controller.abort();
-  });
-
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop: ([file]: Array<FileWithPath>) => {
+    onDrop: async ([file]: Array<FileWithPath>) => {
       if (!file) {
         return;
       }
 
-      reader.readAsText(file);
+      const content = await file.text();
+      useSplitStore.getState().parseCollection(content);
     },
     multiple: false,
     useFsAccessApi: false,
