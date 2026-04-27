@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Card } from "../utils/card.ts";
 import { cardKey, parseCollectionFile } from "../utils/card.ts";
+import { parseManaBoxSelectionCsv } from "../utils/manabox-csv.ts";
 
 export interface TextFile {
   name: string;
@@ -128,7 +129,11 @@ export const useCompareStore = create<CompareStore>()(
 
     compare: () =>
       set((state) => {
-        const lists = state.files.map((f) => parseCollectionFile(f.content));
+        const lists = state.files.map((f) =>
+          f.name.endsWith(".csv")
+            ? parseManaBoxSelectionCsv(f.content)
+            : parseCollectionFile(f.content),
+        );
         state.result = compareCards(lists);
       }),
 
