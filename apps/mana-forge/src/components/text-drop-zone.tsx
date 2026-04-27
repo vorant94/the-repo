@@ -3,12 +3,27 @@ import { IconFileText, IconX } from "@tabler/icons-react";
 import { cn } from "cn";
 import type { FC } from "react";
 import { type FileWithPath, useDropzone } from "react-dropzone-esm";
-import { useShallow } from "zustand/react/shallow";
-import { useCompareStore } from "../stores/compare.store.ts";
+import type { TextFile } from "../utils/card.ts";
 
-export const TextDropZone: FC = () => {
-  const files = useCompareStore(useShallow((s) => s.files));
+export interface TextDropZoneProps {
+  files: Array<TextFile>;
+  onAddFiles: (files: Array<TextFile>) => void;
+  onRemoveFile: (index: number) => void;
+  multiple?: boolean;
+  accept?: Record<string, Array<string>>;
+  label?: string;
+  description?: string;
+}
 
+export const TextDropZone: FC<TextDropZoneProps> = ({
+  files,
+  onAddFiles,
+  onRemoveFile,
+  multiple = true,
+  accept = { "text/plain": [".txt"], "text/csv": [".csv"] },
+  label = "Drag TXT or CSV files here or click to select",
+  description = "Archidekt TXT format or ManaBox CSV selection export",
+}) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (dropped: Array<FileWithPath>) => {
       const newFiles = await Promise.all(
@@ -17,11 +32,11 @@ export const TextDropZone: FC = () => {
           content: await file.text(),
         })),
       );
-      useCompareStore.getState().addFiles(newFiles);
+      onAddFiles(newFiles);
     },
-    multiple: true,
+    multiple,
     useFsAccessApi: false,
-    accept: { "text/plain": [".txt"], "text/csv": [".csv"] },
+    accept,
   });
 
   return (
@@ -48,13 +63,13 @@ export const TextDropZone: FC = () => {
             size="xl"
             className={cn("text-balance")}
           >
-            Drag TXT or CSV files here or click to select
+            {label}
           </Text>
           <Text
             size="sm"
             c="dimmed"
           >
-            Archidekt TXT format or ManaBox CSV selection export
+            {description}
           </Text>
         </div>
       </button>
@@ -79,7 +94,7 @@ export const TextDropZone: FC = () => {
           <ActionIcon
             variant="subtle"
             color="red"
-            onClick={() => useCompareStore.getState().removeFile(index)}
+            onClick={() => onRemoveFile(index)}
             aria-label={`Remove ${file.name}`}
           >
             <IconX size="1em" />

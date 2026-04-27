@@ -1,14 +1,15 @@
 import Papa from "papaparse";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { Card } from "../utils/card.ts";
+import type { Card, TextFile } from "../utils/card.ts";
 import { cardKey } from "../utils/card.ts";
 import { manaBoxCollectionRowSchema } from "../utils/manabox-csv.ts";
 
 interface SplitStore {
+  file: TextFile | null;
   assignments: Record<AssignmentId, Array<Binder>>;
 
-  parseCollection: (csvContent: string) => void;
+  setFile: (file: TextFile | null) => void;
   moveBinder: (binderId: string, from: AssignmentId, to: AssignmentId) => void;
   reset: () => void;
 }
@@ -23,6 +24,7 @@ export interface Binder {
 
 export const useSplitStore = create<SplitStore>()(
   immer((set) => ({
+    file: null,
     assignments: {
       collection: [],
       tradeOnly: [],
@@ -30,9 +32,19 @@ export const useSplitStore = create<SplitStore>()(
       bulk: [],
     },
 
-    parseCollection: (csvContent) =>
+    setFile: (file) =>
       set((state) => {
-        const parsed = Papa.parse(csvContent, {
+        state.file = file;
+
+        if (!file) {
+          state.assignments.collection = [];
+          state.assignments.tradeOnly = [];
+          state.assignments.tradeOrBuy = [];
+          state.assignments.bulk = [];
+          return;
+        }
+
+        const parsed = Papa.parse(file.content, {
           header: true,
           skipEmptyLines: true,
         });
@@ -98,6 +110,7 @@ export const useSplitStore = create<SplitStore>()(
 
     reset: () =>
       set((state) => {
+        state.file = null;
         state.assignments.collection = [];
         state.assignments.tradeOnly = [];
         state.assignments.tradeOrBuy = [];

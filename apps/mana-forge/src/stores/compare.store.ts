@@ -1,13 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { Card } from "../utils/card.ts";
+import type { Card, TextFile } from "../utils/card.ts";
 import { cardKey, parseCollectionFile } from "../utils/card.ts";
 import { parseManaBoxSelectionCsv } from "../utils/manabox-csv.ts";
-
-export interface TextFile {
-  name: string;
-  content: string;
-}
 
 export const resultSectionId = {
   exactMatches: "exactMatches",
