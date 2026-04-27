@@ -2,7 +2,7 @@ import Papa from "papaparse";
 import z from "zod";
 import type { Card } from "./card.ts";
 
-export const manaBoxBaseRowSchema = z.object({
+const manaBoxBaseRowSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
   Name: z.string(),
   "Set code": z.string(),
