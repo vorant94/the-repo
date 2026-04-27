@@ -3,6 +3,7 @@ import type { MantineColor, MantineStyleProp } from "@mantine/core";
 import { Badge, Card, Group, Text } from "@mantine/core";
 import { cn } from "cn";
 import type { FC } from "react";
+import type { Position } from "../hooks/use-binder-positions.ts";
 import type { Binder, BinderType } from "../stores/split.store.ts";
 
 export const BinderCard: FC<BinderCardProps> = ({
@@ -66,11 +67,6 @@ export interface BinderCardProps {
   position: Position;
   zIndex: number;
   onBringToFront: () => void;
-}
-
-export interface Position {
-  x: number;
-  y: number;
 }
 
 export const binderTypeColor: Record<BinderType, MantineColor> = {

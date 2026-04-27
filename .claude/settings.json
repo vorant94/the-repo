@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "caveman@caveman": true,
+    "commit-commands@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
+  }
+}

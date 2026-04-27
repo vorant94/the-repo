@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { Binder, Card } from "./split.store.ts";
+import type { Card } from "../utils/card.ts";
+import { formatCard } from "../utils/card.ts";
+import type { Binder } from "./split.store.ts";
 import {
   assignmentId,
-  formatCard,
   isAssignmentId,
   mergeBinders,
   useSplitStore,
