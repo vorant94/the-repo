@@ -21,7 +21,7 @@ export const TextDropZone: FC = () => {
     },
     multiple: true,
     useFsAccessApi: false,
-    accept: { "text/plain": [".txt"] },
+    accept: { "text/plain": [".txt"], "text/csv": [".csv"] },
   });
 
   return (
@@ -48,13 +48,13 @@ export const TextDropZone: FC = () => {
             size="xl"
             className={cn("text-balance")}
           >
-            Drag collection TXT files here or click to select
+            Drag TXT or CSV files here or click to select
           </Text>
           <Text
             size="sm"
             c="dimmed"
           >
-            Attach multiple files in Archidekt format
+            Archidekt TXT format or ManaBox CSV selection export
           </Text>
         </div>
       </button>
