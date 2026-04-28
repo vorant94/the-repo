@@ -1,7 +1,7 @@
 pre-push:
   commands:
     test:
-      run: pnpm exec turbo test
+      run: pnpm -r run --if-present test
     unused-code:check:
       run: pnpm run unused-code:check
 pre-commit:
@@ -9,4 +9,4 @@ pre-commit:
     lint:ci:
       run: pnpm run lint:ci
     ts:check:
-      run: pnpm exec turbo ts:check
+      run: pnpm -r run --if-present ts:check

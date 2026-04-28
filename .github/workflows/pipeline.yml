@@ -53,16 +53,16 @@ jobs:
             || echo "has_deploy=false" >> $GITHUB_OUTPUT
 
       - name: TS Check
-        run: pnpm exec turbo ts:check --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run ts:check
 
       - name: Test
-        run: pnpm exec turbo test --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present test
 
       - name: Are Translations Sorted
-        run: pnpm exec turbo are-translations-sorted --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present are-translations-sorted
 
       - name: Build
-        run: pnpm exec turbo build --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present build
 
       - name: Upload Build
         if: steps.check-deploy.outputs.has_deploy == 'true'
@@ -111,14 +111,14 @@ jobs:
 
       - name: Install Playwright with Dependencies
         if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: pnpm exec turbo e2e:install --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run e2e:install
 
       - name: Install Playwright Dependencies
         if: steps.cache-playwright.outputs.cache-hit == 'true'
-        run: pnpm exec turbo e2e:install-deps --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run e2e:install-deps
 
       - name: Run E2E
-        run: pnpm exec turbo e2e --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run e2e
 
       - name: Upload E2E Report
         if: failure()
@@ -169,14 +169,14 @@ jobs:
           path: apps/${{ inputs.workspace }}/dist
 
       - name: Migrate
-        run: pnpm exec turbo migrate:production --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present migrate:production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
       - name: Deploy Production
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: pnpm exec turbo deploy:production --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run deploy:production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
@@ -186,7 +186,7 @@ jobs:
           github.event_name == 'pull_request' &&
           contains(github.event.pull_request.labels.*.name, 'preview') &&
           contains(github.event.pull_request.labels.*.name, inputs.workspace)
-        run: pnpm exec turbo deploy:preview --filter=${{ inputs.workspace }}
+        run: pnpm --filter=${{ inputs.workspace }} run deploy:preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

@@ -4,7 +4,7 @@ Guidance to Claude Code (claude.ai/code) for this repo.
 
 ## Repository Overview
 
-Monorepo: pnpm workspaces, Turbo for build, Biome for lint/format.
+Monorepo: pnpm workspaces, Biome for lint/format.
 
 **Structure:**
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
@@ -26,8 +26,8 @@ Monorepo: pnpm workspaces, Turbo for build, Biome for lint/format.
 ```bash
 pnpm install
 pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
-pnpm exec turbo ts:check                   # TypeScript across workspaces
-pnpm exec turbo test                       # Tests across workspaces
+pnpm -r run --if-present ts:check          # TypeScript across workspaces
+pnpm -r run --if-present test              # Tests across workspaces
 pnpm run unused-code:check                 # Knip unused code analysis
 ```
 
@@ -104,8 +104,8 @@ Always run Biome from repo root. Rules:
 
 ## Git Hooks (lefthook)
 
-**pre-commit:** `npm run lint:ci`, `npx turbo ts:check`
-**pre-push:** `npx turbo test`, `npm run unused-code:check`
+**pre-commit:** `pnpm run lint:ci`, `pnpm -r run --if-present ts:check`
+**pre-push:** `pnpm -r run --if-present test`, `pnpm run unused-code:check`
 
 ## Programming Preferences
 
@@ -187,7 +187,7 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 
 ## CI/CD
 
-**Pipeline:** `.github/workflows/ci-cd.yml` detects affected apps via `npx turbo --dry=json --filter=...[SHA]`, runs workspace-wide checks, then calls `.github/workflows/pipeline.yml` per app (ci → e2e → deploy). Deploy gated by presence of `deploy:production` script in app's `package.json`.
+**Pipeline:** `.github/workflows/ci-cd.yml` detects affected apps via `pnpm list -r --filter "...[SHA]"`, runs workspace-wide checks, then calls `.github/workflows/pipeline.yml` per app (ci → e2e → deploy). Deploy gated by presence of `deploy:production` script in app's `package.json`.
 
 ## Git Workflow
 
