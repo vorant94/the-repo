@@ -21,11 +21,9 @@ test(
   async ({ page }) => {
     await page.goto("/en/posts");
 
-    await page.getByRole("button", { name: "switch to ru" }).click();
+    await page.getByRole("link", { name: "switch to ru" }).click();
 
-    const url = new URL(page.url());
-
-    expect(url.pathname).toEqual("/ru/posts");
+    await expect(page).toHaveURL("/ru/posts");
   },
 );
 
@@ -35,11 +33,9 @@ test(
   async ({ page }) => {
     await page.goto("/en/posts/why-brave-new-world-is-actually-a-utopia");
 
-    await page.getByRole("button", { name: "switch to ru" }).click();
+    await page.getByRole("link", { name: "switch to ru" }).click();
 
-    const url = new URL(page.url());
-
-    expect(url.pathname).toEqual(
+    await expect(page).toHaveURL(
       "/ru/posts/why-brave-new-world-is-actually-a-utopia",
     );
   },
@@ -51,10 +47,8 @@ test(
   async ({ page }) => {
     await page.goto("/en/posts/divide-and-conquer-right-concerns-to-separate");
 
-    await page.getByRole("button", { name: "switch to ru" }).click();
+    await page.getByRole("link", { name: "switch to ru" }).click();
 
-    const url = new URL(page.url());
-
-    expect(url.pathname).toEqual("/ru");
+    await expect(page).toHaveURL("/ru");
   },
 );
