@@ -42,19 +42,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PKGS=$(pnpm exec turbo run ts:check --filter="./apps/**" --dry=json \
-              | jq -c '[.packages[] | select(. != "//")]')
+            PKGS=$(pnpm list -r --filter "./apps/**" --depth 0 --json | jq -c '[.[].name]')
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="${{ github.event.pull_request.base.sha }}"
-            PKGS=$(pnpm exec turbo run ts:check --filter=...[${BASE}] --dry=json \
-              | jq -c '[.packages[] | select(. != "//")]')
+            PKGS=$(pnpm list -r --filter "...[${BASE}]" --depth 0 --json | jq -c '[.[].name]')
           else
             BASE="${{ github.event.before }}"
             if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
               BASE="HEAD^1"
             fi
-            PKGS=$(pnpm exec turbo run ts:check --filter=...[${BASE}] --dry=json \
-              | jq -c '[.packages[] | select(. != "//")]')
+            PKGS=$(pnpm list -r --filter "...[${BASE}]" --depth 0 --json | jq -c '[.[].name]')
           fi
           echo "packages=$PKGS" >> $GITHUB_OUTPUT
 

@@ -4,6 +4,111 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@mantine/core':
+      specifier: ^8.3.8
+      version: 8.3.8
+    '@mantine/hooks':
+      specifier: ^8.3.8
+      version: 8.3.8
+    '@playwright/test':
+      specifier: ^1.56.1
+      version: 1.56.1
+    '@tabler/icons-react':
+      specifier: ^3.35.0
+      version: 3.35.0
+    '@tailwindcss/vite':
+      specifier: ^4.1.17
+      version: 4.1.17
+    '@testing-library/jest-dom':
+      specifier: ^6.9.1
+      version: 6.9.1
+    '@testing-library/react':
+      specifier: ^16.3.0
+      version: 16.3.2
+    '@total-typescript/ts-reset':
+      specifier: ^0.6.1
+      version: 0.6.1
+    '@types/fs-extra':
+      specifier: ^11.0.4
+      version: 11.0.4
+    '@types/node':
+      specifier: ^22.19.1
+      version: 22.19.1
+    '@types/react':
+      specifier: ^19.2.5
+      version: 19.2.5
+    '@types/react-dom':
+      specifier: ^19.2.3
+      version: 19.2.3
+    '@vitejs/plugin-react':
+      specifier: ^5.1.1
+      version: 5.1.1
+    autoprefixer:
+      specifier: ^10.4.21
+      version: 10.4.21
+    babel-plugin-react-compiler:
+      specifier: ^1.0.0
+      version: 1.0.0
+    cssnano:
+      specifier: ^7.0.6
+      version: 7.0.6
+    date-fns:
+      specifier: ^4.1.0
+      version: 4.1.0
+    dotenv:
+      specifier: ^16.4.7
+      version: 16.4.7
+    fs-extra:
+      specifier: ^11.3.0
+      version: 11.3.0
+    immer:
+      specifier: ^10.1.1
+      version: 10.2.0
+    jsdom:
+      specifier: ^27.2.0
+      version: 27.4.0
+    postcss-preset-mantine:
+      specifier: ^1.15.0
+      version: 1.18.0
+    postcss-simple-vars:
+      specifier: ^7.0.1
+      version: 7.0.1
+    react:
+      specifier: ^19.2.0
+      version: 19.2.0
+    react-dom:
+      specifier: ^19.2.0
+      version: 19.2.0
+    react-dropzone-esm:
+      specifier: ^15.2.0
+      version: 15.2.0
+    react-router:
+      specifier: ^7.9.6
+      version: 7.13.0
+    tailwindcss:
+      specifier: ^4.1.1
+      version: 4.1.17
+    typescript:
+      specifier: ^5.9.3
+      version: 5.9.3
+    vite:
+      specifier: ^6.4.1
+      version: 6.4.2
+    vitest:
+      specifier: ^4.0.10
+      version: 4.0.10
+    wrangler:
+      specifier: ^4.2.0
+      version: 4.59.2
+    zod:
+      specifier: ^3.24.2
+      version: 3.25.76
+    zustand:
+      specifier: ^5.0.8
+      version: 5.0.8
+
 importers:
 
   .:
@@ -17,9 +122,6 @@ importers:
       lefthook:
         specifier: ^1.11.3
         version: 1.11.3
-      turbo:
-        specifier: ^2.6.1
-        version: 2.6.1
 
   apps/digital-garden:
     dependencies:
@@ -6258,40 +6360,6 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
-
-  turbo-darwin-64@2.6.1:
-    resolution: {integrity: sha512-Dm0HwhyZF4J0uLqkhUyCVJvKM9Rw7M03v3J9A7drHDQW0qAbIGBrUijQ8g4Q9Cciw/BXRRd8Uzkc3oue+qn+ZQ==}
-    cpu: [x64]
-    os: [darwin]
-
-  turbo-darwin-arm64@2.6.1:
-    resolution: {integrity: sha512-U0PIPTPyxdLsrC3jN7jaJUwgzX5sVUBsKLO7+6AL+OASaa1NbT1pPdiZoTkblBAALLP76FM0LlnsVQOnmjYhyw==}
-    cpu: [arm64]
-    os: [darwin]
-
-  turbo-linux-64@2.6.1:
-    resolution: {integrity: sha512-eM1uLWgzv89bxlK29qwQEr9xYWBhmO/EGiH22UGfq+uXr+QW1OvNKKMogSN65Ry8lElMH4LZh0aX2DEc7eC0Mw==}
-    cpu: [x64]
-    os: [linux]
-
-  turbo-linux-arm64@2.6.1:
-    resolution: {integrity: sha512-MFFh7AxAQAycXKuZDrbeutfWM5Ep0CEZ9u7zs4Hn2FvOViTCzIfEhmuJou3/a5+q5VX1zTxQrKGy+4Lf5cdpsA==}
-    cpu: [arm64]
-    os: [linux]
-
-  turbo-windows-64@2.6.1:
-    resolution: {integrity: sha512-buq7/VAN7KOjMYi4tSZT5m+jpqyhbRU2EUTTvp6V0Ii8dAkY2tAAjQN1q5q2ByflYWKecbQNTqxmVploE0LVwQ==}
-    cpu: [x64]
-    os: [win32]
-
-  turbo-windows-arm64@2.6.1:
-    resolution: {integrity: sha512-7w+AD5vJp3R+FB0YOj1YJcNcOOvBior7bcHTodqp90S3x3bLgpr7tE6xOea1e8JkP7GK6ciKVUpQvV7psiwU5Q==}
-    cpu: [arm64]
-    os: [win32]
-
-  turbo@2.6.1:
-    resolution: {integrity: sha512-qBwXXuDT3rA53kbNafGbT5r++BrhRgx3sAo0cHoDAeG9g1ItTmUMgltz3Hy7Hazy1ODqNpR+C7QwqL6DYB52yA==}
-    hasBin: true
 
   type-fest@4.41.0:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
@@ -12687,33 +12755,6 @@ snapshots:
       typescript: 5.9.3
 
   tslib@2.8.1: {}
-
-  turbo-darwin-64@2.6.1:
-    optional: true
-
-  turbo-darwin-arm64@2.6.1:
-    optional: true
-
-  turbo-linux-64@2.6.1:
-    optional: true
-
-  turbo-linux-arm64@2.6.1:
-    optional: true
-
-  turbo-windows-64@2.6.1:
-    optional: true
-
-  turbo-windows-arm64@2.6.1:
-    optional: true
-
-  turbo@2.6.1:
-    optionalDependencies:
-      turbo-darwin-64: 2.6.1
-      turbo-darwin-arm64: 2.6.1
-      turbo-linux-64: 2.6.1
-      turbo-linux-arm64: 2.6.1
-      turbo-windows-64: 2.6.1
-      turbo-windows-arm64: 2.6.1
 
   type-fest@4.41.0: {}
 
