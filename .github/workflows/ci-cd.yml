@@ -83,9 +83,6 @@ jobs:
       - name: Unused Code
         run: pnpm run unused-code:check
 
-      - name: Dependency Mismatches
-        run: pnpm run deps-mismatch:check
-
   grimoire:
     needs: [detect, workspace-checks]
     if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'grimoire')

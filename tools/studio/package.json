@@ -6,18 +6,18 @@
     "@remotion/tailwind-v4": "4.0.376",
     "@remotion/zod-types": "4.0.376",
     "cn": "workspace:*",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "remotion": "4.0.376",
-    "tailwindcss": "^4.1.1",
-    "zod": "^3.24.2"
+    "tailwindcss": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
-    "@total-typescript/ts-reset": "^0.6.1",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
-    "typescript": "^5.9.3"
+    "@total-typescript/ts-reset": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   },
   "private": true,
   "scripts": {
