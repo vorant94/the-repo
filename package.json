@@ -16,7 +16,7 @@
     "darwin",
     "linux"
   ],
-  "packageManager": "^npm@11.2.0",
+  "packageManager": "pnpm@10.33.2",
   "private": true,
   "scripts": {
     "deps-mismatch:check": "syncpack list-mismatches",
@@ -29,9 +29,9 @@
     "unused-code:check": "knip"
   },
   "type": "module",
-  "workspaces": [
-    "apps/*",
-    "tools/*",
-    "libs/*"
-  ]
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
+  }
 }
