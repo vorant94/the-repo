@@ -2,7 +2,6 @@
   "name": "the-repo",
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
-    "chrome-devtools-mcp": "^0.17.0",
     "knip": "^5.70.2",
     "lefthook": "^1.11.3",
     "turbo": "^2.6.1"

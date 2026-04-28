@@ -6,9 +6,6 @@
   },
   "tags": ["-lintignore"],
   "workspaces": {
-    ".": {
-      "ignoreDependencies": ["chrome-devtools-mcp"]
-    },
     "apps/digital-garden": {
       "ignoreDependencies": ["sharp"] // used by astro image service at runtime, not statically imported
     },
