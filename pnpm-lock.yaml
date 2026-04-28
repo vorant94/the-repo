@@ -4,111 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    '@mantine/core':
-      specifier: ^8.3.8
-      version: 8.3.8
-    '@mantine/hooks':
-      specifier: ^8.3.8
-      version: 8.3.8
-    '@playwright/test':
-      specifier: ^1.56.1
-      version: 1.56.1
-    '@tabler/icons-react':
-      specifier: ^3.35.0
-      version: 3.35.0
-    '@tailwindcss/vite':
-      specifier: ^4.1.17
-      version: 4.1.17
-    '@testing-library/jest-dom':
-      specifier: ^6.9.1
-      version: 6.9.1
-    '@testing-library/react':
-      specifier: ^16.3.0
-      version: 16.3.2
-    '@total-typescript/ts-reset':
-      specifier: ^0.6.1
-      version: 0.6.1
-    '@types/fs-extra':
-      specifier: ^11.0.4
-      version: 11.0.4
-    '@types/node':
-      specifier: ^22.19.1
-      version: 22.19.1
-    '@types/react':
-      specifier: ^19.2.5
-      version: 19.2.5
-    '@types/react-dom':
-      specifier: ^19.2.3
-      version: 19.2.3
-    '@vitejs/plugin-react':
-      specifier: ^5.1.1
-      version: 5.1.1
-    autoprefixer:
-      specifier: ^10.4.21
-      version: 10.4.21
-    babel-plugin-react-compiler:
-      specifier: ^1.0.0
-      version: 1.0.0
-    cssnano:
-      specifier: ^7.0.6
-      version: 7.0.6
-    date-fns:
-      specifier: ^4.1.0
-      version: 4.1.0
-    dotenv:
-      specifier: ^16.4.7
-      version: 16.4.7
-    fs-extra:
-      specifier: ^11.3.0
-      version: 11.3.0
-    immer:
-      specifier: ^10.1.1
-      version: 10.2.0
-    jsdom:
-      specifier: ^27.2.0
-      version: 27.4.0
-    postcss-preset-mantine:
-      specifier: ^1.15.0
-      version: 1.18.0
-    postcss-simple-vars:
-      specifier: ^7.0.1
-      version: 7.0.1
-    react:
-      specifier: ^19.2.0
-      version: 19.2.0
-    react-dom:
-      specifier: ^19.2.0
-      version: 19.2.0
-    react-dropzone-esm:
-      specifier: ^15.2.0
-      version: 15.2.0
-    react-router:
-      specifier: ^7.9.6
-      version: 7.13.0
-    tailwindcss:
-      specifier: ^4.1.1
-      version: 4.1.17
-    typescript:
-      specifier: ^5.9.3
-      version: 5.9.3
-    vite:
-      specifier: ^6.4.1
-      version: 6.4.2
-    vitest:
-      specifier: ^4.0.10
-      version: 4.0.10
-    wrangler:
-      specifier: ^4.2.0
-      version: 4.59.2
-    zod:
-      specifier: ^3.24.2
-      version: 3.25.76
-    zustand:
-      specifier: ^5.0.8
-      version: 5.0.8
-
 importers:
 
   .:
@@ -116,9 +11,6 @@ importers:
       '@biomejs/biome':
         specifier: ^2.3.6
         version: 2.3.6
-      chrome-devtools-mcp:
-        specifier: ^0.17.0
-        version: 0.17.0
       knip:
         specifier: ^5.70.2
         version: 5.70.2(@types/node@22.19.1)(typescript@5.9.3)
@@ -3590,11 +3482,6 @@ packages:
   chokidar@5.0.0:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
     engines: {node: '>= 20.19.0'}
-
-  chrome-devtools-mcp@0.17.0:
-    resolution: {integrity: sha512-vMi2zXq2ph2EG6amyyApcvuKJcEFj4cGK1XQVb6x8vQYHk8D9ZnSxdtFqD0cRnG7SbUOrg3GhjOZEJAD1dZWSQ==}
-    engines: {node: ^20.19.0 || ^22.12.0 || >=23}
-    hasBin: true
 
   chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
@@ -9767,8 +9654,6 @@ snapshots:
   chokidar@5.0.0:
     dependencies:
       readdirp: 5.0.0
-
-  chrome-devtools-mcp@0.17.0: {}
 
   chrome-trace-event@1.0.4: {}
 
