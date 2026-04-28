@@ -6,8 +6,7 @@ import {
   type ResultSectionId,
   useCompareStore,
 } from "../stores/compare.store.ts";
-import { formatCard } from "../stores/split.store.ts";
-import { cardKey } from "../utils/card-key.ts";
+import { cardKey, formatCard } from "../utils/card.ts";
 import { downloadTextFile } from "../utils/download-text-file.ts";
 
 export interface ResultSectionProps {
