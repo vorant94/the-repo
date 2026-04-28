@@ -60,7 +60,7 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:ui": "playwright test --ui",
-    "migrate:prod": "wrangler d1 migrations apply DB --remote",
+    "migrate:production": "wrangler d1 migrations apply DB --remote",
     "start:dev": "astro dev",
     "start:prod": "astro preview",
     "ts:check": "wrangler types && astro check"

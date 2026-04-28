@@ -13,7 +13,11 @@ export const ComparePage: FC = () => {
     <Stack gap="md">
       <Title order={2}>Compare Collections</Title>
 
-      <TextDropZone />
+      <TextDropZone
+        files={files}
+        onAddFiles={(newFiles) => useCompareStore.getState().addFiles(newFiles)}
+        onRemoveFile={(index) => useCompareStore.getState().removeFile(index)}
+      />
 
       <Button
         onClick={() => useCompareStore.getState().compare()}

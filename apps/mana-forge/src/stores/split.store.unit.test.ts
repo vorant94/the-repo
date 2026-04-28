@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { Binder, Card } from "./split.store.ts";
+import type { Card } from "../utils/card.ts";
+import { formatCard } from "../utils/card.ts";
+import type { Binder } from "./split.store.ts";
 import {
   assignmentId,
-  formatCard,
   isAssignmentId,
   mergeBinders,
   useSplitStore,
@@ -117,15 +118,15 @@ describe("useSplitStore", () => {
     useSplitStore.getState().reset();
   });
 
-  describe("parseCollection", () => {
+  describe("setFile", () => {
     it("parses valid CSV and creates binders by name and type", () => {
-      const csv = [
+      const content = [
         "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
         "My Binder,binder,Lightning Bolt,m10,149,,1",
         "My Deck,deck,Counterspell,mm2,37,,2",
       ].join("\n");
 
-      useSplitStore.getState().parseCollection(csv);
+      useSplitStore.getState().setFile({ name: "collection.csv", content });
       const { assignments } = useSplitStore.getState();
       expect(assignments.collection).toHaveLength(2);
 
@@ -140,13 +141,13 @@ describe("useSplitStore", () => {
     });
 
     it("aggregates card counts within same binder", () => {
-      const csv = [
+      const content = [
         "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
         "My Binder,binder,Lightning Bolt,m10,149,,1",
         "My Binder,binder,Counterspell,mm2,37,,2",
       ].join("\n");
 
-      useSplitStore.getState().parseCollection(csv);
+      useSplitStore.getState().setFile({ name: "collection.csv", content });
       const { assignments } = useSplitStore.getState();
       expect(assignments.collection).toHaveLength(1);
       expect(assignments.collection[0]?.cardCount).toBe(3);
@@ -154,13 +155,13 @@ describe("useSplitStore", () => {
     });
 
     it("parses foil field correctly", () => {
-      const csv = [
+      const content = [
         "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
         "My Binder,binder,Lightning Bolt,m10,149,foil,1",
         "My Binder,binder,Counterspell,mm2,37,,1",
       ].join("\n");
 
-      useSplitStore.getState().parseCollection(csv);
+      useSplitStore.getState().setFile({ name: "collection.csv", content });
       const { assignments } = useSplitStore.getState();
       const binder = assignments.collection[0];
       const foilCard = binder?.cards.find((c) => c.name === "Lightning Bolt");
@@ -168,16 +169,29 @@ describe("useSplitStore", () => {
       expect(foilCard?.foil).toBe(true);
       expect(nonFoilCard?.foil).toBe(false);
     });
-  });
 
-  describe("moveBinder", () => {
-    it("moves binder from one assignment to another", () => {
-      const csv = [
+    it("clears assignments when called with null", () => {
+      const content = [
         "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
         "My Binder,binder,Lightning Bolt,m10,149,,1",
       ].join("\n");
 
-      useSplitStore.getState().parseCollection(csv);
+      useSplitStore.getState().setFile({ name: "collection.csv", content });
+      useSplitStore.getState().setFile(null);
+
+      expect(useSplitStore.getState().file).toBeNull();
+      expect(useSplitStore.getState().assignments.collection).toHaveLength(0);
+    });
+  });
+
+  describe("moveBinder", () => {
+    it("moves binder from one assignment to another", () => {
+      const content = [
+        "Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity",
+        "My Binder,binder,Lightning Bolt,m10,149,,1",
+      ].join("\n");
+
+      useSplitStore.getState().setFile({ name: "collection.csv", content });
       const binder = useSplitStore.getState().assignments.collection[0];
       expect(binder).toBeDefined();
 
