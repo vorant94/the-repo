@@ -23,10 +23,5 @@
     "prepare": "lefthook install",
     "unused-code:check": "knip"
   },
-  "type": "module",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
-  }
+  "type": "module"
 }

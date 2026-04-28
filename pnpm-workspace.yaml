@@ -3,6 +3,12 @@ packages:
   - 'tools/*'
   - 'libs/*'
 
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  sharp: true
+  workerd: true
+
 catalog:
   # Build toolchain
   typescript: ^5.9.3
