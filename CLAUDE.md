@@ -84,9 +84,24 @@ Always run Biome from repo root. Rules:
 - Store fixtures in `@app/grimoire/assets/` (e.g. `assets/scrap-pauper-fixture.html`)
 
 **General:**
-- Vitest for subs-savvy and grimoire
-- Playwright for digital-garden E2E
+- Vitest for subs-savvy, grimoire, mana-forge; Playwright for digital-garden E2E
 - Prefer `it()` over `test()`, use `describe()` blocks
+- Test utility functions (fixtures, helpers) go below the describe block, not above it
+
+**jsdom setup (React hook/component tests):**
+- Add to vite.config.ts `test` block: `environment: "jsdom"`, `restoreMocks: true`, `setupFiles: ["./src/test-setup.ts"]`
+- `restoreMocks: true` required when spying on prototypes — auto-restores after each test
+- Mirror `apps/subs-savvy/src/test-setup.ts` for Mantine mocks (getComputedStyle, matchMedia, ResizeObserver, scrollIntoView)
+
+**Mocking modules (`__mocks__` pattern — preferred):**
+- For node_modules: `__mocks__/<package>.ts` at app root; scoped packages: `__mocks__/@dnd-kit/core.ts`
+- For internal modules: `__mocks__/` sibling directory next to the file being mocked
+- Test file still needs `vi.mock(import("..."))` — Vitest uses the `__mocks__` file as implementation
+
+**Mocking read-only DOM properties (jsdom):**
+- `clientWidth`, `clientHeight` etc. are getter-only in jsdom — direct assignment throws
+- Use `vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(800)` per test
+- Regular methods (e.g. `getBoundingClientRect`) can be assigned directly on the instance
 
 ## Git Hooks (lefthook)
 
