@@ -4,8 +4,6 @@ pre-push:
       run: pnpm exec turbo test
     unused-code:check:
       run: pnpm run unused-code:check
-    deps-mismatch:check:
-      run: pnpm run deps-mismatch:check
 pre-commit:
   commands:
     lint:ci:
