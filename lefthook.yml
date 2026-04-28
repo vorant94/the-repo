@@ -1,14 +1,12 @@
 pre-push:
   commands:
     test:
-      run: npx turbo test
+      run: pnpm -r run --if-present test
     unused-code:check:
-      run: npm run unused-code:check
-    deps-mismatch:check:
-      run: npm run deps-mismatch:check
+      run: pnpm run unused-code:check
 pre-commit:
   commands:
     lint:ci:
-      run: npm run lint:ci
+      run: pnpm run lint:ci
     ts:check:
-      run: npx turbo ts:check
+      run: pnpm -r run --if-present ts:check
