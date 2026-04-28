@@ -6,8 +6,8 @@
     "@hono/swagger-ui": "^0.5.1",
     "@hono/zod-validator": "^0.4.1",
     "date-fns": "catalog:",
-    "drizzle-orm": "^0.44.2",
-    "drizzle-zod": "^0.7.1",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
     "grammy": "^1.31.2",
     "hono": "^4.10.6",
     "hono-openapi": "^0.4.6",
@@ -16,13 +16,13 @@
     "zod-openapi": "^4.2.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241112.0",
+    "@cloudflare/workers-types": "catalog:",
     "@hono/vite-dev-server": "^0.19.0",
     "@libsql/client": "^0.14.0",
     "@total-typescript/ts-reset": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "catalog:",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "wrangler": "catalog:"

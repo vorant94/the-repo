@@ -28,7 +28,7 @@ export const defaultDict = {
   "tags.title": "posts",
 } as const;
 export type DictionaryKey = keyof typeof defaultDict;
-export type Dictionary = Record<DictionaryKey, string>;
+type Dictionary = Record<DictionaryKey, string>;
 
 export const languageToLocale = {
   en: "en-US",

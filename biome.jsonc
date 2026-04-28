@@ -113,6 +113,7 @@
       "!**/build",
       "!**/out",
       "!**/.turbo",
+      "!**/worker-configuration.d.ts",
       "!**/*-fixture.html"
     ]
   },

@@ -21,6 +21,8 @@ catalog:
   react-dom: ^19.2.0
   react-router: ^7.9.6
   react-dropzone-esm: ^15.2.0
+  react-hook-form: ^7.66.0
+  "@hookform/resolvers": ^5.2.2
   immer: ^10.1.1
   zustand: ^5.0.8
 
@@ -31,6 +33,7 @@ catalog:
   jsdom: ^27.2.0
 
   # TypeScript utilities
+  "@cloudflare/workers-types": ^4.20241112.0
   "@total-typescript/ts-reset": ^0.6.1
   "@types/fs-extra": ^11.0.4
   "@types/node": ^22.19.1
@@ -51,6 +54,11 @@ catalog:
   "@tabler/icons-react": ^3.35.0
   postcss-preset-mantine: ^1.15.0
   postcss-simple-vars: ^7.0.1
+
+  # Drizzle ORM
+  drizzle-orm: ^0.45.1
+  drizzle-zod: ^0.7.1
+  drizzle-kit: ^0.31.9
 
   # Utilities
   date-fns: ^4.1.0
