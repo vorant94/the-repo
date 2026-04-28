@@ -5,7 +5,7 @@
     "@remotion/cli": "4.0.376",
     "@remotion/tailwind-v4": "4.0.376",
     "@remotion/zod-types": "4.0.376",
-    "cn": "0.0.1",
+    "cn": "workspace:*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remotion": "4.0.376",

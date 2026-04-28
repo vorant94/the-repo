@@ -4,7 +4,7 @@ Guidance to Claude Code (claude.ai/code) for this repo.
 
 ## Repository Overview
 
-Monorepo: npm workspaces, Turbo for build, Biome for lint/format.
+Monorepo: pnpm workspaces, Turbo for build, Biome for lint/format.
 
 **Structure:**
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
@@ -18,23 +18,23 @@ Monorepo: npm workspaces, Turbo for build, Biome for lint/format.
 
 ## Commands
 
-**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `npm -w <name>`.
+**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `pnpm --filter <name>`.
 
-**Internal lib dependencies:** Reference workspace libs by exact version (e.g. `"cn": "0.0.1"`), not `workspace:*`.
+**Internal lib dependencies:** Reference workspace libs with workspace protocol: `"cn": "workspace:*"`.
 
 **Root:**
 ```bash
-npm install
-npm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
-npx turbo ts:check                        # TypeScript across workspaces
-npx turbo test                            # Tests across workspaces
-npm run deps-mismatch:check|fix           # Dependency version management
-npm run unused-code:check                 # Knip unused code analysis
+pnpm install
+pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
+pnpm exec turbo ts:check                   # TypeScript across workspaces
+pnpm exec turbo test                       # Tests across workspaces
+pnpm run deps-mismatch:check|fix           # Dependency version management
+pnpm run unused-code:check                 # Knip unused code analysis
 ```
 
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
-**grimoire:** Install globally with `npm link` from apps/grimoire, then run anywhere:
+**grimoire:** Install globally with `pnpm link --global` from apps/grimoire, then run anywhere:
 ```bash
 grimoire wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
 grimoire merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
@@ -42,7 +42,7 @@ grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath 
 grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 ```
 
-**sofash database:** `npx drizzle-kit generate|migrate` locally, `npm run migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
+**sofash database:** `pnpm exec drizzle-kit generate|migrate` locally, `pnpm run migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
 
 ## Architecture
 

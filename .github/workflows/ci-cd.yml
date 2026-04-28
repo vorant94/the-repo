@@ -25,32 +25,35 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 23.6
-          cache: npm
+          cache: pnpm
 
       - name: Install Dependencies
-        run: npm ci --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Compute Affected Applications
         id: affected
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PKGS=$(npx turbo run ts:check --filter="./apps/**" --dry=json \
+            PKGS=$(pnpm exec turbo run ts:check --filter="./apps/**" --dry=json \
               | jq -c '[.packages[] | select(. != "//")]')
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="${{ github.event.pull_request.base.sha }}"
-            PKGS=$(npx turbo run ts:check --filter=...[${BASE}] --dry=json \
+            PKGS=$(pnpm exec turbo run ts:check --filter=...[${BASE}] --dry=json \
               | jq -c '[.packages[] | select(. != "//")]')
           else
             BASE="${{ github.event.before }}"
             if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE" 2>/dev/null; then
               BASE="HEAD^1"
             fi
-            PKGS=$(npx turbo run ts:check --filter=...[${BASE}] --dry=json \
+            PKGS=$(pnpm exec turbo run ts:check --filter=...[${BASE}] --dry=json \
               | jq -c '[.packages[] | select(. != "//")]')
           fi
           echo "packages=$PKGS" >> $GITHUB_OUTPUT
@@ -62,23 +65,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 23.6
-          cache: npm
+          cache: pnpm
 
       - name: Install Dependencies
-        run: npm ci --no-audit
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint:ci
+        run: pnpm run lint:ci
 
       - name: Unused Code
-        run: npm run unused-code:check
+        run: pnpm run unused-code:check
 
       - name: Dependency Mismatches
-        run: npm run deps-mismatch:check
+        run: pnpm run deps-mismatch:check
 
   grimoire:
     needs: [detect, workspace-checks]

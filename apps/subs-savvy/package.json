@@ -9,7 +9,7 @@
     "@mantine/hooks": "^8.3.8",
     "@mantine/notifications": "^8.3.8",
     "@tabler/icons-react": "^3.35.0",
-    "cn": "0.0.1",
+    "cn": "workspace:*",
     "dayjs": "^1.11.11",
     "dexie": "^4.2.1",
     "dexie-react-hooks": "^4.2.0",
