@@ -6,6 +6,9 @@
   },
   "tags": ["-lintignore"],
   "workspaces": {
+    ".": {
+      "ignoreDependencies": ["skills"]
+    },
     "apps/digital-garden": {
       "ignoreDependencies": ["sharp"] // used by astro image service at runtime, not statically imported
     },
