@@ -3,7 +3,8 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
     "knip": "^5.70.2",
-    "lefthook": "^1.11.3"
+    "lefthook": "^1.11.3",
+    "skills": "^1.5.3"
   },
   "engines": {
     "node": ">=23"
