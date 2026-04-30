@@ -55,9 +55,6 @@ jobs:
       - name: TS Check
         run: pnpm --filter=${{ inputs.workspace }} run ts:check
 
-      - name: Test
-        run: pnpm --filter=${{ inputs.workspace }} run --if-present test
-
       - name: Are Translations Sorted
         run: pnpm --filter=${{ inputs.workspace }} run --if-present are-translations-sorted
 

@@ -13,7 +13,6 @@ catalog:
   # Build toolchain
   typescript: ^5.9.3
   vite: ^6.4.1
-  vitest: ^4.0.10
   wrangler: ^4.2.0
 
   # React
@@ -28,7 +27,6 @@ catalog:
   "@playwright/test": ^1.56.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.0
-  jsdom: ^27.2.0
 
   # TypeScript utilities
   "@total-typescript/ts-reset": ^0.6.1

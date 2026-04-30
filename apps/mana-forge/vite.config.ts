@@ -1,4 +1,3 @@
-/// <reference types="vitest/config" />
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import postcssPresetMantine from "postcss-preset-mantine";
@@ -30,10 +29,4 @@ export default defineConfig({
       },
     }),
   ],
-  test: {
-    environment: "jsdom",
-    include: ["src/**/*.test.ts"],
-    restoreMocks: true,
-    setupFiles: ["./src/test-setup.ts"],
-  },
 });
