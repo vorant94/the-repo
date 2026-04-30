@@ -27,12 +27,10 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
-    "jsdom": "catalog:",
     "postcss-preset-mantine": "catalog:",
     "postcss-simple-vars": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
     "wrangler": "catalog:"
   },
   "private": true,
@@ -41,7 +39,6 @@
     "deploy:preview": "wrangler deploy --env preview",
     "deploy:production": "wrangler deploy",
     "start:dev": "vite",
-    "test": "vitest run",
     "ts:check": "tsc"
   },
   "type": "module"

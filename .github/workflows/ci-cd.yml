@@ -77,6 +77,9 @@ jobs:
       - name: Lint
         run: pnpm run lint:ci
 
+      - name: Test
+        run: pnpm run test
+
       - name: Unused Code
         run: pnpm run unused-code:check
 

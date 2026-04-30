@@ -39,8 +39,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@vitest/coverage-v8": "^4.0.10",
-    "@vitest/expect": "^4.0.10",
     "autoprefixer": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "cssnano": "catalog:",
@@ -48,13 +46,11 @@
     "fake-indexeddb": "^6.0.0",
     "fs-extra": "catalog:",
     "i18next-hmr": "^3.1.2",
-    "jsdom": "catalog:",
     "postcss-preset-mantine": "catalog:",
     "postcss-simple-vars": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-svgr": "^4.3.0",
-    "vitest": "catalog:",
     "wrangler": "catalog:"
   },
   "private": true,
@@ -69,8 +65,6 @@
     "e2e:install-deps": "playwright install-deps",
     "e2e:ui": "playwright test --ui",
     "start:dev": "vite",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
     "ts:check": "tsc"
   },
   "type": "module"
