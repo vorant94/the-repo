@@ -1,7 +1,7 @@
 pre-push:
   commands:
     test:
-      run: pnpm -r run --if-present test
+      run: pnpm run test
     unused-code:check:
       run: pnpm run unused-code:check
 pre-commit:
