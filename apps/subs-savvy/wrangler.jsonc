@@ -5,6 +5,7 @@
     "directory": "dist",
     "not_found_handling": "single-page-application"
   },
+  "routes": [{ "pattern": "subs-savvy.vorant94.dev", "custom_domain": true }],
   "env": {
     "preview": {
       "name": "subs-savvy-preview"
