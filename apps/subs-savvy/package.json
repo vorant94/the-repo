@@ -61,8 +61,8 @@
   "scripts": {
     "are-translations-sorted": "node scripts/are-translations-sorted.ts",
     "build": "vite build",
-    "deploy:preview": "wrangler pages deploy --branch preview",
-    "deploy:production": "wrangler pages deploy",
+    "deploy:preview": "wrangler deploy --env preview",
+    "deploy:production": "wrangler deploy",
     "e2e": "playwright test",
     "e2e:codegen": "playwright codegen",
     "e2e:install": "playwright install --with-deps",

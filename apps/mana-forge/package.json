@@ -38,8 +38,8 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "deploy:preview": "wrangler pages deploy --branch preview",
-    "deploy:production": "wrangler pages deploy",
+    "deploy:preview": "wrangler deploy --env preview",
+    "deploy:production": "wrangler deploy",
     "start:dev": "vite",
     "test": "vitest run",
     "ts:check": "tsc"
