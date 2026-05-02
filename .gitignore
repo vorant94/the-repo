@@ -19,7 +19,6 @@ data
 .vscode
 .claude/*
 !.claude/skills
-!.claude/settings.json
 .husky/_
 build
 out
