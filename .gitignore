@@ -8,6 +8,8 @@ playwright-report
 test-results
 .react-router
 .env
+.dev.vars
+worker-configuration.d.ts
 *.local
 *.log
 *.sw?

@@ -1,7 +1,4 @@
-import { builtinModules } from "node:module";
-import path from "node:path";
-import process from "node:process";
-import devServer from "@hono/vite-dev-server";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -10,25 +7,10 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
-    lib: {
-      entry: path.resolve(process.cwd(), "src/main.ts"),
-      formats: ["es"],
-      fileName: "main",
-    },
-    rollupOptions: {
-      external: [...builtinModules, /^node:/], // without it rollup tries to "bundle" node built-in modules
-      output: {
-        inlineDynamicImports: true, // prevent multiple chunks since it is easier for CF to work with a single file
-      },
-    },
   },
   server: {
     hmr: false, // without it swagger UI page gets refreshed on code change, very annoying
     cors: false, // to avoid conflicts with hono cors middleware
   },
-  plugins: [
-    devServer({
-      entry: path.resolve(process.cwd(), "src/main.ts"),
-    }),
-  ],
+  plugins: [cloudflare()],
 });

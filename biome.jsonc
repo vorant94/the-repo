@@ -113,7 +113,8 @@
       "!**/build",
       "!**/out",
       "!**/.turbo",
-      "!**/*-fixture.html"
+      "!**/*-fixture.html",
+      "!**/worker-configuration.d.ts"
     ]
   },
   "overrides": [

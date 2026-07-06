@@ -10,7 +10,7 @@ Monorepo: pnpm workspaces, Biome for lint/format.
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
 - `apps/grimoire` - MTG collection CLI (ManaBox→Archidekt conversion, deck merging, staples scraping)
 - `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
-- `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1/LibSQL)
+- `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1)
 - `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
 - `libs/cn` - TailwindCSS className utility (clsx + tailwind-merge)
 - `libs/nt` - NeverThrow wrapper utilities
@@ -41,7 +41,7 @@ grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath 
 grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
 ```
 
-**sofash database:** `pnpm exec drizzle-kit generate|migrate` locally, `pnpm run migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle.
+**sofash database:** `pnpm run db:generate` to generate migrations, `pnpm run db:migrate:local` to apply them to the local Miniflare D1, `pnpm run db:migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle. Cloudflare binding types are generated via `pnpm run cf-typegen` (`wrangler types`) into `worker-configuration.d.ts` (gitignored); `ts:check` runs it first.
 
 ## Architecture
 

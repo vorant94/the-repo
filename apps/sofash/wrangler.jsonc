@@ -1,11 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sofash",
-  "main": "dist/main.js",
+  "main": "./src/main.ts",
   "compatibility_date": "2024-11-12",
   "compatibility_flags": ["nodejs_compat"],
-  "no_bundle": true,
-  "rules": [{ "type": "Text", "globs": ["main.js.map"], "fallthrough": true }],
   "observability": {
     "enabled": true
   },

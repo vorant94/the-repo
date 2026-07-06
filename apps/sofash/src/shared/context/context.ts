@@ -1,7 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import type { Bot } from "grammy";
 import type { User } from "../schema/users.ts";
 import type { GrammyContext } from "../telegram/grammy-context.ts";
@@ -11,7 +10,7 @@ export interface Context {
   requestId: string;
   config: Config;
   bot: Bot<GrammyContext>;
-  db: DrizzleD1Database | LibSQLDatabase;
+  db: DrizzleD1Database;
   user?: User;
 }
 
@@ -72,10 +71,9 @@ export function runWithinPatchedContext<T>(
 
 const storage = new AsyncLocalStorage<RawContext>();
 
-// implementing manual simplified validation instead of zod schema in order to
-// leave imports from drizzle-orm/d1 and drizzle-orm/libsql as type-only imports
-// and therefore load only one of them based on environment. otherwise using
-// z.instanceOf requires to actually load both used classes at the same time
+// manual presence check instead of a zod schema with z.instanceOf on purpose:
+// utility scripts (e.g. scripts/search-tmdb-movie.ts) stub unused fields with
+// `{}`, so validating bot/db as class instances would reject those contexts
 function isContext(context: RawContext): context is Context {
   return "config" in context && "bot" in context && "db" in context;
 }

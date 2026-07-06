@@ -167,7 +167,7 @@ jobs:
           path: apps/${{ inputs.workspace }}/dist
 
       - name: Migrate
-        run: pnpm --filter=${{ inputs.workspace }} run --if-present migrate:production
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present db:migrate:production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
