@@ -27,6 +27,41 @@ describe("useBinderPositions", () => {
     });
   });
 
+  describe("initial position in a small container", () => {
+    it("skips out-of-bounds spiral candidates and still places every binder", () => {
+      const binders = [makeBinder("b1"), makeBinder("b2"), makeBinder("b3")];
+      const containerRef = makeContainerRef(200, 100);
+
+      const { result } = renderHook(() =>
+        useBinderPositions({
+          binders,
+          containerRef,
+          assignmentId: "collection",
+        }),
+      );
+
+      for (const binder of binders) {
+        const pos = result.current.getPosition(binder.id);
+        expect(pos.x).toBeGreaterThanOrEqual(0);
+        expect(pos.y).toBeGreaterThanOrEqual(0);
+      }
+    });
+  });
+
+  describe("initial position with no container element", () => {
+    it("falls back to default container dimensions when the ref is empty", () => {
+      const { result } = renderHook(() =>
+        useBinderPositions({
+          binders: [makeBinder("b1")],
+          containerRef: { current: null },
+          assignmentId: "collection",
+        }),
+      );
+
+      expect(result.current.getPosition("b1")).not.toEqual({ x: 0, y: 0 });
+    });
+  });
+
   describe("getLayerIndex", () => {
     it("returns 0 for unknown binder", () => {
       const containerRef = makeContainerRef();

@@ -1,6 +1,60 @@
 import { describe, expect, it } from "vitest";
 import type { Card } from "./card.ts";
-import { formatCard, parseCollectionFile } from "./card.ts";
+import { formatCard, isBasicLand, parseCollectionFile } from "./card.ts";
+
+const makeCard = (name: string): Card => ({
+  quantity: 1,
+  name,
+  setCode: "",
+  collectorNumber: "",
+  foil: false,
+});
+
+describe("isBasicLand", () => {
+  it("returns true for basic lands", () => {
+    for (const name of ["Plains", "Island", "Swamp", "Mountain", "Forest"]) {
+      expect(isBasicLand(makeCard(name))).toBe(true);
+    }
+  });
+
+  it("returns true for Wastes and snow-covered basics", () => {
+    expect(isBasicLand(makeCard("Wastes"))).toBe(true);
+    expect(isBasicLand(makeCard("Snow-Covered Island"))).toBe(true);
+  });
+
+  it("returns false for non-basic-land cards", () => {
+    expect(isBasicLand(makeCard("Lightning Bolt"))).toBe(false);
+    expect(isBasicLand(makeCard("Island Sanctuary"))).toBe(false);
+  });
+});
+
+describe("formatCard", () => {
+  it("omits the set code and collector number when there is no set code", () => {
+    expect(formatCard(makeCard("Sol Ring"))).toBe("1 Sol Ring");
+  });
+});
+
+describe("parseCollectionCard null branches (fall back to simple format)", () => {
+  it("rejects an empty card name before the set code", () => {
+    expect(parseCollectionFile("1  (m10) 149")[0]?.name).toBe("(m10) 149");
+  });
+
+  it("rejects a missing closing paren", () => {
+    expect(parseCollectionFile("1 Bolt (m10 149")[0]?.name).toBe(
+      "Bolt (m10 149",
+    );
+  });
+
+  it("rejects an empty set code", () => {
+    expect(parseCollectionFile("1 Bolt () 149")[0]?.name).toBe("Bolt () 149");
+  });
+
+  it("rejects an empty collector number left after stripping the foil marker", () => {
+    expect(parseCollectionFile("1 Bolt (m10) *F*")[0]?.name).toBe(
+      "Bolt (m10) *F*",
+    );
+  });
+});
 
 describe("formatCard / parseCollectionFile round-trip", () => {
   it("round-trips a non-foil card", () => {

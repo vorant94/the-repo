@@ -164,6 +164,60 @@ describe("useCompareStore", () => {
     });
   });
 
+  describe("similarity", () => {
+    const compareContents = (...contents: Array<string>) => {
+      useCompareStore
+        .getState()
+        .addFiles(
+          contents.map((content, i) => ({ name: `f${i}.txt`, content })),
+        );
+      useCompareStore.getState().compare();
+      return useCompareStore.getState().result;
+    };
+
+    it("is zero when fewer than two decks are compared", () => {
+      const result = compareContents("4 Brainstorm");
+      expect(result?.similarity).toBe(0);
+      expect(result?.similarityWithoutBasicLands).toBe(0);
+    });
+
+    it("is zero when the decks contain no valid cards", () => {
+      const result = compareContents("not a card", "also not a card");
+      expect(result?.similarity).toBe(0);
+    });
+
+    it("is 100 for identical decks", () => {
+      const result = compareContents(
+        "4 Brainstorm\n1 Island",
+        "4 Brainstorm\n1 Island",
+      );
+      expect(result?.similarity).toBe(100);
+    });
+
+    it("is zero for decks with no shared card names", () => {
+      const result = compareContents("2 Brainstorm", "2 Counterspell");
+      expect(result?.similarity).toBe(0);
+    });
+
+    it("counts all copies of a shared card, regardless of quantity or version", () => {
+      // Brainstorm shared (3 + 1 copies = 4), Forest / Mountain unique.
+      // matched = 4, total = 6 => 66.67%.
+      const result = compareContents(
+        "3 Brainstorm\n1 Forest",
+        "1 Brainstorm (a) 1\n1 Mountain",
+      );
+      expect(result?.similarity).toBeCloseTo((4 / 6) * 100, 5);
+    });
+
+    it("excludes basic lands from the without-basic-lands score", () => {
+      // With basics: Brainstorm shared (2+2), Forest only in deck A =>
+      // matched 4 / total 6. Without basics: only Brainstorm remains => 100%.
+      const result = compareContents("2 Brainstorm\n2 Forest", "2 Brainstorm");
+      expect(result?.similarity).toBeCloseTo((4 / 6) * 100, 5);
+      expect(result?.similarityWithoutBasicLands).toBe(100);
+    });
+  });
+
   describe("reset", () => {
     it("clears files and result", () => {
       const content = "1 Lightning Bolt (m10) 149";

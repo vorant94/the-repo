@@ -78,7 +78,7 @@ jobs:
         run: pnpm run lint:ci
 
       - name: Test
-        run: pnpm run test
+        run: pnpm run test:coverage
 
       - name: Unused Code
         run: pnpm run unused-code:check
