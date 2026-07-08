@@ -66,10 +66,10 @@ export const ResultSection: FC<ResultSectionProps> = ({ resultSectionId }) => {
 
 const resultSectionTitles: Record<ResultSectionId, string> = {
   exactMatches: "Exact Matches",
-  partialMatches: "Partial Matches",
+  partialMatches: "Version / Foil Mismatches",
 };
 
 const resultSectionFilenames: Record<ResultSectionId, string> = {
   exactMatches: "exact-matches.txt",
-  partialMatches: "partial-matches.txt",
+  partialMatches: "version-foil-mismatches.txt",
 };

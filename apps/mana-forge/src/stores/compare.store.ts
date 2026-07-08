@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Card, TextFile } from "../utils/card.ts";
-import { cardKey, parseCollectionFile } from "../utils/card.ts";
+import { cardKey, isBasicLand, parseCollectionFile } from "../utils/card.ts";
 import { parseManaBoxSelectionCsv } from "../utils/manabox-csv.ts";
 
 export const resultSectionId = {
@@ -15,6 +15,8 @@ export type ResultSectionId =
 export interface CompareResult {
   exactMatches: Array<Card>;
   partialMatches: Array<Card>;
+  similarity: number;
+  similarityWithoutBasicLands: number;
 }
 
 interface CompareStore {
@@ -29,7 +31,12 @@ interface CompareStore {
 
 function compareCards(lists: Array<Array<Card>>): CompareResult {
   if (lists.length < 2) {
-    return { exactMatches: [], partialMatches: [] };
+    return {
+      exactMatches: [],
+      partialMatches: [],
+      similarity: 0,
+      similarityWithoutBasicLands: 0,
+    };
   }
 
   const fileCount = lists.length;
@@ -104,7 +111,55 @@ function compareCards(lists: Array<Array<Card>>): CompareResult {
     partialMatches.push(card);
   }
 
-  return { exactMatches, partialMatches };
+  return {
+    exactMatches,
+    partialMatches,
+    similarity: similarityByCopies(lists),
+    similarityWithoutBasicLands: similarityByCopies(
+      lists.map((list) => list.filter((card) => !isBasicLand(card))),
+    ),
+  };
+}
+
+// Copy-weighted similarity, ignoring version (set/collector number/foil):
+// all copies of every card whose name is shared by every deck, relative to
+// the combined size of all decks. A card counts fully once present in each
+// deck, regardless of differing quantities. For two decks this is
+// sum(a + b) over shared names / (totalA + totalB).
+function similarityByCopies(lists: Array<Array<Card>>): number {
+  let totalCopies = 0;
+  const copiesPerList = lists.map((list) => {
+    const copies = new Map<string, number>();
+    for (const card of list) {
+      copies.set(card.name, (copies.get(card.name) ?? 0) + card.quantity);
+      totalCopies += card.quantity;
+    }
+    return copies;
+  });
+
+  if (totalCopies === 0) {
+    return 0;
+  }
+
+  const [firstCopies, ...restCopies] = copiesPerList;
+  if (!firstCopies) {
+    return 0;
+  }
+
+  let matchedCopies = 0;
+
+  for (const [name, count] of firstCopies) {
+    if (!restCopies.every((other) => other.has(name))) {
+      continue;
+    }
+
+    matchedCopies += restCopies.reduce(
+      (sum, other) => sum + (other.get(name) ?? 0),
+      count,
+    );
+  }
+
+  return (matchedCopies / totalCopies) * 100;
 }
 
 export const useCompareStore = create<CompareStore>()(
