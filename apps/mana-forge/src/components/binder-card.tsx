@@ -41,12 +41,17 @@ export const BinderCard: FC<BinderCardProps> = ({
       padding="sm"
       radius="md"
       withBorder
-      className={cn("cursor-grab select-none", isDragging && "opacity-50")}
+      className={cn("w-45 cursor-grab select-none", isDragging && "opacity-50")}
     >
-      <Group justify="space-between">
+      <Group
+        justify="space-between"
+        wrap="nowrap"
+      >
         <Text
           fw={500}
           size="sm"
+          truncate
+          className={cn("min-w-0 flex-1")}
         >
           {binder.name}
         </Text>
