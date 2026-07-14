@@ -59,7 +59,13 @@
       "source": "upstash/context7",
       "sourceType": "github",
       "skillPath": "skills/context7-mcp/SKILL.md",
-      "computedHash": "a4b485790d6ab03a95110bbda5fe269210faa01c1c171b44412ddc77ecabd18b"
+      "computedHash": "5469e63939588b98cc8185697897960793e44318a0a4f64af52cb326da24f897"
+    },
+    "git-commit": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/git-commit/SKILL.md",
+      "computedHash": "2607fc60629b82b257136dd2a7a373f0a4466c0b49df7746d845d59313c99b21"
     },
     "improve-codebase-architecture": {
       "source": "mattpocock/skills",

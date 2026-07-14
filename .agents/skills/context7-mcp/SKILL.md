@@ -36,11 +36,9 @@ From the resolution results, choose based on:
 Call `query-docs` with:
 
 - `libraryId`: The selected Context7 library ID (e.g., `/vercel/next.js`)
-- `query`: The user's specific question
+- `query`: The user's specific question, scoped to a single concept
 
-### Step 3.5: Retry with researchMode if you weren't satisfied
-
-If the default `query-docs` answer didn't satisfy, call `query-docs` **again for the same library** with `researchMode: true`. This retries using sandboxed agents that git-pull the actual source repos plus a live web search, then synthesizes a fresh answer. Do this before giving up or answering from training data. More costly than the default — use it as a targeted retry.
+If the user's question spans multiple distinct concepts (e.g. routing and auth and caching), make a separate `query-docs` call per concept with the same library ID, unless the question is about how the concepts interact — combined queries dilute ranking and return shallow results for each topic.
 
 ### Step 4: Use the Documentation
 
@@ -52,6 +50,7 @@ Incorporate the fetched documentation into your response:
 
 ## Guidelines
 
-- **Be specific**: Pass the user's full question as the query for better results
+- **Be specific**: Pass the user's full question as the query for better results, but keep each query to a single concept
+- **One topic per query**: Split multi-topic questions into separate `query-docs` calls — resolve the library ID once, then query per concept, unless the question is about how the concepts interact
 - **Version awareness**: When users mention versions ("Next.js 15", "React 19"), use version-specific library IDs if available from the resolution step
 - **Prefer official sources**: When multiple matches exist, prefer official/primary packages over community forks
