@@ -22,7 +22,7 @@ describe("useCompareStore", () => {
       expect(useCompareStore.getState().files).toEqual(files);
     });
 
-    it("appends to existing files", () => {
+    it("replaces existing files with new ones", () => {
       const file1 = {
         name: "file1.txt",
         content: "1 Lightning Bolt (m10) 149",
@@ -30,7 +30,17 @@ describe("useCompareStore", () => {
       const file2 = { name: "file2.txt", content: "1 Counterspell (mm2) 37" };
       useCompareStore.getState().addFiles([file1]);
       useCompareStore.getState().addFiles([file2]);
-      expect(useCompareStore.getState().files).toEqual([file1, file2]);
+      expect(useCompareStore.getState().files).toEqual([file2]);
+    });
+
+    it("caps at two files", () => {
+      const files = [
+        { name: "file1.txt", content: "1 Lightning Bolt (m10) 149" },
+        { name: "file2.txt", content: "1 Counterspell (mm2) 37" },
+        { name: "file3.txt", content: "1 Brainstorm" },
+      ];
+      useCompareStore.getState().addFiles(files);
+      expect(useCompareStore.getState().files).toEqual([files[0], files[1]]);
     });
   });
 
