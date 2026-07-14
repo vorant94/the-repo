@@ -201,7 +201,3 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 Don't commit unless explicitly asked — edit files, leave for user review.
 
 NEVER co-sign commits. No `Co-Authored-By` trailer, no "Generated with Claude Code", no agent attribution of any kind. You are a tool, not an author.
-
-## Requirements
-
-Node.js >= 23, npm >= 11.2.0, macOS/Linux only
