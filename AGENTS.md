@@ -36,10 +36,7 @@ pnpm run unused-code:check                 # Knip unused code analysis
 
 **grimoire:** Install globally with `pnpm link --global` from apps/grimoire, then run anywhere:
 ```bash
-grimoire wish-trade [--inputPath ManaBox_Collection.csv] [--outputDir .]
-grimoire merge <deck1> <deck2> [...deckN] [--outputPath merged-decklist.txt]
-grimoire scrap-pauper [--url https://paupergeddon.com/Top64.html] [--outputPath pauper-staples.txt]
-grimoire spectate --url <youtube-url> [--outputPath transcript.txt]
+grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath ./spectate-analysis.md] [--debug]
 ```
 
 **sofash database:** `pnpm run db:generate` to generate migrations, `pnpm run db:migrate:local` to apply them to the local Miniflare D1, `pnpm run db:migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle. Cloudflare binding types are generated via `pnpm run cf-typegen` (`wrangler types`) into `worker-configuration.d.ts` (gitignored); `ts:check` runs it first.
