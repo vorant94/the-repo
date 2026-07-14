@@ -27,7 +27,8 @@ Monorepo: pnpm workspaces, Biome for lint/format.
 pnpm install
 pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
 pnpm -r run --if-present ts:check          # TypeScript across workspaces
-pnpm -r run --if-present test              # Tests across workspaces
+pnpm run test                              # Vitest across all workspaces (root config)
+pnpm run test:coverage                     # Same, with coverage + thresholds
 pnpm run unused-code:check                 # Knip unused code analysis
 ```
 
@@ -87,6 +88,12 @@ Always run Biome from repo root. Rules:
 - Prefer `it()` over `test()`, use `describe()` blocks
 - Test utility functions (fixtures, helpers) go below the describe block, not above it
 
+**Running tests (root workspace):**
+- Vitest is configured as a workspace at root `vitest.config.ts` (`test.projects` globs each `{apps,libs,tools}/*/vitest.config.ts`). Per-project `vitest.config.ts` uses `defineProject` and holds only that project's `test` block; coverage config + thresholds live only at root.
+- Always run tests from repo root: `pnpm run test` (or `pnpm run test:coverage`). Apps do NOT have their own `test` script — `pnpm --filter <name> test` won't work.
+- Filter to one project via vitest's `--project <name>`, e.g. `pnpm run test --project mana-forge`.
+- Coverage thresholds are enforced per glob at root (currently `apps/mana-forge/src/**`); `.tsx` and thin DOM/config files are excluded there.
+
 **jsdom setup (React hook/component tests):**
 - Add to vite.config.ts `test` block: `environment: "jsdom"`, `restoreMocks: true`, `setupFiles: ["./src/test-setup.ts"]`
 - `restoreMocks: true` required when spying on prototypes — auto-restores after each test
@@ -105,7 +112,7 @@ Always run Biome from repo root. Rules:
 ## Git Hooks (lefthook)
 
 **pre-commit:** `pnpm run lint:ci`, `pnpm -r run --if-present ts:check`
-**pre-push:** `pnpm -r run --if-present test`, `pnpm run unused-code:check`
+**pre-push:** `pnpm run test` (root vitest workspace), `pnpm run unused-code:check`
 
 ## Programming Preferences
 
