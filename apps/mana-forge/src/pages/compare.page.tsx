@@ -17,11 +17,12 @@ export const ComparePage: FC = () => {
         files={files}
         onAddFiles={(newFiles) => useCompareStore.getState().addFiles(newFiles)}
         onRemoveFile={(index) => useCompareStore.getState().removeFile(index)}
+        maxFiles={2}
       />
 
       <Button
         onClick={() => useCompareStore.getState().compare()}
-        disabled={files.length < 2}
+        disabled={files.length !== 2}
       >
         Compare
       </Button>
@@ -41,6 +42,11 @@ export const ComparePage: FC = () => {
           <SimpleGrid cols={2}>
             <ResultSection resultSectionId={resultSectionId.exactMatches} />
             <ResultSection resultSectionId={resultSectionId.partialMatches} />
+          </SimpleGrid>
+
+          <SimpleGrid cols={2}>
+            <ResultSection resultSectionId={resultSectionId.onlyInFirst} />
+            <ResultSection resultSectionId={resultSectionId.onlyInSecond} />
           </SimpleGrid>
         </>
       )}

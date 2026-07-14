@@ -7,6 +7,8 @@ import { parseManaBoxSelectionCsv } from "../utils/manabox-csv.ts";
 export const resultSectionId = {
   exactMatches: "exactMatches",
   partialMatches: "partialMatches",
+  onlyInFirst: "onlyInFirst",
+  onlyInSecond: "onlyInSecond",
 } as const;
 
 export type ResultSectionId =
@@ -15,6 +17,8 @@ export type ResultSectionId =
 export interface CompareResult {
   exactMatches: Array<Card>;
   partialMatches: Array<Card>;
+  onlyInFirst: Array<Card>;
+  onlyInSecond: Array<Card>;
   similarity: number;
   similarityWithoutBasicLands: number;
 }
@@ -34,43 +38,39 @@ function compareCards(lists: Array<Array<Card>>): CompareResult {
     return {
       exactMatches: [],
       partialMatches: [],
+      onlyInFirst: [],
+      onlyInSecond: [],
       similarity: 0,
       similarityWithoutBasicLands: 0,
     };
   }
 
-  const fileCount = lists.length;
-
-  const exactKeyCounts = new Map<string, number>();
-  const partialKeyCounts = new Map<string, number>();
-  const exactKeyToCard = new Map<string, Card>();
-  const partialKeyToCard = new Map<string, Card>();
-
-  for (const list of lists) {
-    const seenExactKeys = new Set<string>();
-    const seenPartialKeys = new Set<string>();
-
+  const perListKeyQty = lists.map((list) => {
+    const map = new Map<string, number>();
     for (const card of list) {
-      const exactKey = cardKey(card);
-      const partialKey = card.name;
+      const key = cardKey(card);
+      map.set(key, (map.get(key) ?? 0) + card.quantity);
+    }
+    return map;
+  });
 
-      if (!seenExactKeys.has(exactKey)) {
-        seenExactKeys.add(exactKey);
-        exactKeyCounts.set(exactKey, (exactKeyCounts.get(exactKey) ?? 0) + 1);
-        if (!exactKeyToCard.has(exactKey)) {
-          exactKeyToCard.set(exactKey, card);
-        }
+  const perListNameQty = lists.map((list) => {
+    const map = new Map<string, number>();
+    for (const card of list) {
+      map.set(card.name, (map.get(card.name) ?? 0) + card.quantity);
+    }
+    return map;
+  });
+
+  const representativeByKey = new Map<string, Card>();
+  const representativeByName = new Map<string, Card>();
+  for (const list of lists) {
+    for (const card of list) {
+      if (!representativeByKey.has(cardKey(card))) {
+        representativeByKey.set(cardKey(card), card);
       }
-
-      if (!seenPartialKeys.has(partialKey)) {
-        seenPartialKeys.add(partialKey);
-        partialKeyCounts.set(
-          partialKey,
-          (partialKeyCounts.get(partialKey) ?? 0) + 1,
-        );
-        if (!partialKeyToCard.has(partialKey)) {
-          partialKeyToCard.set(partialKey, card);
-        }
+      if (!representativeByName.has(card.name)) {
+        representativeByName.set(card.name, card);
       }
     }
   }
@@ -78,42 +78,99 @@ function compareCards(lists: Array<Array<Card>>): CompareResult {
   const exactMatches: Array<Card> = [];
   const exactMatchNames = new Set<string>();
 
-  for (const [key, count] of exactKeyCounts) {
-    if (count !== fileCount) {
+  for (const [key, card] of representativeByKey) {
+    if (!perListKeyQty.every((map) => map.has(key))) {
       continue;
     }
-
-    const card = exactKeyToCard.get(key);
-    if (!card) {
-      continue;
-    }
-
-    exactMatches.push(card);
+    const minQty = perListKeyQty.reduce(
+      (min, map) => Math.min(min, map.get(key) ?? min),
+      Number.MAX_SAFE_INTEGER,
+    );
+    exactMatches.push({ ...card, quantity: minQty });
     exactMatchNames.add(card.name);
   }
 
   const partialMatches: Array<Card> = [];
 
-  for (const [name, count] of partialKeyCounts) {
-    if (count !== fileCount) {
-      continue;
-    }
-
+  for (const [name, card] of representativeByName) {
     if (exactMatchNames.has(name)) {
       continue;
     }
-
-    const card = partialKeyToCard.get(name);
-    if (!card) {
+    if (!perListNameQty.every((map) => map.has(name))) {
       continue;
     }
+    const minQty = perListNameQty.reduce(
+      (min, map) => Math.min(min, map.get(name) ?? min),
+      Number.MAX_SAFE_INTEGER,
+    );
+    partialMatches.push({ ...card, quantity: minQty });
+  }
 
-    partialMatches.push(card);
+  const firstList = lists[0];
+  const secondList = lists[1];
+
+  if (!firstList || !secondList) {
+    return {
+      exactMatches: [],
+      partialMatches: [],
+      onlyInFirst: [],
+      onlyInSecond: [],
+      similarity: 0,
+      similarityWithoutBasicLands: 0,
+    };
+  }
+
+  const firstNameQty = perListNameQty[0];
+  const secondNameQty = perListNameQty[1];
+
+  if (!firstNameQty || !secondNameQty) {
+    return {
+      exactMatches: [],
+      partialMatches: [],
+      onlyInFirst: [],
+      onlyInSecond: [],
+      similarity: 0,
+      similarityWithoutBasicLands: 0,
+    };
+  }
+
+  const firstNameToCard = new Map<string, Card>();
+  for (const card of firstList) {
+    firstNameToCard.set(card.name, card);
+  }
+
+  const secondNameToCard = new Map<string, Card>();
+  for (const card of secondList) {
+    secondNameToCard.set(card.name, card);
+  }
+
+  const allNames = new Set([...firstNameQty.keys(), ...secondNameQty.keys()]);
+
+  const onlyInFirst: Array<Card> = [];
+  const onlyInSecond: Array<Card> = [];
+
+  for (const name of allNames) {
+    const qty1 = firstNameQty.get(name) ?? 0;
+    const qty2 = secondNameQty.get(name) ?? 0;
+
+    if (qty1 > qty2) {
+      const card = firstNameToCard.get(name);
+      if (card) {
+        onlyInFirst.push({ ...card, quantity: qty1 - qty2 });
+      }
+    } else if (qty2 > qty1) {
+      const card = secondNameToCard.get(name);
+      if (card) {
+        onlyInSecond.push({ ...card, quantity: qty2 - qty1 });
+      }
+    }
   }
 
   return {
     exactMatches,
     partialMatches,
+    onlyInFirst,
+    onlyInSecond,
     similarity: similarityByCopies(lists),
     similarityWithoutBasicLands: similarityByCopies(
       lists.map((list) => list.filter((card) => !isBasicLand(card))),
@@ -169,7 +226,7 @@ export const useCompareStore = create<CompareStore>()(
 
     addFiles: (newFiles) =>
       set((state) => {
-        state.files.push(...newFiles);
+        state.files = newFiles.slice(0, 2);
       }),
 
     removeFile: (index) =>

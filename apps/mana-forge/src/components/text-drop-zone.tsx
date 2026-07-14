@@ -9,6 +9,8 @@ export interface TextDropZoneProps {
   files: Array<TextFile>;
   onAddFiles: (files: Array<TextFile>) => void;
   onRemoveFile: (index: number) => void;
+  disabled?: boolean;
+  maxFiles?: number;
   multiple?: boolean;
   accept?: Record<string, Array<string>>;
   label?: string;
@@ -19,6 +21,8 @@ export const TextDropZone: FC<TextDropZoneProps> = ({
   files,
   onAddFiles,
   onRemoveFile,
+  disabled = false,
+  maxFiles,
   multiple = true,
   accept = { "text/plain": [".txt"], "text/csv": [".csv"] },
   label = "Drag TXT or CSV files here or click to select",
@@ -37,6 +41,8 @@ export const TextDropZone: FC<TextDropZoneProps> = ({
     multiple,
     useFsAccessApi: false,
     accept,
+    disabled,
+    maxFiles,
   });
 
   return (
