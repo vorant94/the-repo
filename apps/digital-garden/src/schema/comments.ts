@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import type z from "zod";
@@ -9,7 +8,9 @@ export const comments = sqliteTable("comments", {
   authorId: text()
     .notNull()
     .references(() => users.id),
-  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text()
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
   updatedAt: text(),
   postSlug: text().notNull(),
   text: text().notNull(),

@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { blob, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import type z from "zod";
@@ -10,8 +9,12 @@ export const sessions = sqliteTable("sessions", {
     .notNull()
     .references(() => users.id),
   secretHash: blob({ mode: "buffer" }).notNull(),
-  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  lastValidatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text()
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  lastValidatedAt: text()
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
 });
 
 export const sessionSchema = createSelectSchema(sessions);

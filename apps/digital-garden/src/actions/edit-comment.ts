@@ -1,5 +1,5 @@
 import { ActionError, defineAction } from "astro:actions";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { editCommentInputSchema } from "../lib/api";
 import type { CommentWithAuthor } from "../lib/comments";
 import { commentSchema, comments } from "../schema/comments";
@@ -36,7 +36,7 @@ export const editComment = defineAction({
       .update(comments)
       .set({
         text,
-        updatedAt: sql`(CURRENT_TIMESTAMP)`,
+        updatedAt: new Date().toISOString(),
       })
       .where(eq(comments.id, commentId))
       .returning();

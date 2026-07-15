@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import type { APIContext } from "astro";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { type Session, sessionSchema, sessions } from "../schema/sessions";
 
 interface SessionWithToken extends Session {
@@ -107,7 +107,7 @@ export async function validateSessionToken(
   ) {
     const [rawUpdated] = await db
       .update(sessions)
-      .set({ lastValidatedAt: sql`(CURRENT_TIMESTAMP)` })
+      .set({ lastValidatedAt: new Date().toISOString() })
       .where(eq(sessions.id, session.id))
       .returning();
 

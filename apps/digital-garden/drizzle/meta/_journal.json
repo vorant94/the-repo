@@ -57,6 +57,13 @@
       "when": 1772874133778,
       "tag": "0007_crazy_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1784119267717,
+      "tag": "0008_odd_killraven",
+      "breakpoints": true
     }
   ]
 }
