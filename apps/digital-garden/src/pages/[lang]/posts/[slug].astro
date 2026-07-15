@@ -35,6 +35,8 @@ export interface Props {
 
 const { post } = Astro.props;
 
+const locale = Astro.currentLocale;
+
 const [_, id] = post.id.split("/");
 if (!id) {
   throw new Error("Can't get post id!");
@@ -113,5 +115,6 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 	<CommentsServerWrapper
    	server:defer
    	postSlug={id}
+    locale={locale}
 	/>
 </DefaultLayout>
