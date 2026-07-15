@@ -53,6 +53,36 @@ describe("useMergeStore", () => {
       });
     });
 
+    it("sums quantities of duplicate rows within the same file", () => {
+      useMergeStore.getState().addFiles([
+        { name: "deck-a.txt", content: "1 Bojuka Bog\n1 Bojuka Bog" },
+        { name: "deck-b.txt", content: "4 Island" },
+      ]);
+      useMergeStore.getState().merge();
+
+      const { result } = useMergeStore.getState();
+      expect(result?.cards).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: "Bojuka Bog", quantity: 2 }),
+        ]),
+      );
+    });
+
+    it("sums within each file then takes max across files", () => {
+      useMergeStore.getState().addFiles([
+        { name: "deck-a.txt", content: "1 Bojuka Bog\n1 Bojuka Bog" },
+        { name: "deck-b.txt", content: "1 Bojuka Bog" },
+      ]);
+      useMergeStore.getState().merge();
+
+      const { result } = useMergeStore.getState();
+      expect(result?.cards).toHaveLength(1);
+      expect(result?.cards[0]).toMatchObject({
+        name: "Bojuka Bog",
+        quantity: 2,
+      });
+    });
+
     it("returns cards from a single file unchanged", () => {
       useMergeStore.getState().addFiles([
         {

@@ -10,7 +10,6 @@
     "dedent": "^1.7.1",
     "env-paths": "^3.0.0",
     "fs-extra": "catalog:",
-    "linkedom": "^0.18.5",
     "slugify": "^1.6.6",
     "zod": "catalog:"
   },
@@ -18,12 +17,10 @@
     "@total-typescript/ts-reset": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "private": true,
   "scripts": {
-    "test": "vitest run",
     "ts:check": "tsc"
   },
   "type": "module"

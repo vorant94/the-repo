@@ -1,4 +1,4 @@
-import { Button, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Button, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { ResultSection } from "../components/result-section.tsx";
@@ -17,20 +17,38 @@ export const ComparePage: FC = () => {
         files={files}
         onAddFiles={(newFiles) => useCompareStore.getState().addFiles(newFiles)}
         onRemoveFile={(index) => useCompareStore.getState().removeFile(index)}
+        maxFiles={2}
       />
 
       <Button
         onClick={() => useCompareStore.getState().compare()}
-        disabled={files.length < 2}
+        disabled={files.length !== 2}
       >
         Compare
       </Button>
 
       {result && (
-        <SimpleGrid cols={2}>
-          <ResultSection resultSectionId={resultSectionId.exactMatches} />
-          <ResultSection resultSectionId={resultSectionId.partialMatches} />
-        </SimpleGrid>
+        <>
+          <Group gap="xl">
+            <Text>
+              Similarity: <strong>{result.similarity.toFixed(1)}%</strong>
+            </Text>
+            <Text>
+              Similarity (excluding basic lands):{" "}
+              <strong>{result.similarityWithoutBasicLands.toFixed(1)}%</strong>
+            </Text>
+          </Group>
+
+          <SimpleGrid cols={2}>
+            <ResultSection resultSectionId={resultSectionId.exactMatches} />
+            <ResultSection resultSectionId={resultSectionId.partialMatches} />
+          </SimpleGrid>
+
+          <SimpleGrid cols={2}>
+            <ResultSection resultSectionId={resultSectionId.onlyInFirst} />
+            <ResultSection resultSectionId={resultSectionId.onlyInSecond} />
+          </SimpleGrid>
+        </>
       )}
     </Stack>
   );

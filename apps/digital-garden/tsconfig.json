@@ -39,12 +39,7 @@
     "jsxImportSource": "react",
 
     /* Misc */
-    "types": [
-      "vite/client",
-      "@total-typescript/ts-reset",
-      "node",
-      "@cloudflare/workers-types"
-    ]
+    "types": ["vite/client", "@total-typescript/ts-reset", "node"]
   },
   "include": [
     "src",

@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sofash",
+  "main": "./src/main.ts",
+  "compatibility_date": "2024-11-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sofash",
+      "database_id": "2e220ae3-0252-483d-911b-87daf934a808",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

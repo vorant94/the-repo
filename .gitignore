@@ -8,6 +8,8 @@ playwright-report
 test-results
 .react-router
 .env
+.dev.vars
+worker-configuration.d.ts
 *.local
 *.log
 *.sw?
@@ -19,7 +21,6 @@ data
 .vscode
 .claude/*
 !.claude/skills
-!.claude/settings.json
 .husky/_
 build
 out

@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.5",
-    "@cloudflare/workers-types": "catalog:",
     "@playwright/test": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@total-typescript/ts-reset": "catalog:",
@@ -55,6 +54,7 @@
   "private": true,
   "scripts": {
     "build": "astro build",
+    "cf-typegen": "wrangler types",
     "deploy:preview": "wrangler versions upload --preview-alias preview",
     "deploy:production": "wrangler deploy",
     "e2e": "playwright test",
@@ -62,10 +62,12 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:ui": "playwright test --ui",
-    "migrate:production": "wrangler d1 migrations apply DB --remote",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:production": "wrangler d1 migrations apply DB --remote",
     "start:dev": "astro dev",
     "start:prod": "astro preview",
-    "ts:check": "wrangler types && astro check"
+    "ts:check": "pnpm run cf-typegen && astro check"
   },
   "type": "module"
 }

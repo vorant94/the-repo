@@ -1,21 +1,12 @@
-import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import { configSchema } from "./src/shared/context/config.ts";
 import { dbConfig } from "./src/shared/schema/db-config.ts";
 
-const dotenvConfig = configSchema
-  .pick({
-    // biome-ignore lint/style/useNamingConvention: env variables have different convention
-    DB_FILE_NAME: true,
-  })
-  .parse(config().parsed);
-
+// migrations are generated here and applied to the D1 databases (local
+// Miniflare + remote) via `wrangler d1 migrations apply DB`, so no
+// dbCredentials are needed for drizzle-kit generate
 export default defineConfig({
   ...dbConfig,
   out: "./drizzle",
   schema: "./src/shared/schema",
   dialect: "sqlite",
-  dbCredentials: {
-    url: dotenvConfig.DB_FILE_NAME,
-  },
 });

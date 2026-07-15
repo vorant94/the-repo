@@ -54,7 +54,11 @@ const legacyI18nRedirects = {
 };
 
 export default defineConfig({
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+    },
+  }),
   site: "https://vorant94.dev",
   trailingSlash: "never",
   prefetch: true,
@@ -64,12 +68,6 @@ export default defineConfig({
     // additionally since astro middleware is ran at buildtime it evaluates secrets as well there
     // in order to avoid keeping env vars in the GitHub Actions everything should have a default dummy value at least.
     schema: {
-      // biome-ignore lint/style/useNamingConvention: env variables have different convention
-      DB_FILE_NAME: envField.string({
-        context: "server",
-        access: "secret",
-        default: ":memory:",
-      }),
       // biome-ignore lint/style/useNamingConvention: env variables have different convention
       GITHUB_CLIENT_ID: envField.string({
         context: "server",

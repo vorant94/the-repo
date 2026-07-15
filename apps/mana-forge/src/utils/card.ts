@@ -14,6 +14,24 @@ export interface Card {
 export const cardKey = (card: Card): string =>
   `${card.name}|${card.setCode}|${card.collectorNumber}|${card.foil}`;
 
+const basicLandNames = new Set([
+  "Plains",
+  "Island",
+  "Swamp",
+  "Mountain",
+  "Forest",
+  "Wastes",
+  "Snow-Covered Plains",
+  "Snow-Covered Island",
+  "Snow-Covered Swamp",
+  "Snow-Covered Mountain",
+  "Snow-Covered Forest",
+  "Snow-Covered Wastes",
+]);
+
+export const isBasicLand = (card: Card): boolean =>
+  basicLandNames.has(card.name);
+
 export function formatCard(card: Card): string {
   if (!card.setCode) {
     return `${card.quantity} ${card.name}`;

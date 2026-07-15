@@ -17,11 +17,26 @@ interface MergeStore {
   reset: () => void;
 }
 
+function normalizeList(list: Array<Card>): Map<string, Card> {
+  const nameToCard = new Map<string, Card>();
+
+  for (const card of list) {
+    const existing = nameToCard.get(card.name);
+    if (!existing) {
+      nameToCard.set(card.name, { ...card });
+      continue;
+    }
+    existing.quantity += card.quantity;
+  }
+
+  return nameToCard;
+}
+
 function mergeCards(lists: Array<Array<Card>>): Array<Card> {
   const nameToCard = new Map<string, Card>();
 
   for (const list of lists) {
-    for (const card of list) {
+    for (const card of normalizeList(list).values()) {
       const existing = nameToCard.get(card.name);
       if (!existing || card.quantity > existing.quantity) {
         nameToCard.set(card.name, { ...card });

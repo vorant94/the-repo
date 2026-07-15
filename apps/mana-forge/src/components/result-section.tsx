@@ -25,7 +25,8 @@ export const ResultSection: FC<ResultSectionProps> = ({ resultSectionId }) => {
     <Stack gap="xs">
       <Group justify="space-between">
         <Title order={4}>
-          {resultSectionTitles[resultSectionId]} ({cards.length})
+          {resultSectionTitles[resultSectionId]} (
+          {cards.reduce((sum, c) => sum + c.quantity, 0)})
         </Title>
         <Button
           size="xs"
@@ -40,7 +41,7 @@ export const ResultSection: FC<ResultSectionProps> = ({ resultSectionId }) => {
 
       <Stack
         gap={2}
-        className={cn("max-h-96 overflow-y-auto rounded border p-2")}
+        className={cn("max-h-48 flex-1 overflow-y-auto rounded border p-2")}
       >
         {cards.length === 0 ? (
           <Text
@@ -66,10 +67,14 @@ export const ResultSection: FC<ResultSectionProps> = ({ resultSectionId }) => {
 
 const resultSectionTitles: Record<ResultSectionId, string> = {
   exactMatches: "Exact Matches",
-  partialMatches: "Partial Matches",
+  partialMatches: "Version / Foil Mismatches",
+  onlyInFirst: "Only in First Deck",
+  onlyInSecond: "Only in Second Deck",
 };
 
 const resultSectionFilenames: Record<ResultSectionId, string> = {
   exactMatches: "exact-matches.txt",
-  partialMatches: "partial-matches.txt",
+  partialMatches: "version-foil-mismatches.txt",
+  onlyInFirst: "only-in-first-deck.txt",
+  onlyInSecond: "only-in-second-deck.txt",
 };

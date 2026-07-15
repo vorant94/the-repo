@@ -1,5 +1,6 @@
 import { Button, Group, Stack, Text, Title } from "@mantine/core";
-import { IconDownload } from "@tabler/icons-react";
+import { useClipboard } from "@mantine/hooks";
+import { IconCheck, IconCopy, IconDownload } from "@tabler/icons-react";
 import type { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { TextDropZone } from "../components/text-drop-zone.tsx";
@@ -10,6 +11,7 @@ import { downloadTextFile } from "../utils/download-text-file.ts";
 export const MergePage: FC = () => {
   const files = useMergeStore(useShallow((s) => s.files));
   const result = useMergeStore((s) => s.result);
+  const clipboard = useClipboard({ timeout: 2000 });
 
   const handleDownload = () => {
     if (!result) {
@@ -17,6 +19,14 @@ export const MergePage: FC = () => {
     }
     const content = result.cards.map(formatCard).join("\n");
     downloadTextFile("merged-decklist.txt", content);
+  };
+
+  const handleCopy = () => {
+    if (!result) {
+      return;
+    }
+    const content = result.cards.map(formatCard).join("\n");
+    clipboard.copy(content);
   };
 
   return (
@@ -45,15 +55,32 @@ export const MergePage: FC = () => {
               Merged Decklist (
               {result.cards.reduce((sum, c) => sum + c.quantity, 0)} cards)
             </Title>
-            <Button
-              size="xs"
-              variant="light"
-              leftSection={<IconDownload size="1em" />}
-              disabled={result.cards.length === 0}
-              onClick={handleDownload}
-            >
-              Download
-            </Button>
+            <Group gap="xs">
+              <Button
+                size="xs"
+                variant="light"
+                leftSection={
+                  clipboard.copied ? (
+                    <IconCheck size="1em" />
+                  ) : (
+                    <IconCopy size="1em" />
+                  )
+                }
+                disabled={result.cards.length === 0}
+                onClick={handleCopy}
+              >
+                {clipboard.copied ? "Copied" : "Copy"}
+              </Button>
+              <Button
+                size="xs"
+                variant="light"
+                leftSection={<IconDownload size="1em" />}
+                disabled={result.cards.length === 0}
+                onClick={handleDownload}
+              >
+                Download
+              </Button>
+            </Group>
           </Group>
 
           <Stack

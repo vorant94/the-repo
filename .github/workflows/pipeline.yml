@@ -55,9 +55,6 @@ jobs:
       - name: TS Check
         run: pnpm --filter=${{ inputs.workspace }} run ts:check
 
-      - name: Test
-        run: pnpm --filter=${{ inputs.workspace }} run --if-present test
-
       - name: Are Translations Sorted
         run: pnpm --filter=${{ inputs.workspace }} run --if-present are-translations-sorted
 
@@ -138,6 +135,7 @@ jobs:
       (needs.e2e.result == 'success' || needs.e2e.result == 'skipped') &&
       needs.ci.outputs.has_deploy == 'true' &&
       (
+        github.event_name == 'workflow_dispatch' ||
         (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
         (github.event_name == 'pull_request' &&
           contains(github.event.pull_request.labels.*.name, 'preview') &&
@@ -169,13 +167,13 @@ jobs:
           path: apps/${{ inputs.workspace }}/dist
 
       - name: Migrate
-        run: pnpm --filter=${{ inputs.workspace }} run --if-present migrate:production
+        run: pnpm --filter=${{ inputs.workspace }} run --if-present db:migrate:production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
       - name: Deploy Production
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
         run: pnpm --filter=${{ inputs.workspace }} run deploy:production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

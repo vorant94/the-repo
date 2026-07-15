@@ -120,16 +120,27 @@ export function useBinderPositions({
 
 const cardWidth = 180;
 const cardHeight = 50;
+const gap = 24;
+const maxAttempts = 400;
 
-function isOverlapping(pos1: Position, pos2: Position): boolean {
+function isOverlapping(
+  pos1: Position,
+  pos2: Position,
+  padding: number,
+): boolean {
   return !(
-    pos1.x + cardWidth <= pos2.x ||
-    pos2.x + cardWidth <= pos1.x ||
-    pos1.y + cardHeight <= pos2.y ||
-    pos2.y + cardHeight <= pos1.y
+    pos1.x + cardWidth + padding <= pos2.x ||
+    pos2.x + cardWidth + padding <= pos1.x ||
+    pos1.y + cardHeight + padding <= pos2.y ||
+    pos2.y + cardHeight + padding <= pos1.y
   );
 }
 
+// Rejection sampling ("dart throwing"): try random spots inside the visible
+// canvas, keep the first that doesn't collide with an existing binder. Produces
+// an organic, force-directed-graph-like scatter instead of rigid rows. Positions
+// stay within the container bounds (no scroll); if no free spot is found after
+// maxAttempts, a random overlapping spot is used as a fallback.
 function findInitialPosition(
   existingPositions: Array<Position>,
   containerRef: RefObject<HTMLDivElement | null>,
@@ -138,38 +149,18 @@ function findInitialPosition(
   const containerWidth = container?.clientWidth ?? 400;
   const containerHeight = container?.clientHeight ?? 200;
 
-  const centerX = (containerWidth - cardWidth) / 2;
-  const centerY = (containerHeight - cardHeight) / 2;
+  const maxX = Math.max(0, containerWidth - cardWidth);
+  const maxY = Math.max(0, containerHeight - cardHeight);
 
-  const step = 20;
-  const maxRadius = Math.max(containerWidth, containerHeight);
-
-  for (let radius = 0; radius < maxRadius; radius += step) {
-    const angleStep = radius === 0 ? 1 : Math.PI / 4;
-    for (let angle = 0; angle < 2 * Math.PI; angle += angleStep) {
-      const candidate: Position = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-      };
-
-      if (candidate.x < 0 || candidate.y < 0) {
-        continue;
-      }
-      if (candidate.x + cardWidth > containerWidth) {
-        continue;
-      }
-      if (candidate.y + cardHeight > containerHeight) {
-        continue;
-      }
-
-      const hasOverlap = existingPositions.some((pos) =>
-        isOverlapping(candidate, pos),
-      );
-      if (!hasOverlap) {
-        return candidate;
-      }
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const candidate: Position = {
+      x: Math.random() * maxX,
+      y: Math.random() * maxY,
+    };
+    if (!existingPositions.some((pos) => isOverlapping(candidate, pos, gap))) {
+      return candidate;
     }
   }
 
-  return { x: centerX, y: centerY };
+  return { x: Math.random() * maxX, y: Math.random() * maxY };
 }

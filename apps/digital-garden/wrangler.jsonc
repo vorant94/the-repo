@@ -1,5 +1,5 @@
 {
-  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "$schema": "node_modules/wrangler/config-schema.json",
   "main": "dist/_worker.js/index.js",
   "name": "digital-garden",
   "compatibility_date": "2025-11-30",
@@ -22,7 +22,8 @@
     {
       "binding": "DB",
       "database_name": "digital-garden",
-      "database_id": "4cf10012-d3fb-4e62-8f64-6d4af55c0cb8"
+      "database_id": "4cf10012-d3fb-4e62-8f64-6d4af55c0cb8",
+      "migrations_dir": "drizzle"
     }
   ]
 }

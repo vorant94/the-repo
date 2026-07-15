@@ -1,4 +1,3 @@
-import { DB_FILE_NAME } from "astro:env/server";
 import { defineMiddleware, sequence } from "astro:middleware";
 import { dbConfig } from "./globals/db";
 import { setSessionCookie, validateSessionToken } from "./lib/sessions";
@@ -15,13 +14,8 @@ const defineMiddlewarePrerenderFalse: typeof defineMiddleware = (fn) => {
 };
 
 const setupDb = defineMiddlewarePrerenderFalse(async (ctx, next) => {
-  if (import.meta.env.DEV) {
-    const { drizzle } = await import("drizzle-orm/libsql");
-    ctx.locals.db = drizzle(DB_FILE_NAME, dbConfig);
-  } else {
-    const { drizzle } = await import("drizzle-orm/d1");
-    ctx.locals.db = drizzle(ctx.locals.runtime.env.DB, dbConfig);
-  }
+  const { drizzle } = await import("drizzle-orm/d1");
+  ctx.locals.db = drizzle(ctx.locals.runtime.env.DB, dbConfig);
 
   return next();
 });
