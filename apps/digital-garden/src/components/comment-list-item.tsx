@@ -20,11 +20,9 @@ export const CommentListItem: FC<CommentListItemProps> = ({ comment }) => {
   const locale = useLocale();
   const t = createTranslate(locale ?? "en");
 
-  const avatarUrl = new URL(
-    comment.author
-      ? `https://avatars.githubusercontent.com/u/${comment.author.githubId}`
-      : "https://placehold.co/460x460",
-  );
+  const avatarUrl = comment.author
+    ? `https://avatars.githubusercontent.com/u/${comment.author.githubId}`
+    : null;
 
   const username = comment.author?.username ?? "Anonymous";
   const date = new Date(comment.createdAt);
@@ -45,11 +43,20 @@ export const CommentListItem: FC<CommentListItemProps> = ({ comment }) => {
 
   return (
     <div className="group flex gap-2">
-      <img
-        className={cn("h-9 w-9 shrink-0 rounded-full")}
-        src={avatarUrl.toString()}
-        alt=""
-      />
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt=""
+          className="h-9 w-9 shrink-0 rounded-full"
+        />
+      ) : (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-800">
+          <Icon
+            glyph={"user"}
+            className={cn("text-slate-300 dark:text-slate-600")}
+          />
+        </div>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">

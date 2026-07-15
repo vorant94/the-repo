@@ -45,7 +45,7 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex gap-3">
-        {user && avatarUrl ? (
+        {avatarUrl ? (
           <img
             src={avatarUrl}
             alt=""
