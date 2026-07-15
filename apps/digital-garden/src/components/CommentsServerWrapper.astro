@@ -9,10 +9,13 @@ export interface Props {
 const { user } = Astro.locals;
 
 const { postSlug } = Astro.props;
+
+const locale = Astro.currentLocale;
 ---
 
 <CommentsClientWrapper
   client:only
 	postSlug={postSlug}
 	user={user}
+  locale={locale}
 />

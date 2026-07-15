@@ -5,6 +5,11 @@ import type { FC } from "react";
 import { useForm } from "react-hook-form";
 import { query, queryClient } from "../globals/query";
 import { type AddCommentInput, addCommentInputSchema } from "../lib/api";
+import { createTranslate } from "../lib/i18n.ts";
+import { useLocale } from "./locale-context.tsx";
+import { Button } from "./ui/button.tsx";
+import { ButtonLink } from "./ui/button-link.tsx";
+import { Icon } from "./ui/icon.tsx";
 import { useUser } from "./user-context";
 
 interface CommentFormProps {
@@ -13,6 +18,8 @@ interface CommentFormProps {
 
 export const CommentForm: FC<CommentFormProps> = ({ postSlug }) => {
   const user = useUser();
+  const locale = useLocale();
+  const t = createTranslate(locale ?? "en");
   const loginUrl = new URL("/api/login/github", window.location.origin);
   loginUrl.searchParams.set("redirect_uri", window.location.href);
 
@@ -26,107 +33,83 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug }) => {
   const onSubmit = async (data: AddCommentInput) => {
     await actions.addComment(data);
     reset(defaultValues);
-    queryClient.invalidateQueries({ queryKey: [query.comments, postSlug] });
+    await queryClient.invalidateQueries({
+      queryKey: [query.comments, postSlug],
+    });
   };
 
+  const avatarUrl = user
+    ? `https://avatars.githubusercontent.com/u/${user.githubId}`
+    : null;
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={cn(
-        "flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm",
-        "dark:border-gray-700 dark:bg-gray-800",
-      )}
-    >
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="text"
-          className="font-medium text-gray-700 text-sm dark:text-gray-300"
-        >
-          Add a comment
-        </label>
-        <textarea
-          id="text"
-          required
-          rows={4}
-          placeholder="Share your thoughts..."
-          className={cn(
-            "min-h-[100px] w-full resize-y rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 outline-none transition-colors",
-            "focus:border-blue-500 focus:ring-2 focus:ring-blue-500",
-            "dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100",
-            "dark:focus:border-blue-400 dark:focus:ring-blue-400",
-          )}
-          {...register("text")}
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        {user && (
-          <span className="text-gray-600 text-sm dark:text-gray-400">
-            Commenting as{" "}
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              {user.username}
-            </span>
-          </span>
-        )}
-        {!user && (
-          <span className="text-gray-600 text-sm dark:text-gray-400">
-            Sign in to comment
-          </span>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex gap-3">
+        {user && avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt=""
+            className="h-9 w-9 shrink-0 rounded-full"
+          />
+        ) : (
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-100 dark:border-slate-600 dark:bg-slate-800">
+            <Icon
+              glyph={"user"}
+              className={cn("text-slate-300 dark:text-slate-600")}
+            />
+          </div>
         )}
 
-        {!user && (
-          <a
-            href={loginUrl.toString()}
-            data-astro-prefetch="false"
-            className={cn(
-              "inline-flex items-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 font-medium text-sm text-white transition-colors",
-              "hover:bg-gray-800 focus:ring-4 focus:ring-gray-300",
-              "dark:bg-gray-100 dark:text-gray-900 dark:focus:ring-gray-700 dark:hover:bg-gray-200",
+        {/* Input side */}
+        <div className="min-w-0 flex-1">
+          <textarea
+            id="text"
+            required
+            rows={3}
+            disabled={!user}
+            placeholder={
+              user
+                ? t("comments.write-placeholder")
+                : t("comments.signin-placeholder")
+            }
+            className="w-full resize-y rounded-2xl border not-active:border-transparent p-3 text-slate-600 text-sm outline-cyan-500 active:border-cyan-500 active:outline-solid disabled:cursor-not-allowed dark:bg-stone-800 dark:text-slate-300"
+            {...register("text")}
+          />
+
+          <div className="mt-2.5 flex items-center justify-between gap-3">
+            <div className="text-slate-500 text-sm">
+              {user && (
+                <span>
+                  {t("comments.commenting-as")}
+                  <span className="font-semibold text-slate-600 dark:text-slate-300">
+                    {user.username}
+                  </span>
+                </span>
+              )}
+            </div>
+
+            {user ? (
+              <Button
+                variant="outlined"
+                disabled={!formState.isValid || formState.isSubmitting}
+                type="submit"
+                className="flex items-center justify-center gap-2 p-2 not-disabled:text-slate-800 disabled:text-slate-500 not-disabled:dark:text-slate-100"
+              >
+                {t("comments.comment-button")}
+              </Button>
+            ) : (
+              <ButtonLink
+                variant="outlined"
+                href={loginUrl.toString()}
+                data-astro-prefetch="false"
+                className="flex items-center justify-center gap-2 p-2 not-disabled:text-slate-800 hover:not-disabled:text-cyan-500 disabled:text-slate-500 not-disabled:dark:text-slate-100"
+              >
+                <Icon glyph={"github"} />
+                {t("comments.signin-github")}
+              </ButtonLink>
             )}
-          >
-            <svg
-              className="h-4 w-4"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Sign in with GitHub
-          </a>
-        )}
-        {user && (
-          <button
-            disabled={formState.isSubmitting}
-            type="submit"
-            className={cn(
-              "inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-sm text-white transition-colors",
-              "hover:bg-blue-700 focus:ring-4 focus:ring-blue-300",
-              "dark:bg-blue-500 dark:focus:ring-blue-800 dark:hover:bg-blue-600",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-            )}
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-            Post Comment
-          </button>
-        )}
+          </div>
+        </div>
       </div>
     </form>
   );

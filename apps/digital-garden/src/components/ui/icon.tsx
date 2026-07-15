@@ -1,6 +1,7 @@
 import "@fortawesome/fontawesome-free/css/brands.css";
 import "@fortawesome/fontawesome-free/css/fontawesome.css";
 import "@fortawesome/fontawesome-free/css/solid.css";
+import "@fortawesome/fontawesome-free/css/regular.css";
 import "flag-icons/css/flag-icons.css";
 import { cn } from "cn";
 import type { FC, HTMLAttributes } from "react";
@@ -19,6 +20,8 @@ const iconGlyphs = [
   "bluesky",
   "en",
   "ru",
+  "trash",
+  "user",
 ] as const;
 type IconGlyph = (typeof iconGlyphs)[number];
 
@@ -49,4 +52,6 @@ const iconGlyphToFaIcon = {
   bluesky: "fa-brands fa-bluesky",
   en: "fi fi-us",
   ru: "fi fi-ru",
+  trash: "fa-solid fa-trash",
+  user: "fa-regular fa-user",
 } as const satisfies Record<IconGlyph, string>;
