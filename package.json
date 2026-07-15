@@ -11,6 +11,11 @@
     "skills": "^1.5.3",
     "vitest": "^4.0.10"
   },
+  "pnpm": {
+    "overrides": {
+      "miniflare": "4.20260708.1"
+    }
+  },
   "engines": {
     "node": ">=23"
   },

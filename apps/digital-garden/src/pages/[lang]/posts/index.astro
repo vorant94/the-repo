@@ -9,8 +9,8 @@ import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
-} from "../../../utils/content.helpers";
-import { createTranslate } from "../../../utils/i18n.helpers";
+} from "../../../lib/content";
+import { createTranslate } from "../../../lib/i18n";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({

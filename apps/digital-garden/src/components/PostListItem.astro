@@ -3,8 +3,8 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import type { HTMLAttributes } from "astro/types";
 import { format } from "date-fns";
 import { publishedAtFormat } from "../globals/published-at-format";
-import type { PostModel } from "../utils/content.helpers";
-import Link from "./ui/Link.astro";
+import type { PostModel } from "../lib/content";
+import { Link } from "./ui/link";
 
 export interface Props extends HTMLAttributes<"li"> {
   post: PostModel;
@@ -21,7 +21,7 @@ const [lang, id] = post.id.split("/");
 >
 	<Link
 		href={getRelativeLocaleUrl(lang!, `/${post.collection}/${id}`)}
-		class="flex items-center gap-3 text-slate-800 dark:text-slate-100"
+		className="flex items-center gap-3 text-slate-800 dark:text-slate-100"
 		aria-label={post.data.title}
 	>
 		<span

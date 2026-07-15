@@ -1,0 +1,20 @@
+---
+import { CommentsClientWrapper } from "./comments-client-wrapper";
+
+export interface Props {
+  postSlug: string;
+  locale: string | undefined;
+}
+
+// this component is needed to be able to get user data on-demand and not during build
+const { user } = Astro.locals;
+
+const { postSlug, locale } = Astro.props;
+---
+
+<CommentsClientWrapper
+  client:only
+	postSlug={postSlug}
+	user={user}
+  locale={locale}
+/>

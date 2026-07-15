@@ -26,9 +26,20 @@ export const defaultDict = {
   "profile.description": "My personal piece of the Internet",
   "posts.title": "Posts",
   "tags.title": "posts",
+  "comments.write-placeholder": "Write a comment…",
+  "comments.signin-placeholder": "Sign in to comment",
+  "comments.commenting-as": "Commenting as ",
+  "comments.comment-button": "Comment",
+  "comments.signin-github": "Sign in with GitHub",
+  "comments.delete-confirm": "Are you sure you want to delete this comment?",
+  "comments.count-singular": "1 Comment",
+  "comments.count-plural": "Comments",
+  "comments.count-plural-2-4": "Comments",
+  "comments.count-plural-5": "Comments",
+  "comments.empty": "No comments yet — be the first to say something.",
 } as const;
 export type DictionaryKey = keyof typeof defaultDict;
-export type Dictionary = Record<DictionaryKey, string>;
+type Dictionary = Record<DictionaryKey, string>;
 
 export const languageToLocale = {
   en: "en-US",
@@ -62,6 +73,19 @@ export const languageToDict = {
     "profile.description": "Мой личный кусочек Интернета",
     "posts.title": "Посты",
     "tags.title": "посты",
+    "comments.write-placeholder": "Написать комментарий…",
+    "comments.signin-placeholder": "Войдите, чтобы оставить комментарий",
+    "comments.commenting-as": "Вы вошли как ",
+    "comments.comment-button": "Комментировать",
+    "comments.signin-github": "Войти через GitHub",
+    "comments.delete-confirm":
+      "Вы уверены, что хотите удалить этот комментарий?",
+    "comments.count-singular": "1 комментарий",
+    "comments.count-plural": "комментариев",
+    "comments.count-plural-2-4": "комментария",
+    "comments.count-plural-5": "комментариев",
+    "comments.empty":
+      "Комментариев пока нет — будьте первым, кто что-то скажет.",
   },
 } satisfies Record<Language, Dictionary>;
 

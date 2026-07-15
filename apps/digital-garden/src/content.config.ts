@@ -14,7 +14,7 @@ const basePost = z.object({
 });
 
 const posts = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/posts" }),
+  loader: glob({ pattern: "**/*.md", base: "./src/blog" }),
   schema: ({ image }) =>
     z.union([
       basePost.extend({
