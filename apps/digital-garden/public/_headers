@@ -1,4 +1,4 @@
 /*
-  Content-Security-Policy: default-src 'self' 'unsafe-inline'; frame-ancestors 'none'; frame-src 'none'; script-src 'self' 'unsafe-inline' static.cloudflareinsights.com; img-src 'self' data: w3.org/svg/2000 https://avatars.githubusercontent.com;
+  Content-Security-Policy: default-src 'self' 'unsafe-inline'; frame-ancestors 'none'; frame-src 'none'; script-src 'self' 'unsafe-inline' static.cloudflareinsights.com data:; img-src 'self' data: w3.org/svg/2000 https://avatars.githubusercontent.com;
 
 
