@@ -32,6 +32,16 @@ const basicLandNames = new Set([
 export const isBasicLand = (card: Card): boolean =>
   basicLandNames.has(card.name);
 
+export function normalizeCardName(name: string): string {
+  if (name.includes(" // ")) {
+    return name.split(" // ")[0]?.trim() ?? name;
+  }
+  if (name.includes("//")) {
+    return name.split("//")[0]?.trim() ?? name;
+  }
+  return name;
+}
+
 export function formatCard(card: Card): string {
   if (!card.setCode) {
     return `${card.quantity} ${card.name}`;
@@ -63,10 +73,11 @@ function parseCollectionCard(line: string): Card | null {
     return null;
   }
 
-  const name = trimmed.slice(firstSpace + 1, setCodeStart).trim();
-  if (!name) {
+  const rawName = trimmed.slice(firstSpace + 1, setCodeStart).trim();
+  if (!rawName) {
     return null;
   }
+  const name = normalizeCardName(rawName);
 
   const setCodeEnd = trimmed.indexOf(")", setCodeStart);
   if (setCodeEnd === -1) {
@@ -125,10 +136,11 @@ function parseSimpleDecklistCard(line: string): Card | null {
     return null;
   }
 
-  const name = trimmed.slice(firstSpace + 1).trim();
-  if (!name) {
+  const rawName = trimmed.slice(firstSpace + 1).trim();
+  if (!rawName) {
     return null;
   }
+  const name = normalizeCardName(rawName);
 
   return { quantity, name, setCode: "", collectorNumber: "", foil: false };
 }

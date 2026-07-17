@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import z from "zod";
 import type { Card } from "./card.ts";
+import { normalizeCardName } from "./card.ts";
 
 const manaBoxBaseRowSchema = z.object({
   // biome-ignore lint/style/useNamingConvention: CSV header name from external ManaBox export format
@@ -26,7 +27,7 @@ export function parseManaBoxSelectionCsv(content: string): Array<Card> {
     const validRow = manaBoxBaseRowSchema.parse(row);
     cards.push({
       quantity: validRow.Quantity,
-      name: validRow.Name,
+      name: normalizeCardName(validRow.Name),
       setCode: validRow["Set code"],
       collectorNumber: validRow["Collector number"],
       foil: validRow.Foil,
