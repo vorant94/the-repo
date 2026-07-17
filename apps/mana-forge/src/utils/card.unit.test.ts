@@ -218,6 +218,12 @@ describe("parseCollectionFile", () => {
     expect(result[0]).toMatchObject({ quantity: 1, name: "Sagu Wildling" });
   });
 
+  it("normalizes double-faced card names in simple format without spaces", () => {
+    const result = parseCollectionFile("1 Sagu Wildling//Roost Seek");
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ quantity: 1, name: "Sagu Wildling" });
+  });
+
   it("normalizes double-faced card names in collection format", () => {
     const result = parseCollectionFile(
       "1 Sagu Wildling // Roost Seek (TDM) 306",

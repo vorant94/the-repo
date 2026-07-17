@@ -136,10 +136,7 @@ function parseSimpleDecklistCard(line: string): Card | null {
     return null;
   }
 
-  const rawName = trimmed.slice(firstSpace + 1).trim();
-  if (!rawName) {
-    return null;
-  }
+  const rawName = trimmed.slice(firstSpace + 1).trim() ?? "";
   const name = normalizeCardName(rawName);
 
   return { quantity, name, setCode: "", collectorNumber: "", foil: false };
