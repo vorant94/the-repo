@@ -6,7 +6,7 @@ import {
   type ResultSectionId,
   useCompareStore,
 } from "../stores/compare.store.ts";
-import { cardKey, formatCard } from "../utils/card.ts";
+import { formatCard } from "../utils/card.ts";
 import { downloadTextFile } from "../utils/download-text-file.ts";
 
 export interface ResultSectionProps {
@@ -51,14 +51,12 @@ export const ResultSection: FC<ResultSectionProps> = ({ resultSectionId }) => {
             No matches found
           </Text>
         ) : (
-          cards.map((card) => (
-            <Text
-              key={cardKey(card)}
-              size="sm"
-            >
-              {formatCard(card)}
-            </Text>
-          ))
+          <Text
+            size="sm"
+            className={cn("whitespace-pre-wrap")}
+          >
+            {cards.map(formatCard).join("\n")}
+          </Text>
         )}
       </Stack>
     </Stack>

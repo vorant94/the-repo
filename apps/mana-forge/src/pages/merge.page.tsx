@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { TextDropZone } from "../components/text-drop-zone.tsx";
 import { useMergeStore } from "../stores/merge.store.ts";
-import { cardKey, formatCard } from "../utils/card.ts";
+import { formatCard } from "../utils/card.ts";
 import { downloadTextFile } from "../utils/download-text-file.ts";
 
 export const MergePage: FC = () => {
@@ -95,14 +95,12 @@ export const MergePage: FC = () => {
                 No cards found
               </Text>
             ) : (
-              result.cards.map((card) => (
-                <Text
-                  key={cardKey(card)}
-                  size="sm"
-                >
-                  {formatCard(card)}
-                </Text>
-              ))
+              <Text
+                size="sm"
+                className="whitespace-pre-wrap"
+              >
+                {result.cards.map(formatCard).join("\n")}
+              </Text>
             )}
           </Stack>
         </Stack>
