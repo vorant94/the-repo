@@ -38,7 +38,11 @@
     "jsx": "react-jsx",
 
     /* Misc */
-    "types": ["vite/client", "@total-typescript/ts-reset"]
+    "types": [
+      "vite/client",
+      "@total-typescript/ts-reset",
+      "vite-plugin-pwa/client"
+    ]
   },
   "include": ["src", "*.config.ts"]
 }

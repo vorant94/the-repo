@@ -31,6 +31,7 @@
     "postcss-simple-vars": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-pwa": "^1.3.0",
     "wrangler": "catalog:"
   },
   "private": true,
