@@ -12,7 +12,7 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "command": ["npx", "chrome-devtools-mcp"]
+      "command": ["pnpm", "dlx", "chrome-devtools-mcp"]
     }
   }
 }

@@ -1,6 +1,7 @@
 import {
   AppShell,
   Burger,
+  ColorSchemeScript,
   MantineProvider,
   type MantineThemeOverride,
   NavLink,
@@ -33,9 +34,13 @@ export const theme = {} as const satisfies MantineThemeOverride;
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <meta charSet="UTF-8" />
+        <ColorSchemeScript defaultColorScheme="auto" />
         <link
           rel="icon"
           type="image/svg+xml"
