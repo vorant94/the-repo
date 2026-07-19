@@ -4,6 +4,7 @@ import {
   IconFileTypeCsv,
   IconLayersIntersect,
   IconLayersUnion,
+  IconShoppingCart,
 } from "@tabler/icons-react";
 import { cn } from "cn";
 import {
@@ -70,6 +71,11 @@ export const DefaultLayout: FC<PropsWithChildren> = ({ children }) => {
             label="Merge"
             path={route.merge}
             icon={<IconLayersUnion />}
+          />
+          <DefaultLayoutNavLink
+            label="Pick"
+            path={route.pick}
+            icon={<IconShoppingCart />}
           />
         </ol>
       </AppShell.Navbar>

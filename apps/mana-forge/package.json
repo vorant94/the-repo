@@ -6,6 +6,7 @@
     "@mantine/core": "catalog:",
     "@mantine/hooks": "catalog:",
     "@tabler/icons-react": "catalog:",
+    "@tanstack/react-query": "catalog:",
     "cn": "workspace:*",
     "immer": "catalog:",
     "papaparse": "^5.5.3",

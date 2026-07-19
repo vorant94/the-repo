@@ -1,10 +1,12 @@
 import { MantineProvider, type MantineThemeOverride } from "@mantine/core";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 import "./style.css";
 import { createBrowserRouter, Navigate } from "react-router";
 import { App } from "./app.tsx";
+import { queryClient } from "./globals/query-client.ts";
 import { route } from "./globals/route.ts";
 
 if (import.meta.env.DEV) {
@@ -76,17 +78,27 @@ const router = createBrowserRouter([
             Component: m.ComparePage,
           })),
       },
+      {
+        path: route.pick,
+        lazy: () =>
+          import("./pages/pick.page.tsx").then((m) => ({
+            // biome-ignore lint/style/useNamingConvention: 3-rd party type
+            Component: m.PickPage,
+          })),
+      },
     ],
   },
 ]);
 
 createRoot(rootElement).render(
   <StrictMode>
-    <MantineProvider
-      theme={theme}
-      defaultColorScheme="auto"
-    >
-      <RouterProvider router={router} />
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider
+        theme={theme}
+        defaultColorScheme="auto"
+      >
+        <RouterProvider router={router} />
+      </MantineProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );

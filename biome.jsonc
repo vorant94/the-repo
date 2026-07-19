@@ -98,6 +98,7 @@
       "!**/.idea",
       "!**/node_modules",
       "!**/dist",
+      "!**/dev-dist",
       "!**/coverage",
       "!**/playwright-report",
       "!**/test-results",

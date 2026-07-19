@@ -6,6 +6,15 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  server: {
+    proxy: {
+      "/api/scryfall": {
+        target: "https://api.scryfall.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace("/api/scryfall", ""),
+      },
+    },
+  },
   css: {
     postcss: {
       plugins: [
