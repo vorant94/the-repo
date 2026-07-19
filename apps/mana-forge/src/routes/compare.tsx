@@ -53,3 +53,5 @@ export const ComparePage: FC = () => {
     </Stack>
   );
 };
+
+export default ComparePage;

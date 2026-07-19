@@ -38,11 +38,14 @@
     "jsx": "react-jsx",
 
     /* Misc */
-    "types": [
-      "vite/client",
-      "@total-typescript/ts-reset",
-      "vite-plugin-pwa/client"
-    ]
+    "rootDirs": [".", "./.react-router/types"],
+    "types": ["vite/client", "@total-typescript/ts-reset"]
   },
-  "include": ["src", "*.config.ts"]
+  "include": [
+    "src",
+    "workers",
+    "*.config.ts",
+    ".react-router/types/**/*",
+    "worker-configuration.d.ts"
+  ]
 }

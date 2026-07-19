@@ -114,3 +114,5 @@ export const PickPage: FC = () => {
     </Stack>
   );
 };
+
+export default PickPage;

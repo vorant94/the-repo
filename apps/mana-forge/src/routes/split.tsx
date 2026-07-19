@@ -154,3 +154,5 @@ function findBinderById(
 
   return [null, null];
 }
+
+export default SplitPage;

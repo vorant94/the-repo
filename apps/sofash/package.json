@@ -16,7 +16,7 @@
     "zod-openapi": "^4.2.2"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.40.0",
+    "@cloudflare/vite-plugin": "catalog:",
     "@total-typescript/ts-reset": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "catalog:",

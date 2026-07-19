@@ -110,6 +110,7 @@
       "!**/.astro",
       "!**/.vscode",
       "!**/.claude",
+      "!**/.react-router",
       "!**/.husky/_",
       "!**/build",
       "!**/out",
@@ -124,7 +125,15 @@
         "**/*.config.ts",
         "**/*.config.mjs",
         "**/src/main.ts",
-        "**/*.tailwind-plugin.ts"
+        "**/*.tailwind-plugin.ts",
+        "**/src/routes.ts",
+        "**/src/root.tsx",
+        "**/src/routes/**/*.ts",
+        "**/src/routes/**/*.tsx",
+        "**/src/api/scryfall-proxy.ts",
+        "**/workers/app.ts",
+        "**/src/entry.server.tsx",
+        "**/src/pages/**/*.page.tsx"
       ],
       "linter": {
         "rules": {

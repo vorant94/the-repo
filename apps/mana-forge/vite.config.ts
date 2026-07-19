@@ -1,20 +1,11 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
+import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import postcssPresetMantine from "postcss-preset-mantine";
 import postcssSimpleVars from "postcss-simple-vars";
 import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  server: {
-    proxy: {
-      "/api/scryfall": {
-        target: "https://api.scryfall.com",
-        changeOrigin: true,
-        rewrite: (path) => path.replace("/api/scryfall", ""),
-      },
-    },
-  },
   css: {
     postcss: {
       plugins: [
@@ -32,57 +23,8 @@ export default defineConfig({
     },
   },
   plugins: [
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    reactRouter(),
     tailwindcss(),
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
-    }),
-    VitePWA({
-      registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
-      manifest: {
-        name: "Mana Forge",
-        // biome-ignore lint/style/useNamingConvention: Web Manifest standard key
-        short_name: "Mana Forge",
-        description:
-          "Magic: The Gathering web tool for forge, deck building, and brewing.",
-        // biome-ignore lint/style/useNamingConvention: Web Manifest standard key
-        theme_color: "#1a1b1e",
-        // biome-ignore lint/style/useNamingConvention: Web Manifest standard key
-        background_color: "#1a1b1e",
-        display: "standalone",
-        // biome-ignore lint/style/useNamingConvention: Web Manifest standard key
-        start_url: "/",
-        scope: "/",
-        icons: [
-          {
-            src: "favicon.svg",
-            sizes: "192x192",
-            type: "image/svg+xml",
-            purpose: "any",
-          },
-          {
-            src: "favicon.svg",
-            sizes: "512x512",
-            type: "image/svg+xml",
-            purpose: "any",
-          },
-          {
-            src: "favicon.svg",
-            sizes: "192x192 512x512",
-            type: "image/svg+xml",
-            purpose: "maskable",
-          },
-        ],
-      },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
-        navigateFallback: "index.html",
-      },
-      devOptions: {
-        enabled: true,
-      },
-    }),
   ],
 });

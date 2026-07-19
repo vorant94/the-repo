@@ -41,6 +41,8 @@ grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath .
 
 **sofash database:** `pnpm run db:generate` to generate migrations, `pnpm run db:migrate:local` to apply them to the local Miniflare D1, `pnpm run db:migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle. Cloudflare binding types are generated via `pnpm run cf-typegen` (`wrangler types`) into `worker-configuration.d.ts` (gitignored); `ts:check` runs it first.
 
+**Cloudflare SSR headers:** Some projects have two CSP sources: `public/_headers` covers static assets, while Worker or framework middleware must set the equivalent header on SSR/API responses. Keep both policies in sync when changing CSP.
+
 ## Architecture
 
 **mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. React Compiler (babel-plugin-react-compiler) for auto-optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars.

@@ -38,4 +38,16 @@ const setupAuth = defineMiddlewarePrerenderFalse(async (ctx, next) => {
   return next();
 });
 
-export const onRequest = sequence(setupDb, setupAuth);
+const setContentSecurityPolicy = defineMiddlewarePrerenderFalse(
+  async (_ctx, next) => {
+    const response = await next();
+    response.headers.set(
+      "Content-Security-Policy",
+      "default-src 'self' 'unsafe-inline'; frame-ancestors 'none'; frame-src 'none'; script-src 'self' 'unsafe-inline' static.cloudflareinsights.com data:; img-src 'self' data: w3.org/svg/2000 https://avatars.githubusercontent.com;",
+    );
+
+    return response;
+  },
+);
+
+export const onRequest = sequence(setupDb, setupAuth, setContentSecurityPolicy);

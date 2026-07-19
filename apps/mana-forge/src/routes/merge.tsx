@@ -108,3 +108,5 @@ export const MergePage: FC = () => {
     </Stack>
   );
 };
+
+export default MergePage;

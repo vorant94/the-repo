@@ -66,7 +66,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ inputs.workspace }}
-          path: apps/${{ inputs.workspace }}/dist
+          path: |
+            apps/${{ inputs.workspace }}/dist
+            apps/${{ inputs.workspace }}/.wrangler/deploy
           include-hidden-files: true
           retention-days: 1
 
@@ -164,7 +166,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-${{ inputs.workspace }}
-          path: apps/${{ inputs.workspace }}/dist
+          path: apps/${{ inputs.workspace }}
 
       - name: Migrate
         run: pnpm --filter=${{ inputs.workspace }} run --if-present db:migrate:production

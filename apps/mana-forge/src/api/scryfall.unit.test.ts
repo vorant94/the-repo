@@ -61,6 +61,26 @@ describe("getSetCards", () => {
 
     expect(fetch).toHaveBeenCalledTimes(1);
   });
+
+  it("returns no cards when Scryfall does not recognize a set", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 404 })),
+    );
+
+    await expect(getSetCards("unknown")).resolves.toEqual([]);
+  });
+
+  it("throws when Scryfall returns an unexpected error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response(null, { status: 500 })),
+    );
+
+    await expect(getSetCards("error")).rejects.toThrow(
+      "Scryfall search failed for error.",
+    );
+  });
 });
 
 interface ScryfallResponseFixture {

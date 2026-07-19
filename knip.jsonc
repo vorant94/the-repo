@@ -13,7 +13,11 @@
       "ignoreDependencies": ["sharp"] // used by astro image service at runtime, not statically imported
     },
     "apps/mana-forge": {
-      "entry": ["src/main.{ts,tsx}"]
+      "entry": ["workers/app.ts"],
+      "ignoreUnresolved": ["./\\+types/scryfall"],
+      "react-router": {
+        "config": "react-router.config.ts"
+      }
     },
     "apps/grimoire": {
       "entry": ["src/main.ts"]
