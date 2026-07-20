@@ -5,10 +5,10 @@
     "grimoire": "src/main.ts"
   },
   "dependencies": {
-    "@clack/prompts": "^1.0.0",
-    "@google/generative-ai": "^0.21.0",
+    "@clack/prompts": "^1.7.0",
+    "@google/generative-ai": "^0.24.1",
     "dedent": "^1.7.2",
-    "env-paths": "^3.0.0",
+    "env-paths": "^4.0.0",
     "fs-extra": "catalog:",
     "slugify": "^1.6.9",
     "zod": "catalog:"
