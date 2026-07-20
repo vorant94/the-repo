@@ -82,8 +82,8 @@ catalogs:
       specifier: ^11.3.0
       version: 11.3.6
     immer:
-      specifier: ^10.1.1
-      version: 10.2.0
+      specifier: ^11.1.15
+      version: 11.1.15
     postcss-preset-mantine:
       specifier: ^1.15.0
       version: 1.18.0
@@ -208,7 +208,7 @@ importers:
         version: 0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0))(zod@3.25.76)
+        version: 0.7.1(drizzle-orm@0.45.2(@libsql/client@0.14.0))(zod@3.25.76)
       flag-icons:
         specifier: ^7.5.0
         version: 7.5.0
@@ -360,7 +360,7 @@ importers:
         version: link:../../libs/cn
       immer:
         specifier: 'catalog:'
-        version: 10.2.0
+        version: 11.1.15
       papaparse:
         specifier: ^5.5.4
         version: 5.5.4
@@ -384,7 +384,7 @@ importers:
         version: 3.25.76
       zustand:
         specifier: 'catalog:'
-        version: 5.0.14(@types/react@19.2.17)(immer@10.2.0)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        version: 5.0.14(@types/react@19.2.17)(immer@11.1.15)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: 'catalog:'
@@ -448,7 +448,7 @@ importers:
         version: 0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0))(zod@3.25.76)
+        version: 0.7.1(drizzle-orm@0.45.2(@libsql/client@0.14.0))(zod@3.25.76)
       grammy:
         specifier: ^1.31.2
         version: 1.37.0
@@ -523,11 +523,11 @@ importers:
         specifier: ^1.11.21
         version: 1.11.21
       dexie:
-        specifier: ^4.2.1
-        version: 4.2.1
+        specifier: ^4.4.4
+        version: 4.4.4
       dexie-react-hooks:
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react@19.2.17)(dexie@4.2.1)(react@19.2.7)
+        specifier: ^4.4.0
+        version: 4.4.0(dexie@4.4.4)(react@19.2.7)
       i18next:
         specifier: ^25.6.2
         version: 25.6.2(typescript@5.9.3)
@@ -539,7 +539,7 @@ importers:
         version: 7.0.0
       immer:
         specifier: 'catalog:'
-        version: 10.2.0
+        version: 11.1.15
       react:
         specifier: 'catalog:'
         version: 19.2.7
@@ -572,7 +572,7 @@ importers:
         version: 3.25.76
       zustand:
         specifier: 'catalog:'
-        version: 5.0.14(@types/react@19.2.17)(immer@10.2.0)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        version: 5.0.14(@types/react@19.2.17)(immer@11.1.15)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'
@@ -4594,15 +4594,14 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
-  dexie-react-hooks@4.2.0:
-    resolution: {integrity: sha512-u7KqTX9JpBQK8+tEyA9X0yMGXlSCsbm5AU64N6gjvGk/IutYDpLBInMYEAEC83s3qhIvryFS+W+sqLZUBEvePQ==}
+  dexie-react-hooks@4.4.0:
+    resolution: {integrity: sha512-ObLXBS5+4BJU8vtSvBx6b9fY6zZYgniAtwxzjCHsUQadgbqYN6935X2/1TWw4Rf2N1aZV1io5/ziox4vKuxABA==}
     peerDependencies:
-      '@types/react': '>=16'
       dexie: '>=4.2.0-alpha.1 <5.0.0'
       react: '>=16'
 
-  dexie@4.2.1:
-    resolution: {integrity: sha512-Ckej0NS6jxQ4Po3OrSQBFddayRhTCic2DoCAG5zacOfOVB9P2Q5Xc5uL/nVa7ZVs+HdMnvUPzLFCB/JwpB6Csg==}
+  dexie@4.4.4:
+    resolution: {integrity: sha512-jIwsYI8Os2hgnqc6O49YwFDKGc5v5QjGx0wPVp543ip1F53VFAKMLthV2pQosQcVTv3eAskTWYspOx195PM0FQ==}
 
   diff@8.0.4:
     resolution: {integrity: sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==}
@@ -5211,9 +5210,6 @@ packages:
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
-
-  immer@10.2.0:
-    resolution: {integrity: sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==}
 
   immer@11.1.15:
     resolution: {integrity: sha512-VrNANlmnWQnh5COXIIOQXM9oOJw7naGKlBT74ZOOR6lpVXc3gFEu9FJLDFcpCJ2j+NWr8TIwtWD//T6ZX6TKiQ==}
@@ -11422,13 +11418,12 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  dexie-react-hooks@4.2.0(@types/react@19.2.17)(dexie@4.2.1)(react@19.2.7):
+  dexie-react-hooks@4.4.0(dexie@4.4.4)(react@19.2.7):
     dependencies:
-      '@types/react': 19.2.17
-      dexie: 4.2.1
+      dexie: 4.4.4
       react: 19.2.7
 
-  dexie@4.2.1: {}
+  dexie@4.4.4: {}
 
   diff@8.0.4: {}
 
@@ -11484,7 +11479,7 @@ snapshots:
       '@cloudflare/workers-types': 4.20260426.1
       '@libsql/client': 0.14.0
 
-  drizzle-zod@0.7.1(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0))(zod@3.25.76):
+  drizzle-zod@0.7.1(drizzle-orm@0.45.2(@libsql/client@0.14.0))(zod@3.25.76):
     dependencies:
       drizzle-orm: 0.45.2(@cloudflare/workers-types@4.20260426.1)(@libsql/client@0.14.0)
       zod: 3.25.76
@@ -12097,8 +12092,6 @@ snapshots:
   icss-utils@5.1.0(postcss@8.5.12):
     dependencies:
       postcss: 8.5.12
-
-  immer@10.2.0: {}
 
   immer@11.1.15: {}
 
@@ -14858,10 +14851,10 @@ snapshots:
 
   zod@4.4.3: {}
 
-  zustand@5.0.14(@types/react@19.2.17)(immer@10.2.0)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7)):
+  zustand@5.0.14(@types/react@19.2.17)(immer@11.1.15)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7)):
     optionalDependencies:
       '@types/react': 19.2.17
-      immer: 10.2.0
+      immer: 11.1.15
       react: 19.2.7
       use-sync-external-store: 1.6.0(react@19.2.7)
 
