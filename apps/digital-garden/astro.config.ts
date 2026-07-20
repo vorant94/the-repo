@@ -112,6 +112,7 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       include: ["astro/actions/runtime/entrypoints/route.js"],
+      exclude: ["drizzle-orm", "drizzle-zod"],
     },
     css: {
       postcss: {
