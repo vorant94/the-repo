@@ -2,13 +2,13 @@
   "name": "studio",
   "version": "0.0.1",
   "dependencies": {
-    "@remotion/cli": "4.0.376",
-    "@remotion/tailwind-v4": "4.0.376",
-    "@remotion/zod-types": "4.0.376",
+    "@remotion/cli": "4.0.494",
+    "@remotion/tailwind-v4": "4.0.494",
+    "@remotion/zod-types": "4.0.494",
     "cn": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "remotion": "4.0.376",
+    "remotion": "4.0.494",
     "tailwindcss": "catalog:",
     "zod": "catalog:"
   },

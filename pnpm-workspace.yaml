@@ -12,8 +12,8 @@ allowBuilds:
 catalog:
   "@cloudflare/vite-plugin": ^1.45.1
   "@hookform/resolvers": ^5.2.2
-  "@mantine/core": ^8.3.8
-  "@mantine/hooks": ^8.3.8
+  "@mantine/core": ^9.4.1
+  "@mantine/hooks": ^9.4.1
   "@playwright/test": ^1.56.1
   "@tabler/icons-react": ^3.35.0
   "@tailwindcss/vite": ^4.1.17

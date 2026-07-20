@@ -185,12 +185,14 @@ export const DefaultLayoutProvider: FC<PropsWithChildren> = ({ children }) => {
 const defaultLayoutContext = createContext<UseDefaultLayout>({
   isDrawerOpened: false,
   drawer: {
+    set: () => {},
     open: () => {},
     close: () => {},
     toggle: () => {},
   },
   isNavOpened: false,
   nav: {
+    set: () => {},
     open: () => {},
     close: () => {},
     toggle: () => {},
