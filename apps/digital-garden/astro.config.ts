@@ -110,6 +110,9 @@ export default defineConfig({
     react(),
   ],
   vite: {
+    optimizeDeps: {
+      include: ["astro/actions/runtime/entrypoints/route.js"],
+    },
     css: {
       postcss: {
         plugins: [autoprefixer, cssnano],

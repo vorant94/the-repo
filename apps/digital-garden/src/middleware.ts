@@ -1,5 +1,6 @@
 import { defineMiddleware, sequence } from "astro:middleware";
 import { env } from "cloudflare:workers";
+import { drizzle } from "drizzle-orm/d1";
 import { dbConfig } from "./globals/db";
 import { setSessionCookie, validateSessionToken } from "./lib/sessions";
 import { findUserById } from "./lib/users";
@@ -14,8 +15,7 @@ const defineMiddlewarePrerenderFalse: typeof defineMiddleware = (fn) => {
   });
 };
 
-const setupDb = defineMiddlewarePrerenderFalse(async (ctx, next) => {
-  const { drizzle } = await import("drizzle-orm/d1");
+const setupDb = defineMiddlewarePrerenderFalse((ctx, next) => {
   ctx.locals.db = drizzle(env.DB, dbConfig);
 
   return next();
