@@ -32,6 +32,8 @@ pnpm run test:coverage                     # Same, with coverage + thresholds
 pnpm run unused-code:check                 # Knip unused code analysis
 ```
 
+**Codex pnpm access:** Run dependency-mutating pnpm commands (`install`, `add`, `remove`, `up`, `update`, `fetch`) escalated on first attempt. The sandbox cannot write the user-level pnpm store backing the existing `node_modules`, which otherwise causes `ERR_PNPM_UNEXPECTED_STORE`. Escalation does not require or imply a preceding `pnpm install`; run only the requested command. Run existing project scripts sandboxed unless they need other restricted access.
+
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
 **grimoire:** Install globally with `pnpm link --global` from apps/grimoire, then run anywhere:
