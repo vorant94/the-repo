@@ -12,15 +12,13 @@ export class SelectCom<T extends string = string> {
   async fillWithValue(value: T): Promise<void> {
     await this.#locator.first().click();
 
-    if (!this.#mapValueToLabel || !this.#mapValueToLabel[value]) {
+    const label = this.#mapValueToLabel?.[value];
+    if (!label) {
       throw new Error(`No label is associated with value ${value}`);
     }
 
     // this.#locator.nth(1).getByRole("option") doesn't work on with non-dev server for some reason
-    await this.#locator
-      .nth(1)
-      .getByText(this.#mapValueToLabel[value], { exact: true })
-      .click();
+    await this.#locator.nth(1).getByText(label, { exact: true }).click();
   }
 
   async fillWithLabel(label: string): Promise<void> {

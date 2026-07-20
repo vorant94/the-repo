@@ -92,13 +92,7 @@ export function useBinderPositions({
       const binderId = active.id.toString();
       const binderIndex = binders.findIndex((b) => b.id === binderId);
 
-      if (binderIndex !== -1) {
-        const currentPos = getPosition(binderId);
-        setBinderPosition(binderId, {
-          x: currentPos.x + delta.x,
-          y: currentPos.y + delta.y,
-        });
-      } else {
+      if (binderIndex === -1) {
         const container = containerRef.current;
         if (!container || !active.rect.current.translated) {
           return;
@@ -111,6 +105,12 @@ export function useBinderPositions({
           y: top - containerRect.top,
         });
         bringToFront(binderId);
+      } else {
+        const currentPos = getPosition(binderId);
+        setBinderPosition(binderId, {
+          x: currentPos.x + delta.x,
+          y: currentPos.y + delta.y,
+        });
       }
     },
   });

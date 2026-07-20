@@ -82,6 +82,7 @@ export const TextDropZone: FC<TextDropZoneProps> = ({
 
       {files.map((file, index) => (
         <Group
+          // biome-ignore lint/suspicious/noArrayIndexKey: its not just index, its file name and index
           key={`${file.name}-${index}`}
           justify="space-between"
           p="xs"

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.6/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
   "css": {
     "parser": {
       "tailwindDirectives": true
@@ -192,6 +192,16 @@
         "rules": {
           "performance": {
             "noBarrelFile": "off" // these index.ts are entry points for libraries, so it's OK for them to have barrel exports
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/{apps,studio}/public/**/*.svg"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "off" // public SVG files are referenced as images, whose alt text belongs at call sites
           }
         }
       }

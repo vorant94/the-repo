@@ -94,7 +94,7 @@ export const ManageCategoriesModal: FC<ManageCategoriesModalProps> = ({
               {upsertCategoryMode === "update" ? "Update" : "Insert"}
             </Button>
           )}
-          {mode !== "view" ? (
+          {mode === "view" ? null : (
             <Button
               type="button"
               key="cancel-category-form"
@@ -103,7 +103,7 @@ export const ManageCategoriesModal: FC<ManageCategoriesModalProps> = ({
             >
               Cancel
             </Button>
-          ) : null}
+          )}
         </div>
       </div>
     </Modal>
