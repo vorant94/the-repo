@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver, validator } from "hono-openapi/zod";
+import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
 import { chainNameSchema } from "../../bl/quickbook/name-to-external-id-mappings.ts";
 import { insertChain, selectChains } from "../../dal/db/chains.table.ts";
@@ -18,12 +17,12 @@ const chainDtoSchema = chainSchema
     createdAt: true,
     updatedAt: true,
   })
-  .openapi({ ref: "ChainDto" });
+  .meta({ ref: "ChainDto" });
 
 const insertChainDtoSchema = insertChainSchema
   .omit({ name: true })
   .extend({ name: chainNameSchema })
-  .openapi({
+  .meta({
     ref: "InsertChainDto",
   });
 

@@ -1,4 +1,3 @@
-import "zod-openapi/extend";
 import { conversations } from "@grammyjs/conversations";
 import { swaggerUI } from "@hono/swagger-ui";
 import { drizzle } from "drizzle-orm/d1";
@@ -6,7 +5,7 @@ import { Bot, session } from "grammy";
 import { Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
-import { openAPISpecs } from "hono-openapi";
+import { openAPIRouteHandler } from "hono-openapi";
 import { ensureUserMiddleware } from "./api/telegram/ensure-user.middleware.ts";
 import { telegramRoute } from "./api/telegram/telegram.route.ts";
 import { v1Route } from "./api/v1/v1.route.ts";
@@ -71,7 +70,7 @@ app.route("/api/telegram", telegramRoute);
 
 app.get(
   "/api/openapi.json",
-  openAPISpecs(app, {
+  openAPIRouteHandler(app, {
     documentation: {
       info: {
         title: "Sofash",

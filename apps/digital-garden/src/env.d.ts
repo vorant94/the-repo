@@ -1,4 +1,4 @@
-type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
+type Runtime = import("@astrojs/cloudflare").Runtime;
 
 // biome-ignore lint/style/noNamespace: copy-paste from astro docs
 declare namespace App {

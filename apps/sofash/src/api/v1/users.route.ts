@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver, validator } from "hono-openapi/zod";
+import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
 import { selectUsers, setUserRole } from "../../dal/db/users.table.ts";
 import { BadInputException } from "../../shared/exceptions/bad-input.exception.ts";
@@ -17,7 +16,7 @@ const userDtoSchema = userSchema
     createdAt: true,
     updatedAt: true,
   })
-  .openapi({ ref: "UserDto" });
+  .meta({ ref: "UserDto" });
 
 usersRoute.get(
   "/",
@@ -42,7 +41,7 @@ usersRoute.get(
   async (hc) => {
     try {
       const users = await selectUsers();
-      // can't use validateResponse of hono-openapi/zod#describeRoute since it doesn't
+      // can't use describeRoute response validation since it doesn't
       // trim unknown to response schema fields like createdAt or resourceType
       const dtosResult = z.array(userDtoSchema).safeParse(users);
       if (!dtosResult.success) {

@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "main": "dist/_worker.js/index.js",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "name": "digital-garden",
   "compatibility_date": "2025-11-30",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],

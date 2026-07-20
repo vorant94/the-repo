@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver } from "hono-openapi/zod";
+import { describeRoute, resolver } from "hono-openapi";
 import { z } from "zod";
 import { apiVersions, checkHealth, healthStatuses } from "../../bl/system.ts";
 
@@ -8,11 +7,9 @@ export const systemRoute = new Hono();
 
 const healthStatusDtoSchema = z
   .enum(healthStatuses)
-  .openapi({ ref: "HealthStatusDto" });
+  .meta({ ref: "HealthStatusDto" });
 
-const apiVersionDtoSchema = z
-  .enum(apiVersions)
-  .openapi({ ref: "ApiVersionDto" });
+const apiVersionDtoSchema = z.enum(apiVersions).meta({ ref: "ApiVersionDto" });
 
 const healthDtoSchema = z
   .object({
@@ -28,7 +25,7 @@ const healthDtoSchema = z
       }),
     }),
   })
-  .openapi({ ref: "HealthDto" });
+  .meta({ ref: "HealthDto" });
 
 systemRoute.get(
   "/health",

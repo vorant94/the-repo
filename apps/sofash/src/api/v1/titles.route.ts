@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver } from "hono-openapi/zod";
+import { describeRoute, resolver } from "hono-openapi";
 import { z } from "zod";
 import { selectTitles } from "../../dal/db/titles.table.ts";
 import { titleSchema } from "../../shared/schema/titles.ts";
@@ -16,7 +15,7 @@ const titleDtoSchema = titleSchema
     createdAt: true,
     updatedAt: true,
   })
-  .openapi({ ref: "TitleDto" });
+  .meta({ ref: "TitleDto" });
 
 titlesRoute.get(
   "/",

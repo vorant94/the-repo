@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { describeRoute } from "hono-openapi";
-import { resolver, validator } from "hono-openapi/zod";
+import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
 import {
   chainNameSchema,
@@ -24,7 +23,7 @@ const siteDtoSchema = siteSchema
     createdAt: true,
     updatedAt: true,
   })
-  .openapi({ ref: "SiteDto" });
+  .meta({ ref: "SiteDto" });
 
 sitesRoute.get(
   "/",
@@ -68,7 +67,7 @@ sitesRoute.get(
 const insertSiteDtoSchema = insertSiteSchema
   .omit({ chainId: true, name: true })
   .extend({ chainName: chainNameSchema, name: siteNameSchema })
-  .openapi({
+  .meta({
     ref: "InsertSiteDto",
   });
 
@@ -122,7 +121,7 @@ const scrapSiteDtoSchema = z
   .object({
     date: z.coerce.date(),
   })
-  .openapi({ ref: "ScrapSiteDto" });
+  .meta({ ref: "ScrapSiteDto" });
 
 sitesRoute.post(
   "/:id/scrap",

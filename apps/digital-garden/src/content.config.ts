@@ -1,6 +1,6 @@
 import { defineCollection, reference } from "astro:content";
 import { glob } from "astro/loaders";
-import { z } from "zod";
+import { z } from "astro/zod";
 
 const basePost = z.object({
   title: z.string(),
@@ -9,7 +9,7 @@ const basePost = z.object({
   publishedAt: z.date(),
   related: z.array(reference("posts")).nullish(),
   isPinned: z.boolean().nullish().default(false),
-  codeUrl: z.string().url().nullish(),
+  codeUrl: z.url().nullish(),
   isDraft: z.boolean().nullish().default(false),
 });
 
@@ -23,7 +23,7 @@ const posts = defineCollection({
         coverImageDark: image().nullish(),
       }),
       basePost.extend({
-        coverImage: z.void(),
+        coverImage: z.undefined().optional(),
       }),
     ]),
 });

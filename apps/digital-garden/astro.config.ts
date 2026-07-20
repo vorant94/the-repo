@@ -5,7 +5,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
-import type { Text } from "hast";
 import { h } from "hastscript";
 // biome-ignore lint/suspicious/noShadowRestrictedNames: 3-rd party name
 import { toString } from "mdast-util-to-string";
@@ -54,11 +53,7 @@ const legacyI18nRedirects = {
 };
 
 export default defineConfig({
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    },
-  }),
+  adapter: cloudflare(),
   site: "https://vorant94.dev",
   trailingSlash: "never",
   prefetch: true,
@@ -152,11 +147,9 @@ export default defineConfig({
             return h(`span.${classnames.replace(" ", ".")}`, "🔗");
           },
           properties: ({ children }) => {
-            const text = children.find(
-              (child): child is Text => child.type === "text",
-            );
+            const text = children.find((child) => child.type === "text");
             return {
-              className: "no-underline",
+              className: ["no-underline"],
               ariaLabel: text?.value,
             };
           },

@@ -1,7 +1,8 @@
 import path from "node:path";
 import process from "node:process";
+import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
 import cssnano from "cssnano";
 import { i18nextHMRPlugin } from "i18next-hmr/vite";
@@ -31,11 +32,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
-    }),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     svgr(),
     dotenvConfig.NODE_ENV !== "production" &&
       i18nextHMRPlugin({

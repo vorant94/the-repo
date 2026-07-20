@@ -25,7 +25,7 @@ catalog:
   "@types/node": ^22.19.1
   "@types/react": ^19.2.5
   "@types/react-dom": ^19.2.3
-  "@vitejs/plugin-react": ^5.1.1
+  "@vitejs/plugin-react": ^6.0.3
   autoprefixer: ^10.4.21
   babel-plugin-react-compiler: ^1.0.0
   cssnano: ^8.0.2
@@ -33,7 +33,7 @@ catalog:
   dotenv: ^16.4.7
   drizzle-kit: ^0.31.9
   drizzle-orm: ^0.45.1
-  drizzle-zod: ^0.7.1
+  drizzle-zod: ^0.8.3
   fs-extra: ^11.3.0
   immer: ^11.1.15
   postcss-preset-mantine: ^1.15.0
@@ -42,10 +42,10 @@ catalog:
   react-dom: ^19.2.0
   react-dropzone-esm: ^15.2.0
   react-hook-form: ^7.66.0
-  react-router: ^7.9.6
+  react-router: ^8.2.0
   tailwindcss: ^4.1.1
   typescript: ^5.9.3
-  vite: ^6.4.1
+  vite: ^8.1.5
   wrangler: ^4.107.0
-  zod: ^3.24.2
+  zod: ^4.4.3
   zustand: ^5.0.8
