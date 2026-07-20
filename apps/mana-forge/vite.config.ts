@@ -22,9 +22,11 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
-    reactRouter(),
-    tailwindcss(),
-  ],
+  plugins: process.env.VITEST
+    ? [tailwindcss()]
+    : [
+        cloudflare({ viteEnvironment: { name: "ssr" } }),
+        reactRouter(),
+        tailwindcss(),
+      ],
 });
