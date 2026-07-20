@@ -35,7 +35,8 @@
     "db:migrate:production": "wrangler d1 migrations apply DB --remote",
     "proxy:dev": "ngrok http 5173",
     "start:dev": "vite",
-    "ts:check": "pnpm run cf-typegen && tsc"
+    "ts:codegen": "pnpm run cf-typegen",
+    "ts:check": "pnpm run ts:codegen && tsc"
   },
   "type": "module"
 }

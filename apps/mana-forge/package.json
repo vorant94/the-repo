@@ -42,7 +42,8 @@
     "deploy:production": "wrangler deploy",
     "rr-typegen": "react-router typegen",
     "start:dev": "react-router dev",
-    "ts:check": "pnpm run rr-typegen && pnpm run cf-typegen && tsc"
+    "ts:codegen": "pnpm run rr-typegen && pnpm run cf-typegen",
+    "ts:check": "pnpm run ts:codegen && tsc"
   },
   "type": "module"
 }

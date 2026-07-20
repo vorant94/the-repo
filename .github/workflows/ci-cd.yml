@@ -80,6 +80,9 @@ jobs:
       - name: Test
         run: pnpm run test:coverage
 
+      - name: Generate TypeScript Types
+        run: pnpm -r run --if-present ts:codegen
+
       - name: Unused Code
         run: pnpm run unused-code:check
 

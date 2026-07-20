@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
   "ignoreExportsUsedInFile": {
     "interface": true,
     "type": true
@@ -9,18 +9,10 @@
     ".": {
       "ignoreDependencies": ["skills", "chrome-devtools-mcp"]
     },
-    "apps/digital-garden": {
-      "ignoreDependencies": ["sharp"] // used by astro image service at runtime, not statically imported
-    },
     "apps/mana-forge": {
-      "entry": ["workers/app.ts"],
-      "ignoreUnresolved": ["./\\+types/scryfall"],
       "react-router": {
         "config": "react-router.config.ts"
       }
-    },
-    "apps/grimoire": {
-      "entry": ["src/main.ts"]
     },
     "apps/sofash": {
       "entry": [
@@ -31,11 +23,9 @@
       "ignoreBinaries": ["ngrok"] // it should be installed with homebrew
     },
     "apps/subs-savvy": {
-      "entry": ["src/main.{ts,tsx}", "scripts/*.ts", "src/**/*.spec.{ts,tsx}"],
-      "ignore": ["src/**/__mocks__/**"]
+      "entry": ["src/main.{ts,tsx}", "scripts/*.ts", "src/**/*.spec.{ts,tsx}"]
     },
     "libs/cn": {},
-    "libs/nt": {},
     "tools/studio": {
       "entry": ["*.config.ts", "src/index.ts"],
       "ignoreDependencies": ["@remotion/zod-types"] // either it is used under the hood or i will use it at some point of time, i don't care

@@ -3,7 +3,7 @@ pre-push:
     test:
       run: pnpm run test
     unused-code:check:
-      run: pnpm run unused-code:check
+      run: pnpm -r run --if-present ts:codegen && pnpm run unused-code:check
 pre-commit:
   commands:
     lint:ci:

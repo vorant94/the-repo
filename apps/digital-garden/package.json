@@ -54,6 +54,7 @@
   "private": true,
   "scripts": {
     "build": "astro build",
+    "astro-typegen": "astro sync",
     "cf-typegen": "wrangler types",
     "deploy:preview": "wrangler versions upload --preview-alias preview",
     "deploy:production": "wrangler deploy",
@@ -67,7 +68,8 @@
     "db:migrate:production": "wrangler d1 migrations apply DB --remote",
     "start:dev": "astro dev",
     "start:prod": "astro preview",
-    "ts:check": "pnpm run cf-typegen && astro check"
+    "ts:codegen": "pnpm run astro-typegen && pnpm run cf-typegen",
+    "ts:check": "pnpm run ts:codegen && astro check"
   },
   "type": "module"
 }
