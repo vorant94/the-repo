@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import dayjs from "dayjs";
+import { addYears } from "date-fns";
 import { categoryMock } from "../src/shared/api/__mocks__/category.model.ts";
 import {
   monthlySubscription,
@@ -67,7 +67,7 @@ test.describe("subscriptions", () => {
     const subscriptionToCreate = {
       ...monthlySubscription,
       description: "Basic Plan",
-      endedAt: dayjs(monthlySubscription.startedAt).add(1, "year").toDate(),
+      endedAt: addYears(monthlySubscription.startedAt, 1),
     } as const satisfies InsertSubscriptionModel;
 
     await pom.goto();

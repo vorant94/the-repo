@@ -1,12 +1,14 @@
 import type { MatchersObject } from "@vitest/expect";
-import dayjs, { type OpUnitType } from "dayjs";
+import { isSameDay, isSameMonth, isSameYear } from "date-fns";
+
+type DateUnit = "day" | "month" | "year";
 
 export const dateMatchers = {
-  toBeSame(received: Date, expected: Date, unit: OpUnitType) {
+  toBeSame(received: Date, expected: Date, unit: DateUnit) {
     const { isNot } = this;
 
     return {
-      pass: dayjs(received).isSame(expected, unit),
+      pass: isSameByUnit[unit](received, expected),
       message: () =>
         `${received} is${isNot ? " not" : ""} same ${unit} as ${expected}`,
     };
@@ -15,4 +17,10 @@ export const dateMatchers = {
 
 export type DateMatchers = Record<keyof typeof dateMatchers, DateComparer>;
 
-export type DateComparer = (expected: Date, unit: OpUnitType) => void;
+export type DateComparer = (expected: Date, unit: DateUnit) => void;
+
+const isSameByUnit = {
+  day: isSameDay,
+  month: isSameMonth,
+  year: isSameYear,
+} as const satisfies Record<DateUnit, (left: Date, right: Date) => boolean>;

@@ -1,44 +1,55 @@
-import dayjs from "dayjs";
+import {
+  addMonths,
+  addYears,
+  differenceInMonths,
+  differenceInYears,
+  isBefore,
+  setMonth,
+  setYear,
+} from "date-fns";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { subscriptionCyclePeriodToManipulateUnit } from "../../../shared/api/subscription-cycle-period.model.ts";
 import { isSubscriptionExpired } from "./is-subscription-expired.ts";
 
 export function getSubscriptionNextPaymentAt(
   subscription: SubscriptionModel,
   now: Date = new Date(),
 ): Date | null {
-  const startedAtDayJs = dayjs(subscription.startedAt);
-  const manipulateUnit =
-    subscriptionCyclePeriodToManipulateUnit[subscription.cycle.period];
+  const manipulateUnit = subscription.cycle.period;
 
   if (isSubscriptionExpired(subscription, now)) {
     return null;
   }
 
-  const nextPaymentDate = dayjs(now).add(1, manipulateUnit).toDate();
+  const nextPaymentDate =
+    manipulateUnit === "monthly" ? addMonths(now, 1) : addYears(now, 1);
   if (isSubscriptionExpired(subscription, nextPaymentDate)) {
     return null;
   }
 
-  if (startedAtDayJs.isAfter(now)) {
+  if (subscription.startedAt > now) {
     return subscription.startedAt;
   }
 
-  const differenceInPeriods = startedAtDayJs
-    .set("year", now.getFullYear())
-    .set("month", now.getMonth())
-    .diff(subscription.startedAt, manipulateUnit);
-
-  const nextPaymentAtDayJs = startedAtDayJs.add(
-    Math.floor(differenceInPeriods),
-    manipulateUnit,
+  const dateInCurrentPeriod = setMonth(
+    setYear(subscription.startedAt, now.getFullYear()),
+    now.getMonth(),
   );
+  const differenceInPeriods =
+    manipulateUnit === "monthly"
+      ? differenceInMonths(dateInCurrentPeriod, subscription.startedAt)
+      : differenceInYears(dateInCurrentPeriod, subscription.startedAt);
+  const nextPaymentAt =
+    manipulateUnit === "monthly"
+      ? addMonths(subscription.startedAt, Math.floor(differenceInPeriods))
+      : addYears(subscription.startedAt, Math.floor(differenceInPeriods));
 
-  if (nextPaymentAtDayJs.isBefore(now)) {
-    return nextPaymentAtDayJs.add(1, manipulateUnit).toDate();
+  if (isBefore(nextPaymentAt, now)) {
+    return manipulateUnit === "monthly"
+      ? addMonths(nextPaymentAt, 1)
+      : addYears(nextPaymentAt, 1);
   }
 
-  return nextPaymentAtDayJs.toDate();
+  return nextPaymentAt;
 }
 
 export interface SubscriptionWithNextPaymentAt extends SubscriptionModel {

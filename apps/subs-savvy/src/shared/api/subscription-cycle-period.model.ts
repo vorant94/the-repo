@@ -1,5 +1,4 @@
 import type { ComboboxData } from "@mantine/core";
-import type { ManipulateType } from "dayjs";
 
 export const subscriptionCyclePeriods = ["monthly", "yearly"] as const;
 export type SubscriptionCyclePeriodModel =
@@ -15,8 +14,3 @@ export const subscriptionCyclePeriodsComboboxData: ComboboxData =
     value: cyclePeriod,
     label: subscriptionCyclePeriodToLabel[cyclePeriod],
   }));
-
-export const subscriptionCyclePeriodToManipulateUnit = {
-  monthly: "month",
-  yearly: "year",
-} satisfies Record<SubscriptionCyclePeriodModel, ManipulateType>;

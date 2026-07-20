@@ -1,4 +1,11 @@
-import dayjs from "dayjs";
+import {
+  addMonths,
+  addYears,
+  setDate,
+  setMonth,
+  subDays,
+  subYears,
+} from "date-fns";
 import { expect, it } from "vitest";
 import {
   monthlySubscription,
@@ -10,28 +17,24 @@ import { getSubscriptionNextPaymentAt } from "./get-subscription-next-payment-at
 it("monthly subscription", () => {
   const subscription = {
     ...monthlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .subtract(1, "year")
-      .toDate(),
+    startedAt: subYears(setDate(monthlySubscription.startedAt, 1), 1),
   } satisfies SubscriptionModel;
 
-  const expected = dayjs(new Date()).add(1, "month").set("date", 1).toDate();
+  const expected = setDate(addMonths(new Date(), 1), 1);
   expect(getSubscriptionNextPaymentAt(subscription)).toBeSame(expected, "day");
 });
 
 it("yearly subscription", () => {
   const subscription = {
     ...yearlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .set("month", 1)
-      .subtract(1, "year")
-      .toDate(),
+    startedAt: subYears(
+      setMonth(setDate(monthlySubscription.startedAt, 1), 1),
+      1,
+    ),
   } satisfies SubscriptionModel;
-  const now = dayjs(subscription.startedAt).add(6, "month").toDate();
+  const now = addMonths(subscription.startedAt, 6);
 
-  const expected = dayjs(subscription.startedAt).add(1, "year").toDate();
+  const expected = addYears(subscription.startedAt, 1);
   expect(getSubscriptionNextPaymentAt(subscription, now)).toBeSame(
     expected,
     "day",
@@ -41,15 +44,11 @@ it("yearly subscription", () => {
 it("expired subscription", () => {
   const subscription = {
     ...monthlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .subtract(1, "year")
-      .toDate(),
-    endedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .subtract(1, "year")
-      .add(1, "month")
-      .toDate(),
+    startedAt: subYears(setDate(monthlySubscription.startedAt, 1), 1),
+    endedAt: addMonths(
+      subYears(setDate(monthlySubscription.startedAt, 1), 1),
+      1,
+    ),
   } satisfies SubscriptionModel;
 
   expect(getSubscriptionNextPaymentAt(subscription)).toBeNull();
@@ -58,17 +57,13 @@ it("expired subscription", () => {
 it("will expire before supposed next payment date", () => {
   const subscription = {
     ...monthlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .subtract(1, "year")
-      .toDate(),
-    endedAt: dayjs(monthlySubscription.startedAt)
-      .set("date", 1)
-      .subtract(1, "year")
-      .add(2, "month")
-      .toDate(),
+    startedAt: subYears(setDate(monthlySubscription.startedAt, 1), 1),
+    endedAt: addMonths(
+      subYears(setDate(monthlySubscription.startedAt, 1), 1),
+      2,
+    ),
   } satisfies SubscriptionModel;
-  const now = dayjs(subscription.endedAt).subtract(2, "days").toDate();
+  const now = subDays(subscription.endedAt, 2);
 
   expect(getSubscriptionNextPaymentAt(subscription, now)).toBeNull();
 });
@@ -76,23 +71,21 @@ it("will expire before supposed next payment date", () => {
 it("startedAt is in the future", () => {
   const subscription = {
     ...monthlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt).add(3, "year").toDate(),
+    startedAt: addYears(monthlySubscription.startedAt, 3),
   } satisfies SubscriptionModel;
 
-  const expected = dayjs(subscription.startedAt).toDate();
+  const expected = subscription.startedAt;
   expect(getSubscriptionNextPaymentAt(subscription)).toBeSame(expected, "day");
 });
 
 it("startedAt is in past, but its day is bigger that current", () => {
   const subscription = {
     ...monthlySubscription,
-    startedAt: dayjs(monthlySubscription.startedAt)
-      .subtract(3, "year")
-      .toDate(),
+    startedAt: subYears(monthlySubscription.startedAt, 3),
   } satisfies SubscriptionModel;
-  const now = dayjs(monthlySubscription.startedAt).subtract(2, "days").toDate();
+  const now = subDays(monthlySubscription.startedAt, 2);
 
-  const expected = dayjs(monthlySubscription.startedAt).toDate();
+  const expected = monthlySubscription.startedAt;
   expect(getSubscriptionNextPaymentAt(subscription, now)).toBeSame(
     expected,
     "day",

@@ -10,7 +10,7 @@
     "@mantine/notifications": "^9.4.1",
     "@tabler/icons-react": "catalog:",
     "cn": "workspace:*",
-    "dayjs": "^1.11.21",
+    "date-fns": "catalog:",
     "dexie": "^4.4.4",
     "dexie-react-hooks": "^4.4.0",
     "i18next": "^26.3.6",

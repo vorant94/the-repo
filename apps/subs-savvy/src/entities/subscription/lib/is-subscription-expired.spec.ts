@@ -1,4 +1,11 @@
-import dayjs from "dayjs";
+import {
+  addMonths,
+  addYears,
+  startOfMonth,
+  startOfYear,
+  subMonths,
+  subYears,
+} from "date-fns";
 import { describe, expect, it } from "vitest";
 import {
   monthlySubscription,
@@ -12,7 +19,7 @@ describe("monthly", () => {
     const subscription = {
       ...monthlySubscription,
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.startedAt).add(1, "month").toDate();
+    const compareTo = addMonths(subscription.startedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeFalsy();
   });
@@ -20,9 +27,9 @@ describe("monthly", () => {
   it("endedAt < compareTo", () => {
     const subscription = {
       ...monthlySubscription,
-      endedAt: dayjs(monthlySubscription.startedAt).add(1, "month").toDate(),
+      endedAt: addMonths(monthlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).add(1, "month").toDate();
+    const compareTo = addMonths(subscription.endedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeTruthy();
   });
@@ -30,9 +37,9 @@ describe("monthly", () => {
   it("endedAt = compareTo", () => {
     const subscription = {
       ...monthlySubscription,
-      endedAt: dayjs(monthlySubscription.startedAt).add(1, "month").toDate(),
+      endedAt: addMonths(monthlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).startOf("month").toDate();
+    const compareTo = startOfMonth(subscription.endedAt);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeTruthy();
   });
@@ -40,9 +47,9 @@ describe("monthly", () => {
   it("compareTo < endedAt", () => {
     const subscription = {
       ...monthlySubscription,
-      endedAt: dayjs(monthlySubscription.startedAt).add(1, "month").toDate(),
+      endedAt: addMonths(monthlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).subtract(1, "month").toDate();
+    const compareTo = subMonths(subscription.endedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeFalsy();
   });
@@ -53,7 +60,7 @@ describe("yearly", () => {
     const subscription = {
       ...yearlySubscription,
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.startedAt).add(1, "year").toDate();
+    const compareTo = addYears(subscription.startedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeFalsy();
   });
@@ -61,9 +68,9 @@ describe("yearly", () => {
   it("endedAt < compareTo", () => {
     const subscription = {
       ...yearlySubscription,
-      endedAt: dayjs(yearlySubscription.startedAt).add(1, "year").toDate(),
+      endedAt: addYears(yearlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).add(1, "year").toDate();
+    const compareTo = addYears(subscription.endedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeTruthy();
   });
@@ -71,9 +78,9 @@ describe("yearly", () => {
   it("endedAt = compareTo", () => {
     const subscription = {
       ...yearlySubscription,
-      endedAt: dayjs(yearlySubscription.startedAt).add(1, "year").toDate(),
+      endedAt: addYears(yearlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).startOf("year").toDate();
+    const compareTo = startOfYear(subscription.endedAt);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeTruthy();
   });
@@ -81,9 +88,9 @@ describe("yearly", () => {
   it("compareTo < endedAt", () => {
     const subscription = {
       ...yearlySubscription,
-      endedAt: dayjs(yearlySubscription.startedAt).add(1, "year").toDate(),
+      endedAt: addYears(yearlySubscription.startedAt, 1),
     } satisfies SubscriptionModel;
-    const compareTo = dayjs(subscription.endedAt).subtract(1, "year").toDate();
+    const compareTo = subYears(subscription.endedAt, 1);
 
     expect(isSubscriptionExpired(subscription, compareTo)).toBeFalsy();
   });

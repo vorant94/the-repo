@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { addYears, setMonth, subYears } from "date-fns";
 import { describe, expect, it } from "vitest";
 import {
   monthlySubscription,
@@ -14,16 +14,13 @@ describe("monthly", () => {
   it("startedAtMonth < month && startedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 3).toDate(),
+        setMonth(startOfYear, 3),
       ),
     ).toEqual(subscription.price);
   });
@@ -31,13 +28,13 @@ describe("monthly", () => {
   it("startedAtMonth < month && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt).set("month", 2).toDate(),
+      startedAt: setMonth(monthlySubscription.startedAt, 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 3).toDate(),
+        setMonth(startOfYear, 3),
       ),
     ).toEqual(subscription.price);
   });
@@ -45,13 +42,13 @@ describe("monthly", () => {
   it("startedAtMonth = month && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt).set("month", 2).toDate(),
+      startedAt: setMonth(monthlySubscription.startedAt, 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(subscription.price);
   });
@@ -59,13 +56,13 @@ describe("monthly", () => {
   it("month < startedAtMonth && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt).set("month", 2).toDate(),
+      startedAt: setMonth(monthlySubscription.startedAt, 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 1).toDate(),
+        setMonth(startOfYear, 1),
       ),
     ).toEqual(0);
   });
@@ -73,16 +70,13 @@ describe("monthly", () => {
   it("month < startedAtMonth && year < startedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(addYears(monthlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 1).toDate(),
+        setMonth(startOfYear, 1),
       ),
     ).toEqual(0);
   });
@@ -90,20 +84,14 @@ describe("monthly", () => {
   it("startedAtMonth < endedAtMonth < month && startedAtYear < endedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 6)
-        .toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 6),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 9).toDate(),
+        setMonth(startOfYear, 9),
       ),
     ).toEqual(0);
   });
@@ -111,17 +99,14 @@ describe("monthly", () => {
   it("startedAtMonth < endedAtMonth < month && startedAtYear < year = endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt).set("month", 6).toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(monthlySubscription.startedAt, 6),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 9).toDate(),
+        setMonth(startOfYear, 9),
       ),
     ).toEqual(0);
   });
@@ -129,17 +114,14 @@ describe("monthly", () => {
   it("startedAtMonth < month = endedAtMonth && startedAtYear < year = endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt).set("month", 9).toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(monthlySubscription.startedAt, 9),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 9).toDate(),
+        setMonth(startOfYear, 9),
       ),
     ).toEqual(0);
   });
@@ -147,17 +129,14 @@ describe("monthly", () => {
   it("startedAtMonth < month < endedAtMonth && startedAtYear < year = endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt).set("month", 9).toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(monthlySubscription.startedAt, 9),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 6).toDate(),
+        setMonth(startOfYear, 6),
       ),
     ).toEqual(subscription.price);
   });
@@ -165,20 +144,14 @@ describe("monthly", () => {
   it("startedAtMonth < month < endedAtMonth && startedAtYear < year < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 9)
-        .toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(addYears(monthlySubscription.startedAt, 1), 9),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 6).toDate(),
+        setMonth(startOfYear, 6),
       ),
     ).toEqual(subscription.price);
   });
@@ -186,20 +159,14 @@ describe("monthly", () => {
   it("startedAtMonth < endedAtMonth < month && startedAtYear < year < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...monthlySubscription,
-      startedAt: dayjs(monthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(monthlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 6)
-        .toDate(),
+      startedAt: setMonth(subYears(monthlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(addYears(monthlySubscription.startedAt, 1), 6),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 9).toDate(),
+        setMonth(startOfYear, 9),
       ),
     ).toEqual(subscription.price);
   });
@@ -207,16 +174,13 @@ describe("monthly", () => {
   it("each = 2 && startedAtMonth % month = 0 && startedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...twoMonthlySubscription,
-      startedAt: dayjs(twoMonthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(twoMonthlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 4).toDate(),
+        setMonth(startOfYear, 4),
       ),
     ).toEqual(subscription.price);
   });
@@ -224,16 +188,13 @@ describe("monthly", () => {
   it("each = 2 && startedAtMonth % month = 1 && startedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...twoMonthlySubscription,
-      startedAt: dayjs(twoMonthlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(twoMonthlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 3).toDate(),
+        setMonth(startOfYear, 3),
       ),
     ).toEqual(0);
   });
@@ -243,16 +204,13 @@ describe("yearly", () => {
   it("startedAtMonth < month && startedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 3).toDate(),
+        setMonth(startOfYear, 3),
       ),
     ).toEqual(0);
   });
@@ -260,13 +218,13 @@ describe("yearly", () => {
   it("startedAtMonth < month && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt).set("month", 2).toDate(),
+      startedAt: setMonth(yearlySubscription.startedAt, 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 3).toDate(),
+        setMonth(startOfYear, 3),
       ),
     ).toEqual(0);
   });
@@ -274,13 +232,13 @@ describe("yearly", () => {
   it("startedAtMonth = month && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt).set("month", 2).toDate(),
+      startedAt: setMonth(yearlySubscription.startedAt, 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(subscription.price);
   });
@@ -288,16 +246,13 @@ describe("yearly", () => {
   it("startedAtMonth = month && startedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(subscription.price);
   });
@@ -305,13 +260,13 @@ describe("yearly", () => {
   it("month < startedAtMonth && startedAtYear = year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt).set("month", 4).toDate(),
+      startedAt: setMonth(yearlySubscription.startedAt, 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(0);
   });
@@ -319,16 +274,13 @@ describe("yearly", () => {
   it("month < startedAtMonth && year < startedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(addYears(yearlySubscription.startedAt, 1), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(0);
   });
@@ -336,20 +288,14 @@ describe("yearly", () => {
   it("startedAtMonth < endedAtMonth < month && startedAtYear < endedAtYear < year", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(2, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 2), 2),
+      endedAt: setMonth(subYears(yearlySubscription.startedAt, 1), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 6).toDate(),
+        setMonth(startOfYear, 6),
       ),
     ).toEqual(0);
   });
@@ -357,17 +303,14 @@ describe("yearly", () => {
   it("startedAtMonth < endedAtMonth < month && startedAtYear < year = endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(2, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt).set("month", 4).toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 2), 2),
+      endedAt: setMonth(yearlySubscription.startedAt, 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 6).toDate(),
+        setMonth(startOfYear, 6),
       ),
     ).toEqual(0);
   });
@@ -375,17 +318,14 @@ describe("yearly", () => {
   it("startedAtMonth < month = endedAtMonth && startedAtYear < year = endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(2, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt).set("month", 4).toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 2), 2),
+      endedAt: setMonth(yearlySubscription.startedAt, 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 4).toDate(),
+        setMonth(startOfYear, 4),
       ),
     ).toEqual(0);
   });
@@ -393,17 +333,14 @@ describe("yearly", () => {
   it("startedAtMonth < month = endedAtMonth && startedAtYear = year < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt).set("month", 2).toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(yearlySubscription.startedAt, 2),
+      endedAt: setMonth(addYears(yearlySubscription.startedAt, 1), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 4).toDate(),
+        setMonth(startOfYear, 4),
       ),
     ).toEqual(0);
   });
@@ -411,20 +348,14 @@ describe("yearly", () => {
   it("startedAtMonth = month < endedAtMonth && startedAtYear < year < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(subYears(yearlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(addYears(yearlySubscription.startedAt, 1), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(subscription.price);
   });
@@ -432,20 +363,14 @@ describe("yearly", () => {
   it("startedAtMonth = month < endedAtMonth && year < startedAtYear < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt)
-        .add(2, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(addYears(yearlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(addYears(yearlySubscription.startedAt, 2), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(0);
   });
@@ -453,20 +378,14 @@ describe("yearly", () => {
   it("month < startedAtMonth < endedAtMonth && year < startedAtYear < endedAtYear", () => {
     const subscription: SubscriptionModel = {
       ...yearlySubscription,
-      startedAt: dayjs(yearlySubscription.startedAt)
-        .add(1, "year")
-        .set("month", 2)
-        .toDate(),
-      endedAt: dayjs(yearlySubscription.startedAt)
-        .add(2, "year")
-        .set("month", 4)
-        .toDate(),
+      startedAt: setMonth(addYears(yearlySubscription.startedAt, 1), 2),
+      endedAt: setMonth(addYears(yearlySubscription.startedAt, 2), 4),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 1).toDate(),
+        setMonth(startOfYear, 1),
       ),
     ).toEqual(0);
   });
@@ -474,16 +393,13 @@ describe("yearly", () => {
   it("each = 2 && startedAtMonth = month && startedAtYear % year = 1", () => {
     const subscription: SubscriptionModel = {
       ...twoYearlySubscription,
-      startedAt: dayjs(twoYearlySubscription.startedAt)
-        .subtract(1, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(twoYearlySubscription.startedAt, 1), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(0);
   });
@@ -491,16 +407,13 @@ describe("yearly", () => {
   it("each = 2 && startedAtMonth = month && startedAtYear % year = 0", () => {
     const subscription: SubscriptionModel = {
       ...twoYearlySubscription,
-      startedAt: dayjs(twoYearlySubscription.startedAt)
-        .subtract(2, "year")
-        .set("month", 2)
-        .toDate(),
+      startedAt: setMonth(subYears(twoYearlySubscription.startedAt, 2), 2),
     };
 
     expect(
       calculateSubscriptionPriceForMonth(
         subscription,
-        dayjs(startOfYear).set("month", 2).toDate(),
+        setMonth(startOfYear, 2),
       ),
     ).toEqual(subscription.price);
   });

@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { compareAsc } from "date-fns";
 import {
   getSubscriptionNextPaymentAt,
   type SubscriptionWithNextPaymentAt,
@@ -21,9 +21,7 @@ export function useUpcomingPayments(): Array<SubscriptionWithNextPaymentAt> {
       (subscription): subscription is SubscriptionWithNextPaymentAt =>
         !!subscription.nextPaymentAt,
     )
-    .toSorted((a, b) =>
-      dayjs(a.nextPaymentAt).isBefore(b.nextPaymentAt) ? -1 : 1,
-    );
+    .toSorted((a, b) => compareAsc(a.nextPaymentAt, b.nextPaymentAt));
 
   return filteredAndSorted.slice(0, isXl ? 4 : isLg ? 3 : 2);
 }

@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
 import { cn } from "cn";
-import dayjs from "dayjs";
+import { subMonths } from "date-fns";
 import { type FC, type HTMLAttributes, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -62,7 +62,7 @@ export const ExpensesByCategory: FC<ExpensesByCategoryProps> = ({
         .map((step) =>
           calculateSubscriptionPriceForMonth(
             subscription,
-            dayjs(startOfMonth).subtract(step, "month").toDate(),
+            subMonths(startOfMonth, step),
           ),
         )
         .reduce((prev, curr) => prev + curr),

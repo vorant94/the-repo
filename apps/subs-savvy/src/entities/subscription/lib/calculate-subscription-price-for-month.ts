@@ -1,17 +1,19 @@
-import dayjs from "dayjs";
+import {
+  differenceInMonths,
+  differenceInYears,
+  isAfter,
+  setMonth,
+  setYear,
+  startOfMonth,
+} from "date-fns";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { subscriptionCyclePeriodToManipulateUnit } from "../../../shared/api/subscription-cycle-period.model.ts";
 import { isSubscriptionExpired } from "./is-subscription-expired.ts";
 
 export function calculateSubscriptionPriceForMonth(
   subscription: SubscriptionModel,
   now: Date = new Date(),
 ): number {
-  const startedAtDayJs = dayjs(subscription.startedAt);
-  const manipulateUnit =
-    subscriptionCyclePeriodToManipulateUnit[subscription.cycle.period];
-
-  if (startedAtDayJs.isAfter(now, manipulateUnit)) {
+  if (isAfter(startOfMonth(subscription.startedAt), startOfMonth(now))) {
     return 0;
   }
 
@@ -19,10 +21,14 @@ export function calculateSubscriptionPriceForMonth(
     return 0;
   }
 
-  const differenceInPeriods = startedAtDayJs
-    .set("year", now.getFullYear())
-    .set("month", now.getMonth())
-    .diff(subscription.startedAt, manipulateUnit);
+  const dateInCurrentPeriod = setMonth(
+    setYear(subscription.startedAt, now.getFullYear()),
+    now.getMonth(),
+  );
+  const differenceInPeriods =
+    subscription.cycle.period === "monthly"
+      ? differenceInMonths(dateInCurrentPeriod, subscription.startedAt)
+      : differenceInYears(dateInCurrentPeriod, subscription.startedAt);
   if (differenceInPeriods % subscription.cycle.each !== 0) {
     return 0;
   }

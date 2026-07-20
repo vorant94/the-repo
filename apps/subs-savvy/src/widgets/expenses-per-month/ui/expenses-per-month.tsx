@@ -1,7 +1,7 @@
 import { ActionIcon, Card, Divider, Text, Title } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { cn } from "cn";
-import dayjs from "dayjs";
+import { addMonths, format, subMonths } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,11 +28,9 @@ import { ExpensesPerMonthLegendContent } from "./expenses-per-month-legend-conte
 
 export const ExpensesPerMonth = () => {
   const [monthDate, setMonthDate] = useState(startOfMonth);
-  const monthName = dayjs(monthDate).format("MMMM");
-  const goPreviousMonth = () =>
-    setMonthDate(dayjs(monthDate).subtract(1, "month").toDate());
-  const goNextMonth = () =>
-    setMonthDate(dayjs(monthDate).add(1, "month").toDate());
+  const monthName = format(monthDate, "MMMM");
+  const goPreviousMonth = () => setMonthDate(subMonths(monthDate, 1));
+  const goNextMonth = () => setMonthDate(addMonths(monthDate, 1));
 
   const subscriptions = useSubscriptions();
   const aggregatedByCategory = aggregateSubscriptionsByCategory(

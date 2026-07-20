@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { differenceInYears, isSameYear, setYear } from "date-fns";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { isSubscriptionExpired } from "./is-subscription-expired.ts";
 
@@ -6,9 +6,7 @@ export function calculateSubscriptionPriceForYear(
   subscription: SubscriptionModel,
   now: Date = new Date(),
 ): number {
-  const startedAtDayJs = dayjs(subscription.startedAt);
-
-  if (startedAtDayJs.isAfter(now, "year")) {
+  if (subscription.startedAt.getFullYear() > now.getFullYear()) {
     return 0;
   }
 
@@ -18,10 +16,15 @@ export function calculateSubscriptionPriceForYear(
         return 0;
       }
 
-      const differenceInYears = startedAtDayJs
-        .set("year", now.getFullYear())
-        .diff(subscription.startedAt, "year");
-      if (differenceInYears % subscription.cycle.each !== 0) {
+      const dateInCurrentYear = setYear(
+        subscription.startedAt,
+        now.getFullYear(),
+      );
+      const yearsSinceStart = differenceInYears(
+        dateInCurrentYear,
+        subscription.startedAt,
+      );
+      if (yearsSinceStart % subscription.cycle.each !== 0) {
         return 0;
       }
 
@@ -29,30 +32,29 @@ export function calculateSubscriptionPriceForYear(
     }
     case "monthly": {
       if (subscription.endedAt) {
-        const endedAtDayJs = dayjs(subscription.endedAt);
-
         if (
-          endedAtDayJs.isSame(now, "year") &&
-          startedAtDayJs.isSame(now, "year")
+          isSameYear(subscription.endedAt, now) &&
+          isSameYear(subscription.startedAt, now)
         ) {
           return (
             (subscription.price *
-              (endedAtDayJs.get("month") - startedAtDayJs.get("month"))) /
+              (subscription.endedAt.getMonth() -
+                subscription.startedAt.getMonth())) /
             subscription.cycle.each
           );
         }
 
-        if (endedAtDayJs.isSame(now, "year")) {
+        if (isSameYear(subscription.endedAt, now)) {
           return (
-            (subscription.price * endedAtDayJs.get("month")) /
+            (subscription.price * subscription.endedAt.getMonth()) /
             subscription.cycle.each
           );
         }
       }
 
-      if (startedAtDayJs.isSame(now, "year")) {
+      if (isSameYear(subscription.startedAt, now)) {
         return (
-          (subscription.price * (12 - startedAtDayJs.get("month"))) /
+          (subscription.price * (12 - subscription.startedAt.getMonth())) /
           subscription.cycle.each
         );
       }

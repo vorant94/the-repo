@@ -513,9 +513,9 @@ importers:
       cn:
         specifier: workspace:*
         version: link:../../libs/cn
-      dayjs:
-        specifier: ^1.11.21
-        version: 1.11.21
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.4.0
       dexie:
         specifier: ^4.4.4
         version: 4.4.4

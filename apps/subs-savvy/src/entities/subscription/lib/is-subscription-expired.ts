@@ -1,6 +1,5 @@
-import dayjs from "dayjs";
+import { isBefore, isSameMonth, isSameYear } from "date-fns";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
-import { subscriptionCyclePeriodToManipulateUnit } from "../../../shared/api/subscription-cycle-period.model.ts";
 
 export function isSubscriptionExpired(
   subscription: SubscriptionModel,
@@ -10,17 +9,14 @@ export function isSubscriptionExpired(
     return false;
   }
 
-  const manipulateUnit =
-    subscriptionCyclePeriodToManipulateUnit[subscription.cycle.period];
-
-  const startedAtDayJs = dayjs(subscription.startedAt);
-  if (startedAtDayJs.isSame(now, manipulateUnit)) {
+  const isSamePeriod =
+    subscription.cycle.period === "monthly" ? isSameMonth : isSameYear;
+  if (isSamePeriod(subscription.startedAt, now)) {
     return false;
   }
 
-  const endedAtDayJs = dayjs(subscription.endedAt);
   return (
-    endedAtDayJs.isBefore(now, manipulateUnit) ||
-    endedAtDayJs.isSame(now, manipulateUnit)
+    isBefore(subscription.endedAt, now) ||
+    isSamePeriod(subscription.endedAt, now)
   );
 }

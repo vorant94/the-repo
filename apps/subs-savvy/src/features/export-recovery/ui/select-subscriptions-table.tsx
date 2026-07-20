@@ -1,5 +1,5 @@
 import { Checkbox, Table } from "@mantine/core";
-import dayjs from "dayjs";
+import { format } from "date-fns";
 import type { Dispatch, FC, SetStateAction } from "react";
 import type { SubscriptionModel } from "../../../shared/api/subscription.model.ts";
 import { subscriptionCyclePeriodToLabel } from "../../../shared/api/subscription-cycle-period.model.ts";
@@ -67,11 +67,11 @@ export const SelectSubscriptionsTable: FC<SelectSubscriptionsTableProps> = ({
               <Table.Td>{subscriptionIconToLabel[subscription.icon]}</Table.Td>
               <Table.Td>{subscription.price}</Table.Td>
               <Table.Td>
-                {dayjs(subscription.startedAt).format("MMMM D, YYYY")}
+                {format(subscription.startedAt, "MMMM d, yyyy")}
               </Table.Td>
               <Table.Td>
                 {subscription.endedAt
-                  ? dayjs(subscription.endedAt).format("MMMM D, YYYY")
+                  ? format(subscription.endedAt, "MMMM d, yyyy")
                   : null}
               </Table.Td>
               <Table.Td>{subscription.cycle.each}</Table.Td>

@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import dayjs from "dayjs";
+import { differenceInCalendarMonths, format, parse } from "date-fns";
 import type { DatePickerInputAriaLabels } from "../../src/shared/ui/create-date-picker-input-aria-labels.ts";
 
 export class DatePickerInputCom {
@@ -19,9 +19,9 @@ export class DatePickerInputCom {
 
     const currentDateString =
       await this.#locators.monthLevelControl.innerText();
-    const currentDate = dayjs(currentDateString, "MMMM YYYY").toDate();
+    const currentDate = parse(currentDateString, "MMMM yyyy", new Date(0));
     const diffInMonths = Math.floor(
-      dayjs(value).diff(currentDate, "month", true),
+      differenceInCalendarMonths(value, currentDate),
     );
     for (let i = 0; i < Math.abs(diffInMonths); i++) {
       diffInMonths < 0
@@ -29,7 +29,7 @@ export class DatePickerInputCom {
         : await this.#locators.nextMonth.click();
     }
 
-    const valueDateString = dayjs(value).format("D MMMM YYYY");
+    const valueDateString = format(value, "d MMMM yyyy");
     await this.#page.getByLabel(valueDateString, { exact: true }).click();
   }
 

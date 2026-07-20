@@ -1,7 +1,11 @@
-import dayjs from "dayjs";
+import {
+  startOfMonth as getStartOfMonth,
+  startOfYear as getStartOfYear,
+  startOfDay,
+} from "date-fns";
 
-export const startOfToday = dayjs(new Date()).startOf("day").toDate();
+export const startOfToday = startOfDay(new Date());
 
-export const startOfMonth = dayjs(new Date()).startOf("month").toDate();
+export const startOfMonth = getStartOfMonth(new Date());
 
-export const startOfYear = dayjs(new Date()).startOf("year").toDate();
+export const startOfYear = getStartOfYear(new Date());
