@@ -4,9 +4,10 @@ Guidance to AI Agents for this repo.
 
 ## Repository Overview
 
-Monorepo: pnpm workspaces, Biome for lint/format.
+Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatting.
 
 **Structure:**
+
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
 - `apps/grimoire` - MTG collection CLI (ManaBox→Archidekt conversion, deck merging, staples scraping)
 - `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
@@ -23,9 +24,11 @@ Monorepo: pnpm workspaces, Biome for lint/format.
 **Internal lib dependencies:** Reference workspace libs with workspace protocol: `"cn": "workspace:*"`.
 
 **Root:**
+
 ```bash
 pnpm install
 pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
+pnpm run prettier:check|write              # Prettier checks/writes only Markdown and YAML (always run from root)
 pnpm -r run --if-present ts:check          # TypeScript across workspaces
 pnpm run test                              # Vitest across all workspaces (root config)
 pnpm run test:coverage                     # Same, with coverage + thresholds
@@ -37,6 +40,7 @@ pnpm run unused-code:check                 # Knip unused code analysis
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
 **grimoire:** Install globally with `pnpm link --global` from apps/grimoire, then run anywhere:
+
 ```bash
 grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath ./spectate-analysis.md] [--debug]
 ```
@@ -60,6 +64,7 @@ grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath .
 ## Code Style (Biome)
 
 Always run Biome from repo root. Rules:
+
 - No default exports (except config files, main.ts, Astro files)
 - Kebab-case filenames
 - No barrel files (except `libs/*/src/index.ts`)
@@ -72,52 +77,61 @@ Always run Biome from repo root. Rules:
 ## Testing
 
 **Test naming convention:**
+
 - `*.unit.test.ts` - Pure logic, no I/O (formatters, parsers, utilities)
 - `*.int.test.ts` - Direct function calls with mocked I/O (fetch, fs, process)
 - `*.e2e.test.ts` - Full process execution (spawn CLI binary)
 - Legacy `*.spec.ts` still supported, prefer above
 
 **Mocking pattern:**
+
 - Use `vi.spyOn(target, "method").mockImplementationOnce()` for one-time mocks (auto-expires after first call, no cleanup needed)
 
 **Integration test pattern:**
+
 - Call functions directly with mocked I/O, don't spawn processes
 - Store fixtures in `@app/grimoire/assets/` (e.g. `assets/scrap-pauper-fixture.html`)
 
 **General:**
+
 - Vitest for subs-savvy, grimoire, mana-forge; Playwright for digital-garden E2E
 - Prefer `it()` over `test()`, use `describe()` blocks
 - Test utility functions (fixtures, helpers) go below the describe block, not above it
 
 **Running tests (root workspace):**
+
 - Vitest is configured as a workspace at root `vitest.config.ts` (`test.projects` globs each `{apps,libs,tools}/*/vitest.config.ts`). Per-project `vitest.config.ts` uses `defineProject` and holds only that project's `test` block; coverage config + thresholds live only at root.
 - Always run tests from repo root: `pnpm run test` (or `pnpm run test:coverage`). Apps do NOT have their own `test` script — `pnpm --filter <name> test` won't work.
 - Filter to one project via vitest's `--project <name>`, e.g. `pnpm run test --project mana-forge`.
 - Coverage thresholds are enforced per glob at root (currently `apps/mana-forge/src/**`); `.tsx` and thin DOM/config files are excluded there.
 
 **jsdom setup (React hook/component tests):**
+
 - Add to vite.config.ts `test` block: `environment: "jsdom"`, `restoreMocks: true`, `setupFiles: ["./src/test-setup.ts"]`
 - `restoreMocks: true` required when spying on prototypes — auto-restores after each test
 - Mirror `apps/subs-savvy/src/test-setup.ts` for Mantine mocks (getComputedStyle, matchMedia, ResizeObserver, scrollIntoView)
 
 **Mocking modules (`__mocks__` pattern — preferred):**
+
 - For node_modules: `__mocks__/<package>.ts` at app root; scoped packages: `__mocks__/@dnd-kit/core.ts`
 - For internal modules: `__mocks__/` sibling directory next to the file being mocked
 - Test file still needs `vi.mock(import("..."))` — Vitest uses the `__mocks__` file as implementation
 
 **Mocking read-only DOM properties (jsdom):**
+
 - `clientWidth`, `clientHeight` etc. are getter-only in jsdom — direct assignment throws
 - Use `vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(800)` per test
 - Regular methods (e.g. `getBoundingClientRect`) can be assigned directly on the instance
 
 ## Git Hooks (lefthook)
 
-**pre-commit:** `pnpm run lint:ci`, `pnpm -r run --if-present ts:check`
+**pre-commit:** `pnpm run lint:ci`, `pnpm run prettier:check`, `pnpm -r run --if-present ts:check`
 **pre-push:** `pnpm run test` (root vitest workspace), `pnpm run unused-code:check`
 
 ## Programming Preferences
 
 **Philosophy:**
+
 - Simplicity over abstraction — remove abstractions until needed
 - Minimal dependencies — prefer native APIs, reuse monorepo deps
 - Only export what other files need (Knip catches unused exports)
@@ -134,21 +148,30 @@ Always run Biome from repo root. Rules:
 **HTML parsing:** Prefer semantic selectors (class names) over regex, simple string methods over regex when possible.
 
 **TypeScript:**
+
 ```typescript
 // satisfies for type safety
 const format = "Pauper" satisfies Format;
-export const Format = { pauper: "Pauper" } as const satisfies Record<string, Format>;
+export const Format = { pauper: "Pauper" } as const satisfies Record<
+  string,
+  Format
+>;
 
 // interface for objects, type for unions
-export interface TempDir { path: string; cleanup: () => Promise<void>; }
+export interface TempDir {
+  path: string;
+  cleanup: () => Promise<void>;
+}
 type Status = "pending" | "completed";
 
 // Optional properties/params: use ?: not | undefined
-export interface Foo { title?: string; }  // not title: string | undefined
-function bar(title?: string) {}           // not title: string | undefined
+export interface Foo {
+  title?: string;
+} // not title: string | undefined
+function bar(title?: string) {} // not title: string | undefined
 
 // Optional and nullable: parameters can be both
-function baz(debugFileName?: string | null) {}  // accepts string, null, or undefined (omitted)
+function baz(debugFileName?: string | null) {} // accepts string, null, or undefined (omitted)
 
 // Type-only imports, explicit node: protocol
 import type { Format } from "./types";
@@ -160,7 +183,7 @@ type Row = z.infer<typeof rowSchema>;
 
 // Use type aliases instead of inline inference
 export const chapterSchema = z.object({ title: z.string() });
-export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everywhere
+export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywhere
 // NOT: Array<z.infer<typeof chapterSchema>> at each usage site
 ```
 
@@ -171,6 +194,7 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 **Modern TypeScript:** Top-level await (no main wrappers). No enums (`erasableSyntaxOnly: true`) — use type unions + const objects.
 
 **CLI patterns:**
+
 - camelCase CLI args matching schema fields for direct `parseArgs` → Zod pass-through
 - Avoid unnecessary `.min(1)` — `z.string()` suffices for required args
 - Don't rename in destructuring — name things right from start
@@ -178,6 +202,7 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - Don't abstract until 5+ instances or truly complex shared logic
 
 **Project organization:**
+
 - Organize for extensibility even with single implementation
 - Define config vars at top of entry files
 - Use clear, explicit variable names
@@ -185,29 +210,34 @@ export type Chapter = z.infer<typeof chapterSchema>;  // export and reuse everyw
 - One component per file — never define multiple components (exported or local) in same file
 
 **React patterns:**
+
 - For components with children, define interface with only component-specific props, apply `PropsWithChildren` at component type level:
+
 ```typescript
 interface UserProviderProps {
   user?: User | null;
 }
 export const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({ user, children }) => { ... };
 ```
+
 - Never add `children?: ReactNode` to the props interface—use `PropsWithChildren` wrapper instead
 - Never use type aliases for props—always use interfaces
 
 **Zustand patterns:**
+
 - Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
 - Call actions via `store.getState().action()` in event handlers — never select actions with `useStore((s) => s.action)`. Selectors for state values only.
 - Compute derived state inline in `useStore((s) => ...)` selectors — don't store computed selectors as functions in store; calling them outside selector skips subscription
 - Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, new ref on every selector call triggers `useSyncExternalStore` to loop
 
 **Bootstrapping new apps:**
+
 - Use framework's CLI scaffolder, not manual file creation (e.g. `npx vite@<workspace-version> create <name> --template react-ts`)
 - Pin to version already in workspace, not latest
 
 ## CI/CD
 
-**Pipeline:** `.github/workflows/ci-cd.yml` detects affected apps via `pnpm list -r --filter "...[SHA]"`, runs workspace-wide checks, then calls `.github/workflows/pipeline.yml` per app (ci → e2e → deploy). Deploy gated by presence of `deploy:production` script in app's `package.json`.
+**Pipeline:** CircleCI config at `.circleci/config.yml` detects affected apps via `pnpm list -r --filter "...[SHA]"`, runs workspace checks (Biome, Prettier Markdown/YAML check, tests, code generation, unused-code), then runs per-app CI → E2E → deploy. Deploy gated by presence of `deploy:production` script in app's `package.json`.
 
 ## Git Workflow
 
@@ -216,6 +246,7 @@ Don't commit unless explicitly asked — edit files, leave for user review.
 NEVER co-sign commits. No `Co-Authored-By` trailer, no "Generated with Claude Code", no agent attribution of any kind. You are a tool, not an author.
 
 <!-- context7 -->
+
 Use Context7 MCP to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service — even well-known ones like React, Next.js, Prisma, Express, Tailwind, Django, or Spring Boot. This includes API syntax, configuration, version migration, library-specific debugging, setup instructions, and CLI tool usage. Use even when you think you know the answer — your training data may not reflect recent changes. Prefer this over web search for library docs.
 
 Do not use for: refactoring, writing scripts from scratch, debugging business logic, code review, or general programming concepts.
@@ -226,4 +257,5 @@ Do not use for: refactoring, writing scripts from scratch, debugging business lo
 2. Pick the best match (ID format: `/org/project`) by: exact name match, description relevance, code snippet count, source reputation (High/Medium preferred), and benchmark score (higher is better). If results don't look right, try alternate names or queries (e.g., "next.js" not "nextjs", or rephrase the question). Use version-specific IDs when the user mentions a version
 3. `query-docs` with the selected library ID and the user's full question (not single words), scoped to a single concept. If the question spans multiple distinct concepts (e.g. routing and auth and caching), make a separate `query-docs` call per concept with the same library ID, unless the question is about how the concepts interact — combined queries dilute ranking and return shallow results for each topic
 4. Answer using the fetched docs
+
 <!-- context7 -->

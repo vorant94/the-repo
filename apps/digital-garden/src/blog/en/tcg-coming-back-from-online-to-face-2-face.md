@@ -16,7 +16,7 @@ It's not that simple with paper version. Your go-to option for getting cards wou
 
 But even if you have a game-shop on the next to your street or even if you have enough money to pay all the delivery costs in the world there still no guarantee you can get what you imagined. Cards can simply be out of stock! "Sounds like a bump, no?", you might think. I would argue otherwise.
 
-The thing is that human creativity thrives when it has boundaries or borders. When you can't get what you want you start coming up with replacement ideas, you start diving deep, you start thinking, you stop consuming and start creating. When you can buy literally anything with the same price of one card you are lost, you will tend to skip deck building by finding some deck online, that is supposed to be fun to play and you will start with it. Hopefully after month or so you'll start to patch this deck. You played this deck a couple of times, you know its weaknesses and have some ideas how to fix them.  If you look back on what happened you essentially created a boundaries you didn't like initially all by yourself, you decided to go with this one deck and not some another.
+The thing is that human creativity thrives when it has boundaries or borders. When you can't get what you want you start coming up with replacement ideas, you start diving deep, you start thinking, you stop consuming and start creating. When you can buy literally anything with the same price of one card you are lost, you will tend to skip deck building by finding some deck online, that is supposed to be fun to play and you will start with it. Hopefully after month or so you'll start to patch this deck. You played this deck a couple of times, you know its weaknesses and have some ideas how to fix them. If you look back on what happened you essentially created a boundaries you didn't like initially all by yourself, you decided to go with this one deck and not some another.
 
 In paper version you are starting with those boundaries and instead of being restricted by one deck, you are restricted by what your game-shop have in stock. You start thinking "OK, what can I build out from what I have?". Or if you wish you can still start with ready-to-play deck by buying a pre-constructed one and then essentially continue as you would with digital version. But still analog version gives you way more changes to de-rail from your initial starting point and go exploring.
 
@@ -24,11 +24,9 @@ I always wondered how people come up with deck ideas, now I got it. I missed tha
 
 ## Right in your pocket
 
-
 ## Accessories
 
 ## Proxies
-
 
 ---
 

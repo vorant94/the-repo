@@ -1,7 +1,7 @@
 packages:
-  - 'apps/*'
-  - 'tools/*'
-  - 'libs/*'
+  - "apps/*"
+  - "tools/*"
+  - "libs/*"
 
 allowBuilds:
   esbuild: true

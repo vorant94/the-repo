@@ -1,0 +1,7 @@
+*
+!**/
+!**/*.md
+!**/*.markdown
+!**/*.yaml
+!**/*.yml
+.agents/

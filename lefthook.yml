@@ -8,5 +8,7 @@ pre-commit:
   commands:
     lint:ci:
       run: pnpm run lint:ci
+    prettier:check:
+      run: pnpm run prettier:check
     ts:check:
       run: pnpm -r run --if-present ts:check

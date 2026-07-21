@@ -36,7 +36,11 @@ commands:
             base="$base_revision"
             if [ -z "$base" ] || [ "$base" = "<nil>" ] || ! git cat-file -e "$base" 2>/dev/null; then
               git fetch --no-tags --depth=2 origin master
-              base=$(git merge-base HEAD origin/master)
+              if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/master)" ]; then
+                base=$(git rev-parse HEAD^)
+              else
+                base=$(git merge-base HEAD origin/master)
+              fi
             fi
             packages=$(pnpm list -r --filter "...[${base}]" --depth 0 --json | jq -r '.[].name')
             if ! printf '%s\n' "$packages" | grep -Fxq '<< parameters.workspace >>'; then
@@ -57,7 +61,6 @@ commands:
               circleci step halt
             fi
 
-
 jobs:
   workspace-checks:
     executor: node
@@ -67,6 +70,9 @@ jobs:
       - run:
           name: Lint
           command: pnpm run lint:ci
+      - run:
+          name: Check Markdown and YAML formatting
+          command: pnpm run prettier:check
       - run:
           name: Test
           command: pnpm run test:coverage
@@ -172,13 +178,15 @@ workflows:
           requires: [workspace-checks]
           matrix:
             parameters:
-              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace:
+                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
       - app-e2e:
           name: e2e-<< matrix.workspace >>
           requires: [ci-<< matrix.workspace >>]
           matrix:
             parameters:
-              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace:
+                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
       - app-deploy:
           name: deploy-<< matrix.workspace >>
           context: cloudflare
@@ -187,4 +195,5 @@ workflows:
           filters: pipeline.event.name == "api" or pipeline.git.branch == "master"
           matrix:
             parameters:
-              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace:
+                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]

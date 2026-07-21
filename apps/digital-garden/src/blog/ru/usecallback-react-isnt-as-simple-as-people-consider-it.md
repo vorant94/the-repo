@@ -21,24 +21,24 @@ coverAlt: AI generated art of React logo
 
 ```tsx
 export const Counter: FC = () => {
-	const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
 
-	const logCounter = () => {
-		console.log(`Count is: ${counter}`);
-	};
+  const logCounter = () => {
+    console.log(`Count is: ${counter}`);
+  };
 
-	const increaseCounter = () => {
-		setCounter(counter + 1);
-	};
+  const increaseCounter = () => {
+    setCounter(counter + 1);
+  };
 
   return (
-		<div className="flex flex-col gap-2 items-start">
-			<p>{counter}</p>
-			<p>{doubleCounter}</p>
-			<button onClick={increaseCounter}>Increase Counter</button>
-			<button onClick={logCounter}>Log Counter</button>
-		</div>
-	);
+    <div className="flex flex-col gap-2 items-start">
+      <p>{counter}</p>
+      <p>{doubleCounter}</p>
+      <button onClick={increaseCounter}>Increase Counter</button>
+      <button onClick={logCounter}>Log Counter</button>
+    </div>
+  );
 };
 ```
 
@@ -48,24 +48,24 @@ export const Counter: FC = () => {
 
 ```tsx
 export const Counter: FC = () => {
-	const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
 
-	const logCounter = useCallback(() => {
-		console.log(`Count is: ${counter}`);
-	}, []);
+  const logCounter = useCallback(() => {
+    console.log(`Count is: ${counter}`);
+  }, []);
 
-	const increaseCounter = useCallback(() => {
-		setCounter(counter + 1);
-	}, []);
+  const increaseCounter = useCallback(() => {
+    setCounter(counter + 1);
+  }, []);
 
   return (
-		<div className="flex flex-col gap-2 items-start">
-			<p>{counter}</p>
-			<p>{doubleCounter}</p>
-			<button onClick={increaseCounter}>Increase Counter</button>
-			<button onClick={logCounter}>Log Counter</button>
-		</div>
-	);
+    <div className="flex flex-col gap-2 items-start">
+      <p>{counter}</p>
+      <p>{doubleCounter}</p>
+      <button onClick={increaseCounter}>Increase Counter</button>
+      <button onClick={logCounter}>Log Counter</button>
+    </div>
+  );
 };
 ```
 
@@ -81,24 +81,24 @@ export const Counter: FC = () => {
 
 ```tsx
 export const Counter: FC = () => {
-	const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
 
-	const logCounter = useCallback(() => {
-		console.log(`Count is: ${counter}`);
-	}, [counter]);
+  const logCounter = useCallback(() => {
+    console.log(`Count is: ${counter}`);
+  }, [counter]);
 
-	const increaseCounter = useCallback(() => {
-		setCounter(counter + 1);
-	}, [counter, setCounter]);
+  const increaseCounter = useCallback(() => {
+    setCounter(counter + 1);
+  }, [counter, setCounter]);
 
   return (
-		<div className="flex flex-col gap-2 items-start">
-			<p>{counter}</p>
-			<p>{doubleCounter}</p>
-			<button onClick={increaseCounter}>Increase Counter</button>
-			<button onClick={logCounter}>Log Counter</button>
-		</div>
-	);
+    <div className="flex flex-col gap-2 items-start">
+      <p>{counter}</p>
+      <p>{doubleCounter}</p>
+      <button onClick={increaseCounter}>Increase Counter</button>
+      <button onClick={logCounter}>Log Counter</button>
+    </div>
+  );
 };
 ```
 
@@ -106,32 +106,32 @@ export const Counter: FC = () => {
 
 ## "А ручки-то вот они!" ©️
 
-В JS наследование реализовано через прототипирование. Допустим, мы создали класс `Person` с полями `firstName` и `lastName`  и методом `getFullName`. Каждый инстанс этого класса имеет свои собственные `firstName` и `lastName`. Однако в то же время все они ссылаются на один единственный `getFullName`, который живет на прототипе нашего класса, а не на конкретном инстансе. Как же этот отдельно стоящий `getFullName` знает, что он вызван в контексте инстанса `person1`, а не `person2`? При помощи `this.`! Но React отказался от компонентов в виде классов давным давно, поэтому у нас нет `this.` в компонентах-функциях, поэтому авторам реакта пришлось находить решение в массиве зависимостей хука `useCallback`. И мне это кое-что напоминает.
+В JS наследование реализовано через прототипирование. Допустим, мы создали класс `Person` с полями `firstName` и `lastName` и методом `getFullName`. Каждый инстанс этого класса имеет свои собственные `firstName` и `lastName`. Однако в то же время все они ссылаются на один единственный `getFullName`, который живет на прототипе нашего класса, а не на конкретном инстансе. Как же этот отдельно стоящий `getFullName` знает, что он вызван в контексте инстанса `person1`, а не `person2`? При помощи `this.`! Но React отказался от компонентов в виде классов давным давно, поэтому у нас нет `this.` в компонентах-функциях, поэтому авторам реакта пришлось находить решение в массиве зависимостей хука `useCallback`. И мне это кое-что напоминает.
 
 Допустим, у нас есть како-то другой стейт, который зависит от `counter`. Назовем его `doubleCounter`, он по определению должен обновляться каждый раз, когда обновляется `counter` и React отлично с этим справляется посредством `useMemo` хука. А теперь сравните схематически использование `useCallback` и `useMemo`. Они одинаковы с точки зрения компонента! `increaseCounter` и `logCounter` по сути отвечают за описание **поведения компонента**, но он к ним относится будто они очередной его **стейт** (как `doubleCounter`), который надо обновлять исходя из зависимостей, и который надо отдельно хранить в каждом инстансе компонента!
 
 ```tsx
 export const Counter: FC = () => {
-	const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
 
-	const doubleCounter = useMemo(() => counter * 2, [counter]);
+  const doubleCounter = useMemo(() => counter * 2, [counter]);
 
-	const logCounter = useCallback(() => {
-		console.log(`Count is: ${counter}`);
-	}, [counter]);
+  const logCounter = useCallback(() => {
+    console.log(`Count is: ${counter}`);
+  }, [counter]);
 
-	const increaseCounter = useCallback(() => {
-		setCounter(counter + 1);
-	}, [counter, setCounter]);
+  const increaseCounter = useCallback(() => {
+    setCounter(counter + 1);
+  }, [counter, setCounter]);
 
   return (
-		<div className="flex flex-col gap-2 items-start">
-			<p>{counter}</p>
-			<p>{doubleCounter}</p>
-			<button onClick={increaseCounter}>Increase Counter</button>
-			<button onClick={logCounter}>Log Counter</button>
-		</div>
-	);
+    <div className="flex flex-col gap-2 items-start">
+      <p>{counter}</p>
+      <p>{doubleCounter}</p>
+      <button onClick={increaseCounter}>Increase Counter</button>
+      <button onClick={logCounter}>Log Counter</button>
+    </div>
+  );
 };
 ```
 

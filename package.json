@@ -8,6 +8,7 @@
     "jsdom": "^29.1.1",
     "knip": "^6.27.0",
     "lefthook": "^2.1.10",
+    "prettier": "^3.9.6",
     "skills": "^1.5.19",
     "vitest": "^4.1.10"
   },
@@ -37,6 +38,8 @@
     "lint:ci": "biome ci .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
     "prepare": "lefthook install",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

@@ -1,6 +1,6 @@
 ---
 title: useCallback - React isn't as simple as people consider it
-description: "Recently I switched camps from Angular to React. Comparing these two technologies head-to-head is quite naive thing to do. There is a long-standing perception in the tech world, that React may lack some features, but it is simple and elegant, while Angular is complex and heavy, but it is a \"batteries included\" solution. Without experience with react I had nothing to do with this perception, but now it changed. I don't agree, that React is simple and `useCallback` is my proof"
+description: 'Recently I switched camps from Angular to React. Comparing these two technologies head-to-head is quite naive thing to do. There is a long-standing perception in the tech world, that React may lack some features, but it is simple and elegant, while Angular is complex and heavy, but it is a "batteries included" solution. Without experience with react I had nothing to do with this perception, but now it changed. I don''t agree, that React is simple and `useCallback` is my proof'
 tags:
   - react
   - programming
@@ -133,7 +133,6 @@ export const Counter: FC = () => {
 ```
 
 I don't know what are the issues, that authors of React faced, that they decided to abandon class-based components. I would be glad to hear more on it from someone who knows. But it doesn't change the fact, that component isn't only the derivative of the state or data, but also a behavior, attached to it. Denial of this either intentional or not leads to a situation, where on the paper there are less terms (there are no directives, no services or modules like in the Angular), but on practice it means you need to squeeze the same number of things into lesser amount of categories. Less in not always more
-
 
 ---
 
