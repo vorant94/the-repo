@@ -239,6 +239,8 @@ export const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({ user, c
 
 **Pipeline:** CircleCI config at `.circleci/config.yml` detects affected apps via `pnpm list -r --filter "...[SHA]"`, runs workspace checks (Biome, Prettier Markdown/YAML check, tests, code generation, unused-code), then runs per-app CI → E2E → deploy. Deploy gated by presence of `deploy:production` script in app's `package.json`.
 
+**CircleCI CLI:** `circleci` is installed and authenticated on this machine. Use it instead of the web UI to inspect pipelines and logs, e.g. `circleci workflow get <workflow-id> --json`, `circleci job get <job-id> --json`, and `circleci job output get <job-id> --step-num <step-number>`.
+
 ## Git Workflow
 
 Don't commit unless explicitly asked — edit files, leave for user review.
