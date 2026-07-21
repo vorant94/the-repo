@@ -1,0 +1,191 @@
+version: 2.1
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:24.14
+    working_directory: ~/project
+
+commands:
+  install_dependencies:
+    steps:
+      - restore_cache:
+          keys:
+            - pnpm-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-v1-
+      - run:
+          name: Install dependencies
+          command: |
+            corepack enable
+            pnpm config set store-dir ~/.pnpm-store
+            pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - ~/.pnpm-store
+  halt_if_unaffected:
+    parameters:
+      workspace:
+        type: string
+    steps:
+      - run:
+          name: Halt if << parameters.workspace >> is unaffected
+          environment:
+            base_revision: << pipeline.git.base_revision >>
+          command: |
+            set -euo pipefail
+            base="$base_revision"
+            if [ -z "$base" ] || [ "$base" = "<nil>" ] || ! git cat-file -e "$base" 2>/dev/null; then
+              git fetch --no-tags --depth=2 origin master
+              base=$(git merge-base HEAD origin/master)
+            fi
+            packages=$(pnpm list -r --filter "...[${base}]" --depth 0 --json | jq -r '.[].name')
+            if ! printf '%s\n' "$packages" | grep -Fxq '<< parameters.workspace >>'; then
+              circleci step halt
+            fi
+
+  halt_if_script_absent:
+    parameters:
+      workspace:
+        type: string
+      script:
+        type: string
+    steps:
+      - run:
+          name: Halt if << parameters.workspace >> has no << parameters.script >> script
+          command: |
+            if ! jq -e --arg script '<< parameters.script >>' '.scripts[$script]' apps/<< parameters.workspace >>/package.json >/dev/null; then
+              circleci step halt
+            fi
+
+
+jobs:
+  workspace-checks:
+    executor: node
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: Lint
+          command: pnpm run lint:ci
+      - run:
+          name: Test
+          command: pnpm run test:coverage
+      - run:
+          name: Generate TypeScript types
+          command: pnpm -r run --if-present ts:codegen
+      - run:
+          name: Unused code
+          command: pnpm run unused-code:check
+
+  app-ci:
+    executor: node
+    parameters:
+      workspace:
+        type: string
+    steps:
+      - checkout
+      - install_dependencies
+      - halt_if_unaffected:
+          workspace: << parameters.workspace >>
+      - run:
+          name: Type check
+          command: pnpm --filter=<< parameters.workspace >> run ts:check
+      - run:
+          name: Check translations
+          command: pnpm --filter=<< parameters.workspace >> run --if-present are-translations-sorted
+      - run:
+          name: Build
+          command: |
+            pnpm --filter=<< parameters.workspace >> run --if-present build
+            mkdir -p apps/<< parameters.workspace >>/dist apps/<< parameters.workspace >>/.wrangler/deploy
+      - persist_to_workspace:
+          root: .
+          paths:
+            - apps/<< parameters.workspace >>/dist
+            - apps/<< parameters.workspace >>/.wrangler/deploy
+
+  app-e2e:
+    executor: node
+    parameters:
+      workspace:
+        type: string
+    steps:
+      - checkout
+      - install_dependencies
+      - halt_if_unaffected:
+          workspace: << parameters.workspace >>
+      - halt_if_script_absent:
+          workspace: << parameters.workspace >>
+          script: e2e
+      - restore_cache:
+          keys:
+            - playwright-v1-<< parameters.workspace >>-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Install Playwright
+          command: |
+            if [ -d ~/.cache/ms-playwright ]; then
+              pnpm --filter=<< parameters.workspace >> run e2e:install-deps
+              exit 0
+            fi
+            pnpm --filter=<< parameters.workspace >> run e2e:install
+      - save_cache:
+          key: playwright-v1-<< parameters.workspace >>-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - ~/.cache/ms-playwright
+      - run:
+          name: Run E2E
+          command: pnpm --filter=<< parameters.workspace >> run e2e
+      - store_artifacts:
+          path: apps/<< parameters.workspace >>/playwright-report
+          destination: e2e-report-<< parameters.workspace >>
+          when: on_fail
+
+  app-deploy:
+    executor: node
+    parameters:
+      workspace:
+        type: string
+    steps:
+      - checkout
+      - install_dependencies
+      - halt_if_unaffected:
+          workspace: << parameters.workspace >>
+      - halt_if_script_absent:
+          workspace: << parameters.workspace >>
+          script: deploy:production
+      - attach_workspace:
+          at: .
+      - run:
+          name: Migrate production database
+          command: pnpm --filter=<< parameters.workspace >> run --if-present db:migrate:production
+      - run:
+          name: Deploy production
+          command: pnpm --filter=<< parameters.workspace >> run deploy:production
+
+workflows:
+  ci-cd:
+    when: pipeline.event.name == "api" or (pipeline.event.name == "push" and pipeline.git.branch == "master") or (pipeline.event.name == "pull_request" and pipeline.event.github.pull_request.base.ref == "master")
+    jobs:
+      - workspace-checks
+      - app-ci:
+          name: ci-<< matrix.workspace >>
+          requires: [workspace-checks]
+          matrix:
+            parameters:
+              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+      - app-e2e:
+          name: e2e-<< matrix.workspace >>
+          requires: [ci-<< matrix.workspace >>]
+          matrix:
+            parameters:
+              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+      - app-deploy:
+          name: deploy-<< matrix.workspace >>
+          context: cloudflare
+          serial-group: << pipeline.project.slug >>/deploy-<< matrix.workspace >>
+          requires: [ci-<< matrix.workspace >>, e2e-<< matrix.workspace >>]
+          filters: pipeline.event.name == "api" or pipeline.git.branch == "master"
+          matrix:
+            parameters:
+              workspace: [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
