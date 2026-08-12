@@ -13,12 +13,6 @@
       "skillPath": "skills/caveman-commit/SKILL.md",
       "computedHash": "790a4eeace0be35c6691faf923518ba5bd50f1f1305d1101d09dd4971be94e00"
     },
-    "caveman-compress": {
-      "source": "JuliusBrussee/caveman",
-      "sourceType": "github",
-      "skillPath": "skills/caveman-compress/SKILL.md",
-      "computedHash": "e4409b04a8a0efbf4b611b6f7ba91e0fab3ca105c2ffd82374c8584e290363fc"
-    },
     "chrome-devtools": {
       "source": "chromedevtools/chrome-devtools-mcp",
       "sourceType": "github",
