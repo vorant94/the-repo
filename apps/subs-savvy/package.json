@@ -23,7 +23,7 @@
     "react-hook-form": "catalog:",
     "react-i18next": "^17.0.10",
     "react-router": "catalog:",
-    "recharts": "^3.9.2",
+    "recharts": "catalog:",
     "simple-icons": "^16.27.0",
     "tailwindcss": "catalog:",
     "zod": "catalog:",

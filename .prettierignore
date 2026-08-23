@@ -5,3 +5,4 @@
 !**/*.yaml
 !**/*.yml
 .agents/
+pnpm-lock.yaml

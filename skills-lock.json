@@ -24,6 +24,12 @@
       "sourceType": "github",
       "skillPath": "skills/context7-mcp/SKILL.md",
       "computedHash": "5469e63939588b98cc8185697897960793e44318a0a4f64af52cb326da24f897"
+    },
+    "simplify": {
+      "source": "brianlovin/agent-config",
+      "sourceType": "github",
+      "skillPath": "skills/simplify/SKILL.md",
+      "computedHash": "322a20071306ede626dc73ac05182b08c97b60781e23ec3fbf23f85a4d27d111"
     }
   }
 }
