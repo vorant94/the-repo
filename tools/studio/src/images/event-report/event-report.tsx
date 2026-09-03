@@ -14,6 +14,7 @@ const pieStartAngle = 90;
 const pieEndAngle = -360;
 const labelHorizontalLineLength = 129;
 const maxRowsPerTable = 18;
+const minimumPlayersForPercentages = 64;
 const pieSweepAngle =
   Math.sign(pieEndAngle - pieStartAngle) *
   Math.min(Math.abs(pieEndAngle - pieStartAngle), 360);
@@ -281,7 +282,7 @@ const getPieLabelLayouts = (
       elbowX,
       isRightSide,
       name: item.name,
-      percent: `${((item.count / totalPlayers) * 100).toFixed(1)}%`,
+      value: formatArchetypeValue(item.count, totalPlayers),
       textAnchor,
       textX,
       y: 0,
@@ -308,3 +309,11 @@ const getPieLabelLayouts = (
 
 const formatRecord = (wins: number, loses: number, draws?: number): string =>
   `${wins}/${loses}/${draws ?? 0}`;
+
+const formatArchetypeValue = (count: number, totalPlayers: number): string => {
+  if (totalPlayers >= minimumPlayersForPercentages) {
+    return `${((count / totalPlayers) * 100).toFixed(1)}%`;
+  }
+
+  return `${count} ${count === 1 ? "PLAYER" : "PLAYERS"}`;
+};

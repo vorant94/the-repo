@@ -6,7 +6,7 @@ export interface PieLabelProps {
   elbowX: number;
   isDark: boolean;
   name: string;
-  percent: string;
+  value: string;
   textAnchor: "end" | "start";
   textX: number;
   y: number;
@@ -18,7 +18,7 @@ export const PieLabel: FC<PieLabelProps> = ({
   elbowX,
   isDark,
   name,
-  percent,
+  value,
   textAnchor,
   textX,
   y,
@@ -58,7 +58,7 @@ export const PieLabel: FC<PieLabelProps> = ({
         fontSize={15}
         fontWeight={600}
       >
-        {percent}
+        {value}
       </text>
     </g>
   );
