@@ -7,7 +7,7 @@
     "@mantine/hooks": "catalog:",
     "@tabler/icons-react": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "cn": "workspace:*",
+    "cn": "catalog:",
     "immer": "catalog:",
     "papaparse": "^5.5.4",
     "react": "catalog:",

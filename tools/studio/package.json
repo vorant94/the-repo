@@ -6,7 +6,7 @@
     "@remotion/tailwind-v4": "4.0.508",
     "@remotion/zod-types": "4.0.508",
     "@tanstack/react-query": "catalog:",
-    "cn": "workspace:*",
+    "cn": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "catalog:",

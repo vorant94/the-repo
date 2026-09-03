@@ -13,15 +13,14 @@ Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatt
 - `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
 - `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1)
 - `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
-- `libs/cn` - TailwindCSS className utility (clsx + tailwind-merge)
 - `libs/nt` - NeverThrow wrapper utilities
 - `tools/studio` - Remotion studio for asset generation
 
 ## Commands
 
-**Workspace names:** Packages use bare names (e.g. `mana-forge`, `cn`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `pnpm --filter <name>`.
+**Workspace names:** Packages use bare names (e.g. `mana-forge`, `nt`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `pnpm --filter <name>`.
 
-**Internal lib dependencies:** Reference workspace libs with workspace protocol: `"cn": "workspace:*"`.
+**Internal lib dependencies:** Reference workspace libs with workspace protocol (e.g. `"nt": "workspace:*"`).
 
 **Root:**
 

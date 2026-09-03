@@ -15,7 +15,7 @@
     "@tanstack/react-query": "catalog:",
     "arctic": "^3.7.0",
     "astro": "^7.1.2",
-    "cn": "workspace:*",
+    "cn": "catalog:",
     "date-fns": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",

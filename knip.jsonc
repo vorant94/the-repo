@@ -28,7 +28,6 @@
     "apps/subs-savvy": {
       "entry": ["src/main.{ts,tsx}", "scripts/*.ts", "src/**/*.spec.{ts,tsx}"]
     },
-    "libs/cn": {},
     "tools/studio": {
       "entry": ["*.config.ts", "src/index.ts"],
       "ignoreDependencies": ["@remotion/zod-types"] // either it is used under the hood or i will use it at some point of time, i don't care

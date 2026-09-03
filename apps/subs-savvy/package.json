@@ -9,7 +9,7 @@
     "@mantine/hooks": "catalog:",
     "@mantine/notifications": "^9.4.1",
     "@tabler/icons-react": "catalog:",
-    "cn": "workspace:*",
+    "cn": "catalog:",
     "date-fns": "catalog:",
     "dexie": "^4.4.4",
     "dexie-react-hooks": "^4.4.0",
