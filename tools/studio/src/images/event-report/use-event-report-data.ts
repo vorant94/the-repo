@@ -1,12 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  cancelRender,
-  continueRender,
-  delayRender,
-  staticFile,
-} from "remotion";
+import { cancelRender, continueRender, delayRender } from "remotion";
 import { eventReportDataSchema } from "./schema.ts";
+
+const eventReportDataBaseUrl = "https://pauper-il.vorant94.dev/reports-data";
 
 export const useEventReportData = () => {
   const [handle] = useState(() => delayRender("Loading meta report data"));
@@ -17,12 +14,12 @@ export const useEventReportData = () => {
         const [archetypes, events, hosts, players] = await Promise.all(
           ["archetypes", "events", "hosts", "players"].map(async (fileName) => {
             const response = await fetch(
-              staticFile(`data/event-report/${fileName}.json`),
+              `${eventReportDataBaseUrl}/${fileName}.json`,
             );
 
             if (!response.ok) {
               throw new Error(
-                `Could not load meta report data: ${fileName}.json`,
+                `Could not load remote meta report data: ${fileName}.json`,
               );
             }
 

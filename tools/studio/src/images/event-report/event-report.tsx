@@ -111,7 +111,7 @@ export const EventReport: FC<EventReportProps> = ({ eventId, mode }) => {
       </header>
 
       <main className="mt-8 flex">
-        <div className="relative h-[760px] w-1/2">
+        <div className="relative h-190 w-1/2">
           <PieChart
             width={chartWidth}
             height={chartHeight}
@@ -160,7 +160,7 @@ export const EventReport: FC<EventReportProps> = ({ eventId, mode }) => {
           </div>
         </div>
 
-        <section className="h-[760px] w-1/2 pl-8">
+        <section className="h-190 w-1/2 pl-8">
           <h2 className="font-black text-3xl tracking-tight">
             Final standings
           </h2>
@@ -177,7 +177,7 @@ export const EventReport: FC<EventReportProps> = ({ eventId, mode }) => {
               >
                 <thead
                   className={cn(
-                    "border-y text-[10px] uppercase tracking-[0.1em]",
+                    "border-y text-[10px] uppercase tracking-widest",
                     isDark
                       ? "border-slate-700 text-slate-400"
                       : "border-slate-300 text-slate-500",
