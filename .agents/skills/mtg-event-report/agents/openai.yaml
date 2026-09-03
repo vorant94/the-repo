@@ -1,0 +1,4 @@
+interface:
+  display_name: "MTG Event Report"
+  short_description: "Add MTG event reports from standings screenshots"
+  default_prompt: "Parse this MTG standings screenshot into the Studio event-report data."
