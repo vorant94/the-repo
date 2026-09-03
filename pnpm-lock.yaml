@@ -307,43 +307,6 @@ importers:
         specifier: 'catalog:'
         version: 4.112.0
 
-  apps/grimoire:
-    dependencies:
-      '@clack/prompts':
-        specifier: ^1.7.0
-        version: 1.7.0
-      '@google/generative-ai':
-        specifier: ^0.24.1
-        version: 0.24.1
-      dedent:
-        specifier: ^1.7.2
-        version: 1.7.2
-      env-paths:
-        specifier: ^4.0.0
-        version: 4.0.0
-      fs-extra:
-        specifier: 'catalog:'
-        version: 11.3.6
-      slugify:
-        specifier: ^1.6.9
-        version: 1.6.9
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@total-typescript/ts-reset':
-        specifier: 'catalog:'
-        version: 0.6.1
-      '@types/fs-extra':
-        specifier: 'catalog:'
-        version: 11.0.4
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.13.3
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-
   apps/mana-forge:
     dependencies:
       '@dnd-kit/core':
@@ -1818,10 +1781,6 @@ packages:
   '@fortawesome/fontawesome-free@7.3.1':
     resolution: {integrity: sha512-wmglKKPDIkgV3aWlZzWECCPoGIkYCulzBwxG9+w7rc5BGapZ6cPMpoPOT8k36J0Ni7PPX6c/rsoMWfS4d1MUMg==}
     engines: {node: '>=6'}
-
-  '@google/generative-ai@0.24.1':
-    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
-    engines: {node: '>=18.0.0'}
 
   '@grammyjs/conversations@2.1.1':
     resolution: {integrity: sha512-hoxqwSkaXDeU7mzXulpk3A4Cmd6UZO3HU4aPoITX5ekSHK7ZcUEmMl7RhKKkqw3z6zVbbAShQreJoVV5/dDSLA==}
@@ -4476,10 +4435,6 @@ packages:
     resolution: {integrity: sha512-zwfzJecQ/Uej6tusMqwAqU/6KL2XaB2VZ2Jg54Je6ahNBGNH6Ek6g3jjNCF0fG9EWQKGZNddNjU5F1ZQn/sBnA==}
     engines: {node: '>=20.19.0'}
 
-  env-paths@4.0.0:
-    resolution: {integrity: sha512-pxP8eL2SwwaTRi/KHYwLYXinDs7gL3jxFcBYmEdYfZmZXbaVDvdppd0XBU8qVz03rDfKZMXg1omHCbsJjZrMsw==}
-    engines: {node: '>=20'}
-
   error-ex@1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
 
@@ -4868,10 +4823,6 @@ packages:
 
   is-potential-custom-element-name@1.0.1:
     resolution: {integrity: sha512-bCYeRA2rVibKZd+s2625gGnGF/t7DSqDs4dP7CrLA1m7jKWz6pps0LpYLJN8Q64HtmPKJ1hrN3nzPNKFEKOUiQ==}
-
-  is-safe-filename@0.1.1:
-    resolution: {integrity: sha512-4SrR7AdnY11LHfDKTZY1u6Ga3RuxZdl3YKWWShO5iyuG5h8QS4GD2tOb04peBJ5I7pXbR+CGBNEhTcwK+FzN3g==}
-    engines: {node: '>=20'}
 
   is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
@@ -6288,10 +6239,6 @@ packages:
     resolution: {integrity: sha512-SR05cbNk+R17GfaCFv94Hlq5EXDpUCbG0ZL9+EYi5UEHzUPAAl+kls2LxCT+67wAWlOAanUwzZekIVQvpCmp5w==}
     engines: {node: '>=22.20.0'}
     hasBin: true
-
-  slugify@1.6.9:
-    resolution: {integrity: sha512-vZ7rfeehZui7wQs438JXBckYLkIIdfHOXsaVEUMyS5fHo1483l1bMdo0EDSWYclY0yZKFOipDy4KHuKs6ssvdg==}
-    engines: {node: '>=8.0.0'}
 
   smol-toml@1.7.0:
     resolution: {integrity: sha512-aqVvWoyO21L23mb+drl4RmMXbf6N7FdHjAhTRA9ZBL7apWBgfWC16KjrASI+1p9GAroljyMHj6fK67i0UiTNvQ==}
@@ -8118,8 +8065,6 @@ snapshots:
   '@floating-ui/utils@0.2.12': {}
 
   '@fortawesome/fontawesome-free@7.3.1': {}
-
-  '@google/generative-ai@0.24.1': {}
 
   '@grammyjs/conversations@2.1.1(grammy@1.45.1)':
     dependencies:
@@ -10571,10 +10516,6 @@ snapshots:
 
   entities@8.0.0: {}
 
-  env-paths@4.0.0:
-    dependencies:
-      is-safe-filename: 0.1.1
-
   error-ex@1.3.2:
     dependencies:
       is-arrayish: 0.2.1
@@ -11055,8 +10996,6 @@ snapshots:
   is-plain-obj@4.1.0: {}
 
   is-potential-custom-element-name@1.0.1: {}
-
-  is-safe-filename@0.1.1: {}
 
   is-stream@2.0.1: {}
 
@@ -12717,8 +12656,6 @@ snapshots:
   skills@1.5.19:
     dependencies:
       yaml: 2.9.0
-
-  slugify@1.6.9: {}
 
   smol-toml@1.7.0: {}
 

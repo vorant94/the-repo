@@ -178,15 +178,13 @@ workflows:
           requires: [workspace-checks]
           matrix:
             parameters:
-              workspace:
-                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace: [mana-forge, sofash, digital-garden, subs-savvy]
       - app-e2e:
           name: e2e-<< matrix.workspace >>
           requires: [ci-<< matrix.workspace >>]
           matrix:
             parameters:
-              workspace:
-                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace: [mana-forge, sofash, digital-garden, subs-savvy]
       - app-deploy:
           name: deploy-<< matrix.workspace >>
           context: cloudflare
@@ -195,5 +193,4 @@ workflows:
           filters: pipeline.event.name == "api" or pipeline.git.branch == "master"
           matrix:
             parameters:
-              workspace:
-                [grimoire, mana-forge, sofash, digital-garden, subs-savvy]
+              workspace: [mana-forge, sofash, digital-garden, subs-savvy]

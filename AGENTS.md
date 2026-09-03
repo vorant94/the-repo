@@ -9,7 +9,6 @@ Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatt
 **Structure:**
 
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
-- `apps/grimoire` - MTG collection CLI (ManaBox→Archidekt conversion, deck merging, staples scraping)
 - `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
 - `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1)
 - `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
@@ -38,12 +37,6 @@ pnpm run unused-code:check                 # Knip unused code analysis
 
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
-**grimoire:** Install globally with `pnpm link --global` from apps/grimoire, then run anywhere:
-
-```bash
-grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath ./spectate-analysis.md] [--debug]
-```
-
 **sofash database:** `pnpm run db:generate` to generate migrations, `pnpm run db:migrate:local` to apply them to the local Miniflare D1, `pnpm run db:migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle. Cloudflare binding types are generated via `pnpm run cf-typegen` (`wrangler types`) into `worker-configuration.d.ts` (gitignored); `ts:check` runs it first.
 
 **Cloudflare SSR headers:** Some projects have two CSP sources: `public/_headers` covers static assets, while Worker or framework middleware must set the equivalent header on SSR/API responses. Keep both policies in sync when changing CSP.
@@ -57,8 +50,6 @@ grimoire spectate --url <youtube-url> [--model gemini-2.5-flash] [--outputPath .
 **subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops + Zod validation. PostCSS inline in `vite.config.ts` (`css.postcss.plugins`), not `postcss.config.*`. (Abandoned, reference only.)
 
 **digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n, custom rehype/remark plugins.
-
-**grimoire:** Single entry main.ts, subcommand routing. Commands in src/commands/, self-contained with config at top. `--experimental-strip-types` for direct TS execution. Shebang in main.ts for npm bin execution.
 
 ## Code Style (Biome)
 
@@ -89,11 +80,10 @@ Always run Biome from repo root. Rules:
 **Integration test pattern:**
 
 - Call functions directly with mocked I/O, don't spawn processes
-- Store fixtures in `@app/grimoire/assets/` (e.g. `assets/scrap-pauper-fixture.html`)
 
 **General:**
 
-- Vitest for subs-savvy, grimoire, mana-forge; Playwright for digital-garden E2E
+- Vitest for subs-savvy and mana-forge; Playwright for digital-garden E2E
 - Prefer `it()` over `test()`, use `describe()` blocks
 - Test utility functions (fixtures, helpers) go below the describe block, not above it
 
