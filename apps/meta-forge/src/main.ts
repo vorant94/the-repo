@@ -8,7 +8,7 @@ import { dbMiddleware } from "./middlewares/db.middleware.ts";
 import { envMiddleware } from "./middlewares/env.middleware.ts";
 import { jwtMiddleware } from "./middlewares/jwt.middleware.ts";
 import { archetypesRoute } from "./routes/archetypes.route.ts";
-import { eventReportsRoute } from "./routes/event-reports.route.ts";
+import { eventReportsRoute } from "./routes/event-reports/index.route.ts";
 import { eventsRoute } from "./routes/events.route.ts";
 import { hostsRoute } from "./routes/hosts.route.ts";
 import { playersRoute } from "./routes/players.route.ts";
@@ -21,7 +21,12 @@ app.use(contextStorage());
 app.use(cors());
 app.use(envMiddleware);
 app.use(dbMiddleware);
-app.use("/api/*", except(["/api/docs", "/api/openapi.json"], jwtMiddleware));
+const publicApiPaths = ["/api/docs", "/api/openapi.json"];
+if (import.meta.env.DEV) {
+  publicApiPaths.push("/api/event-reports/*/preview");
+}
+
+app.use("/api/*", except(publicApiPaths, jwtMiddleware));
 
 app.get("/", (c) => c.redirect("/api/docs"));
 app.route("/api/hosts", hostsRoute);

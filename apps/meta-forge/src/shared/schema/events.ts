@@ -21,24 +21,20 @@ export const events = sqliteTable("events", {
     .references(() => hosts.id, { onDelete: "restrict", onUpdate: "cascade" }),
 });
 
-export const eventSchema = createSelectSchema(events, {
+const eventSchema = createSelectSchema(events, {
   hostedAt: z.iso.datetime({ offset: true }),
 }).meta({ ref: "EventInternal" });
-export type Event = z.infer<typeof eventSchema>;
 
 export const eventDtoSchema = eventSchema
   .omit({ createdAt: true, updatedAt: true })
   .meta({ ref: "Event" });
-export type EventDto = z.infer<typeof eventDtoSchema>;
 
 export const insertEventSchema = createInsertSchema(events, {
   hostedAt: z.iso.datetime({ offset: true }),
 })
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertEvent" });
-export type InsertEvent = z.infer<typeof insertEventSchema>;
 
 export const updateEventSchema = insertEventSchema.partial().meta({
   ref: "UpdateEvent",
 });
-export type UpdateEvent = z.infer<typeof updateEventSchema>;

@@ -7,7 +7,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import type { z } from "zod";
 import { archetypes } from "./archetypes.ts";
 import { events } from "./events.ts";
 import { players } from "./players.ts";
@@ -62,22 +61,18 @@ export const ranks = sqliteTable(
   ],
 );
 
-export const rankSchema = createSelectSchema(ranks).meta({
+const rankSchema = createSelectSchema(ranks).meta({
   ref: "RankInternal",
 });
-export type Rank = z.infer<typeof rankSchema>;
 
 export const rankDtoSchema = rankSchema
   .omit({ createdAt: true, updatedAt: true })
   .meta({ ref: "Rank" });
-export type RankDto = z.infer<typeof rankDtoSchema>;
 
 export const insertRankSchema = createInsertSchema(ranks)
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertRank" });
-export type InsertRank = z.infer<typeof insertRankSchema>;
 
 export const updateRankSchema = insertRankSchema.partial().meta({
   ref: "UpdateRank",
 });
-export type UpdateRank = z.infer<typeof updateRankSchema>;
