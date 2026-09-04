@@ -22,7 +22,7 @@ export const events = sqliteTable("events", {
 });
 
 export const eventSchema = createSelectSchema(events, {
-  hostedAt: z.iso.datetime(),
+  hostedAt: z.iso.datetime({ offset: true }),
 }).meta({ ref: "EventInternal" });
 export type Event = z.infer<typeof eventSchema>;
 
@@ -32,7 +32,7 @@ export const eventDtoSchema = eventSchema
 export type EventDto = z.infer<typeof eventDtoSchema>;
 
 export const insertEventSchema = createInsertSchema(events, {
-  hostedAt: z.iso.datetime(),
+  hostedAt: z.iso.datetime({ offset: true }),
 })
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertEvent" });
