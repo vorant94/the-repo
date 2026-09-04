@@ -52,9 +52,12 @@
   },
   "private": true,
   "scripts": {
-    "build": "astro build",
     "astro-typegen": "astro sync",
+    "build": "astro build",
     "cf-typegen": "wrangler types",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:production": "wrangler d1 migrations apply DB --remote",
     "deploy:preview": "wrangler versions upload --preview-alias preview",
     "deploy:production": "wrangler deploy",
     "e2e": "playwright test",
@@ -62,13 +65,10 @@
     "e2e:install": "playwright install --with-deps",
     "e2e:install-deps": "playwright install-deps",
     "e2e:ui": "playwright test --ui",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply DB --local",
-    "db:migrate:production": "wrangler d1 migrations apply DB --remote",
     "start:dev": "astro dev",
     "start:prod": "astro preview",
-    "ts:codegen": "pnpm run astro-typegen && pnpm run cf-typegen",
-    "ts:check": "pnpm run ts:codegen && astro check"
+    "ts:check": "pnpm run ts:codegen && astro check",
+    "ts:codegen": "pnpm run astro-typegen && pnpm run cf-typegen"
   },
   "type": "module"
 }

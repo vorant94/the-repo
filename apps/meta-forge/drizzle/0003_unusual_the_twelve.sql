@@ -1,0 +1,1 @@
+ALTER TABLE `events` RENAME COLUMN "event_date" TO "hosted_at";

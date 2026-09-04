@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788458095818,
+      "tag": "0000_sloppy_fixer",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788460641634,
+      "tag": "0001_famous_proemial_gods",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788460890508,
+      "tag": "0002_wise_pepper_potts",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1788461089650,
+      "tag": "0003_unusual_the_twelve",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1788461186342,
+      "tag": "0004_steep_luminals",
+      "breakpoints": true
+    }
+  ]
+}

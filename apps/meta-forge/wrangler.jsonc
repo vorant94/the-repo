@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "meta-forge",
+  "main": "src/main.ts",
+  "compatibility_date": "2026-09-03",
+  "observability": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "pattern": "meta-forge.vorant94.dev",
+      "custom_domain": true
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "meta-forge",
+      "database_id": "d6050d89-3945-4c5c-a8c3-8be1852d6a13",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

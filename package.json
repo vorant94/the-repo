@@ -12,6 +12,15 @@
     "skills": "^1.5.19",
     "vitest": "^4.1.10"
   },
+  "engines": {
+    "node": ">=24"
+  },
+  "license": "MIT",
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "packageManager": "pnpm@10.33.2",
   "pnpm": {
     "overrides": {
       "miniflare": "4.20260708.1"
@@ -23,24 +32,15 @@
       "workerd"
     ]
   },
-  "engines": {
-    "node": ">=24"
-  },
-  "license": "MIT",
-  "os": [
-    "darwin",
-    "linux"
-  ],
-  "packageManager": "pnpm@10.33.2",
   "private": true,
   "scripts": {
     "lint:check": "biome check .",
     "lint:ci": "biome ci .",
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
+    "prepare": "lefthook install",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "prepare": "lefthook install",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "unused-code:check": "knip"
