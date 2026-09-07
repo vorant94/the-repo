@@ -42,7 +42,7 @@ export function processJobs(batch: MessageBatch, env: CloudflareBindings) {
             const result = await processEventReportGeneration(
               eventReportJobSchema.parse(job),
               env.BROWSER,
-              env.meta_forge_bucket,
+              env.BUCKET,
             );
             await db
               .update(jobs)

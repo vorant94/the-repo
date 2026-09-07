@@ -24,13 +24,13 @@
   "queues": {
     "producers": [
       {
-        "binding": "meta_forge_jobs",
-        "queue": "meta-forge-jobs"
+        "binding": "QUEUE",
+        "queue": "meta-forge"
       }
     ],
     "consumers": [
       {
-        "queue": "meta-forge-jobs",
+        "queue": "meta-forge",
         "max_batch_size": 1,
         "max_retries": 3,
         "retry_delay": 30
@@ -43,7 +43,7 @@
   "r2_buckets": [
     {
       "bucket_name": "meta-forge",
-      "binding": "meta_forge_bucket"
+      "binding": "BUCKET"
     }
   ]
 }

@@ -50,7 +50,7 @@ eventReportGenerateRoute.post(
       throw new Error("Job insertion returned no record");
     }
 
-    await c.env.meta_forge_jobs.send({ jobId: job.id });
+    await c.env.QUEUE.send({ jobId: job.id });
 
     return c.json(eventReportJobSchema.parse(job), 202);
   },
