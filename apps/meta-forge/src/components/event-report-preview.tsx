@@ -1,4 +1,5 @@
 import { css, cx, Style } from "hono/css";
+import { eventReportRenderSize } from "../shared/event-report-render-size.ts";
 import type { EventReport } from "../shared/schema/jobs.ts";
 import { EventReportChart } from "./event-report-chart.tsx";
 import { EventReportStandings } from "./event-report-standings.tsx";
@@ -66,8 +67,8 @@ const globalStyles = css`
   body { margin: 0; background: #e2e8f0; color: #020617; font-family: Arial, sans-serif; }
 `;
 const reportStyle = css`
-  width: 1920px;
-  min-height: 1080px;
+  width: ${eventReportRenderSize.width}px;
+  height: ${eventReportRenderSize.height}px;
   margin: 0 auto;
   padding: 64px;
   background: #f8fafc;

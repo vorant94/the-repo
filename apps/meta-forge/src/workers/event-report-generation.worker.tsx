@@ -1,6 +1,7 @@
 import puppeteer from "@cloudflare/puppeteer";
 import { renderToReadableStream } from "hono/jsx/dom/server";
 import { EventReportPreview } from "../components/event-report-preview.tsx";
+import { eventReportRenderSize } from "../shared/event-report-render-size.ts";
 import type { EventReportJob } from "../shared/schema/jobs.ts";
 
 export async function processEventReportGeneration(
@@ -12,7 +13,10 @@ export async function processEventReportGeneration(
   const browser = await puppeteer.launch(browserBinding);
   try {
     const page = await browser.newPage();
-    await page.setViewport({ width: 1440, height: 1800, deviceScaleFactor: 2 });
+    await page.setViewport({
+      ...eventReportRenderSize,
+      deviceScaleFactor: 2,
+    });
     const stream = await renderToReadableStream(
       <EventReportPreview
         mode="dark"
@@ -22,7 +26,7 @@ export async function processEventReportGeneration(
     const response = new Response(stream);
     const html = await response.text();
     await page.setContent(html, { waitUntil: "networkidle0" });
-    const screenshot = await page.screenshot({ fullPage: true, type: "png" });
+    const screenshot = await page.screenshot({ type: "png" });
     const objectKey = `event-report-generation-results/${eventReport.id}/${job.id}.png`;
     await bucket.put(objectKey, screenshot, {
       httpMetadata: { contentType: "image/png" },
