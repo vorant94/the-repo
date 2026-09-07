@@ -1,36 +1,14 @@
 import { asc, eq } from "drizzle-orm";
-import { getContext } from "hono/context-storage";
-import { z } from "zod";
-import type { HonoEnv } from "../shared/hono-env.ts";
+import { getAppContext } from "../shared/app-context.ts";
 import { archetypes } from "../shared/schema/archetypes.ts";
 import { events } from "../shared/schema/events.ts";
 import { hosts } from "../shared/schema/hosts.ts";
+import { eventReportPayloadSchema } from "../shared/schema/jobs.ts";
 import { players } from "../shared/schema/players.ts";
 import { ranks } from "../shared/schema/ranks.ts";
 
-export const eventReportDtoSchema = z
-  .object({
-    id: z.uuid(),
-    name: z.string(),
-    hostedAt: z.iso.datetime({ offset: true }),
-    host: z.object({ name: z.string(), address: z.string() }),
-    ranks: z.array(
-      z.object({
-        position: z.number().int().positive(),
-        wins: z.number().int().nonnegative(),
-        losses: z.number().int().nonnegative(),
-        draws: z.number().int().nonnegative(),
-        isArchetypeHidden: z.boolean().nullable(),
-        player: z.object({ name: z.string() }),
-        archetype: z.object({ name: z.string() }),
-      }),
-    ),
-  })
-  .meta({ ref: "EventReport" });
-export type EventReport = z.infer<typeof eventReportDtoSchema>;
-
 export async function findEventReport(eventId: string) {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getAppContext();
   const rawEventReportRows = await db
     .select({
       event: { id: events.id, name: events.name, hostedAt: events.hostedAt },
@@ -66,7 +44,7 @@ export async function findEventReport(eventId: string) {
     return [{ ...rank, player, archetype }];
   });
 
-  return eventReportDtoSchema.parse({
+  return eventReportPayloadSchema.parse({
     ...rawEventReport.event,
     host: rawEventReport.host,
     ranks: reportRanks,

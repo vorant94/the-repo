@@ -1,18 +1,16 @@
 import { eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
-import { getContext } from "hono/context-storage";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import Papa from "papaparse";
 import { z } from "zod";
-import {
-  eventReportDtoSchema,
-  findEventReport,
-} from "../../queries/find-event-report.ts";
+import { findEventReport } from "../../queries/find-event-report.ts";
+import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 import { archetypes } from "../../shared/schema/archetypes.ts";
 import { events } from "../../shared/schema/events.ts";
 import { hosts } from "../../shared/schema/hosts.ts";
+import { eventReportPayloadSchema } from "../../shared/schema/jobs.ts";
 import { players } from "../../shared/schema/players.ts";
 import { ranks } from "../../shared/schema/ranks.ts";
 
@@ -22,7 +20,7 @@ const eventReportImportFormSchema = z.object({
   eventName: z.string(),
   hostName: z.string(),
   eventDate: z.iso.datetime({ offset: true }),
-  report: z.instanceof(File),
+  report: z.instanceof(File).meta({ type: "string", format: "binary" }),
 });
 
 const eventReportRowSchema = z.object({
@@ -32,6 +30,11 @@ const eventReportRowSchema = z.object({
   wins: z.coerce.number().int().nonnegative(),
   losses: z.coerce.number().int().nonnegative(),
   draws: z.coerce.number().int().nonnegative().optional(),
+  isArchetypeHidden: z.stringbool({
+    truthy: ["true"],
+    falsy: ["false"],
+    case: "sensitive",
+  }),
 });
 type EventReportRow = z.infer<typeof eventReportRowSchema>;
 
@@ -42,6 +45,7 @@ const expectedHeaders = [
   "wins",
   "losses",
   "draws",
+  "isArchetypeHidden",
 ];
 const maximumRowsPerStatement = 10;
 
@@ -71,18 +75,16 @@ eventReportImportRoute.post(
       201: {
         description: "Imported event report",
         content: {
-          "application/json": { schema: resolver(eventReportDtoSchema) },
+          "application/json": { schema: resolver(eventReportPayloadSchema) },
         },
       },
       400: { description: "Invalid multipart data, CSV report, or host" },
       401: { description: "Unauthorized" },
     },
   }),
-  validator("form", eventReportImportFormSchema, undefined, {
-    media: "multipart/form-data",
-  }),
+  validator("form", eventReportImportFormSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { eventName, hostName, eventDate, report } = c.req.valid("form");
     const rows = parseEventReport(await report.text());
     const rawHost = await db
@@ -150,7 +152,7 @@ function parseEventReport(report: string): Array<EventReportRow> {
 }
 
 async function preparePlayers(rows: Array<EventReportRow>) {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.player));
   const rawPlayers = await db
     .select()
@@ -176,7 +178,7 @@ async function preparePlayers(rows: Array<EventReportRow>) {
 }
 
 async function prepareArchetypes(rows: Array<EventReportRow>) {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.archetype));
   const rawArchetypes = await db
     .select()
@@ -207,7 +209,7 @@ function prepareRanks(
   playerIdsByName: Map<string, string>,
   archetypeIdsByName: Map<string, string>,
 ) {
-  const { db } = getContext<HonoEnv>().var;
+  const { db } = getAppContext();
   const values = rows.map((row) => {
     const playerId = playerIdsByName.get(row.player);
     const archetypeId = archetypeIdsByName.get(row.archetype);
@@ -223,6 +225,7 @@ function prepareRanks(
       wins: row.wins,
       losses: row.losses,
       draws: row.draws,
+      isArchetypeHidden: row.isArchetypeHidden,
     };
   });
 

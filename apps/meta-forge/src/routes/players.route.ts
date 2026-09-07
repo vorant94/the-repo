@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
+import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
@@ -29,7 +30,7 @@ playersRoute.get(
     },
   }),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
 
     const rawPlayers = await db
       .select()
@@ -56,7 +57,7 @@ playersRoute.get(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawPlayers = await db
@@ -88,7 +89,7 @@ playersRoute.post(
   }),
   validator("json", insertPlayerSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const body = c.req.valid("json");
 
     const rawPlayers = await db.insert(players).values(body).returning();
@@ -119,7 +120,7 @@ playersRoute.patch(
   validator("param", idSchema),
   validator("json", updatePlayerSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
 
@@ -150,7 +151,7 @@ playersRoute.delete(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawPlayers = await db

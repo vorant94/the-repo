@@ -2,6 +2,7 @@
   "name": "meta-forge",
   "version": "0.0.1",
   "dependencies": {
+    "@cloudflare/puppeteer": "^1.4.0",
     "@hono/standard-validator": "^0.2.3",
     "@hono/swagger-ui": "^0.6.1",
     "d3-shape": "^3.2.0",

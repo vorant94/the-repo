@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
+import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
@@ -29,7 +30,7 @@ eventsRoute.get(
     },
   }),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
 
     const rawEvents = await db
       .select()
@@ -56,7 +57,7 @@ eventsRoute.get(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawEvents = await db.select().from(events).where(eq(events.id, id));
@@ -85,7 +86,7 @@ eventsRoute.post(
   }),
   validator("json", insertEventSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const body = c.req.valid("json");
 
     const rawEvents = await db.insert(events).values(body).returning();
@@ -116,7 +117,7 @@ eventsRoute.patch(
   validator("param", idSchema),
   validator("json", updateEventSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
 
@@ -147,7 +148,7 @@ eventsRoute.delete(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawEvents = await db

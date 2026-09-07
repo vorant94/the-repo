@@ -1,5 +1,5 @@
 import { css, cx } from "hono/css";
-import type { EventReport } from "../queries/find-event-report.ts";
+import type { EventReport } from "../shared/schema/jobs.ts";
 
 const maximumRowsPerTable = 18;
 
@@ -40,7 +40,7 @@ export const EventReportStandings = ({
               <tr>
                 <th class={rankStyle}>#</th>
                 <th>Player</th>
-                <th class={deckStyle}>Deck</th>
+                <th class={deckColumnStyle}>Deck</th>
                 <th class={recordStyle}>W/L/D</th>
               </tr>
             </thead>
@@ -62,7 +62,8 @@ export const EventReportStandings = ({
                   <td
                     class={cx(
                       tableCellStyle,
-                      deckStyle,
+                      deckColumnStyle,
+                      deckCellStyle,
                       isDark && darkDeckStyle,
                     )}
                   >
@@ -133,20 +134,20 @@ const darkTableHeaderStyle = css`
   color: #94a3b8;
 `;
 const tableCellStyle = css`
-  border-bottom: 1px solid #e2e8f0;
   padding-block: 8px;
   font-weight: 600;
 `;
 const darkTableCellStyle = css`
-  border-color: #1e293b;
   color: #f8fafc;
 `;
 const rankStyle = css`
   width: 32px;
   font-weight: 700;
 `;
-const deckStyle = css`
+const deckColumnStyle = css`
   width: 144px;
+`;
+const deckCellStyle = css`
   color: #475569;
 `;
 const darkDeckStyle = css`

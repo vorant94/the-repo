@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
+import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
@@ -29,7 +30,7 @@ ranksRoute.get(
     },
   }),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
 
     const rawRanks = await db.select().from(ranks).orderBy(asc(ranks.position));
     const ranksDto = z.array(rankDtoSchema).parse(rawRanks);
@@ -53,7 +54,7 @@ ranksRoute.get(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawRanks = await db.select().from(ranks).where(eq(ranks.id, id));
@@ -82,7 +83,7 @@ ranksRoute.post(
   }),
   validator("json", insertRankSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const body = c.req.valid("json");
 
     const rawRanks = await db.insert(ranks).values(body).returning();
@@ -113,7 +114,7 @@ ranksRoute.patch(
   validator("param", idSchema),
   validator("json", updateRankSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
 
@@ -144,7 +145,7 @@ ranksRoute.delete(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawRanks = await db

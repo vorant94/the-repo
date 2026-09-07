@@ -1,7 +1,7 @@
 import type { PieArcDatum } from "d3-shape";
 import { arc, pie } from "d3-shape";
 import { css, cx } from "hono/css";
-import type { EventReport } from "../queries/find-event-report.ts";
+import type { EventReport } from "../shared/schema/jobs.ts";
 
 const chartWidth = 896;
 const chartHeight = 760;

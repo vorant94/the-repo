@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
+import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
@@ -29,7 +30,7 @@ hostsRoute.get(
     },
   }),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
 
     const rawHosts = await db.select().from(hosts).orderBy(asc(hosts.name));
     const hostsDto = z.array(hostDtoSchema).parse(rawHosts);
@@ -53,7 +54,7 @@ hostsRoute.get(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawHosts = await db.select().from(hosts).where(eq(hosts.id, id));
@@ -82,7 +83,7 @@ hostsRoute.post(
   }),
   validator("json", insertHostSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const body = c.req.valid("json");
 
     const rawHosts = await db.insert(hosts).values(body).returning();
@@ -113,7 +114,7 @@ hostsRoute.patch(
   validator("param", idSchema),
   validator("json", updateHostSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
 
@@ -144,7 +145,7 @@ hostsRoute.delete(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawHosts = await db

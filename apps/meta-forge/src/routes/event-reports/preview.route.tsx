@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { validator } from "hono-openapi";
 import { z } from "zod";
 import { EventReportPreview } from "../../components/event-report-preview.tsx";
+import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 
 export const eventReportPreviewRoute = new Hono<HonoEnv>();
@@ -16,7 +17,7 @@ eventReportPreviewRoute.get(
   validator("query", eventReportPreviewQuerySchema),
   (c) => {
     const { mode } = c.req.valid("query");
-    const { eventReport } = c.var;
+    const { eventReport } = getAppContext();
     if (!eventReport) {
       throw new HTTPException(404, { message: "Event report was not found" });
     }

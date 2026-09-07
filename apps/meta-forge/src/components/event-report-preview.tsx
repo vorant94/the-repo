@@ -1,5 +1,5 @@
 import { css, cx, Style } from "hono/css";
-import type { EventReport } from "../queries/find-event-report.ts";
+import type { EventReport } from "../shared/schema/jobs.ts";
 import { EventReportChart } from "./event-report-chart.tsx";
 import { EventReportStandings } from "./event-report-standings.tsx";
 

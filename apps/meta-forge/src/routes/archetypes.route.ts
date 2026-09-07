@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
+import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
@@ -31,7 +32,7 @@ archetypesRoute.get(
     },
   }),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
 
     const rawArchetypes = await db
       .select()
@@ -60,7 +61,7 @@ archetypesRoute.get(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawArchetypes = await db
@@ -94,7 +95,7 @@ archetypesRoute.post(
   }),
   validator("json", insertArchetypeSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const body = c.req.valid("json");
 
     const rawArchetypes = await db.insert(archetypes).values(body).returning();
@@ -127,7 +128,7 @@ archetypesRoute.patch(
   validator("param", idSchema),
   validator("json", updateArchetypeSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
 
@@ -158,7 +159,7 @@ archetypesRoute.delete(
   }),
   validator("param", idSchema),
   async (c) => {
-    const { db } = c.var;
+    const { db } = getAppContext();
     const { id } = c.req.valid("param");
 
     const rawArchetypes = await db

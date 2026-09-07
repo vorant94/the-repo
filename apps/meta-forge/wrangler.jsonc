@@ -20,5 +20,30 @@
       "database_id": "d6050d89-3945-4c5c-a8c3-8be1852d6a13",
       "migrations_dir": "drizzle"
     }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "meta_forge_jobs",
+        "queue": "meta-forge-jobs"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "meta-forge-jobs",
+        "max_batch_size": 1,
+        "max_retries": 3,
+        "retry_delay": 30
+      }
+    ]
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "r2_buckets": [
+    {
+      "bucket_name": "meta-forge",
+      "binding": "meta_forge_bucket"
+    }
   ]
 }
