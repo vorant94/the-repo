@@ -14,9 +14,9 @@ import { eventReportPayloadSchema } from "../../shared/schema/jobs.ts";
 import { players } from "../../shared/schema/players.ts";
 import { ranks } from "../../shared/schema/ranks.ts";
 
-export const eventReportImportRoute = new Hono<HonoEnv>();
+export const eventReportCreateRoute = new Hono<HonoEnv>();
 
-const eventReportImportFormSchema = z.object({
+const eventReportCreateFormSchema = z.object({
   eventName: z.string(),
   hostName: z.string(),
   eventDate: z.iso.datetime({ offset: true }),
@@ -49,10 +49,10 @@ const expectedHeaders = [
 ];
 const maximumRowsPerStatement = 10;
 
-eventReportImportRoute.post(
+eventReportCreateRoute.post(
   "/",
   describeRoute({
-    description: "Import an event report from a CSV file",
+    description: "Create an event report from a CSV file",
     tags: ["event reports"],
     requestBody: {
       required: true,
@@ -73,7 +73,7 @@ eventReportImportRoute.post(
     },
     responses: {
       201: {
-        description: "Imported event report",
+        description: "Created event report",
         content: {
           "application/json": { schema: resolver(eventReportPayloadSchema) },
         },
@@ -82,7 +82,7 @@ eventReportImportRoute.post(
       401: { description: "Unauthorized" },
     },
   }),
-  validator("form", eventReportImportFormSchema),
+  validator("form", eventReportCreateFormSchema),
   async (c) => {
     const { db } = getAppContext();
     const { eventName, hostName, eventDate, report } = c.req.valid("form");

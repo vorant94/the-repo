@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { validator } from "hono-openapi";
+import { describeRoute, validator } from "hono-openapi";
 import { z } from "zod";
 import { EventReportPreview } from "../../components/event-report-preview.tsx";
 import { getAppContext } from "../../shared/app-context.ts";
@@ -14,6 +14,17 @@ const eventReportPreviewQuerySchema = z.object({
 
 eventReportPreviewRoute.get(
   "/preview",
+  describeRoute({
+    description: "Preview an event report",
+    tags: ["event reports"],
+    responses: {
+      200: {
+        description: "Event report preview",
+        content: { "text/html": { schema: { type: "string" } } },
+      },
+      404: { description: "Event report not found" },
+    },
+  }),
   validator("query", eventReportPreviewQuerySchema),
   (c) => {
     const { mode } = c.req.valid("query");

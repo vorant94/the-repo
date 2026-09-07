@@ -5,14 +5,14 @@ import { findEventReport } from "../../queries/find-event-report.ts";
 import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 import { idSchema } from "../../shared/id-schema.ts";
+import { eventReportCreateRoute } from "./create.route.ts";
 import { eventReportGenerateRoute } from "./generate.route.ts";
 import { eventReportGetRoute } from "./get.route.ts";
-import { eventReportImportRoute } from "./import.route.ts";
 import { eventReportPreviewRoute } from "./preview.route.tsx";
 
 export const eventReportsRoute = new Hono<HonoEnv>();
 
-eventReportsRoute.route("/import", eventReportImportRoute);
+eventReportsRoute.route("/", eventReportCreateRoute);
 eventReportsRoute.use("/:id", eventReportMiddleware);
 eventReportsRoute.use("/:id/*", eventReportMiddleware);
 eventReportsRoute.route("/:id", eventReportGetRoute);

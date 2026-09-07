@@ -6,6 +6,7 @@ import { openAPIRouteHandler } from "hono-openapi";
 import { appContextMiddleware } from "./middlewares/app-context.middleware.ts";
 import { jwtMiddleware } from "./middlewares/jwt.middleware.ts";
 import { archetypesRoute } from "./routes/archetypes.route.ts";
+import { bucketRoute } from "./routes/bucket.route.ts";
 import { eventReportsRoute } from "./routes/event-reports/index.route.ts";
 import { eventsRoute } from "./routes/events.route.ts";
 import { hostsRoute } from "./routes/hosts.route.ts";
@@ -22,6 +23,7 @@ app.use(appContextMiddleware);
 const publicApiPaths = ["/api/docs", "/api/openapi.json"];
 if (import.meta.env.DEV) {
   publicApiPaths.push("/api/event-reports/*/preview");
+  publicApiPaths.push("/api/bucket/*");
 }
 
 app.use("/api/*", except(publicApiPaths, jwtMiddleware));
@@ -34,6 +36,9 @@ app.route("/api/archetypes", archetypesRoute);
 app.route("/api/events", eventsRoute);
 app.route("/api/ranks", ranksRoute);
 app.route("/api/event-reports", eventReportsRoute);
+if (import.meta.env.DEV) {
+  app.route("/api/bucket", bucketRoute);
+}
 app.get(
   "/api/openapi.json",
   openAPIRouteHandler(app, {
