@@ -42,6 +42,7 @@ export const ranks = sqliteTable(
         onDelete: "restrict",
         onUpdate: "cascade",
       }),
+    isArchetypeHidden: integer({ mode: "boolean" }),
     position: integer().notNull(),
     wins: integer().notNull(),
     losses: integer().notNull(),

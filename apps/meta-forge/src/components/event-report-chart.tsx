@@ -160,7 +160,9 @@ function getArchetypeDistribution(
 ): Array<ArchetypeDistribution> {
   const counts = new Map<string, number>();
   for (const standing of standings) {
-    const name = standing.archetype.name;
+    const name = standing.isArchetypeHidden
+      ? "Homebrew"
+      : standing.archetype.name;
     counts.set(name, (counts.get(name) ?? 0) + 1);
   }
 

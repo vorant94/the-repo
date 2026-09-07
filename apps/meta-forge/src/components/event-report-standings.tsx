@@ -66,7 +66,7 @@ export const EventReportStandings = ({
                       isDark && darkDeckStyle,
                     )}
                   >
-                    {standing.archetype.name}
+                    {getArchetypeName(standing)}
                   </td>
                   <td
                     class={cx(
@@ -159,4 +159,12 @@ const recordStyle = css`
 
 function formatRecord(wins: number, losses: number, draws: number): string {
   return `${wins}/${losses}/${draws}`;
+}
+
+function getArchetypeName(standing: EventReport["ranks"][number]): string {
+  if (standing.isArchetypeHidden) {
+    return "Homebrew";
+  }
+
+  return standing.archetype.name;
 }

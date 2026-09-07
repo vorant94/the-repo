@@ -1,0 +1,1 @@
+ALTER TABLE `ranks` ADD `is_archetype_hidden` integer;

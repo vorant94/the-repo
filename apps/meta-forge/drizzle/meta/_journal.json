@@ -36,6 +36,13 @@
       "when": 1788461186342,
       "tag": "0004_steep_luminals",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1788762616058,
+      "tag": "0005_curious_phalanx",
+      "breakpoints": true
     }
   ]
 }
