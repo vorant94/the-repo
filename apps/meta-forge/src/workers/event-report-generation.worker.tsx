@@ -27,7 +27,7 @@ export async function processEventReportGeneration(
     const html = await response.text();
     await page.setContent(html, { waitUntil: "networkidle0" });
     const screenshot = await page.screenshot({ type: "png" });
-    const objectKey = `event-report-generation-results/${eventReport.id}/${job.id}.png`;
+    const objectKey = `event-reports/${eventReport.id}/${job.id}.png`;
     await bucket.put(objectKey, screenshot, {
       httpMetadata: { contentType: "image/png" },
     });

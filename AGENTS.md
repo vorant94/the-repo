@@ -126,6 +126,7 @@ Always run Biome from repo root. Rules:
 - Only export what other files need (Knip catches unused exports)
 - Early returns always: `if (!value) { return; }` not `if (value) { ... }` — all contexts including small functions, disposal handlers
 - Avoid unnecessary nesting — main logic flows without deep nesting
+- Keep distinct actions in separate statements — extract and validate inputs before using them in queries or other operations
 - When approach fails: investigate, present findings, stop and wait
 - Prefer library-native APIs over custom workarounds — check library first before implementing
 - Always use Node for any throwaway or automation scripts in this repo (`node -e 'console.log("workspace-ok")'` or a Node script, not Python).
@@ -176,7 +177,7 @@ export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywh
 // NOT: Array<z.infer<typeof chapterSchema>> at each usage site
 ```
 
-**Zod parsing:** Use `.parse()` by default — let validation errors throw. Only `.safeParse()` for user-facing validation needing graceful errors.
+**Zod parsing:** Always use `.parse()` by default and let validation errors throw. NEVER use `.safeParse()` unless the user explicitly asks for it.
 
 **Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE implies false immutability — objects stay mutable.
 

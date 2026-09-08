@@ -1,3 +1,4 @@
+import { AwsClient } from "aws4fetch";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { z } from "zod";
@@ -18,8 +19,14 @@ const jobMessageSchema = z.object({ jobId: z.uuid() });
 export function processJobs(batch: MessageBatch, env: CloudflareBindings) {
   const db = drizzle(env.DB, dbConfig);
   const parsedEnv = envSchema.parse(env);
+  const awsClient = new AwsClient({
+    service: "s3",
+    region: "auto",
+    accessKeyId: parsedEnv.R2_ACCESS_KEY_ID,
+    secretAccessKey: parsedEnv.R2_SECRET_ACCESS_KEY,
+  });
 
-  return runWithAppContext({ db, env: parsedEnv }, async () => {
+  return runWithAppContext({ awsClient, db, env: parsedEnv }, async () => {
     for (const message of batch.messages) {
       const { jobId } = jobMessageSchema.parse(message.body);
       const rawJob = await db

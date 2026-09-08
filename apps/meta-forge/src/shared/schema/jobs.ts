@@ -60,11 +60,13 @@ export const jobs = sqliteTable("jobs", {
 
 export const jobSchema = createSelectSchema(jobs).meta({ ref: "Job" });
 
+export const eventReportResultSchema = z.object({ objectKey: z.string() });
+
 export const eventReportJobSchema = jobSchema
   .extend({
     type: z.literal(jobTypes.eventReport),
     payload: eventReportPayloadSchema,
-    result: z.object({ objectKey: z.string() }).nullable(),
+    result: eventReportResultSchema.nullable(),
   })
   .meta({ ref: "EventReportJob" });
 export type EventReportJob = z.infer<typeof eventReportJobSchema>;
