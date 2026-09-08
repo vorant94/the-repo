@@ -1,12 +1,12 @@
 import { css, cx, Style } from "hono/css";
 import { eventReportRenderSize } from "../shared/event-report-render-size.ts";
-import type { EventReport } from "../shared/schema/jobs.ts";
+import type { EventReportPayload } from "../shared/schema/jobs.ts";
 import { EventReportChart } from "./event-report-chart.tsx";
 import { EventReportStandings } from "./event-report-standings.tsx";
 
 interface EventReportPreviewProps {
   mode: "dark" | "light";
-  report: EventReport;
+  report: EventReportPayload;
 }
 
 export const EventReportPreview = ({

@@ -2,27 +2,6 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const eventReportPayloadSchema = z
-  .object({
-    id: z.uuid(),
-    name: z.string(),
-    hostedAt: z.iso.datetime({ offset: true }),
-    host: z.object({ name: z.string(), address: z.string() }),
-    ranks: z.array(
-      z.object({
-        position: z.number().int().positive(),
-        wins: z.number().int().nonnegative(),
-        losses: z.number().int().nonnegative(),
-        draws: z.number().int().nonnegative(),
-        isArchetypeHidden: z.boolean().nullable(),
-        player: z.object({ name: z.string() }),
-        archetype: z.object({ name: z.string() }),
-      }),
-    ),
-  })
-  .meta({ ref: "EventReport" });
-export type EventReport = z.infer<typeof eventReportPayloadSchema>;
-
 export const jobTypes = {
   eventReport: "event-report",
 } as const;
@@ -59,8 +38,32 @@ export const jobs = sqliteTable("jobs", {
 });
 
 export const jobSchema = createSelectSchema(jobs).meta({ ref: "Job" });
+export type Job = z.infer<typeof jobSchema>;
 
-export const eventReportResultSchema = z.object({ objectKey: z.string() });
+export const eventReportPayloadSchema = z
+  .object({
+    id: z.uuid(),
+    name: z.string(),
+    hostedAt: z.iso.datetime({ offset: true }),
+    host: z.object({ name: z.string(), address: z.string() }),
+    ranks: z.array(
+      z.object({
+        position: z.number().int().positive(),
+        wins: z.number().int().nonnegative(),
+        losses: z.number().int().nonnegative(),
+        draws: z.number().int().nonnegative(),
+        isArchetypeHidden: z.boolean().nullable(),
+        player: z.object({ name: z.string() }),
+        archetype: z.object({ name: z.string() }),
+      }),
+    ),
+  })
+  .meta({ ref: "EventReportPayload" });
+export type EventReportPayload = z.infer<typeof eventReportPayloadSchema>;
+
+export const eventReportResultSchema = z
+  .object({ objectKey: z.string() })
+  .meta({ ref: "EventReportResult" });
 
 export const eventReportJobSchema = jobSchema
   .extend({
@@ -69,4 +72,3 @@ export const eventReportJobSchema = jobSchema
     result: eventReportResultSchema.nullable(),
   })
   .meta({ ref: "EventReportJob" });
-export type EventReportJob = z.infer<typeof eventReportJobSchema>;

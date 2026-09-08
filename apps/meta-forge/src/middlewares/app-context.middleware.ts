@@ -20,5 +20,15 @@ export const appContextMiddleware: MiddlewareHandler<HonoEnv> = (c, next) => {
     accessKeyId: env.R2_ACCESS_KEY_ID,
     secretAccessKey: env.R2_SECRET_ACCESS_KEY,
   });
-  return runWithAppContext({ awsClient, db, env }, next);
+  return runWithAppContext(
+    {
+      awsClient,
+      browser: c.env.BROWSER,
+      bucket: c.env.BUCKET,
+      db,
+      env,
+      queue: c.env.QUEUE,
+    },
+    next,
+  );
 };

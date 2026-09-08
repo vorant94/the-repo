@@ -1,11 +1,11 @@
 import { css, cx } from "hono/css";
-import type { EventReport } from "../shared/schema/jobs.ts";
+import type { EventReportPayload } from "../shared/schema/jobs.ts";
 
 const maximumRowsPerTable = 18;
 
 interface EventReportStandingsProps {
   mode: "dark" | "light";
-  report: EventReport;
+  report: EventReportPayload;
 }
 
 export const EventReportStandings = ({
@@ -162,7 +162,9 @@ function formatRecord(wins: number, losses: number, draws: number): string {
   return `${wins}/${losses}/${draws}`;
 }
 
-function getArchetypeName(standing: EventReport["ranks"][number]): string {
+function getArchetypeName(
+  standing: EventReportPayload["ranks"][number],
+): string {
   if (standing.isArchetypeHidden) {
     return "Homebrew";
   }

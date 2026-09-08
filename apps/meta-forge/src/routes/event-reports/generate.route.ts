@@ -29,12 +29,12 @@ eventReportGenerateRoute.post(
     },
   }),
   async (c) => {
-    const { db, eventReport } = getAppContext();
+    const { db, eventReport, queue } = getAppContext();
     if (!eventReport) {
       throw new HTTPException(404, { message: "Event report was not found" });
     }
 
-    const job = await db
+    const jobsRows = await db
       .insert(jobs)
       .values({
         id: crypto.randomUUID(),
@@ -44,13 +44,13 @@ eventReportGenerateRoute.post(
         result: null,
         error: null,
       })
-      .returning()
-      .then((rows) => rows.at(0));
+      .returning();
+    const job = jobsRows.at(0);
     if (!job) {
       throw new Error("Job insertion returned no record");
     }
 
-    await c.env.QUEUE.send({ jobId: job.id });
+    await queue.send({ jobId: job.id });
 
     return c.json(eventReportJobSchema.parse(job), 202);
   },

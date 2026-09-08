@@ -1,7 +1,7 @@
 import type { PieArcDatum } from "d3-shape";
 import { arc, pie } from "d3-shape";
 import { css, cx } from "hono/css";
-import type { EventReport } from "../shared/schema/jobs.ts";
+import type { EventReportPayload } from "../shared/schema/jobs.ts";
 
 const chartWidth = 896;
 const chartHeight = 760;
@@ -29,7 +29,7 @@ const pieColors = [
 
 interface EventReportChartProps {
   mode: "dark" | "light";
-  report: EventReport;
+  report: EventReportPayload;
 }
 
 export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
@@ -156,13 +156,11 @@ interface PieLabel {
 }
 
 function getArchetypeDistribution(
-  standings: EventReport["ranks"],
+  ranks: EventReportPayload["ranks"],
 ): Array<ArchetypeDistribution> {
   const counts = new Map<string, number>();
-  for (const standing of standings) {
-    const name = standing.isArchetypeHidden
-      ? "Homebrew"
-      : standing.archetype.name;
+  for (const rank of ranks) {
+    const name = rank.isArchetypeHidden ? "Homebrew" : rank.archetype.name;
     counts.set(name, (counts.get(name) ?? 0) + 1);
   }
 
