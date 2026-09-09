@@ -161,13 +161,14 @@ const darkTableHeaderStyle = css`
 `;
 const tableCellStyle = css`
   padding-block: 8px;
-  font-weight: 400;
+  font-weight: 600;
 `;
 const darkTableCellStyle = css`
   color: #f8fafc;
 `;
 const rankStyle = css`
   width: 32px;
+  font-weight: 700;
 `;
 const deckColumnStyle = css`
   width: 144px;
@@ -177,7 +178,7 @@ const singleTableDeckColumnStyle = css`
 `;
 const deckCellStyle = css`
   color: #475569;
-  font-weight: 600;
+  font-weight: 400;
 `;
 const darkDeckStyle = css`
   color: #cbd5e1;
