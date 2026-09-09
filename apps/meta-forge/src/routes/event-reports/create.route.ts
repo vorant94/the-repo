@@ -47,7 +47,7 @@ const expectedHeaders = [
   "draws",
   "isArchetypeHidden",
 ];
-const maximumRowsPerStatement = 10;
+const maximumRowsPerStatement = 9;
 
 eventReportCreateRoute.post(
   "/",

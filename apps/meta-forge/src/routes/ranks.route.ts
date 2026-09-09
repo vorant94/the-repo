@@ -15,10 +15,14 @@ import {
 
 export const ranksRoute = new Hono<HonoEnv>();
 
+const ranksQuerySchema = z.object({
+  archetypeId: z.uuid().optional(),
+});
+
 ranksRoute.get(
   "/",
   describeRoute({
-    description: "List all ranks",
+    description: "List ranks, optionally filtered by archetype ID",
     tags: ["ranks"],
     responses: {
       200: {
@@ -29,10 +33,16 @@ ranksRoute.get(
       },
     },
   }),
+  validator("query", ranksQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const { archetypeId } = c.req.valid("query");
 
-    const rawRanks = await db.select().from(ranks).orderBy(asc(ranks.position));
+    const rawRanks = await db
+      .select()
+      .from(ranks)
+      .where(archetypeId ? eq(ranks.archetypeId, archetypeId) : undefined)
+      .orderBy(asc(ranks.position));
     const ranksDto = z.array(rankDtoSchema).parse(rawRanks);
 
     return c.json(ranksDto);
