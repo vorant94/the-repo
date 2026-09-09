@@ -21,6 +21,7 @@ export const EventReportStandings = ({
           report.ranks.slice(firstTableLength),
         ]
       : [report.ranks];
+  const isSingleTable = standingsTables.length === 1;
 
   return (
     <section class={standingsSectionStyle}>
@@ -28,19 +29,32 @@ export const EventReportStandings = ({
       <div
         class={cx(
           tablesStyle,
-          standingsTables.length === 1 ? singleTableStyle : doubleTableStyle,
+          isSingleTable ? singleTableStyle : doubleTableStyle,
         )}
       >
         {standingsTables.map((standings, tableIndex) => (
           <table
-            class={tableStyle}
+            class={cx(tableStyle, isSingleTable && singleTableTextStyle)}
             key={standings.at(0)?.player.name ?? "empty-standings"}
           >
-            <thead class={cx(tableHeaderStyle, isDark && darkTableHeaderStyle)}>
+            <thead
+              class={cx(
+                tableHeaderStyle,
+                isSingleTable && singleTableHeaderStyle,
+                isDark && darkTableHeaderStyle,
+              )}
+            >
               <tr>
                 <th class={rankStyle}>#</th>
                 <th>Player</th>
-                <th class={deckColumnStyle}>Deck</th>
+                <th
+                  class={cx(
+                    deckColumnStyle,
+                    isSingleTable && singleTableDeckColumnStyle,
+                  )}
+                >
+                  Deck
+                </th>
                 <th class={recordStyle}>W/L/D</th>
               </tr>
             </thead>
@@ -63,6 +77,7 @@ export const EventReportStandings = ({
                     class={cx(
                       tableCellStyle,
                       deckColumnStyle,
+                      isSingleTable && singleTableDeckColumnStyle,
                       deckCellStyle,
                       isDark && darkDeckStyle,
                     )}
@@ -93,6 +108,9 @@ export const EventReportStandings = ({
 };
 
 const standingsSectionStyle = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 50%;
   height: 760px;
   padding-left: 32px;
@@ -102,6 +120,7 @@ const headingStyle = css`
   font-size: 30px;
   font-weight: 900;
   letter-spacing: -0.025em;
+  text-align: center;
 `;
 const tablesStyle = css`
   display: grid;
@@ -109,7 +128,8 @@ const tablesStyle = css`
   margin-top: 20px;
 `;
 const singleTableStyle = css`
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 70%);
+  justify-content: center;
 `;
 const doubleTableStyle = css`
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -117,17 +137,23 @@ const doubleTableStyle = css`
 const tableStyle = css`
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: 14px;
   table-layout: fixed;
   text-align: left;
+`;
+const singleTableTextStyle = css`
+  font-size: 18px;
 `;
 const tableHeaderStyle = css`
   border-block: 1px solid #cbd5e1;
   color: #64748b;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   th { padding-block: 8px; font-weight: 700; }
+`;
+const singleTableHeaderStyle = css`
+  font-size: 14px;
 `;
 const darkTableHeaderStyle = css`
   border-color: #334155;
@@ -135,20 +161,23 @@ const darkTableHeaderStyle = css`
 `;
 const tableCellStyle = css`
   padding-block: 8px;
-  font-weight: 600;
+  font-weight: 400;
 `;
 const darkTableCellStyle = css`
   color: #f8fafc;
 `;
 const rankStyle = css`
   width: 32px;
-  font-weight: 700;
 `;
 const deckColumnStyle = css`
   width: 144px;
 `;
+const singleTableDeckColumnStyle = css`
+  width: 174.24px;
+`;
 const deckCellStyle = css`
   color: #475569;
+  font-weight: 600;
 `;
 const darkDeckStyle = css`
   color: #cbd5e1;
