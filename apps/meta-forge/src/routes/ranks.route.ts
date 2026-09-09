@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
@@ -17,12 +17,13 @@ export const ranksRoute = new Hono<HonoEnv>();
 
 const ranksQuerySchema = z.object({
   archetypeId: z.uuid().optional(),
+  eventId: z.uuid().optional(),
 });
 
 ranksRoute.get(
   "/",
   describeRoute({
-    description: "List ranks, optionally filtered by archetype ID",
+    description: "List ranks, optionally filtered by archetype and event IDs",
     tags: ["ranks"],
     responses: {
       200: {
@@ -36,12 +37,17 @@ ranksRoute.get(
   validator("query", ranksQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const { archetypeId } = c.req.valid("query");
+    const { archetypeId, eventId } = c.req.valid("query");
 
     const rawRanks = await db
       .select()
       .from(ranks)
-      .where(archetypeId ? eq(ranks.archetypeId, archetypeId) : undefined)
+      .where(
+        and(
+          archetypeId ? eq(ranks.archetypeId, archetypeId) : undefined,
+          eventId ? eq(ranks.eventId, eventId) : undefined,
+        ),
+      )
       .orderBy(asc(ranks.position));
     const ranksDto = z.array(rankDtoSchema).parse(rawRanks);
 
