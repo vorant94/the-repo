@@ -25,7 +25,9 @@ Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, g
 
 ## CSV handoff
 
-- After approval, return a CSV in a fenced `csv` block with this exact header and order: `rank,player,archetype,wins,losses,draws,isArchetypeHidden`.
+- After approval, save the CSV in the repository root as `event-report-YYYY-MM-DD-<host-slug>.csv`, using the event's local date and a lowercase kebab-case host slug. Do this automatically; do not wait for a separate request to create the file.
+- Return the saved file as a clickable link and include its contents in a fenced `csv` block with this exact header and order: `rank,player,archetype,wins,losses,draws,isArchetypeHidden`.
 - Include all seven columns for every row, including `draws` with `0` where appropriate and `isArchetypeHidden` as lowercase `true` or `false`. Quote CSV values when required by CSV syntax.
 - Do not include IDs, host details, event details, or extra columns in the CSV. The import form receives `eventName`, `hostName`, and `eventDate` separately.
+- Provide a ready-to-run `curl` snippet that imports the saved file with `POST https://meta-forge.vorant94.dev/api/event-reports/`. Use multipart fields `eventName`, `hostName`, `eventDate`, and `report`, and authenticate with `Authorization: Bearer ${META_FORGE_TOKEN}`. Do not execute the import unless the user explicitly asks.
 - State that Meta Forge creates missing players and archetypes during import, but rejects an unknown host.
