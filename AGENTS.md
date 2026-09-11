@@ -179,7 +179,7 @@ export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywh
 
 **Zod parsing:** Always use `.parse()` by default and let validation errors throw. NEVER use `.safeParse()` unless the user explicitly asks for it.
 
-**Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE implies false immutability — objects stay mutable.
+**Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE implies false immutability — objects stay mutable. Environment variable names are an exception: preserve their SCREAMING_SNAKE_CASE names across the codebase, including Zod schemas and parsed environment objects, and add a narrowly scoped `biome-ignore lint/style/useNamingConvention` comment where required.
 
 **Modern TypeScript:** Top-level await (no main wrappers). No enums (`erasableSyntaxOnly: true`) — use type unions + const objects.
 

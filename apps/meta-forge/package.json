@@ -7,6 +7,7 @@
     "@hono/swagger-ui": "^0.6.1",
     "aws4fetch": "^1.0.20",
     "d3-shape": "^3.2.0",
+    "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "hono": "^4.12.31",
