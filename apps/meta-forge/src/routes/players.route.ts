@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
@@ -12,6 +12,7 @@ import {
   players,
   updatePlayerSchema,
 } from "../shared/schema/players.ts";
+import { ranks } from "../shared/schema/ranks.ts";
 
 export const playersRoute = new Hono<HonoEnv>();
 
@@ -100,6 +101,77 @@ playersRoute.post(
     const playerDto = playerDtoSchema.parse(rawPlayer);
 
     return c.json(playerDto, 201);
+  },
+);
+
+playersRoute.post(
+  "/:id/reconcile",
+  describeRoute({
+    description: "Merge another player into this player",
+    tags: ["players"],
+    responses: {
+      200: {
+        description: "Reconciled player",
+        content: { "application/json": { schema: resolver(playerDtoSchema) } },
+      },
+      400: { description: "Invalid request body or matching player IDs" },
+      404: { description: "Player not found" },
+    },
+  }),
+  validator("param", idSchema),
+  validator("json", idSchema),
+  async (c) => {
+    const { db } = getAppContext();
+    const { id } = c.req.valid("param");
+    const { id: duplicateId } = c.req.valid("json");
+    if (id === duplicateId) {
+      throw new HTTPException(400, {
+        message: "A player cannot be reconciled with itself",
+      });
+    }
+
+    const rawPlayers = await db
+      .select()
+      .from(players)
+      .where(inArray(players.id, [id, duplicateId]));
+    const rawPlayer = rawPlayers.find((player) => player.id === id);
+    if (!rawPlayer) {
+      throw new HTTPException(404, { message: "Player was not found" });
+    }
+    const rawDuplicate = rawPlayers.find((player) => player.id === duplicateId);
+    if (!rawDuplicate) {
+      throw new HTTPException(404, {
+        message: "Duplicate player was not found",
+      });
+    }
+
+    const aliases = new Set(rawPlayer.aliases);
+    aliases.add(rawDuplicate.name);
+    const aliasValues = [...aliases];
+    const updateRankReferences = db
+      .update(ranks)
+      .set({ playerId: id })
+      .where(eq(ranks.playerId, duplicateId));
+    const updatePlayer = db
+      .update(players)
+      .set({ aliases: aliasValues })
+      .where(eq(players.id, id))
+      .returning();
+    const deleteDuplicate = db
+      .delete(players)
+      .where(eq(players.id, duplicateId));
+    const [, updatedPlayers] = await db.batch([
+      updateRankReferences,
+      updatePlayer,
+      deleteDuplicate,
+    ]);
+    const updatedPlayer = updatedPlayers.at(0);
+    if (!updatedPlayer) {
+      throw new Error("Player reconciliation returned no record");
+    }
+    const playerDto = playerDtoSchema.parse(updatedPlayer);
+
+    return c.json(playerDto);
   },
 );
 
