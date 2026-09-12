@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, validator } from "hono-openapi";
@@ -6,10 +6,10 @@ import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import {
-  eventReportResultSchema,
   jobStatuses,
   jobs,
   jobTypes,
+  reportResultSchema,
 } from "../shared/schema/jobs.ts";
 
 const bucketName = "meta-forge";
@@ -20,11 +20,11 @@ export const linksRoute = new Hono<HonoEnv>();
 linksRoute.get(
   "/:id",
   describeRoute({
-    description: "Redirect to a generated event-report image",
+    description: "Redirect to a generated report image",
     tags: ["links"],
     security: [],
     responses: {
-      302: { description: "Redirect to the event-report image" },
+      302: { description: "Redirect to the report image" },
       404: { description: "Link was not found" },
     },
   }),
@@ -39,7 +39,7 @@ linksRoute.get(
       .where(
         and(
           eq(jobs.id, id),
-          eq(jobs.type, jobTypes.eventReport),
+          inArray(jobs.type, [jobTypes.eventReport, jobTypes.monthlyReport]),
           eq(jobs.status, jobStatuses.completed),
         ),
       );
@@ -48,7 +48,7 @@ linksRoute.get(
       throw new HTTPException(404, { message: "Link was not found" });
     }
 
-    const result = eventReportResultSchema.parse(job.result);
+    const result = reportResultSchema.parse(job.result);
     if (import.meta.env.DEV) {
       return c.redirect(
         new URL(`/api/bucket/${result.objectKey}`, c.req.url).toString(),

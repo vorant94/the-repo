@@ -12,6 +12,7 @@ import {
   jobTypes,
 } from "../shared/schema/jobs.ts";
 import { generateEventReport } from "./event-report.worker.tsx";
+import { generateMonthlyReport } from "./monthly-report.worker.tsx";
 
 const jobMessageSchema = z.object({ jobId: z.uuid() });
 
@@ -52,6 +53,18 @@ export function processJobs(batch: MessageBatch, env: CloudflareBindings) {
           switch (job.type) {
             case jobTypes.eventReport: {
               const result = await generateEventReport(job);
+              await db
+                .update(jobs)
+                .set({
+                  error: null,
+                  result,
+                  status: jobStatuses.completed,
+                })
+                .where(eq(jobs.id, job.id));
+              break;
+            }
+            case jobTypes.monthlyReport: {
+              const result = await generateMonthlyReport(job);
               await db
                 .update(jobs)
                 .set({

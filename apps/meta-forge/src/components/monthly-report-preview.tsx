@@ -1,19 +1,20 @@
 import { css, cx, Style } from "hono/css";
 import { reportRenderSize } from "../shared/report-render-size.ts";
-import type { EventReportPayload } from "../shared/schema/jobs.ts";
-import { EventReportChart } from "./event-report-chart.tsx";
-import { EventReportStandings } from "./event-report-standings.tsx";
+import type { MonthlyReportPayload } from "../shared/schema/jobs.ts";
+import { MonthlyReportCities } from "./monthly-report-cities.tsx";
+import { MonthlyReportMap } from "./monthly-report-map.tsx";
 
-interface EventReportPreviewProps {
+interface MonthlyReportPreviewProps {
   mode: "dark" | "light";
-  report: EventReportPayload;
+  report: MonthlyReportPayload;
 }
 
-export const EventReportPreview = ({
+export const MonthlyReportPreview = ({
   mode,
   report,
-}: EventReportPreviewProps) => {
+}: MonthlyReportPreviewProps) => {
   const isDark = mode === "dark";
+  const formattedMonth = formatMonth(report.month);
 
   return (
     <html lang="en">
@@ -23,7 +24,7 @@ export const EventReportPreview = ({
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <title>{`${report.name} — Pauper meta report`}</title>
+        <title>{`${formattedMonth} — Israel Pauper monthly report`}</title>
         <Style>{globalStyles}</Style>
       </head>
       <body>
@@ -31,23 +32,19 @@ export const EventReportPreview = ({
           <header class={cx(headerStyle, isDark && darkHeaderStyle)}>
             <div>
               <p class={cx(eyebrowStyle, isDark && darkEyebrowStyle)}>
-                Pauper meta report
+                Pauper monthly report
               </p>
-              <h1 class={titleStyle}>{report.name}</h1>
-            </div>
-            <div class={cx(eventDetailsStyle, isDark && darkEventDetailsStyle)}>
-              <p>{report.host.name}</p>
-              <p>{formatEventDate(report.hostedAt)}</p>
+              <h1 class={titleStyle}>{formattedMonth}</h1>
             </div>
           </header>
           <main class={mainStyle}>
-            <EventReportChart
+            <MonthlyReportMap
+              hosts={report.hosts}
               mode={mode}
-              report={report}
             />
-            <EventReportStandings
+            <MonthlyReportCities
+              cities={report.cities}
               mode={mode}
-              report={report}
             />
           </main>
         </article>
@@ -56,10 +53,12 @@ export const EventReportPreview = ({
   );
 };
 
-function formatEventDate(date: string): string {
-  return new Intl.DateTimeFormat("en-CA", { dateStyle: "medium" }).format(
-    new Date(date),
-  );
+function formatMonth(month: string): string {
+  return new Intl.DateTimeFormat("en", {
+    month: "long",
+    timeZone: "UTC",
+    year: "numeric",
+  }).format(new Date(`${month}T00:00:00Z`));
 }
 
 const globalStyles = css`
@@ -104,15 +103,6 @@ const titleStyle = css`
   font-weight: 900;
   letter-spacing: -0.025em;
   line-height: 1;
-`;
-const eventDetailsStyle = css`
-  color: #475569;
-  font-size: 20px;
-  font-weight: 600;
-  text-align: right;
-`;
-const darkEventDetailsStyle = css`
-  color: #94a3b8;
 `;
 const mainStyle = css`
   display: flex;

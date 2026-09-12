@@ -2,7 +2,10 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import type { AwsClient } from "aws4fetch";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { Env } from "./env.ts";
-import type { EventReportPayload } from "./schema/jobs.ts";
+import type {
+  EventReportPayload,
+  MonthlyReportPayload,
+} from "./schema/jobs.ts";
 
 export interface AppContext {
   awsClient: AwsClient;
@@ -11,6 +14,7 @@ export interface AppContext {
   db: DrizzleD1Database<Record<string, unknown>>;
   env: Env;
   eventReport?: EventReportPayload;
+  monthlyReport?: MonthlyReportPayload;
   queue: CloudflareBindings["QUEUE"];
 }
 

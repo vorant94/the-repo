@@ -12,6 +12,7 @@ import { eventsRoute } from "./routes/events.route.ts";
 import { hostsRoute } from "./routes/hosts.route.ts";
 import { jobsRoute } from "./routes/jobs.route.ts";
 import { linksRoute } from "./routes/links.route.ts";
+import { monthlyReportsRoute } from "./routes/monthly-reports/index.route.ts";
 import { playersRoute } from "./routes/players.route.ts";
 import { ranksRoute } from "./routes/ranks.route.ts";
 import type { HonoEnv } from "./shared/hono-env.ts";
@@ -24,6 +25,7 @@ app.use(appContextMiddleware);
 const publicApiPaths = ["/api/docs", "/api/openapi.json"];
 if (import.meta.env.DEV) {
   publicApiPaths.push("/api/event-reports/*/preview");
+  publicApiPaths.push("/api/monthly-reports/*/preview");
   publicApiPaths.push("/api/bucket/*");
 }
 
@@ -38,6 +40,7 @@ app.route("/api/archetypes", archetypesRoute);
 app.route("/api/events", eventsRoute);
 app.route("/api/ranks", ranksRoute);
 app.route("/api/event-reports", eventReportsRoute);
+app.route("/api/monthly-reports", monthlyReportsRoute);
 if (import.meta.env.DEV) {
   app.route("/api/bucket", bucketRoute);
 }

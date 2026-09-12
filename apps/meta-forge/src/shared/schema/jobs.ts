@@ -1,9 +1,11 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { monthlyReportCityNameSchema } from "../monthly-report-city.ts";
 
 export const jobTypes = {
   eventReport: "event-report",
+  monthlyReport: "monthly-report",
 } as const;
 export type JobType = (typeof jobTypes)[keyof typeof jobTypes];
 
@@ -61,9 +63,45 @@ export const eventReportPayloadSchema = z
   .meta({ ref: "EventReportPayload" });
 export type EventReportPayload = z.infer<typeof eventReportPayloadSchema>;
 
-export const eventReportResultSchema = z
-  .object({ objectKey: z.string() })
-  .meta({ ref: "EventReportResult" });
+export const monthlyReportHostSchema = z.object({
+  city: monthlyReportCityNameSchema.nullable(),
+  eventCount: z.number().int().nonnegative(),
+  name: z.string(),
+});
+export type MonthlyReportHost = z.infer<typeof monthlyReportHostSchema>;
+
+export const monthlyReportCitySummarySchema = z.object({
+  archetypeCount: z.number().int().nonnegative(),
+  largeEventCount: z.number().int().nonnegative(),
+  eventCount: z.number().int().nonnegative(),
+  hostCount: z.number().int().nonnegative(),
+  mediumEventCount: z.number().int().nonnegative(),
+  name: monthlyReportCityNameSchema,
+  playerCount: z.number().int().nonnegative(),
+  smallEventCount: z.number().int().nonnegative(),
+});
+export type MonthlyReportCitySummary = z.infer<
+  typeof monthlyReportCitySummarySchema
+>;
+
+export const monthlyReportPayloadSchema = z
+  .object({
+    cities: monthlyReportCitySummarySchema.array(),
+    month: z.iso.date(),
+    hosts: monthlyReportHostSchema.array(),
+  })
+  .meta({ ref: "MonthlyReportPayload" });
+export type MonthlyReportPayload = z.infer<typeof monthlyReportPayloadSchema>;
+
+export const reportResultSchema = z.object({ objectKey: z.string() });
+
+const eventReportResultSchema = reportResultSchema.meta({
+  ref: "EventReportResult",
+});
+
+const monthlyReportResultSchema = reportResultSchema.meta({
+  ref: "MonthlyReportResult",
+});
 
 export const eventReportJobSchema = jobSchema
   .extend({
@@ -72,3 +110,11 @@ export const eventReportJobSchema = jobSchema
     result: eventReportResultSchema.nullable(),
   })
   .meta({ ref: "EventReportJob" });
+
+export const monthlyReportJobSchema = jobSchema
+  .extend({
+    type: z.literal(jobTypes.monthlyReport),
+    payload: monthlyReportPayloadSchema,
+    result: monthlyReportResultSchema.nullable(),
+  })
+  .meta({ ref: "MonthlyReportJob" });
