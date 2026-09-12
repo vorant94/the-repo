@@ -32,7 +32,7 @@ export const MonthlyReportCities = ({
         ))}
       </div>
       <p class={cx(footnoteStyle, isDark && darkDetailsStyle)}>
-        Small: {"<8 players"} · Medium: 8–15 players · Large: 16+ players
+        Small: 6–7 players · Medium: 8–15 players · Large: 16+ players
       </p>
     </section>
   );

@@ -27,80 +27,89 @@ export async function findMonthlyReport(month: string) {
     .leftJoin(ranks, eq(ranks.eventId, events.id))
     .where(sql`substr(${events.hostedAt}, 1, 7) = ${targetMonth}`);
 
+  const valuesByEvent = new Map<string, EventValues>();
+  for (const row of rows) {
+    const eventValues = valuesByEvent.get(row.eventId) ?? {
+      archetypeIds: new Set<string>(),
+      city: findMonthlyReportCity(row.address),
+      hostId: row.hostId,
+      hostName: row.hostName,
+      playerIds: new Set<string>(),
+    };
+    if (row.playerId) {
+      eventValues.playerIds.add(row.playerId);
+    }
+    if (row.archetypeId) {
+      eventValues.archetypeIds.add(row.archetypeId);
+    }
+    valuesByEvent.set(row.eventId, eventValues);
+  }
+
   const valuesByCity = new Map<MonthlyReportCityName, CityValues>();
   const valuesByHost = new Map<string, HostValues>();
-  for (const row of rows) {
-    const city = findMonthlyReportCity(row.address);
-    const hostValues = valuesByHost.get(row.hostId) ?? {
-      city,
-      eventIds: new Set<string>(),
-      name: row.hostName,
-    };
-    hostValues.eventIds.add(row.eventId);
-    valuesByHost.set(row.hostId, hostValues);
-
-    if (!city) {
+  for (const event of valuesByEvent.values()) {
+    if (event.playerIds.size < minimumPlayerCount) {
       continue;
     }
 
-    const cityValues = valuesByCity.get(city) ?? {
-      archetypeIds: new Set<string>(),
-      eventPlayerIds: new Map<string, Set<string>>(),
-      hostIds: new Set<string>(),
-      playerIds: new Set<string>(),
+    const hostValues = valuesByHost.get(event.hostId) ?? {
+      city: event.city,
+      eventCount: 0,
+      name: event.hostName,
     };
-    cityValues.hostIds.add(row.hostId);
-    const eventPlayerIds =
-      cityValues.eventPlayerIds.get(row.eventId) ?? new Set();
-    if (row.playerId) {
-      eventPlayerIds.add(row.playerId);
-      cityValues.playerIds.add(row.playerId);
+    hostValues.eventCount += 1;
+    valuesByHost.set(event.hostId, hostValues);
+
+    if (!event.city) {
+      continue;
     }
-    cityValues.eventPlayerIds.set(row.eventId, eventPlayerIds);
-    if (row.archetypeId) {
-      cityValues.archetypeIds.add(row.archetypeId);
+
+    const cityValues = valuesByCity.get(event.city) ?? {
+      archetypeIds: new Set<string>(),
+      eventCount: 0,
+      hostIds: new Set<string>(),
+      largeEventCount: 0,
+      mediumEventCount: 0,
+      playerIds: new Set<string>(),
+      smallEventCount: 0,
+    };
+    cityValues.eventCount += 1;
+    cityValues.hostIds.add(event.hostId);
+    for (const playerId of event.playerIds) {
+      cityValues.playerIds.add(playerId);
     }
-    valuesByCity.set(city, cityValues);
+    for (const archetypeId of event.archetypeIds) {
+      cityValues.archetypeIds.add(archetypeId);
+    }
+    if (event.playerIds.size < 8) {
+      cityValues.smallEventCount += 1;
+    } else if (event.playerIds.size < 16) {
+      cityValues.mediumEventCount += 1;
+    } else {
+      cityValues.largeEventCount += 1;
+    }
+    valuesByCity.set(event.city, cityValues);
   }
 
   const cities = [...valuesByCity]
-    .map(([name, values]) => {
-      let largeEventCount = 0;
-      let mediumEventCount = 0;
-      let smallEventCount = 0;
-      for (const playerIds of values.eventPlayerIds.values()) {
-        if (playerIds.size < 8) {
-          smallEventCount += 1;
-        } else if (playerIds.size < 16) {
-          mediumEventCount += 1;
-        } else {
-          largeEventCount += 1;
-        }
-      }
-
-      return {
-        archetypeCount: values.archetypeIds.size,
-        eventCount: values.eventPlayerIds.size,
-        hostCount: values.hostIds.size,
-        largeEventCount,
-        mediumEventCount,
-        name,
-        playerCount: values.playerIds.size,
-        smallEventCount,
-      };
-    })
+    .map(([name, values]) => ({
+      archetypeCount: values.archetypeIds.size,
+      eventCount: values.eventCount,
+      hostCount: values.hostIds.size,
+      largeEventCount: values.largeEventCount,
+      mediumEventCount: values.mediumEventCount,
+      name,
+      playerCount: values.playerIds.size,
+      smallEventCount: values.smallEventCount,
+    }))
     .toSorted(
       (left, right) =>
         monthlyReportCityNames.indexOf(left.name) -
         monthlyReportCityNames.indexOf(right.name),
     );
-  const monthlyHosts = [...valuesByHost.values()]
-    .map((host) => ({
-      city: host.city,
-      eventCount: host.eventIds.size,
-      name: host.name,
-    }))
-    .toSorted((left, right) => left.name.localeCompare(right.name));
+  const monthlyHosts = [...valuesByHost.values()].toSorted((left, right) =>
+    left.name.localeCompare(right.name),
+  );
 
   return monthlyReportPayloadSchema.parse({
     cities,
@@ -111,13 +120,26 @@ export async function findMonthlyReport(month: string) {
 
 interface CityValues {
   archetypeIds: Set<string>;
-  eventPlayerIds: Map<string, Set<string>>;
+  eventCount: number;
   hostIds: Set<string>;
+  largeEventCount: number;
+  mediumEventCount: number;
+  playerIds: Set<string>;
+  smallEventCount: number;
+}
+
+interface EventValues {
+  archetypeIds: Set<string>;
+  city: MonthlyReportCityName | null;
+  hostId: string;
+  hostName: string;
   playerIds: Set<string>;
 }
 
 interface HostValues {
   city: MonthlyReportCityName | null;
-  eventIds: Set<string>;
+  eventCount: number;
   name: string;
 }
+
+const minimumPlayerCount = 6;
