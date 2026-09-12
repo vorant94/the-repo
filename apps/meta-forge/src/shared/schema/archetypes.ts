@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -15,6 +16,10 @@ export const archetypes = sqliteTable(
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
     name: text().notNull(),
+    aliases: text({ mode: "json" })
+      .$type<Array<string>>()
+      .notNull()
+      .default(sql`'[]'`),
   },
   (table) => [uniqueIndex("archetypes_name_unique").on(table.name)],
 );

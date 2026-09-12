@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, or, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
@@ -154,13 +154,36 @@ function parseEventReport(report: string): Array<EventReportRow> {
 async function preparePlayers(rows: Array<EventReportRow>) {
   const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.player));
+  const nameValues = [...names];
+  const aliasValues = sql.join(
+    nameValues.map((name) => sql`${name}`),
+    sql`, `,
+  );
   const rawPlayers = await db
     .select()
     .from(players)
-    .where(inArray(players.name, [...names]));
-  const idsByName = new Map(
-    rawPlayers.map((player) => [player.name, player.id]),
-  );
+    .where(
+      or(
+        inArray(players.name, nameValues),
+        sql`exists (
+          select 1
+          from json_each(${players.aliases})
+          where json_each.value in (${aliasValues})
+        )`,
+      ),
+    );
+  const idsByName = new Map<string, string>();
+  for (const player of rawPlayers) {
+    for (const alias of player.aliases) {
+      if (names.has(alias) && !idsByName.has(alias)) {
+        idsByName.set(alias, player.id);
+      }
+    }
+
+    if (names.has(player.name)) {
+      idsByName.set(player.name, player.id);
+    }
+  }
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
       return [];
@@ -180,13 +203,36 @@ async function preparePlayers(rows: Array<EventReportRow>) {
 async function prepareArchetypes(rows: Array<EventReportRow>) {
   const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.archetype));
+  const nameValues = [...names];
+  const aliasValues = sql.join(
+    nameValues.map((name) => sql`${name}`),
+    sql`, `,
+  );
   const rawArchetypes = await db
     .select()
     .from(archetypes)
-    .where(inArray(archetypes.name, [...names]));
-  const idsByName = new Map(
-    rawArchetypes.map((archetype) => [archetype.name, archetype.id]),
-  );
+    .where(
+      or(
+        inArray(archetypes.name, nameValues),
+        sql`exists (
+          select 1
+          from json_each(${archetypes.aliases})
+          where json_each.value in (${aliasValues})
+        )`,
+      ),
+    );
+  const idsByName = new Map<string, string>();
+  for (const archetype of rawArchetypes) {
+    for (const alias of archetype.aliases) {
+      if (names.has(alias) && !idsByName.has(alias)) {
+        idsByName.set(alias, archetype.id);
+      }
+    }
+
+    if (names.has(archetype.name)) {
+      idsByName.set(archetype.name, archetype.id);
+    }
+  }
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
       return [];
