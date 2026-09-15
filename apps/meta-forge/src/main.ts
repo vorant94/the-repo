@@ -1,4 +1,4 @@
-import { swaggerUI } from "@hono/swagger-ui";
+import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { except } from "hono/combine";
 import { cors } from "hono/cors";
@@ -66,7 +66,14 @@ app.get(
     },
   }),
 );
-app.get("/api/docs", swaggerUI({ url: "/api/openapi.json" }));
+app.get(
+  "/api/docs",
+  Scalar({
+    darkMode: true,
+    persistAuth: true,
+    url: "/api/openapi.json",
+  }),
+);
 
 export default {
   fetch: app.fetch,
