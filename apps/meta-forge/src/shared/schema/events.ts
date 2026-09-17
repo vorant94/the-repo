@@ -1,7 +1,7 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { hosts } from "./hosts.ts";
+import { venues } from "./venues.ts";
 
 export const events = sqliteTable("events", {
   id: text()
@@ -18,7 +18,10 @@ export const events = sqliteTable("events", {
   hostedAt: text().notNull(),
   hostedBy: text()
     .notNull()
-    .references(() => hosts.id, { onDelete: "restrict", onUpdate: "cascade" }),
+    .references(() => venues.id, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
 });
 
 const eventSchema = createSelectSchema(events, {

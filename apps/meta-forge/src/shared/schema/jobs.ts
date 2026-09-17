@@ -47,7 +47,7 @@ export const eventReportPayloadSchema = z
     id: z.uuid(),
     name: z.string(),
     hostedAt: z.iso.datetime({ offset: true }),
-    host: z.object({ name: z.string(), address: z.string() }),
+    venue: z.object({ name: z.string(), address: z.string() }),
     ranks: z.array(
       z.object({
         position: z.number().int().positive(),
@@ -63,18 +63,18 @@ export const eventReportPayloadSchema = z
   .meta({ ref: "EventReportPayload" });
 export type EventReportPayload = z.infer<typeof eventReportPayloadSchema>;
 
-export const monthlyReportHostSchema = z.object({
+export const monthlyReportVenueSchema = z.object({
   city: monthlyReportCityNameSchema.nullable(),
   eventCount: z.number().int().nonnegative(),
   name: z.string(),
 });
-export type MonthlyReportHost = z.infer<typeof monthlyReportHostSchema>;
+export type MonthlyReportVenue = z.infer<typeof monthlyReportVenueSchema>;
 
 export const monthlyReportCitySummarySchema = z.object({
   archetypeCount: z.number().int().nonnegative(),
   largeEventCount: z.number().int().nonnegative(),
   eventCount: z.number().int().nonnegative(),
-  hostCount: z.number().int().nonnegative(),
+  venueCount: z.number().int().nonnegative(),
   mediumEventCount: z.number().int().nonnegative(),
   name: monthlyReportCityNameSchema,
   playerCount: z.number().int().nonnegative(),
@@ -88,7 +88,7 @@ export const monthlyReportPayloadSchema = z
   .object({
     cities: monthlyReportCitySummarySchema.array(),
     month: z.iso.date(),
-    hosts: monthlyReportHostSchema.array(),
+    venues: monthlyReportVenueSchema.array(),
   })
   .meta({ ref: "MonthlyReportPayload" });
 export type MonthlyReportPayload = z.infer<typeof monthlyReportPayloadSchema>;

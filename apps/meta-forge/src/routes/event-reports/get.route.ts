@@ -10,7 +10,7 @@ export const eventReportGetRoute = new Hono<HonoEnv>();
 eventReportGetRoute.get(
   "/",
   describeRoute({
-    description: "Get an event report with its host and standings",
+    description: "Get an event report with its venue and standings",
     tags: ["event reports"],
     responses: {
       200: {

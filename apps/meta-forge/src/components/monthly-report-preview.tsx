@@ -39,7 +39,7 @@ export const MonthlyReportPreview = ({
           </header>
           <main class={mainStyle}>
             <MonthlyReportMap
-              hosts={report.hosts}
+              venues={report.venues}
               mode={mode}
             />
             <MonthlyReportCities

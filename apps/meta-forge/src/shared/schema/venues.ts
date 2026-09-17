@@ -1,8 +1,8 @@
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-export const hosts = sqliteTable(
-  "hosts",
+export const venues = sqliteTable(
+  "venues",
   {
     id: text()
       .primaryKey()
@@ -17,21 +17,21 @@ export const hosts = sqliteTable(
     name: text().notNull(),
     address: text().notNull(),
   },
-  (table) => [uniqueIndex("hosts_name_unique").on(table.name)],
+  (table) => [uniqueIndex("venues_name_unique").on(table.name)],
 );
 
-const hostSchema = createSelectSchema(hosts).meta({
-  ref: "HostInternal",
+const venueSchema = createSelectSchema(venues).meta({
+  ref: "VenueInternal",
 });
 
-export const hostDtoSchema = hostSchema
+export const venueDtoSchema = venueSchema
   .omit({ createdAt: true, updatedAt: true })
-  .meta({ ref: "Host" });
+  .meta({ ref: "Venue" });
 
-export const insertHostSchema = createInsertSchema(hosts)
+export const insertVenueSchema = createInsertSchema(venues)
   .omit({ id: true, createdAt: true, updatedAt: true })
-  .meta({ ref: "InsertHost" });
+  .meta({ ref: "InsertVenue" });
 
-export const updateHostSchema = insertHostSchema.partial().meta({
-  ref: "UpdateHost",
+export const updateVenueSchema = insertVenueSchema.partial().meta({
+  ref: "UpdateVenue",
 });

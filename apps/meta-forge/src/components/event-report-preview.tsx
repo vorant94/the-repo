@@ -36,7 +36,7 @@ export const EventReportPreview = ({
               <h1 class={titleStyle}>{report.name}</h1>
             </div>
             <div class={cx(eventDetailsStyle, isDark && darkEventDetailsStyle)}>
-              <p>{report.host.name}</p>
+              <p>{report.venue.name}</p>
               <p>{formatEventDate(report.hostedAt)}</p>
             </div>
           </header>

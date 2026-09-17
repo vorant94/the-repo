@@ -10,7 +10,7 @@ export const monthlyReportGetRoute = new Hono<HonoEnv>();
 monthlyReportGetRoute.get(
   "/",
   describeRoute({
-    description: "Get a monthly report with its event hosts",
+    description: "Get a monthly report with its event venues",
     tags: ["monthly reports"],
     responses: {
       200: {

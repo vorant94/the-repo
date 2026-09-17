@@ -6,24 +6,24 @@ import {
   monthlyReportCityNames,
 } from "../shared/monthly-report-city.ts";
 import { events } from "../shared/schema/events.ts";
-import { hosts } from "../shared/schema/hosts.ts";
 import { monthlyReportPayloadSchema } from "../shared/schema/jobs.ts";
 import { ranks } from "../shared/schema/ranks.ts";
+import { venues } from "../shared/schema/venues.ts";
 
 export async function findMonthlyReport(month: string) {
   const { db } = getAppContext();
   const targetMonth = month.slice(0, 7);
   const rows = await db
     .select({
-      address: hosts.address,
+      address: venues.address,
       archetypeId: ranks.archetypeId,
       eventId: events.id,
-      hostId: hosts.id,
-      hostName: hosts.name,
+      venueId: venues.id,
+      venueName: venues.name,
       playerId: ranks.playerId,
     })
     .from(events)
-    .innerJoin(hosts, eq(events.hostedBy, hosts.id))
+    .innerJoin(venues, eq(events.hostedBy, venues.id))
     .leftJoin(ranks, eq(ranks.eventId, events.id))
     .where(sql`substr(${events.hostedAt}, 1, 7) = ${targetMonth}`);
 
@@ -32,8 +32,8 @@ export async function findMonthlyReport(month: string) {
     const eventValues = valuesByEvent.get(row.eventId) ?? {
       archetypeIds: new Set<string>(),
       city: findMonthlyReportCity(row.address),
-      hostId: row.hostId,
-      hostName: row.hostName,
+      venueId: row.venueId,
+      venueName: row.venueName,
       playerIds: new Set<string>(),
     };
     if (row.playerId) {
@@ -46,19 +46,19 @@ export async function findMonthlyReport(month: string) {
   }
 
   const valuesByCity = new Map<MonthlyReportCityName, CityValues>();
-  const valuesByHost = new Map<string, HostValues>();
+  const valuesByVenue = new Map<string, VenueValues>();
   for (const event of valuesByEvent.values()) {
     if (event.playerIds.size < minimumPlayerCount) {
       continue;
     }
 
-    const hostValues = valuesByHost.get(event.hostId) ?? {
+    const venueValues = valuesByVenue.get(event.venueId) ?? {
       city: event.city,
       eventCount: 0,
-      name: event.hostName,
+      name: event.venueName,
     };
-    hostValues.eventCount += 1;
-    valuesByHost.set(event.hostId, hostValues);
+    venueValues.eventCount += 1;
+    valuesByVenue.set(event.venueId, venueValues);
 
     if (!event.city) {
       continue;
@@ -67,14 +67,14 @@ export async function findMonthlyReport(month: string) {
     const cityValues = valuesByCity.get(event.city) ?? {
       archetypeIds: new Set<string>(),
       eventCount: 0,
-      hostIds: new Set<string>(),
+      venueIds: new Set<string>(),
       largeEventCount: 0,
       mediumEventCount: 0,
       playerIds: new Set<string>(),
       smallEventCount: 0,
     };
     cityValues.eventCount += 1;
-    cityValues.hostIds.add(event.hostId);
+    cityValues.venueIds.add(event.venueId);
     for (const playerId of event.playerIds) {
       cityValues.playerIds.add(playerId);
     }
@@ -95,7 +95,7 @@ export async function findMonthlyReport(month: string) {
     .map(([name, values]) => ({
       archetypeCount: values.archetypeIds.size,
       eventCount: values.eventCount,
-      hostCount: values.hostIds.size,
+      venueCount: values.venueIds.size,
       largeEventCount: values.largeEventCount,
       mediumEventCount: values.mediumEventCount,
       name,
@@ -107,13 +107,13 @@ export async function findMonthlyReport(month: string) {
         monthlyReportCityNames.indexOf(left.name) -
         monthlyReportCityNames.indexOf(right.name),
     );
-  const monthlyHosts = [...valuesByHost.values()].toSorted((left, right) =>
+  const monthlyVenues = [...valuesByVenue.values()].toSorted((left, right) =>
     left.name.localeCompare(right.name),
   );
 
   return monthlyReportPayloadSchema.parse({
     cities,
-    hosts: monthlyHosts,
+    venues: monthlyVenues,
     month,
   });
 }
@@ -121,7 +121,7 @@ export async function findMonthlyReport(month: string) {
 interface CityValues {
   archetypeIds: Set<string>;
   eventCount: number;
-  hostIds: Set<string>;
+  venueIds: Set<string>;
   largeEventCount: number;
   mediumEventCount: number;
   playerIds: Set<string>;
@@ -131,12 +131,12 @@ interface CityValues {
 interface EventValues {
   archetypeIds: Set<string>;
   city: MonthlyReportCityName | null;
-  hostId: string;
-  hostName: string;
+  venueId: string;
+  venueName: string;
   playerIds: Set<string>;
 }
 
-interface HostValues {
+interface VenueValues {
   city: MonthlyReportCityName | null;
   eventCount: number;
   name: string;

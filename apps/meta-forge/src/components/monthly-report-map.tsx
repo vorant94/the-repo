@@ -3,20 +3,20 @@ import { geoMercator, geoPath } from "d3-geo";
 import { css } from "hono/css";
 import israelGeoJson from "../assets/israel.geo.json";
 import { monthlyReportCities } from "../shared/monthly-report-city.ts";
-import type { MonthlyReportHost } from "../shared/schema/jobs.ts";
+import type { MonthlyReportVenue } from "../shared/schema/jobs.ts";
 
 interface MonthlyReportMapProps {
-  hosts: Array<MonthlyReportHost>;
+  venues: Array<MonthlyReportVenue>;
   mode: "dark" | "light";
 }
 
-export const MonthlyReportMap = ({ hosts, mode }: MonthlyReportMapProps) => {
+export const MonthlyReportMap = ({ venues, mode }: MonthlyReportMapProps) => {
   const isDark = mode === "dark";
-  const activeCityNames = new Set(hosts.flatMap((host) => host.city ?? []));
+  const activeCityNames = new Set(venues.flatMap((venue) => venue.city ?? []));
   const activeCities = projectedCities.filter((city) =>
     activeCityNames.has(city.name),
   );
-  const labels = getHostLabels(hosts);
+  const labels = getVenueLabels(venues);
 
   return (
     <section class={mapSectionStyle}>
@@ -64,7 +64,7 @@ export const MonthlyReportMap = ({ hosts, mode }: MonthlyReportMapProps) => {
           filter="url(#map-outline)"
         />
         {labels.map((label) => (
-          <g key={label.hostName}>
+          <g key={label.venueName}>
             <path
               d={`M ${label.cityX} ${label.cityY} L ${label.elbowX} ${label.y} L ${label.textX} ${label.y}`}
               fill="none"
@@ -79,7 +79,7 @@ export const MonthlyReportMap = ({ hosts, mode }: MonthlyReportMapProps) => {
               x={label.textX}
               y={label.y - 6}
             >
-              {label.hostName}
+              {label.venueName}
             </text>
             <text
               fill={isDark ? "#94a3b8" : "#64748b"}
@@ -140,26 +140,26 @@ const projectedCities = monthlyReportCities.map(
   },
 );
 
-interface HostLabel {
+interface VenueLabel {
   cityX: number;
   cityY: number;
   elbowX: number;
   eventCount: number;
-  hostName: string;
+  venueName: string;
   textAnchor: "end" | "start";
   textX: number;
   y: number;
 }
 
-function getHostLabels(hosts: Array<MonthlyReportHost>): Array<HostLabel> {
-  const labels = hosts.flatMap((host) => {
-    if (!host.city) {
+function getVenueLabels(venues: Array<MonthlyReportVenue>): Array<VenueLabel> {
+  const labels = venues.flatMap((venue) => {
+    if (!venue.city) {
       return [];
     }
 
-    const city = projectedCities.find(({ name }) => name === host.city);
+    const city = projectedCities.find(({ name }) => name === venue.city);
     if (!city) {
-      throw new Error(`Could not find ${host.city}`);
+      throw new Error(`Could not find ${venue.city}`);
     }
 
     const isLeft = city.side === "left";
@@ -172,8 +172,8 @@ function getHostLabels(hosts: Array<MonthlyReportHost>): Array<HostLabel> {
         elbowX: isLeft
           ? textX + labelHorizontalLineLength
           : textX - labelHorizontalLineLength,
-        eventCount: host.eventCount,
-        hostName: host.name,
+        eventCount: venue.eventCount,
+        venueName: venue.name,
         textAnchor: isLeft ? ("start" as const) : ("end" as const),
         textX,
         y: city.y,
@@ -192,10 +192,10 @@ function getHostLabels(hosts: Array<MonthlyReportHost>): Array<HostLabel> {
   );
 }
 
-function positionLabels(labels: Array<HostLabel>): Array<HostLabel> {
+function positionLabels(labels: Array<VenueLabel>): Array<VenueLabel> {
   const sortedLabels = labels.toSorted(
     (left, right) =>
-      left.y - right.y || left.hostName.localeCompare(right.hostName),
+      left.y - right.y || left.venueName.localeCompare(right.venueName),
   );
   let nextY = labelMinimumY;
   const positionedLabels = sortedLabels.map((label) => {

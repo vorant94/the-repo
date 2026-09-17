@@ -46,9 +46,9 @@ function formatEventDetails(city: MonthlyReportCitySummary): string {
   ].filter((bucket) => bucket !== null);
   const bucketSummary = joinWithAnd(buckets);
   const eventLabel = city.eventCount === 1 ? "event" : "events";
-  const venueLabel = city.hostCount === 1 ? "venue" : "venues";
+  const venueLabel = city.venueCount === 1 ? "venue" : "venues";
 
-  return `${bucketSummary} ${eventLabel} across ${city.hostCount} ${venueLabel}`;
+  return `${bucketSummary} ${eventLabel} across ${city.venueCount} ${venueLabel}`;
 }
 
 function formatPlayerDetails(city: MonthlyReportCitySummary): string {

@@ -9,16 +9,16 @@ import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 import { archetypes } from "../../shared/schema/archetypes.ts";
 import { events } from "../../shared/schema/events.ts";
-import { hosts } from "../../shared/schema/hosts.ts";
 import { eventReportPayloadSchema } from "../../shared/schema/jobs.ts";
 import { players } from "../../shared/schema/players.ts";
 import { ranks } from "../../shared/schema/ranks.ts";
+import { venues } from "../../shared/schema/venues.ts";
 
 export const eventReportCreateRoute = new Hono<HonoEnv>();
 
 const eventReportCreateFormSchema = z.object({
   eventName: z.string(),
-  hostName: z.string(),
+  venueName: z.string(),
   eventDate: z.iso.datetime({ offset: true }),
   report: z.instanceof(File).meta({ type: "string", format: "binary" }),
 });
@@ -60,10 +60,10 @@ eventReportCreateRoute.post(
         "multipart/form-data": {
           schema: {
             type: "object",
-            required: ["eventName", "hostName", "eventDate", "report"],
+            required: ["eventName", "venueName", "eventDate", "report"],
             properties: {
               eventName: { type: "string" },
-              hostName: { type: "string" },
+              venueName: { type: "string" },
               eventDate: { type: "string", format: "date-time" },
               report: { type: "string", format: "binary" },
             },
@@ -78,22 +78,22 @@ eventReportCreateRoute.post(
           "application/json": { schema: resolver(eventReportPayloadSchema) },
         },
       },
-      400: { description: "Invalid multipart data, CSV report, or host" },
+      400: { description: "Invalid multipart data, CSV report, or venue" },
       401: { description: "Unauthorized" },
     },
   }),
   validator("form", eventReportCreateFormSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { eventName, hostName, eventDate, report } = c.req.valid("form");
+    const { eventName, venueName, eventDate, report } = c.req.valid("form");
     const rows = parseEventReport(await report.text());
-    const rawHost = await db
+    const rawVenue = await db
       .select()
-      .from(hosts)
-      .where(eq(hosts.name, hostName))
-      .then((hosts) => hosts.at(0));
-    if (!rawHost) {
-      throw new HTTPException(400, { message: "Host was not found" });
+      .from(venues)
+      .where(eq(venues.name, venueName))
+      .then((venues) => venues.at(0));
+    if (!rawVenue) {
+      throw new HTTPException(400, { message: "Venue was not found" });
     }
 
     const eventId = crypto.randomUUID();
@@ -113,7 +113,7 @@ eventReportCreateRoute.post(
         id: eventId,
         name: eventName,
         hostedAt: eventDate,
-        hostedBy: rawHost.id,
+        hostedBy: rawVenue.id,
       }),
       ...playerInserts,
       ...archetypeInserts,

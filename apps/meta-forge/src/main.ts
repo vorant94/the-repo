@@ -9,12 +9,12 @@ import { archetypesRoute } from "./routes/archetypes.route.ts";
 import { bucketRoute } from "./routes/bucket.route.ts";
 import { eventReportsRoute } from "./routes/event-reports/index.route.ts";
 import { eventsRoute } from "./routes/events.route.ts";
-import { hostsRoute } from "./routes/hosts.route.ts";
 import { jobsRoute } from "./routes/jobs.route.ts";
 import { linksRoute } from "./routes/links.route.ts";
 import { monthlyReportsRoute } from "./routes/monthly-reports/index.route.ts";
 import { playersRoute } from "./routes/players.route.ts";
 import { ranksRoute } from "./routes/ranks.route.ts";
+import { venuesRoute } from "./routes/venues.route.ts";
 import type { HonoEnv } from "./shared/hono-env.ts";
 import { processJobs } from "./workers/index.ts";
 
@@ -33,7 +33,7 @@ app.use("/api/*", except(publicApiPaths, jwtMiddleware));
 
 app.get("/", (c) => c.redirect("/api/docs"));
 app.route("/ln", linksRoute);
-app.route("/api/hosts", hostsRoute);
+app.route("/api/venues", venuesRoute);
 app.route("/api/jobs", jobsRoute);
 app.route("/api/players", playersRoute);
 app.route("/api/archetypes", archetypesRoute);
