@@ -7,6 +7,7 @@ const chartWidth = 896;
 const chartHeight = 760;
 const pieOuterRadius = 240;
 const labelHorizontalLineLength = 129;
+const maximumArchetypeLabelLength = 24;
 const minimumPlayersForPercentages = 64;
 const pieColors = [
   "#2563eb",
@@ -88,7 +89,8 @@ export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
               x={label.textX}
               y={label.y - 6}
             >
-              {label.name}
+              <title>{label.name}</title>
+              {truncateArchetypeLabel(label.name)}
             </text>
             <text
               fill={isDark ? "#94a3b8" : "#64748b"}
@@ -223,4 +225,18 @@ function formatArchetypeValue(count: number, totalPlayers: number): string {
   }
 
   return `${count} ${count === 1 ? "PLAYER" : "PLAYERS"}`;
+}
+
+function truncateArchetypeLabel(name: string): string {
+  if (name.length <= maximumArchetypeLabelLength) {
+    return name;
+  }
+
+  const truncatedName = name.slice(0, maximumArchetypeLabelLength - 1);
+  const lastSpaceIndex = truncatedName.lastIndexOf(" ");
+  if (lastSpaceIndex === -1) {
+    return `${truncatedName}…`;
+  }
+
+  return `${truncatedName.slice(0, lastSpaceIndex)}…`;
 }
