@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -23,10 +22,7 @@ export const venues = sqliteTable(
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
     name: text().notNull(),
-    address: text({ mode: "json" })
-      .$type<VenueAddress>()
-      .notNull()
-      .default(sql`'{}'`),
+    address: text({ mode: "json" }).$type<VenueAddress>().notNull(),
   },
   (table) => [uniqueIndex("venues_name_unique").on(table.name)],
 );
