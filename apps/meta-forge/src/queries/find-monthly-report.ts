@@ -48,10 +48,6 @@ export async function findMonthlyReport(month: string) {
   const valuesByCity = new Map<MonthlyReportCityName, CityValues>();
   const valuesByVenue = new Map<string, VenueValues>();
   for (const event of valuesByEvent.values()) {
-    if (event.playerIds.size < minimumPlayerCount) {
-      continue;
-    }
-
     const venueValues = valuesByVenue.get(event.venueId) ?? {
       city: event.city,
       eventCount: 0,
@@ -68,12 +64,11 @@ export async function findMonthlyReport(month: string) {
       archetypeIds: new Set<string>(),
       eventCount: 0,
       venueIds: new Set<string>(),
-      largeEventCount: 0,
-      mediumEventCount: 0,
       playerIds: new Set<string>(),
-      smallEventCount: 0,
+      totalPlayerCount: 0,
     };
     cityValues.eventCount += 1;
+    cityValues.totalPlayerCount += event.playerIds.size;
     cityValues.venueIds.add(event.venueId);
     for (const playerId of event.playerIds) {
       cityValues.playerIds.add(playerId);
@@ -81,26 +76,17 @@ export async function findMonthlyReport(month: string) {
     for (const archetypeId of event.archetypeIds) {
       cityValues.archetypeIds.add(archetypeId);
     }
-    if (event.playerIds.size < 8) {
-      cityValues.smallEventCount += 1;
-    } else if (event.playerIds.size < 16) {
-      cityValues.mediumEventCount += 1;
-    } else {
-      cityValues.largeEventCount += 1;
-    }
     valuesByCity.set(event.city, cityValues);
   }
 
   const cities = [...valuesByCity]
     .map(([name, values]) => ({
       archetypeCount: values.archetypeIds.size,
+      averagePlayersPerEvent: values.totalPlayerCount / values.eventCount,
       eventCount: values.eventCount,
       venueCount: values.venueIds.size,
-      largeEventCount: values.largeEventCount,
-      mediumEventCount: values.mediumEventCount,
       name,
       playerCount: values.playerIds.size,
-      smallEventCount: values.smallEventCount,
     }))
     .toSorted(
       (left, right) =>
@@ -122,10 +108,8 @@ interface CityValues {
   archetypeIds: Set<string>;
   eventCount: number;
   venueIds: Set<string>;
-  largeEventCount: number;
-  mediumEventCount: number;
   playerIds: Set<string>;
-  smallEventCount: number;
+  totalPlayerCount: number;
 }
 
 interface EventValues {
@@ -141,5 +125,3 @@ interface VenueValues {
   eventCount: number;
   name: string;
 }
-
-const minimumPlayerCount = 6;

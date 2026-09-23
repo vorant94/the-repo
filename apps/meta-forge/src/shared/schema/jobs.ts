@@ -72,13 +72,11 @@ export type MonthlyReportVenue = z.infer<typeof monthlyReportVenueSchema>;
 
 export const monthlyReportCitySummarySchema = z.object({
   archetypeCount: z.number().int().nonnegative(),
-  largeEventCount: z.number().int().nonnegative(),
+  averagePlayersPerEvent: z.number().nonnegative(),
   eventCount: z.number().int().nonnegative(),
   venueCount: z.number().int().nonnegative(),
-  mediumEventCount: z.number().int().nonnegative(),
   name: monthlyReportCityNameSchema,
   playerCount: z.number().int().nonnegative(),
-  smallEventCount: z.number().int().nonnegative(),
 });
 export type MonthlyReportCitySummary = z.infer<
   typeof monthlyReportCitySummarySchema
