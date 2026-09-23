@@ -1,10 +1,12 @@
-import { eq, inArray, or, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import Papa from "papaparse";
 import { z } from "zod";
+import { findArchetypesByNames } from "../../queries/find-archetypes-by-names.ts";
 import { findEventReport } from "../../queries/find-event-report.ts";
+import { findPlayersByNames } from "../../queries/find-players-by-names.ts";
 import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 import { archetypes } from "../../shared/schema/archetypes.ts";
@@ -97,10 +99,10 @@ eventReportCreateRoute.post(
     }
 
     const eventId = crypto.randomUUID();
-    const { inserts: playerInserts, idsByName: playerIdsByName } =
-      await preparePlayers(rows);
-    const { inserts: archetypeInserts, idsByName: archetypeIdsByName } =
-      await prepareArchetypes(rows);
+    const [
+      { inserts: playerInserts, idsByName: playerIdsByName },
+      { inserts: archetypeInserts, idsByName: archetypeIdsByName },
+    ] = await Promise.all([preparePlayers(rows), prepareArchetypes(rows)]);
     const rankInserts = prepareRanks(
       rows,
       eventId,
@@ -154,36 +156,7 @@ function parseEventReport(report: string): Array<EventReportRow> {
 async function preparePlayers(rows: Array<EventReportRow>) {
   const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.player));
-  const nameValues = [...names];
-  const aliasValues = sql.join(
-    nameValues.map((name) => sql`${name}`),
-    sql`, `,
-  );
-  const rawPlayers = await db
-    .select()
-    .from(players)
-    .where(
-      or(
-        inArray(players.name, nameValues),
-        sql`exists (
-          select 1
-          from json_each(${players.aliases})
-          where json_each.value in (${aliasValues})
-        )`,
-      ),
-    );
-  const idsByName = new Map<string, string>();
-  for (const player of rawPlayers) {
-    for (const alias of player.aliases) {
-      if (names.has(alias) && !idsByName.has(alias)) {
-        idsByName.set(alias, player.id);
-      }
-    }
-
-    if (names.has(player.name)) {
-      idsByName.set(player.name, player.id);
-    }
-  }
+  const idsByName = await findPlayersByNames([...names]);
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
       return [];
@@ -203,36 +176,7 @@ async function preparePlayers(rows: Array<EventReportRow>) {
 async function prepareArchetypes(rows: Array<EventReportRow>) {
   const { db } = getAppContext();
   const names = new Set(rows.map((row) => row.archetype));
-  const nameValues = [...names];
-  const aliasValues = sql.join(
-    nameValues.map((name) => sql`${name}`),
-    sql`, `,
-  );
-  const rawArchetypes = await db
-    .select()
-    .from(archetypes)
-    .where(
-      or(
-        inArray(archetypes.name, nameValues),
-        sql`exists (
-          select 1
-          from json_each(${archetypes.aliases})
-          where json_each.value in (${aliasValues})
-        )`,
-      ),
-    );
-  const idsByName = new Map<string, string>();
-  for (const archetype of rawArchetypes) {
-    for (const alias of archetype.aliases) {
-      if (names.has(alias) && !idsByName.has(alias)) {
-        idsByName.set(alias, archetype.id);
-      }
-    }
-
-    if (names.has(archetype.name)) {
-      idsByName.set(archetype.name, archetype.id);
-    }
-  }
+  const idsByName = await findArchetypesByNames([...names]);
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
       return [];
