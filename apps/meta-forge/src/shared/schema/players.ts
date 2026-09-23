@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const players = sqliteTable(
   "players",
@@ -24,7 +25,9 @@ export const players = sqliteTable(
   (table) => [uniqueIndex("players_name_unique").on(table.name)],
 );
 
-const playerSchema = createSelectSchema(players).meta({
+const playerSchema = createSelectSchema(players, {
+  aliases: z.array(z.string()),
+}).meta({
   ref: "PlayerInternal",
 });
 
@@ -32,7 +35,9 @@ export const playerDtoSchema = playerSchema
   .omit({ createdAt: true, updatedAt: true })
   .meta({ ref: "Player" });
 
-export const insertPlayerSchema = createInsertSchema(players)
+export const insertPlayerSchema = createInsertSchema(players, {
+  aliases: z.array(z.string()),
+})
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertPlayer" });
 

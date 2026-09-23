@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const archetypes = sqliteTable(
   "archetypes",
@@ -24,7 +25,9 @@ export const archetypes = sqliteTable(
   (table) => [uniqueIndex("archetypes_name_unique").on(table.name)],
 );
 
-const archetypeSchema = createSelectSchema(archetypes).meta({
+const archetypeSchema = createSelectSchema(archetypes, {
+  aliases: z.array(z.string()),
+}).meta({
   ref: "ArchetypeInternal",
 });
 
@@ -32,7 +35,9 @@ export const archetypeDtoSchema = archetypeSchema
   .omit({ createdAt: true, updatedAt: true })
   .meta({ ref: "Archetype" });
 
-export const insertArchetypeSchema = createInsertSchema(archetypes)
+export const insertArchetypeSchema = createInsertSchema(archetypes, {
+  aliases: z.array(z.string()),
+})
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertArchetype" });
 
