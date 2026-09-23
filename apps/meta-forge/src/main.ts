@@ -69,6 +69,7 @@ app.get(
 app.get(
   "/api/docs",
   Scalar({
+    agent: { disabled: true },
     darkMode: true,
     persistAuth: true,
     url: "/api/openapi.json",
