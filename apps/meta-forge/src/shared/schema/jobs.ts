@@ -50,7 +50,7 @@ export const eventReportPayloadSchema = z
     hostedAt: z.iso.datetime({ offset: true }),
     venue: z.object({
       name: z.string(),
-      addressObj: venueAddressSchema.nullable(),
+      address: venueAddressSchema,
     }),
     ranks: z.array(
       z.object({

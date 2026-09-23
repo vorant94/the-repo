@@ -16,7 +16,6 @@ export async function findMonthlyReport(month: string) {
   const rows = await db
     .select({
       address: venues.address,
-      addressObj: venues.addressObj,
       archetypeId: ranks.archetypeId,
       eventId: events.id,
       venueId: venues.id,
@@ -32,7 +31,7 @@ export async function findMonthlyReport(month: string) {
   for (const row of rows) {
     const eventValues = valuesByEvent.get(row.eventId) ?? {
       archetypeIds: new Set<string>(),
-      city: findMonthlyReportCity(row.addressObj?.city ?? row.address),
+      city: findMonthlyReportCity(row.address.city),
       venueId: row.venueId,
       venueName: row.venueName,
       playerIds: new Set<string>(),

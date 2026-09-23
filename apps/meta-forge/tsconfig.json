@@ -41,5 +41,5 @@
     /* Misc */
     "types": ["vite/client", "@total-typescript/ts-reset", "node"]
   },
-  "include": ["src", "scripts", "*.config.ts", "worker-configuration.d.ts"]
+  "include": ["src", "*.config.ts", "worker-configuration.d.ts"]
 }

@@ -34,7 +34,14 @@ export const monthlyReportCities = [
     side: "right",
   },
   {
-    aliases: ["tel aviv", "tel-aviv", "תל אביב", "תל-אביב"],
+    aliases: [
+      "tel aviv",
+      "tel-aviv",
+      "tel aviv-yafo",
+      "תל אביב",
+      "תל-אביב",
+      "תל אביב-יפו",
+    ],
     latitude: 32.08088,
     longitude: 34.78057,
     name: "Tel-Aviv",
@@ -43,11 +50,11 @@ export const monthlyReportCities = [
 ] as const satisfies Array<MonthlyReportCity>;
 
 export function findMonthlyReportCity(
-  address: string,
+  cityName: string,
 ): MonthlyReportCityName | null {
-  const normalizedAddress = address.toLocaleLowerCase("en");
+  const normalizedCity = cityName.trim().toLocaleLowerCase("en");
   const city = monthlyReportCities.find(({ aliases }) =>
-    aliases.some((alias) => normalizedAddress.includes(alias)),
+    aliases.some((alias) => alias === normalizedCity),
   );
 
   return city?.name ?? null;

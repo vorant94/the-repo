@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -22,14 +23,16 @@ export const venues = sqliteTable(
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
     name: text().notNull(),
-    address: text().notNull(),
-    addressObj: text("address_obj", { mode: "json" }).$type<VenueAddress>(),
+    address: text({ mode: "json" })
+      .$type<VenueAddress>()
+      .notNull()
+      .default(sql`'{}'`),
   },
   (table) => [uniqueIndex("venues_name_unique").on(table.name)],
 );
 
 const venueSchema = createSelectSchema(venues, {
-  addressObj: venueAddressSchema.nullable(),
+  address: venueAddressSchema,
 }).meta({
   ref: "VenueInternal",
 });
@@ -39,7 +42,7 @@ export const venueDtoSchema = venueSchema
   .meta({ ref: "Venue" });
 
 export const insertVenueSchema = createInsertSchema(venues, {
-  addressObj: venueAddressSchema.nullable().optional(),
+  address: venueAddressSchema,
 })
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertVenue" });
