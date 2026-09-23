@@ -2,6 +2,7 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { monthlyReportCityNameSchema } from "../monthly-report-city.ts";
+import { venueAddressSchema } from "./venues.ts";
 
 export const jobTypes = {
   eventReport: "event-report",
@@ -47,7 +48,10 @@ export const eventReportPayloadSchema = z
     id: z.uuid(),
     name: z.string(),
     hostedAt: z.iso.datetime({ offset: true }),
-    venue: z.object({ name: z.string(), address: z.string() }),
+    venue: z.object({
+      name: z.string(),
+      addressObj: venueAddressSchema.nullable(),
+    }),
     ranks: z.array(
       z.object({
         position: z.number().int().positive(),

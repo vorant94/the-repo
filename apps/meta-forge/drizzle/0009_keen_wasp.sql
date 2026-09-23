@@ -1,0 +1,1 @@
+ALTER TABLE `venues` ADD `address_obj` text;

@@ -12,7 +12,7 @@ export async function findEventReport(eventId: string) {
   const rawEventReportRows = await db
     .select({
       event: { id: events.id, name: events.name, hostedAt: events.hostedAt },
-      venue: { name: venues.name, address: venues.address },
+      venue: { name: venues.name, addressObj: venues.addressObj },
       rank: {
         position: ranks.position,
         wins: ranks.wins,
