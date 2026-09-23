@@ -20,6 +20,7 @@ export const ranksRoute = new Hono<HonoEnv>();
 const ranksQuerySchema = z.object({
   archetypeId: z.uuid().optional(),
   eventId: z.uuid().optional(),
+  playerId: z.uuid().optional(),
 });
 
 const fixRankSchema = z.object({
@@ -30,7 +31,8 @@ const fixRankSchema = z.object({
 ranksRoute.get(
   "/",
   describeRoute({
-    description: "List ranks, optionally filtered by archetype and event IDs",
+    description:
+      "List ranks, optionally filtered by archetype, event, and player IDs",
     tags: ["ranks"],
     responses: {
       200: {
@@ -44,7 +46,7 @@ ranksRoute.get(
   validator("query", ranksQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const { archetypeId, eventId } = c.req.valid("query");
+    const { archetypeId, eventId, playerId } = c.req.valid("query");
 
     const rawRanks = await db
       .select()
@@ -53,6 +55,7 @@ ranksRoute.get(
         and(
           archetypeId ? eq(ranks.archetypeId, archetypeId) : undefined,
           eventId ? eq(ranks.eventId, eventId) : undefined,
+          playerId ? eq(ranks.playerId, playerId) : undefined,
         ),
       )
       .orderBy(asc(ranks.position));

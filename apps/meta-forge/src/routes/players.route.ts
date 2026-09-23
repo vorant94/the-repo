@@ -154,7 +154,10 @@ playersRoute.post(
       .where(eq(ranks.playerId, duplicateId));
     const updatePlayer = db
       .update(players)
-      .set({ aliases: aliasValues })
+      .set({
+        aliases: aliasValues,
+        address: rawPlayer.address ?? rawDuplicate.address,
+      })
       .where(eq(players.id, id))
       .returning();
     const deleteDuplicate = db
