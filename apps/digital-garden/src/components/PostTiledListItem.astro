@@ -1,7 +1,6 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
-import { format } from "date-fns";
-import { publishedAtFormat } from "../globals/published-at-format";
+import { formatPublishedAt } from "../globals/published-at-format";
 import { isPostWithCover, type PostModel } from "../lib/content";
 import { Caption } from "./ui/caption";
 import { Link } from "./ui/link";
@@ -36,7 +35,7 @@ const [lang, id] = post.id.split("/");
 				className="inline-block"
 				transition:name={`post.${id}.publishedAt`}
 			>
-				{format(post.data.publishedAt, publishedAtFormat.full)}
+				{formatPublishedAt(post.data.publishedAt, "full", Astro.currentLocale)}
 			</Caption>
 		</div>
 		{isPostWithCover(post) && (

@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { format } from "date-fns";
-import { publishedAtFormat } from "../globals/published-at-format";
+import { formatPublishedAt } from "../globals/published-at-format";
 import {
   createFilterPostsByLang,
   sortPostsByPublishedAt,
@@ -33,7 +32,7 @@ const pinnedPosts = sortedPosts.filter((post) => post.data.isPinned);
               {post.data.title}
             </Fragment>
             <Fragment slot="right">
-              {format(post.data.publishedAt, publishedAtFormat.short)}
+              {formatPublishedAt(post.data.publishedAt, "short", Astro.currentLocale)}
             </Fragment>
           </PostListItem>
         </span>

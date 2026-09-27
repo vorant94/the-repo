@@ -1,6 +1,5 @@
 ---
 import { getCollection, getEntries, render } from "astro:content";
-import { format } from "date-fns";
 import CommentsServerWrapper from "../../../components/CommentsServerWrapper.astro";
 import RelatedPosts from "../../../components/RelatedPosts.astro";
 import Tag from "../../../components/Tag.astro";
@@ -8,13 +7,14 @@ import { Caption } from "../../../components/ui/caption";
 import { Text } from "../../../components/ui/text";
 import { ThemedImage } from "../../../components/ui/themed-image";
 import { Title } from "../../../components/ui/title";
-import { publishedAtFormat } from "../../../globals/published-at-format";
+import { formatPublishedAt } from "../../../globals/published-at-format";
 import DefaultLayout from "../../../layouts/DefaultLayout.astro";
 import {
   filterOutDraftPosts,
   isPostWithCover,
   type PostModel,
 } from "../../../lib/content";
+import { createTranslate } from "../../../lib/i18n";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", filterOutDraftPosts);
@@ -36,6 +36,7 @@ export interface Props {
 const { post } = Astro.props;
 
 const locale = Astro.currentLocale;
+const t = createTranslate(locale);
 
 const [_, id] = post.id.split("/");
 if (!id) {
@@ -45,6 +46,16 @@ if (!id) {
 const postTags = await getEntries(post.data.tags);
 
 const { Content, remarkPluginFrontmatter } = await render(post);
+const minutesRead = Number.parseInt(remarkPluginFrontmatter.minutesRead, 10);
+const formattedMinutes = new Intl.NumberFormat(
+  locale === "ru" ? "ru-RU" : "en-US",
+  {
+    style: "unit",
+    unit: "minute",
+    unitDisplay: "short",
+  },
+).format(minutesRead);
+const readingTimeText = `${formattedMinutes} ${t("post.reading-time-suffix")}`;
 ---
 
 <DefaultLayout
@@ -75,10 +86,10 @@ const { Content, remarkPluginFrontmatter } = await render(post);
 		<div class="flex flex-col justify-between gap-2 lg:flex-row lg:items-center">
 			<div class="flex items-center gap-2">
 				<Caption transition:name={`post.${id}.publishedAt`}>
-					{format(post.data.publishedAt, publishedAtFormat.full)}
+					{formatPublishedAt(post.data.publishedAt, "full", locale)}
 				</Caption>
 				<Caption>&#x2022;</Caption>
-				<Caption>{remarkPluginFrontmatter.minutesRead}</Caption>
+				<Caption>{readingTimeText}</Caption>
 			</div>
 
 			<menu class="m-0 flex list-none gap-1 p-0">

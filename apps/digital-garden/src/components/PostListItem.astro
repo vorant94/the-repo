@@ -1,8 +1,7 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
 import type { HTMLAttributes } from "astro/types";
-import { format } from "date-fns";
-import { publishedAtFormat } from "../globals/published-at-format";
+import { formatPublishedAt } from "../globals/published-at-format";
 import type { PostModel } from "../lib/content";
 import { Link } from "./ui/link";
 
@@ -35,7 +34,7 @@ const [lang, id] = post.id.split("/");
 			class="whitespace-nowrap text-xs"
 			transition:name={`post.${id}.publishedAt`}
 		>
-			{format(post.data.publishedAt, publishedAtFormat.short)}
+			{formatPublishedAt(post.data.publishedAt, "short", Astro.currentLocale)}
 		</span>
 	</Link>
 </li>
