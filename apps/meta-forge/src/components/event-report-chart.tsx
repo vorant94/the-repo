@@ -1,6 +1,7 @@
 import type { PieArcDatum } from "d3-shape";
 import { arc, pie } from "d3-shape";
 import { css, cx } from "hono/css";
+import { largeEventPlayerThreshold } from "../shared/report-render-size.ts";
 import type { EventReportPayload } from "../shared/schema/jobs.ts";
 
 const chartWidth = 896;
@@ -8,7 +9,6 @@ const chartHeight = 760;
 const pieOuterRadius = 240;
 const labelHorizontalLineLength = 129;
 const maximumArchetypeLabelLength = 24;
-const minimumPlayersForPercentages = 64;
 const pieColors = [
   "#2563eb",
   "#dc2626",
@@ -37,13 +37,17 @@ export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
   const isDark = mode === "dark";
   const totalPlayers = report.ranks.length;
   const distribution = getArchetypeDistribution(report.ranks);
-  const labels = getPieLabels(distribution, totalPlayers);
+  const chartDistribution =
+    totalPlayers >= largeEventPlayerThreshold
+      ? groupSinglePlayerArchetypes(distribution)
+      : distribution;
+  const labels = getPieLabels(chartDistribution, totalPlayers);
   const slices = pie<ArchetypeDistribution>()
     .sort(null)
     .value((item) => item.count)
     .startAngle(0)
     .endAngle(-2 * Math.PI)
-    .padAngle((2 * Math.PI) / 360)(distribution);
+    .padAngle((2 * Math.PI) / 360)(chartDistribution);
   const slicePath = arc<PieArcDatum<ArchetypeDistribution>>()
     .innerRadius(140)
     .outerRadius(pieOuterRadius);
@@ -172,6 +176,28 @@ function getArchetypeDistribution(
   );
 }
 
+function groupSinglePlayerArchetypes(
+  distribution: Array<ArchetypeDistribution>,
+): Array<ArchetypeDistribution> {
+  const singlePlayerCount = distribution.filter(
+    (item) => item.count === 1,
+  ).length;
+  if (singlePlayerCount === 0) {
+    return distribution;
+  }
+
+  const otherCount =
+    distribution.find((item) => item.name === "Other" && item.count > 1)
+      ?.count ?? 0;
+  return [
+    ...distribution.filter((item) => item.count > 1 && item.name !== "Other"),
+    { name: "Other", count: singlePlayerCount + otherCount },
+  ].sort(
+    (left, right) =>
+      right.count - left.count || left.name.localeCompare(right.name),
+  );
+}
+
 function getPieLabels(
   distribution: Array<ArchetypeDistribution>,
   totalPlayers: number,
@@ -220,7 +246,7 @@ function getPieLabels(
 }
 
 function formatArchetypeValue(count: number, totalPlayers: number): string {
-  if (totalPlayers >= minimumPlayersForPercentages) {
+  if (totalPlayers >= largeEventPlayerThreshold) {
     return `${((count / totalPlayers) * 100).toFixed(1)}%`;
   }
 

@@ -2,7 +2,7 @@ import puppeteer from "@cloudflare/puppeteer";
 import { renderToReadableStream } from "hono/jsx/dom/server";
 import { EventReportPreview } from "../components/event-report-preview.tsx";
 import { getAppContext } from "../shared/app-context.ts";
-import { reportRenderSize } from "../shared/report-render-size.ts";
+import { getEventReportRenderSize } from "../shared/report-render-size.ts";
 import { eventReportJobSchema, type Job } from "../shared/schema/jobs.ts";
 
 export async function generateEventReport(job: Job) {
@@ -13,7 +13,7 @@ export async function generateEventReport(job: Job) {
   try {
     const page = await browser.newPage();
     await page.setViewport({
-      ...reportRenderSize,
+      ...getEventReportRenderSize(eventReport.ranks.length),
       deviceScaleFactor: 2,
     });
     const stream = await renderToReadableStream(
