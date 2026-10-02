@@ -10,40 +10,50 @@ export async function findArchetypesByNames(names: Array<string>) {
   }
 
   const nameValues = [...requestedNames];
-  const aliasValues = sql.join(
-    nameValues.map((name) => sql`${name}`),
-    sql`, `,
-  );
   const { db } = getAppContext();
-  const rawArchetypes = await db
-    .select({
-      id: archetypes.id,
-      name: archetypes.name,
-      aliases: archetypes.aliases,
-    })
-    .from(archetypes)
-    .where(
-      or(
-        inArray(archetypes.name, nameValues),
-        sql`exists (
-          select 1
-          from json_each(${archetypes.aliases})
-          where json_each.value in (${aliasValues})
-        )`,
-      ),
+  for (
+    let index = 0;
+    index < nameValues.length;
+    index += maximumNamesPerQuery
+  ) {
+    const chunk = nameValues.slice(index, index + maximumNamesPerQuery);
+    const aliasValues = sql.join(
+      chunk.map((name) => sql`${name}`),
+      sql`, `,
     );
+    const rawArchetypes = await db
+      .select({
+        id: archetypes.id,
+        name: archetypes.name,
+        aliases: archetypes.aliases,
+      })
+      .from(archetypes)
+      .where(
+        or(
+          inArray(archetypes.name, chunk),
+          sql`exists (
+            select 1
+            from json_each(${archetypes.aliases})
+            where json_each.value in (${aliasValues})
+          )`,
+        ),
+      );
 
-  for (const archetype of rawArchetypes) {
-    for (const alias of archetype.aliases) {
-      if (requestedNames.has(alias) && !idsByName.has(alias)) {
-        idsByName.set(alias, archetype.id);
+    for (const archetype of rawArchetypes) {
+      for (const alias of archetype.aliases) {
+        if (requestedNames.has(alias) && !idsByName.has(alias)) {
+          idsByName.set(alias, archetype.id);
+        }
       }
-    }
 
-    if (requestedNames.has(archetype.name)) {
-      idsByName.set(archetype.name, archetype.id);
+      if (requestedNames.has(archetype.name)) {
+        idsByName.set(archetype.name, archetype.id);
+      }
     }
   }
 
   return idsByName;
 }
+
+// Each name binds twice; D1 allows at most 100 parameters per query.
+const maximumNamesPerQuery = 40;

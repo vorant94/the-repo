@@ -49,7 +49,8 @@ const expectedHeaders = [
   "draws",
   "isArchetypeHidden",
 ];
-const maximumRowsPerStatement = 9;
+// Rank inserts bind 11 values per row; keep each statement below D1's limit.
+const maximumRowsPerStatement = 8;
 
 eventReportCreateRoute.post(
   "/",
@@ -169,7 +170,9 @@ async function preparePlayers(rows: Array<EventReportRow>) {
 
   return {
     idsByName,
-    inserts: values.length > 0 ? [db.insert(players).values(values)] : [],
+    inserts: splitIntoChunks(values).map((chunk) =>
+      db.insert(players).values(chunk),
+    ),
   };
 }
 
@@ -189,7 +192,9 @@ async function prepareArchetypes(rows: Array<EventReportRow>) {
 
   return {
     idsByName,
-    inserts: values.length > 0 ? [db.insert(archetypes).values(values)] : [],
+    inserts: splitIntoChunks(values).map((chunk) =>
+      db.insert(archetypes).values(chunk),
+    ),
   };
 }
 
