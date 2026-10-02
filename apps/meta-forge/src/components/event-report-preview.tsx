@@ -27,7 +27,7 @@ export const EventReportPreview = ({
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <title>{`${report.name} — Pauper meta report`}</title>
+        <title>{`${report.name} — Event report`}</title>
         <Style>{globalStyles}</Style>
       </head>
       <body>
@@ -35,7 +35,7 @@ export const EventReportPreview = ({
           <header class={cx(headerStyle, isDark && darkHeaderStyle)}>
             <div>
               <p class={cx(eyebrowStyle, isDark && darkEyebrowStyle)}>
-                Pauper meta report
+                Event report
               </p>
               <h1 class={titleStyle}>{report.name}</h1>
             </div>
