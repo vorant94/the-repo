@@ -4,12 +4,14 @@ import { describeRoute, validator } from "hono-openapi";
 import { z } from "zod";
 import { EventReportPreview } from "../../components/event-report-preview.tsx";
 import { getAppContext } from "../../shared/app-context.ts";
+import { getEventReportPages } from "../../shared/event-report-pages.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 
 export const eventReportPreviewRoute = new Hono<HonoEnv>();
 
 const eventReportPreviewQuerySchema = z.object({
   mode: z.enum(["dark", "light"]).default("dark"),
+  page: z.coerce.number().int().positive().default(1),
 });
 
 eventReportPreviewRoute.get(
@@ -27,15 +29,22 @@ eventReportPreviewRoute.get(
   }),
   validator("query", eventReportPreviewQuerySchema),
   (c) => {
-    const { mode } = c.req.valid("query");
+    const { mode, page } = c.req.valid("query");
     const { eventReport } = getAppContext();
     if (!eventReport) {
       throw new HTTPException(404, { message: "Event report was not found" });
+    }
+    const reportPage = getEventReportPages(eventReport.ranks.length).at(
+      page - 1,
+    );
+    if (!reportPage) {
+      throw new HTTPException(404, { message: "Report page was not found" });
     }
 
     return c.html(
       <EventReportPreview
         mode={mode}
+        page={reportPage}
         report={eventReport}
       />,
     );

@@ -2,7 +2,11 @@ import puppeteer from "@cloudflare/puppeteer";
 import { renderToReadableStream } from "hono/jsx/dom/server";
 import { EventReportPreview } from "../components/event-report-preview.tsx";
 import { getAppContext } from "../shared/app-context.ts";
-import { getEventReportRenderSize } from "../shared/report-render-size.ts";
+import {
+  type EventReportPage,
+  getEventReportPages,
+} from "../shared/event-report-pages.ts";
+import { reportRenderSize } from "../shared/report-render-size.ts";
 import { eventReportJobSchema, type Job } from "../shared/schema/jobs.ts";
 
 export async function generateEventReport(job: Job) {
@@ -13,24 +17,35 @@ export async function generateEventReport(job: Job) {
   try {
     const page = await browser.newPage();
     await page.setViewport({
-      ...getEventReportRenderSize(eventReport.ranks.length),
+      ...reportRenderSize,
       deviceScaleFactor: 2,
     });
-    const stream = await renderToReadableStream(
-      <EventReportPreview
-        mode="dark"
-        report={eventReport}
-      />,
-    );
-    const response = new Response(stream);
-    const html = await response.text();
-    await page.setContent(html, { waitUntil: "networkidle0" });
-    const screenshot = await page.screenshot({ type: "png" });
-    const objectKey = `event-reports/${eventReport.id}/${eventReportJob.id}.png`;
-    await bucket.put(objectKey, screenshot, {
-      httpMetadata: { contentType: "image/png" },
-    });
-    return { objectKey };
+    const pages = getEventReportPages(eventReport.ranks.length);
+    const results: Array<{
+      kind: EventReportPage["kind"];
+      objectKey: string;
+    }> = [];
+    for (const [index, reportPage] of pages.entries()) {
+      const stream = await renderToReadableStream(
+        <EventReportPreview
+          mode="dark"
+          page={reportPage}
+          report={eventReport}
+        />,
+      );
+      const response = new Response(stream);
+      const html = await response.text();
+      await page.setContent(html, { waitUntil: "networkidle0" });
+      const screenshot = await page.screenshot({ type: "png" });
+      const pageNumber = String(index + 1).padStart(2, "0");
+      const objectKey = `event-reports/${eventReport.id}/${eventReportJob.id}/${pageNumber}-${reportPage.kind}.png`;
+      await bucket.put(objectKey, screenshot, {
+        httpMetadata: { contentType: "image/png" },
+      });
+      results.push({ kind: reportPage.kind, objectKey });
+    }
+
+    return { pages: results };
   } finally {
     await browser.close();
   }

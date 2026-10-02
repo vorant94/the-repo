@@ -1,37 +1,56 @@
 import { css, cx } from "hono/css";
+import type { EventReportPage } from "../shared/event-report-pages.ts";
+import { maximumPlayersPerStandingsPage } from "../shared/event-report-pages.ts";
 import type { EventReportPayload } from "../shared/schema/jobs.ts";
 
 const maximumRowsPerTable = 18;
 
 interface EventReportStandingsProps {
   mode: "dark" | "light";
+  page: Exclude<EventReportPage, { kind: "chart" }>;
   report: EventReportPayload;
 }
 
 export const EventReportStandings = ({
   mode,
+  page,
   report,
 }: EventReportStandingsProps) => {
   const isDark = mode === "dark";
-  const firstTableLength = Math.ceil(report.ranks.length / 2);
-  const standingsTables =
-    report.ranks.length > maximumRowsPerTable
-      ? [
-          report.ranks.slice(0, firstTableLength),
-          report.ranks.slice(firstTableLength),
-        ]
-      : [report.ranks];
+  const fullPage = page.kind === "standings";
+  const rankOffset = fullPage
+    ? page.standingsPage * maximumPlayersPerStandingsPage
+    : 0;
+  const ranks = fullPage
+    ? report.ranks.slice(
+        rankOffset,
+        rankOffset + maximumPlayersPerStandingsPage,
+      )
+    : report.ranks;
+  let tableCount = 1;
+  if (fullPage) {
+    tableCount = Math.max(
+      1,
+      Math.ceil(ranks.length / (maximumPlayersPerStandingsPage / 4)),
+    );
+  } else if (ranks.length > maximumRowsPerTable) {
+    tableCount = 2;
+  }
+  const rowsPerTable = Math.ceil(ranks.length / tableCount);
+  const standingsTables = Array.from({ length: tableCount }, (_, index) =>
+    ranks.slice(index * rowsPerTable, (index + 1) * rowsPerTable),
+  );
   const isSingleTable = standingsTables.length === 1;
 
   return (
-    <section class={standingsSectionStyle}>
+    <section
+      class={cx(
+        standingsSectionStyle,
+        fullPage && fullPageStandingsSectionStyle,
+      )}
+    >
       <h2 class={headingStyle}>Final standings</h2>
-      <div
-        class={cx(
-          tablesStyle,
-          isSingleTable ? singleTableStyle : doubleTableStyle,
-        )}
-      >
+      <div class={cx(tablesStyle, tableLayoutStyles[tableCount - 1])}>
         {standingsTables.map((standings, tableIndex) => (
           <table
             class={cx(tableStyle, isSingleTable && singleTableTextStyle)}
@@ -68,7 +87,7 @@ export const EventReportStandings = ({
                       isDark && darkTableCellStyle,
                     )}
                   >
-                    {tableIndex * firstTableLength + index + 1}
+                    {rankOffset + tableIndex * rowsPerTable + index + 1}
                   </td>
                   <td class={cx(tableCellStyle, isDark && darkTableCellStyle)}>
                     {standing.player.name}
@@ -115,6 +134,10 @@ const standingsSectionStyle = css`
   height: 760px;
   padding-left: 32px;
 `;
+const fullPageStandingsSectionStyle = css`
+  width: 100%;
+  padding-left: 0;
+`;
 const headingStyle = css`
   margin: 0;
   font-size: 30px;
@@ -134,6 +157,18 @@ const singleTableStyle = css`
 const doubleTableStyle = css`
   grid-template-columns: repeat(2, minmax(0, 1fr));
 `;
+const threeTableStyle = css`
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+`;
+const fourTableStyle = css`
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+`;
+const tableLayoutStyles = [
+  singleTableStyle,
+  doubleTableStyle,
+  threeTableStyle,
+  fourTableStyle,
+];
 const tableStyle = css`
   width: 100%;
   border-collapse: collapse;

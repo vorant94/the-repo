@@ -95,11 +95,23 @@ export const monthlyReportPayloadSchema = z
   .meta({ ref: "MonthlyReportPayload" });
 export type MonthlyReportPayload = z.infer<typeof monthlyReportPayloadSchema>;
 
-export const reportResultSchema = z.object({ objectKey: z.string() });
+const reportResultSchema = z.object({ objectKey: z.string() });
 
-const eventReportResultSchema = reportResultSchema.meta({
-  ref: "EventReportResult",
-});
+export const eventReportResultSchema = z
+  .union([
+    reportResultSchema,
+    z.object({
+      pages: z
+        .array(
+          z.object({
+            kind: z.enum(["combined", "chart", "standings"]),
+            objectKey: z.string(),
+          }),
+        )
+        .min(1),
+    }),
+  ])
+  .meta({ ref: "EventReportResult" });
 
 const monthlyReportResultSchema = reportResultSchema.meta({
   ref: "MonthlyReportResult",

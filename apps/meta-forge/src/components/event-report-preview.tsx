@@ -1,24 +1,22 @@
 import { css, cx, Style } from "hono/css";
-import {
-  largeEventPlayerThreshold,
-  largeEventReportHeight,
-  reportRenderSize,
-} from "../shared/report-render-size.ts";
+import type { EventReportPage } from "../shared/event-report-pages.ts";
+import { reportRenderSize } from "../shared/report-render-size.ts";
 import type { EventReportPayload } from "../shared/schema/jobs.ts";
 import { EventReportChart } from "./event-report-chart.tsx";
 import { EventReportStandings } from "./event-report-standings.tsx";
 
 interface EventReportPreviewProps {
   mode: "dark" | "light";
+  page: EventReportPage;
   report: EventReportPayload;
 }
 
 export const EventReportPreview = ({
   mode,
+  page,
   report,
 }: EventReportPreviewProps) => {
   const isDark = mode === "dark";
-  const isTall = report.ranks.length >= largeEventPlayerThreshold;
 
   return (
     <html lang="en">
@@ -32,13 +30,7 @@ export const EventReportPreview = ({
         <Style>{globalStyles}</Style>
       </head>
       <body>
-        <article
-          class={cx(
-            reportStyle,
-            isTall && tallReportStyle,
-            isDark && darkReportStyle,
-          )}
-        >
+        <article class={cx(reportStyle, isDark && darkReportStyle)}>
           <header class={cx(headerStyle, isDark && darkHeaderStyle)}>
             <div>
               <p class={cx(eyebrowStyle, isDark && darkEyebrowStyle)}>
@@ -51,15 +43,21 @@ export const EventReportPreview = ({
               <p>{formatEventDate(report.hostedAt)}</p>
             </div>
           </header>
-          <main class={cx(mainStyle, isTall && tallMainStyle)}>
-            <EventReportChart
-              mode={mode}
-              report={report}
-            />
-            <EventReportStandings
-              mode={mode}
-              report={report}
-            />
+          <main class={mainStyle}>
+            {page.kind !== "standings" && (
+              <EventReportChart
+                fullPage={page.kind === "chart"}
+                mode={mode}
+                report={report}
+              />
+            )}
+            {page.kind !== "chart" && (
+              <EventReportStandings
+                mode={mode}
+                page={page}
+                report={report}
+              />
+            )}
           </main>
         </article>
       </body>
@@ -83,11 +81,6 @@ const reportStyle = css`
   margin: 0 auto;
   padding: 64px;
   background: #f8fafc;
-`;
-const tallReportStyle = css`
-  display: flex;
-  flex-direction: column;
-  height: ${largeEventReportHeight}px;
 `;
 const darkReportStyle = css`
   background: #020617;
@@ -133,9 +126,4 @@ const darkEventDetailsStyle = css`
 const mainStyle = css`
   display: flex;
   margin-top: 32px;
-`;
-const tallMainStyle = css`
-  flex: 1;
-  min-height: 0;
-  > section { height: 100%; }
 `;

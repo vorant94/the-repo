@@ -1,13 +1,15 @@
 import type { PieArcDatum } from "d3-shape";
 import { arc, pie } from "d3-shape";
 import { css, cx } from "hono/css";
-import { largeEventPlayerThreshold } from "../shared/report-render-size.ts";
+import { minimumPlayersForMultiPageReport } from "../shared/event-report-pages.ts";
 import type { EventReportPayload } from "../shared/schema/jobs.ts";
 
 const chartWidth = 896;
+const fullPageChartWidth = 1792;
 const chartHeight = 760;
 const pieOuterRadius = 240;
-const labelHorizontalLineLength = 129;
+const fullPagePieOuterRadius = 300;
+const labelRailOffset = 45;
 const maximumArchetypeLabelLength = 24;
 const pieColors = [
   "#2563eb",
@@ -29,19 +31,31 @@ const pieColors = [
 ];
 
 interface EventReportChartProps {
+  fullPage?: boolean;
   mode: "dark" | "light";
   report: EventReportPayload;
 }
 
-export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
+export const EventReportChart = ({
+  fullPage,
+  mode,
+  report,
+}: EventReportChartProps) => {
   const isDark = mode === "dark";
   const totalPlayers = report.ranks.length;
+  const width = fullPage ? fullPageChartWidth : chartWidth;
+  const outerRadius = fullPage ? fullPagePieOuterRadius : pieOuterRadius;
   const distribution = getArchetypeDistribution(report.ranks);
   const chartDistribution =
-    totalPlayers >= largeEventPlayerThreshold
+    totalPlayers >= minimumPlayersForMultiPageReport
       ? groupSinglePlayerArchetypes(distribution)
       : distribution;
-  const labels = getPieLabels(chartDistribution, totalPlayers);
+  const labels = getPieLabels(
+    chartDistribution,
+    totalPlayers,
+    width,
+    outerRadius,
+  );
   const slices = pie<ArchetypeDistribution>()
     .sort(null)
     .value((item) => item.count)
@@ -50,17 +64,19 @@ export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
     .padAngle((2 * Math.PI) / 360)(chartDistribution);
   const slicePath = arc<PieArcDatum<ArchetypeDistribution>>()
     .innerRadius(140)
-    .outerRadius(pieOuterRadius);
+    .outerRadius(outerRadius);
 
   return (
-    <section class={chartSectionStyle}>
+    <section
+      class={cx(chartSectionStyle, fullPage && fullPageChartSectionStyle)}
+    >
       <svg
         aria-label="Archetype distribution"
         class={chartStyle}
         role="img"
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+        viewBox={`0 0 ${width} ${chartHeight}`}
       >
-        <g transform={`translate(${chartWidth / 2} ${chartHeight / 2})`}>
+        <g transform={`translate(${width / 2} ${chartHeight / 2})`}>
           {slices.map((slice, index) => (
             <path
               key={slice.data.name}
@@ -74,7 +90,7 @@ export const EventReportChart = ({ mode, report }: EventReportChartProps) => {
         {labels.map((label) => (
           <g key={label.name}>
             <path
-              d={`M ${label.connectorX} ${label.connectorY} L ${label.elbowX} ${label.y} L ${label.textX} ${label.y}`}
+              d={`M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${label.railX} ${label.y} ${label.textX} ${label.y}`}
               fill="none"
               stroke={isDark ? "#94a3b8" : "#64748b"}
               stroke-width="2"
@@ -127,6 +143,9 @@ const chartSectionStyle = css`
   width: 50%;
   height: 760px;
 `;
+const fullPageChartSectionStyle = css`
+  width: 100%;
+`;
 const chartStyle = css`
   display: block;
   width: 100%;
@@ -153,8 +172,8 @@ const darkChartCenterStyle = css`
 interface PieLabel {
   connectorX: number;
   connectorY: number;
-  elbowX: number;
   name: string;
+  railX: number;
   textAnchor: "end" | "start";
   textX: number;
   value: string;
@@ -201,29 +220,31 @@ function groupSinglePlayerArchetypes(
 function getPieLabels(
   distribution: Array<ArchetypeDistribution>,
   totalPlayers: number,
+  width: number,
+  outerRadius: number,
 ): Array<PieLabel> {
-  const centerX = chartWidth / 2;
+  const centerX = width / 2;
   const centerY = chartHeight / 2;
+  const labelInset = width === fullPageChartWidth ? 300 : 24;
   let angle = 0;
   const labels = distribution.map((item) => {
     const endAngle = angle - (item.count / totalPlayers) * 2 * Math.PI;
     const midAngle = (angle + endAngle) / 2;
     const isRightSide = Math.sin(midAngle) >= 0;
-    const connectorX = centerX + Math.sin(midAngle) * (pieOuterRadius + 10);
-    const connectorY = centerY - Math.cos(midAngle) * (pieOuterRadius + 10);
+    const connectorX = centerX + Math.sin(midAngle) * (outerRadius + 10);
+    const connectorY = centerY - Math.cos(midAngle) * (outerRadius + 10);
     const textAnchor: PieLabel["textAnchor"] = isRightSide ? "end" : "start";
-    const textX = isRightSide ? chartWidth - 24 : 24;
-    const elbowX = isRightSide
-      ? textX - labelHorizontalLineLength
-      : textX + labelHorizontalLineLength;
+    const textX = isRightSide ? width - labelInset : labelInset;
+    const railX =
+      centerX + (isRightSide ? 1 : -1) * (outerRadius + labelRailOffset);
     angle = endAngle;
 
     return {
       connectorX,
       connectorY,
-      elbowX,
       isRightSide,
       name: item.name,
+      railX,
       textAnchor,
       textX,
       value: formatArchetypeValue(item.count, totalPlayers),
@@ -246,7 +267,7 @@ function getPieLabels(
 }
 
 function formatArchetypeValue(count: number, totalPlayers: number): string {
-  if (totalPlayers >= largeEventPlayerThreshold) {
+  if (totalPlayers >= minimumPlayersForMultiPageReport) {
     return `${((count / totalPlayers) * 100).toFixed(1)}%`;
   }
 
