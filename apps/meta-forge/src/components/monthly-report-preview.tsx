@@ -3,6 +3,7 @@ import { reportRenderSize } from "../shared/report-render-size.ts";
 import type { MonthlyReportPayload } from "../shared/schema/jobs.ts";
 import { MonthlyReportCities } from "./monthly-report-cities.tsx";
 import { MonthlyReportMap } from "./monthly-report-map.tsx";
+import { ReportMascot } from "./report-mascot.tsx";
 
 interface MonthlyReportPreviewProps {
   mode: "dark" | "light";
@@ -36,6 +37,7 @@ export const MonthlyReportPreview = ({
               </p>
               <h1 class={titleStyle}>{formattedMonth}</h1>
             </div>
+            <ReportMascot />
           </header>
           <main class={mainStyle}>
             <MonthlyReportMap

@@ -4,6 +4,7 @@ import { reportRenderSize } from "../shared/report-render-size.ts";
 import type { EventReportPayload } from "../shared/schema/jobs.ts";
 import { EventReportChart } from "./event-report-chart.tsx";
 import { EventReportStandings } from "./event-report-standings.tsx";
+import { ReportMascot } from "./report-mascot.tsx";
 
 interface EventReportPreviewProps {
   mode: "dark" | "light";
@@ -38,9 +39,14 @@ export const EventReportPreview = ({
               </p>
               <h1 class={titleStyle}>{report.name}</h1>
             </div>
-            <div class={cx(eventDetailsStyle, isDark && darkEventDetailsStyle)}>
-              <p>{report.venue.name}</p>
-              <p>{formatEventDate(report.hostedAt)}</p>
+            <div class={headerRightStyle}>
+              <div
+                class={cx(eventDetailsStyle, isDark && darkEventDetailsStyle)}
+              >
+                <p>{report.venue.name}</p>
+                <p>{formatEventDate(report.hostedAt)}</p>
+              </div>
+              <ReportMascot />
             </div>
           </header>
           <main class={mainStyle}>
@@ -95,6 +101,11 @@ const headerStyle = css`
 `;
 const darkHeaderStyle = css`
   border-color: #f8fafc;
+`;
+const headerRightStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 24px;
 `;
 const eyebrowStyle = css`
   margin: 0;
