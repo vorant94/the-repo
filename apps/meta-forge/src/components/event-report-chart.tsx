@@ -50,17 +50,22 @@ export const EventReportChart = ({
     totalPlayers >= minimumPlayersForMultiPageReport
       ? groupSinglePlayerArchetypes(distribution)
       : distribution;
+  const firstSliceAngle =
+    ((chartDistribution[0]?.count ?? 0) / totalPlayers) * 2 * Math.PI;
+  const startAngle =
+    totalPlayers >= minimumPlayersForMultiPageReport ? firstSliceAngle / 3 : 0;
   const labels = getPieLabels(
     chartDistribution,
     totalPlayers,
     width,
     outerRadius,
+    startAngle,
   );
   const slices = pie<ArchetypeDistribution>()
     .sort(null)
     .value((item) => item.count)
-    .startAngle(0)
-    .endAngle(-2 * Math.PI)
+    .startAngle(startAngle)
+    .endAngle(startAngle - 2 * Math.PI)
     .padAngle((2 * Math.PI) / 360)(chartDistribution);
   const slicePath = arc<PieArcDatum<ArchetypeDistribution>>()
     .innerRadius(140)
@@ -222,11 +227,12 @@ function getPieLabels(
   totalPlayers: number,
   width: number,
   outerRadius: number,
+  startAngle: number,
 ): Array<PieLabel> {
   const centerX = width / 2;
   const centerY = chartHeight / 2;
   const labelInset = width === fullPageChartWidth ? 300 : 24;
-  let angle = 0;
+  let angle = startAngle;
   const labels = distribution.map((item) => {
     const endAngle = angle - (item.count / totalPlayers) * 2 * Math.PI;
     const midAngle = (angle + endAngle) / 2;
