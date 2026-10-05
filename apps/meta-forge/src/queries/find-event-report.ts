@@ -11,7 +11,12 @@ export async function findEventReport(eventId: string) {
   const { db } = getAppContext();
   const rawEventReportRows = await db
     .select({
-      event: { id: events.id, name: events.name, hostedAt: events.hostedAt },
+      event: {
+        id: events.id,
+        name: events.name,
+        hostedAt: events.hostedAt,
+        isLeagueBranded: events.isLeagueBranded,
+      },
       venue: { name: venues.name, address: venues.address },
       rank: {
         position: ranks.position,

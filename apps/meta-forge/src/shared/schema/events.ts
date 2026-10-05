@@ -1,4 +1,4 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { venues } from "./venues.ts";
@@ -15,6 +15,7 @@ export const events = sqliteTable("events", {
     .$defaultFn(() => new Date().toISOString())
     .$onUpdateFn(() => new Date().toISOString()),
   name: text().notNull(),
+  isLeagueBranded: integer({ mode: "boolean" }),
   hostedAt: text().notNull(),
   hostedBy: text()
     .notNull()

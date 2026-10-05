@@ -22,6 +22,7 @@ const eventReportCreateFormSchema = z.object({
   eventName: z.string(),
   venueName: z.string(),
   eventDate: z.iso.datetime({ offset: true }),
+  isLeagueBranded: z.stringbool().optional(),
   report: z.instanceof(File).meta({ type: "string", format: "binary" }),
 });
 
@@ -68,6 +69,7 @@ eventReportCreateRoute.post(
               eventName: { type: "string" },
               venueName: { type: "string" },
               eventDate: { type: "string", format: "date-time" },
+              isLeagueBranded: { type: "string", enum: ["true", "false"] },
               report: { type: "string", format: "binary" },
             },
           },
@@ -88,7 +90,8 @@ eventReportCreateRoute.post(
   validator("form", eventReportCreateFormSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { eventName, venueName, eventDate, report } = c.req.valid("form");
+    const { eventName, venueName, eventDate, isLeagueBranded, report } =
+      c.req.valid("form");
     const rows = parseEventReport(await report.text());
     const rawVenue = await db
       .select()
@@ -117,6 +120,7 @@ eventReportCreateRoute.post(
         name: eventName,
         hostedAt: eventDate,
         hostedBy: rawVenue.id,
+        isLeagueBranded,
       }),
       ...playerInserts,
       ...archetypeInserts,

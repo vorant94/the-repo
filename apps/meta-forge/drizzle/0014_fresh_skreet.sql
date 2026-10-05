@@ -1,0 +1,1 @@
+ALTER TABLE `events` ADD `is_league_branded` integer;

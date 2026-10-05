@@ -48,6 +48,7 @@ export const eventReportPayloadSchema = z
     id: z.uuid(),
     name: z.string(),
     hostedAt: z.iso.datetime({ offset: true }),
+    isLeagueBranded: z.boolean().nullable(),
     venue: z.object({
       name: z.string(),
       address: venueAddressSchema,

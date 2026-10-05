@@ -43,7 +43,11 @@ export const EventReportPreview = ({
               <div
                 class={cx(eventDetailsStyle, isDark && darkEventDetailsStyle)}
               >
-                <p>{report.venue.name}</p>
+                <p>
+                  {report.isLeagueBranded
+                    ? "Kipod Pauper League"
+                    : report.venue.name}
+                </p>
                 <p>{formatEventDate(report.hostedAt)}</p>
               </div>
               <ReportMascot />
