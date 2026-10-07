@@ -81,6 +81,21 @@ export const EventReportChart = ({
         role="img"
         viewBox={`0 0 ${width} ${chartHeight}`}
       >
+        <defs>
+          {labels.map((label, index) => (
+            <clipPath
+              id={`leader-band-${index}`}
+              key={label.name}
+            >
+              <rect
+                height="4"
+                width={width}
+                x="0"
+                y={label.y - 1}
+              />
+            </clipPath>
+          ))}
+        </defs>
         <g transform={`translate(${width / 2} ${chartHeight / 2})`}>
           {slices.map((slice, index) => (
             <path
@@ -95,7 +110,7 @@ export const EventReportChart = ({
         {labels.map((label) => (
           <g key={`${label.name}-connector`}>
             <path
-              d={`M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${(label.connectorX + label.railX) / 2} ${label.y} ${label.railX} ${label.y}`}
+              d={getConnectorPath(label)}
               fill="none"
               stroke={isDark ? "#94a3b8" : "#64748b"}
               stroke-width="2"
@@ -139,16 +154,26 @@ export const EventReportChart = ({
             </text>
           </g>
         ))}
-        {labels.map((label) => (
-          <line
+        {labels.map((label, index) => (
+          <g
+            clip-path={`url(#leader-band-${index})`}
             key={`${label.name}-underline`}
-            x1={label.railX}
-            x2={label.textX}
-            y1={label.y}
-            y2={label.y}
-            stroke={isDark ? "#94a3b8" : "#64748b"}
-            stroke-width="2"
-          />
+          >
+            <path
+              d={getConnectorPath(label)}
+              fill="none"
+              stroke={isDark ? "#94a3b8" : "#64748b"}
+              stroke-width="2"
+            />
+            <line
+              x1={label.railX}
+              x2={label.textX}
+              y1={label.y}
+              y2={label.y}
+              stroke={isDark ? "#94a3b8" : "#64748b"}
+              stroke-width="2"
+            />
+          </g>
         ))}
       </svg>
       <div class={cx(chartCenterStyle, isDark && darkChartCenterStyle)}>
@@ -204,6 +229,10 @@ interface PieLabel {
   textX: number;
   value: string;
   y: number;
+}
+
+function getConnectorPath(label: PieLabel): string {
+  return `M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${(label.connectorX + label.railX) / 2} ${label.y} ${label.railX} ${label.y}`;
 }
 
 function getArchetypeDistribution(
