@@ -12,6 +12,7 @@ Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, g
 - Use the standings screenshot and event details supplied by the user. Do not inspect or update `tools/studio` data files.
 - Transcribe standings in rank order. Use the best full-name capitalization supported by the source.
 - Use the archetype name supplied by the user or screenshot. Ask for a clear archetype name only when the supplied label is ambiguous enough to make the CSV unreliable.
+- Normalize single-color archetype prefixes to `Mono-<color letter>` using uppercase `W`, `U`, `B`, `R`, or `G` (for example, `Mono W Convoke` becomes `Mono-W Convoke` and `Mono R Madness` becomes `Mono-R Madness`). Preserve the rest of the archetype name.
 - Convert each W/L/D record to numeric `wins`, `losses`, and `draws`. Use `0` for draws when the source omits them.
 - Record a requested hidden archetype on that rank with `isArchetypeHidden` set to `true`; otherwise use `false`.
 - Meta Forge requires an existing venue. Ask for the venue name if it is missing, and tell the user to create the venue separately if they indicate it does not exist.
@@ -29,5 +30,5 @@ Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, g
 - Return the saved file as a clickable link and include its contents in a fenced `csv` block with this exact header and order: `rank,player,archetype,wins,losses,draws,isArchetypeHidden`.
 - Include all seven columns for every row, including `draws` with `0` where appropriate and `isArchetypeHidden` as lowercase `true` or `false`. Quote CSV values when required by CSV syntax.
 - Do not include IDs, venue details, event details, or extra columns in the CSV. The import form receives `eventName`, `venueName`, and `eventDate` separately.
-- Provide a ready-to-run `curl` snippet that imports the saved file with `POST https://meta-forge.vorant94.dev/api/event-reports` (no trailing slash). Use multipart fields `eventName`, `venueName`, `eventDate`, and `report`, and authenticate with `Authorization: Bearer ${META_FORGE_TOKEN}`. Do not execute the import unless the user explicitly asks.
+- Provide a ready-to-run `curl` snippet that imports the saved file with `POST https://meta-forge.vorant94.dev/api/event-reports` (no trailing slash). Use multipart fields `eventName`, `venueName`, `eventDate`, and `report`, and authenticate with `Authorization: Bearer ${META_FORGE_API_TOKEN}`. Do not execute the import unless the user explicitly asks.
 - State that Meta Forge creates missing players and archetypes during import, but rejects an unknown venue.
