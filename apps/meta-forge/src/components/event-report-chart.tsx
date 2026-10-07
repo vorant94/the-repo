@@ -93,9 +93,9 @@ export const EventReportChart = ({
           ))}
         </g>
         {labels.map((label) => (
-          <g key={label.name}>
+          <g key={`${label.name}-connector`}>
             <path
-              d={`M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${label.railX} ${label.y} ${label.textX} ${label.y}`}
+              d={`M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${(label.connectorX + label.railX) / 2} ${label.y} ${label.railX} ${label.y}`}
               fill="none"
               stroke={isDark ? "#94a3b8" : "#64748b"}
               stroke-width="2"
@@ -106,10 +106,17 @@ export const EventReportChart = ({
               fill={isDark ? "#cbd5e1" : "#475569"}
               r="4"
             />
+          </g>
+        ))}
+        {labels.map((label) => (
+          <g key={label.name}>
             <text
               fill={isDark ? "#f8fafc" : "#0f172a"}
               font-size="18"
               font-weight="700"
+              paint-order="stroke"
+              stroke={isDark ? "#020617" : "#f8fafc"}
+              stroke-width="8"
               text-anchor={label.textAnchor}
               x={label.textX}
               y={label.y - 6}
@@ -121,6 +128,9 @@ export const EventReportChart = ({
               fill={isDark ? "#94a3b8" : "#64748b"}
               font-size="15"
               font-weight="600"
+              paint-order="stroke"
+              stroke={isDark ? "#020617" : "#f8fafc"}
+              stroke-width="8"
               text-anchor={label.textAnchor}
               x={label.textX}
               y={label.y + 17}
@@ -128,6 +138,17 @@ export const EventReportChart = ({
               {label.value}
             </text>
           </g>
+        ))}
+        {labels.map((label) => (
+          <line
+            key={`${label.name}-underline`}
+            x1={label.railX}
+            x2={label.textX}
+            y1={label.y}
+            y2={label.y}
+            stroke={isDark ? "#94a3b8" : "#64748b"}
+            stroke-width="2"
+          />
         ))}
       </svg>
       <div class={cx(chartCenterStyle, isDark && darkChartCenterStyle)}>
