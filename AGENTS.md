@@ -9,15 +9,12 @@ Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatt
 **Structure:**
 
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
-- `apps/mana-forge` - WIP MTG web tool (React 19, Vite, Mantine UI, Tailwind CSS v4, React Router v7)
-- `apps/sofash` - WIP Telegram bot for local events (Hono, Grammy, Drizzle ORM, D1)
-- `apps/subs-savvy` - Abandoned subscription tracker (React, Dexie/IndexedDB)
-- `libs/nt` - NeverThrow wrapper utilities
+- `apps/meta-forge` - MTG tournament data tool (Hono, Drizzle ORM, Cloudflare Workers)
 - `tools/studio` - Remotion studio for asset generation
 
 ## Commands
 
-**Workspace names:** Packages use bare names (e.g. `mana-forge`, `nt`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `pnpm --filter <name>`.
+**Workspace names:** Packages use bare names (e.g. `meta-forge`), not `@app/`/`@lib/` scoping. Always check `name` field in target `package.json` before `pnpm --filter <name>`.
 
 **Internal lib dependencies:** Reference workspace libs with workspace protocol (e.g. `"nt": "workspace:*"`).
 
@@ -28,8 +25,6 @@ pnpm install
 pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
 pnpm run prettier:check|write              # Prettier checks/writes only Markdown and YAML (always run from root)
 pnpm -r run --if-present ts:check          # TypeScript across workspaces
-pnpm run test                              # Vitest across all workspaces (root config)
-pnpm run test:coverage                     # Same, with coverage + thresholds
 pnpm run unused-code:check                 # Knip unused code analysis
 ```
 
@@ -37,19 +32,11 @@ pnpm run unused-code:check                 # Knip unused code analysis
 
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
-**sofash database:** `pnpm run db:generate` to generate migrations, `pnpm run db:migrate:local` to apply them to the local Miniflare D1, `pnpm run db:migrate:production` for production D1. Drizzle config: schema at src/shared/schema, migrations output at ./drizzle. Cloudflare binding types are generated via `pnpm run cf-typegen` (`wrangler types`) into `worker-configuration.d.ts` (gitignored); `ts:check` runs it first.
-
 **D1 migrations:** Drizzle Kit uses the SQLite dialect for D1 and has no config option to generate D1-specific migration SQL. Review generated migrations that rebuild tables or change foreign keys: D1 enforces foreign keys inside implicit transactions, so `PRAGMA foreign_keys=OFF` does not disable them. `PRAGMA defer_foreign_keys=ON` only postpones validation until the transaction ends; all references must be valid then. Rewrite incompatible migrations and apply them to a disk-backed local D1 database with representative rows and foreign keys before production. An empty database migration run does not prove that existing data will migrate successfully. Do not rename migration files after they have been applied; Wrangler records their filenames in `d1_migrations`.
 
 **Cloudflare SSR headers:** Some projects have two CSP sources: `public/_headers` covers static assets, while Worker or framework middleware must set the equivalent header on SSR/API responses. Keep both policies in sync when changing CSP.
 
 ## Architecture
-
-**mana-forge (simple):** `globals/` (route constants) → `layouts/` → `pages/`. React Compiler (babel-plugin-react-compiler) for auto-optimization. PostCSS configured inline in `vite.config.ts` (`css.postcss.plugins`) with postcss-preset-mantine and postcss-simple-vars.
-
-**sofash (layered):** `api/` (Hono routes, Grammy handlers) → `bl/` (business logic) → `dal/` (data access). AsyncLocalStorage for request-scoped context.
-
-**subs-savvy (FSD):** `app/` → `pages/` → `widgets/` → `features/` → `entities/` → `shared/`. Zustand state, Dexie DB ops + Zod validation. PostCSS inline in `vite.config.ts` (`css.postcss.plugins`), not `postcss.config.*`. (Abandoned, reference only.)
 
 **digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n, custom rehype/remark plugins.
 
@@ -68,56 +55,12 @@ Always run Biome from repo root. Rules:
 
 ## Testing
 
-**Test naming convention:**
-
-- `*.unit.test.ts` - Pure logic, no I/O (formatters, parsers, utilities)
-- `*.int.test.ts` - Direct function calls with mocked I/O (fetch, fs, process)
-- `*.e2e.test.ts` - Full process execution (spawn CLI binary)
-- Legacy `*.spec.ts` still supported, prefer above
-
-**Mocking pattern:**
-
-- Use `vi.spyOn(target, "method").mockImplementationOnce()` for one-time mocks (auto-expires after first call, no cleanup needed)
-
-**Integration test pattern:**
-
-- Call functions directly with mocked I/O, don't spawn processes
-
-**General:**
-
-- Vitest for subs-savvy and mana-forge; Playwright for digital-garden E2E
-- Prefer `it()` over `test()`, use `describe()` blocks
-- Test utility functions (fixtures, helpers) go below the describe block, not above it
-
-**Running tests (root workspace):**
-
-- Vitest is configured as a workspace at root `vitest.config.ts` (`test.projects` globs each `{apps,libs,tools}/*/vitest.config.ts`). Per-project `vitest.config.ts` uses `defineProject` and holds only that project's `test` block; coverage config + thresholds live only at root.
-- Always run tests from repo root: `pnpm run test` (or `pnpm run test:coverage`). Apps do NOT have their own `test` script — `pnpm --filter <name> test` won't work.
-- Filter to one project via vitest's `--project <name>`, e.g. `pnpm run test --project mana-forge`.
-- Coverage thresholds are enforced per glob at root (currently `apps/mana-forge/src/**`); `.tsx` and thin DOM/config files are excluded there.
-
-**jsdom setup (React hook/component tests):**
-
-- Add to vite.config.ts `test` block: `environment: "jsdom"`, `restoreMocks: true`, `setupFiles: ["./src/test-setup.ts"]`
-- `restoreMocks: true` required when spying on prototypes — auto-restores after each test
-- Mirror `apps/subs-savvy/src/test-setup.ts` for Mantine mocks (getComputedStyle, matchMedia, ResizeObserver, scrollIntoView)
-
-**Mocking modules (`__mocks__` pattern — preferred):**
-
-- For node_modules: `__mocks__/<package>.ts` at app root; scoped packages: `__mocks__/@dnd-kit/core.ts`
-- For internal modules: `__mocks__/` sibling directory next to the file being mocked
-- Test file still needs `vi.mock(import("..."))` — Vitest uses the `__mocks__` file as implementation
-
-**Mocking read-only DOM properties (jsdom):**
-
-- `clientWidth`, `clientHeight` etc. are getter-only in jsdom — direct assignment throws
-- Use `vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(800)` per test
-- Regular methods (e.g. `getBoundingClientRect`) can be assigned directly on the instance
+- Playwright E2E tests for digital-garden run through its app pipeline.
 
 ## Git Hooks (lefthook)
 
 **pre-commit:** `pnpm run lint:ci`, `pnpm run prettier:check`, `pnpm -r run --if-present ts:check`
-**pre-push:** `pnpm run test` (root vitest workspace), `pnpm run unused-code:check`
+**pre-push:** `pnpm -r run --if-present ts:codegen && pnpm run unused-code:check`
 
 ## Programming Preferences
 

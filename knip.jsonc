@@ -9,24 +9,8 @@
     ".": {
       "ignoreDependencies": ["skills", "chrome-devtools-mcp"]
     },
-    "apps/mana-forge": {
-      "react-router": {
-        "config": "react-router.config.ts"
-      }
-    },
     "apps/digital-garden": {
       "ignoreDependencies": ["cloudflare"]
-    },
-    "apps/sofash": {
-      "entry": [
-        "src/main.{ts,tsx}",
-        "scripts/*.ts",
-        "src/shared/schema/releases.ts" // need to include all schemas here since not all of them are used in code yet, but already present in db
-      ],
-      "ignoreBinaries": ["ngrok"] // it should be installed with homebrew
-    },
-    "apps/subs-savvy": {
-      "entry": ["src/main.{ts,tsx}", "scripts/*.ts", "src/**/*.spec.{ts,tsx}"]
     },
     "tools/studio": {
       "entry": ["*.config.ts", "src/index.ts"],

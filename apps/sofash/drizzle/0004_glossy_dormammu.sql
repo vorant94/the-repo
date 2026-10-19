@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `chains_type_unique` ON `chains` (`type`);

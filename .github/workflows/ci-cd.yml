@@ -80,9 +80,6 @@ jobs:
       - name: Check Markdown and YAML formatting
         run: pnpm run prettier:check
 
-      - name: Test
-        run: pnpm run test:coverage
-
       - name: Generate TypeScript Types
         run: pnpm -r run --if-present ts:codegen
 
@@ -99,42 +96,12 @@ jobs:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 
-  mana-forge:
-    needs: [detect, workspace-checks]
-    if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'mana-forge')
-    uses: ./.github/workflows/pipeline.yml
-    with:
-      workspace: mana-forge
-    secrets:
-      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-
-  sofash:
-    needs: [detect, workspace-checks]
-    if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'sofash')
-    uses: ./.github/workflows/pipeline.yml
-    with:
-      workspace: sofash
-    secrets:
-      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-
   digital-garden:
     needs: [detect, workspace-checks]
     if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'digital-garden')
     uses: ./.github/workflows/pipeline.yml
     with:
       workspace: digital-garden
-    secrets:
-      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-
-  subs-savvy:
-    needs: [detect, workspace-checks]
-    if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'subs-savvy')
-    uses: ./.github/workflows/pipeline.yml
-    with:
-      workspace: subs-savvy
     secrets:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

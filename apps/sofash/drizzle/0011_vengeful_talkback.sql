@@ -1,1 +1,0 @@
-ALTER TABLE `titles` ADD `external_id` text NOT NULL;

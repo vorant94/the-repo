@@ -1,1 +1,0 @@
-ALTER TABLE `titles` RENAME COLUMN "release_year" TO "released_at";
