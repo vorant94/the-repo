@@ -52,8 +52,7 @@ export const EventReportChart = ({
       : distribution;
   const firstSliceAngle =
     ((chartDistribution[0]?.count ?? 0) / totalPlayers) * 2 * Math.PI;
-  const startAngle =
-    totalPlayers >= minimumPlayersForMultiPageReport ? firstSliceAngle / 3 : 0;
+  const startAngle = firstSliceAngle / 3;
   const labels = getPieLabels(
     chartDistribution,
     totalPlayers,
