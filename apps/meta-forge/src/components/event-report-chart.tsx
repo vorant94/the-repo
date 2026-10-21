@@ -10,6 +10,10 @@ const chartHeight = 760;
 const pieOuterRadius = 240;
 const fullPagePieOuterRadius = 300;
 const labelRailOffset = 45;
+const connectorRailOffset = 12;
+const minimumLabelGap = 48;
+const labelTop = 40;
+const labelBottom = chartHeight - 40;
 const maximumArchetypeLabelLength = 24;
 const pieColors = [
   "#2563eb",
@@ -220,6 +224,7 @@ const darkChartCenterStyle = css`
 `;
 
 interface PieLabel {
+  connectorRailX: number;
   connectorX: number;
   connectorY: number;
   name: string;
@@ -231,7 +236,8 @@ interface PieLabel {
 }
 
 function getConnectorPath(label: PieLabel): string {
-  return `M ${label.connectorX} ${label.connectorY} C ${label.railX} ${label.connectorY} ${(label.connectorX + label.railX) / 2} ${label.y} ${label.railX} ${label.y}`;
+  const bendX = (label.connectorRailX + label.railX) / 2;
+  return `M ${label.connectorX} ${label.connectorY} H ${label.connectorRailX} C ${bendX} ${label.connectorY} ${bendX} ${label.y} ${label.railX} ${label.y}`;
 }
 
 function getArchetypeDistribution(
@@ -292,9 +298,12 @@ function getPieLabels(
     const textX = isRightSide ? width - labelInset : labelInset;
     const railX =
       centerX + (isRightSide ? 1 : -1) * (outerRadius + labelRailOffset);
+    const connectorRailX =
+      centerX + (isRightSide ? 1 : -1) * (outerRadius + connectorRailOffset);
     angle = endAngle;
 
     return {
+      connectorRailX,
       connectorX,
       connectorY,
       isRightSide,
@@ -303,7 +312,7 @@ function getPieLabels(
       textAnchor,
       textX,
       value: formatArchetypeValue(item.count, totalPlayers),
-      y: 0,
+      y: Math.max(labelTop, Math.min(labelBottom, connectorY)),
     };
   });
 
@@ -312,10 +321,38 @@ function getPieLabels(
     const sideLabels = labels
       .filter((label) => label.isRightSide === isRightSide)
       .toSorted((left, right) => left.connectorY - right.connectorY);
-    const gap = 650 / (sideLabels.length + 1);
-    sideLabels.forEach((label, index) => {
-      positionedLabels.set(label.name, { ...label, y: 55 + gap * (index + 1) });
-    });
+    const gap = Math.min(
+      minimumLabelGap,
+      (labelBottom - labelTop) / Math.max(1, sideLabels.length - 1),
+    );
+    let nextY = labelTop;
+    for (const label of sideLabels) {
+      label.y = Math.max(label.y, nextY);
+      nextY = label.y + gap;
+    }
+
+    let previousY = labelBottom;
+    for (const label of sideLabels.toReversed()) {
+      label.y = Math.min(label.y, previousY);
+      previousY = label.y - gap;
+    }
+
+    const firstLabel = sideLabels.at(0);
+    const lastLabel = sideLabels.at(-1);
+    if (!firstLabel || !lastLabel) {
+      continue;
+    }
+
+    const offsetY = Math.max(
+      labelTop - firstLabel.y,
+      Math.min(
+        labelBottom - lastLabel.y,
+        centerY - (firstLabel.y + lastLabel.y) / 2,
+      ),
+    );
+    for (const label of sideLabels) {
+      positionedLabels.set(label.name, { ...label, y: label.y + offsetY });
+    }
   }
 
   return labels.map((label) => positionedLabels.get(label.name) ?? label);
