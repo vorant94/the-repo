@@ -8,3 +8,9 @@ CONTEXT7_API_KEY = "CONTEXT7_API_KEY"
 [mcp_servers.chrome-devtools]
 command = "pnpm"
 args = ["dlx", "chrome-devtools-mcp"]
+
+[mcp_servers.chrome-devtools.tools.navigate_page]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.take_screenshot]
+approval_mode = "approve"
