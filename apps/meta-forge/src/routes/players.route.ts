@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import {
   insertPlayerSchema,
   playerDtoSchema,
@@ -19,9 +20,10 @@ export const playersRoute = new Hono<HonoEnv>();
 playersRoute.get(
   "/",
   describeRoute({
-    description: "List all players",
+    description: "List players",
     tags: ["players"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of players",
         content: {
@@ -30,13 +32,18 @@ playersRoute.get(
       },
     },
   }),
+  validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const query = c.req.valid("query");
+    const { page, pageSize } = query;
 
     const rawPlayers = await db
       .select()
       .from(players)
-      .orderBy(asc(players.name));
+      .orderBy(asc(players.name), asc(players.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
     const playersDto = z.array(playerDtoSchema).parse(rawPlayers);
 
     return c.json(playersDto);

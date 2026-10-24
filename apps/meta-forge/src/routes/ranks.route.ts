@@ -7,6 +7,7 @@ import { findArchetypesByNames } from "../queries/find-archetypes-by-names.ts";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import { archetypes } from "../shared/schema/archetypes.ts";
 import {
   insertRankSchema,
@@ -17,7 +18,7 @@ import {
 
 export const ranksRoute = new Hono<HonoEnv>();
 
-const ranksQuerySchema = z.object({
+const ranksQuerySchema = paginationQuerySchema.extend({
   archetypeId: z.uuid().optional(),
   eventId: z.uuid().optional(),
   playerId: z.uuid().optional(),
@@ -35,6 +36,7 @@ ranksRoute.get(
       "List ranks, optionally filtered by archetype, event, and player IDs",
     tags: ["ranks"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of ranks",
         content: {
@@ -46,7 +48,8 @@ ranksRoute.get(
   validator("query", ranksQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const { archetypeId, eventId, playerId } = c.req.valid("query");
+    const query = c.req.valid("query");
+    const { archetypeId, eventId, playerId, page, pageSize } = query;
 
     const rawRanks = await db
       .select()
@@ -58,7 +61,9 @@ ranksRoute.get(
           playerId ? eq(ranks.playerId, playerId) : undefined,
         ),
       )
-      .orderBy(asc(ranks.position));
+      .orderBy(asc(ranks.position), asc(ranks.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
     const ranksDto = z.array(rankDtoSchema).parse(rawRanks);
 
     return c.json(ranksDto);

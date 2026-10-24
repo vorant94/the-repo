@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import {
   insertVenueSchema,
   updateVenueSchema,
@@ -18,9 +19,10 @@ export const venuesRoute = new Hono<HonoEnv>();
 venuesRoute.get(
   "/",
   describeRoute({
-    description: "List all venues",
+    description: "List venues",
     tags: ["venues"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of venues",
         content: {
@@ -29,10 +31,18 @@ venuesRoute.get(
       },
     },
   }),
+  validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const query = c.req.valid("query");
+    const { page, pageSize } = query;
 
-    const rawVenues = await db.select().from(venues).orderBy(asc(venues.name));
+    const rawVenues = await db
+      .select()
+      .from(venues)
+      .orderBy(asc(venues.name), asc(venues.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
     const venuesDto = z.array(venueDtoSchema).parse(rawVenues);
 
     return c.json(venuesDto);

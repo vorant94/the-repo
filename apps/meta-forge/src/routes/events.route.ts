@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import {
   eventDtoSchema,
   events,
@@ -18,9 +19,10 @@ export const eventsRoute = new Hono<HonoEnv>();
 eventsRoute.get(
   "/",
   describeRoute({
-    description: "List all events",
+    description: "List events",
     tags: ["events"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of events",
         content: {
@@ -29,13 +31,18 @@ eventsRoute.get(
       },
     },
   }),
+  validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const query = c.req.valid("query");
+    const { page, pageSize } = query;
 
     const rawEvents = await db
       .select()
       .from(events)
-      .orderBy(asc(events.hostedAt));
+      .orderBy(desc(events.hostedAt), asc(events.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
     const eventsDto = z.array(eventDtoSchema).parse(rawEvents);
 
     return c.json(eventsDto);

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import {
   archetypeDtoSchema,
   archetypes,
@@ -23,6 +24,7 @@ archetypesRoute.get(
       "List archetypes, optionally filtered by a case-insensitive partial name or alias",
     tags: ["archetypes"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of archetypes",
         content: {
@@ -35,7 +37,7 @@ archetypesRoute.get(
   }),
   validator(
     "query",
-    z.object({
+    paginationQuerySchema.extend({
       name: z
         .string()
         .optional()
@@ -44,7 +46,8 @@ archetypesRoute.get(
   ),
   async (c) => {
     const { db } = getAppContext();
-    const { name } = c.req.valid("query");
+    const query = c.req.valid("query");
+    const { name, page, pageSize } = query;
     const namePattern = `%${name}%`;
 
     const rawArchetypes = await db
@@ -58,7 +61,9 @@ archetypesRoute.get(
             )
           : undefined,
       )
-      .orderBy(asc(archetypes.name));
+      .orderBy(asc(archetypes.name), asc(archetypes.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
     const archetypesDto = z.array(archetypeDtoSchema).parse(rawArchetypes);
 
     return c.json(archetypesDto);

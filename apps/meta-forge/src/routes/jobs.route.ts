@@ -1,10 +1,11 @@
 import { desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { describeRoute, resolver } from "hono-openapi";
+import { describeRoute, resolver, validator } from "hono-openapi";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
+import { paginationQuerySchema } from "../shared/pagination.ts";
 import { jobSchema, jobs } from "../shared/schema/jobs.ts";
 
 export const jobsRoute = new Hono<HonoEnv>();
@@ -15,6 +16,7 @@ jobsRoute.get(
     description: "List jobs",
     tags: ["jobs"],
     responses: {
+      400: { description: "Invalid pagination or filters" },
       200: {
         description: "Jobs",
         content: {
@@ -24,11 +26,19 @@ jobsRoute.get(
       401: { description: "Unauthorized" },
     },
   }),
+  validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const allJobs = await db.select().from(jobs).orderBy(desc(jobs.createdAt));
+    const query = c.req.valid("query");
+    const { page, pageSize } = query;
+    const rawJobs = await db
+      .select()
+      .from(jobs)
+      .orderBy(desc(jobs.createdAt), desc(jobs.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
 
-    return c.json(jobSchema.array().parse(allJobs));
+    return c.json(jobSchema.array().parse(rawJobs));
   },
 );
 
