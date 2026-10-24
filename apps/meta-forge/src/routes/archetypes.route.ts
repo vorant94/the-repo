@@ -1,4 +1,4 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray, like, or } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
@@ -19,7 +19,8 @@ export const archetypesRoute = new Hono<HonoEnv>();
 archetypesRoute.get(
   "/",
   describeRoute({
-    description: "List all archetypes",
+    description:
+      "List archetypes, optionally filtered by a case-insensitive partial name or alias",
     tags: ["archetypes"],
     responses: {
       200: {
@@ -32,12 +33,31 @@ archetypesRoute.get(
       },
     },
   }),
+  validator(
+    "query",
+    z.object({
+      name: z
+        .string()
+        .optional()
+        .describe("Case-insensitive partial match against the name or aliases"),
+    }),
+  ),
   async (c) => {
     const { db } = getAppContext();
+    const { name } = c.req.valid("query");
+    const namePattern = `%${name}%`;
 
     const rawArchetypes = await db
       .select()
       .from(archetypes)
+      .where(
+        name
+          ? or(
+              like(archetypes.name, namePattern),
+              like(archetypes.aliases, namePattern),
+            )
+          : undefined,
+      )
       .orderBy(asc(archetypes.name));
     const archetypesDto = z.array(archetypeDtoSchema).parse(rawArchetypes);
 
