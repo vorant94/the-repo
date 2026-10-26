@@ -4,7 +4,7 @@ Guidance to AI Agents for this repo.
 
 ## Repository Overview
 
-Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatting.
+Monorepo: pnpm workspaces, Biome for linting and formatting (including YAML), Prettier for Markdown formatting.
 
 **Structure:**
 
@@ -23,7 +23,7 @@ Monorepo: pnpm workspaces, Biome for linting, Prettier for Markdown/YAML formatt
 ```bash
 pnpm install
 pnpm run lint:check|write|write:unsafe|ci  # Biome linting (always run from root)
-pnpm run prettier:check|write              # Prettier checks/writes only Markdown and YAML (always run from root)
+pnpm run prettier:check|write              # Prettier checks/writes only Markdown (always run from root)
 pnpm -r run --if-present ts:check          # TypeScript across workspaces
 pnpm run unused-code:check                 # Knip unused code analysis
 ```
@@ -172,7 +172,7 @@ export const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({ user, c
 
 ## CI/CD
 
-**Pipeline:** GitHub Actions workflows at `.github/workflows/ci-cd.yml` and `.github/workflows/pipeline.yml` detect affected apps via `pnpm list -r --filter "...[SHA]"`, run workspace checks (Biome, Prettier Markdown/YAML check, tests, code generation, unused-code), then run per-app CI → E2E → deploy. Deploy is gated by the presence of a `deploy:production` script in the app's `package.json`.
+**Pipeline:** GitHub Actions workflows at `.github/workflows/ci-cd.yml` and `.github/workflows/pipeline.yml` detect affected apps via `pnpm list -r --filter "...[SHA]"`, run workspace checks (Biome, Prettier Markdown check, tests, code generation, unused-code), then run per-app CI → E2E → deploy. Deploy is gated by the presence of a `deploy:production` script in the app's `package.json`.
 
 ## Git Workflow
 

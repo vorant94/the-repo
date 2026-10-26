@@ -42,7 +42,7 @@ export const TypescriptMonoreposAreAMess: FC<
           "--bg-image-dark-url": `url(${staticFile("yarn-logo-dark.svg")})`,
         }}
         className={cn(
-          "col-span-2 row-span-2 bg-[#2C8EBB] bg-center bg-size-[65%_65%] bg-no-repeat p-12",
+          "col-span-2 row-span-2 bg-[#2C8EBB] bg-size-[65%_65%] bg-center bg-no-repeat p-12",
           mode === "light"
             ? "bg-(image:--bg-image-url)"
             : "bg-(image:--bg-image-dark-url)",
@@ -72,7 +72,7 @@ export const TypescriptMonoreposAreAMess: FC<
           "--bg-image-dark-url": `url(${staticFile("git-logo-dark.svg")})`,
         }}
         className={cn(
-          "col-span-2 row-span-2 bg-[#f03c2e] bg-center bg-size-[65%_65%] bg-no-repeat p-12",
+          "col-span-2 row-span-2 bg-[#f03c2e] bg-size-[65%_65%] bg-center bg-no-repeat p-12",
           mode === "light"
             ? "bg-(image:--bg-image-url)"
             : "bg-(image:--bg-image-dark-url)",

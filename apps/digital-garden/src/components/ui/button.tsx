@@ -17,7 +17,7 @@ export const Button: FC<PropsWithChildren<ButtonProps>> = ({
   return (
     <button
       className={cn(
-        "not-disabled:cursor-pointer p-1 not-disabled:hover:text-cyan-500 disabled:cursor-not-allowed",
+        "p-1 not-disabled:cursor-pointer not-disabled:hover:text-cyan-500 disabled:cursor-not-allowed",
         buttonVariantToStyles[variant],
         className,
       )}

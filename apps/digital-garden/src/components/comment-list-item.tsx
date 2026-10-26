@@ -60,10 +60,10 @@ export const CommentListItem: FC<CommentListItemProps> = ({ comment }) => {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-slate-600 text-sm dark:text-slate-300">
+          <span className="text-sm text-slate-600 dark:text-slate-300">
             {username}
           </span>
-          <span className="text-slate-500 text-xs">{formattedDate}</span>
+          <span className="text-xs text-slate-500">{formattedDate}</span>
 
           {isOwner && (
             <span className="invisible ml-auto inline-flex gap-1 group-hover:visible">
@@ -71,7 +71,7 @@ export const CommentListItem: FC<CommentListItemProps> = ({ comment }) => {
                 type="button"
                 onClick={handleDelete}
                 className={cn(
-                  "text-red-300 text-xs not-disabled:hover:text-red-500",
+                  "text-xs text-red-300 not-disabled:hover:text-red-500",
                 )}
               >
                 <Icon glyph={"trash"} />

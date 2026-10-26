@@ -23,7 +23,7 @@ export const Link: FC<PropsWithChildren<LinkProps>> = ({
     <a
       data-astro-prefetch
       className={cn(
-        "text-slate-500 decoration-4 decoration-cyan-500 decoration-dotted underline-offset-4 hover:text-cyan-500 hover:underline group-hover:text-cyan-500 group-hover:underline",
+        "text-slate-500 decoration-cyan-500 decoration-dotted decoration-4 underline-offset-4 group-hover:text-cyan-500 group-hover:underline hover:text-cyan-500 hover:underline",
         isActive && "text-cyan-500! underline",
         linkSizeToStyles[size],
         className,

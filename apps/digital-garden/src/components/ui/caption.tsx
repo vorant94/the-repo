@@ -10,7 +10,7 @@ export const Caption: FC<PropsWithChildren<CaptionProps>> = ({
 }) => {
   return (
     <span
-      className={cn("text-slate-500 text-sm", className)}
+      className={cn("text-sm text-slate-500", className)}
       {...rest}
     >
       {children}

@@ -19,7 +19,7 @@ export const Badge: FC<PropsWithChildren<BadgeProps>> = ({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 font-semibold text-slate-800 text-xs dark:text-slate-100",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold text-slate-800 dark:text-slate-100",
         ...badgeColorToBg[color],
         className,
       )}

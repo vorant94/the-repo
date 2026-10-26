@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
   "css": {
     "parser": {
       "tailwindDirectives": true
@@ -30,12 +30,8 @@
         }
       },
       "nursery": {
-        "useSortedClasses": {
-          "level": "error",
-          "options": {
-            "attributes": ["className"], // react
-            "functions": ["cn"] // shared/ui/cn.ts
-          }
+        "useTailwindSortedClasses": {
+          "level": "error"
         }
       },
       "performance": {
@@ -94,6 +90,8 @@
   "files": {
     "includes": [
       "**",
+      "!**/*.md",
+      "!**/*.markdown",
       "!**/.DS_Store",
       "!**/.idea",
       "!**/node_modules",
@@ -110,6 +108,8 @@
       "!**/.astro",
       "!**/.vscode",
       "!**/.claude",
+      "!**/.agents",
+      "!**/pnpm-lock.yaml",
       "!**/.react-router",
       "!**/.husky/_",
       "!**/build",
@@ -206,5 +206,6 @@
         }
       }
     }
-  ]
+  ],
+  "tailwind": { "attributes": ["class", "className"], "mergeFunctions": ["cn"] }
 }

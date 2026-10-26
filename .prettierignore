@@ -2,7 +2,4 @@
 !**/
 !**/*.md
 !**/*.markdown
-!**/*.yaml
-!**/*.yml
 .agents/
-pnpm-lock.yaml

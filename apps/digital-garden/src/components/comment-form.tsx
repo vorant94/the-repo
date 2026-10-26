@@ -72,12 +72,12 @@ export const CommentForm: FC<CommentFormProps> = ({ postSlug }) => {
                 ? t("comments.write-placeholder")
                 : t("comments.signin-placeholder")
             }
-            className="w-full resize-y rounded-2xl border not-active:border-transparent p-3 text-slate-600 text-sm outline-cyan-500 active:border-cyan-500 active:outline-solid disabled:cursor-not-allowed dark:bg-stone-800 dark:text-slate-300"
+            className="w-full resize-y rounded-2xl border p-3 text-sm text-slate-600 outline-cyan-500 not-active:border-transparent active:border-cyan-500 active:outline-solid disabled:cursor-not-allowed dark:bg-stone-800 dark:text-slate-300"
             {...register("text")}
           />
 
           <div className="mt-2.5 flex items-center justify-between gap-3">
-            <div className="text-slate-500 text-sm">
+            <div className="text-sm text-slate-500">
               {user && (
                 <span>
                   {t("comments.commenting-as")}

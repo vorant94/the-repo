@@ -19,7 +19,7 @@ export const Divider: FC<PropsWithChildren<DividerProps>> = ({
       {...rest}
     >
       {isLeft && (
-        <div className="grow border-slate-300 border-t dark:border-slate-600" />
+        <div className="grow border-t border-slate-300 dark:border-slate-600" />
       )}
 
       <div
@@ -32,7 +32,7 @@ export const Divider: FC<PropsWithChildren<DividerProps>> = ({
       </div>
 
       {isRight && (
-        <div className="grow border-slate-300 border-t dark:border-slate-600" />
+        <div className="grow border-t border-slate-300 dark:border-slate-600" />
       )}
     </div>
   );
