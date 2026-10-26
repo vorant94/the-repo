@@ -163,7 +163,6 @@ playersRoute.post(
       .update(players)
       .set({
         aliases: aliasValues,
-        address: rawPlayer.address ?? rawDuplicate.address,
       })
       .where(eq(players.id, id))
       .returning();
