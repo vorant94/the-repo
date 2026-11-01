@@ -17,8 +17,10 @@ export const MonthlyReportCities = ({
 }: MonthlyReportCitiesProps) => {
   const isDark = mode === "dark";
   const summaries = [
-    ...cities,
-    ...(otherVenues ? [{ ...otherVenues, name: "Other venues" }] : []),
+    ...cities.map((city) => ({ ...city, isOnline: false })),
+    ...(otherVenues
+      ? [{ ...otherVenues, name: "Online", isOnline: true }]
+      : []),
   ];
 
   return (
@@ -32,7 +34,7 @@ export const MonthlyReportCities = ({
           >
             <strong>{city.name}</strong>
             <span class={cx(detailsStyle, isDark && darkDetailsStyle)}>
-              {formatEventDetails(city)}
+              {formatEventDetails(city, city.isOnline)}
             </span>
             <span class={cx(detailsStyle, isDark && darkDetailsStyle)}>
               {formatPlayerDetails(city)}
@@ -46,13 +48,16 @@ export const MonthlyReportCities = ({
 
 type ReportSummary = Omit<MonthlyReportCitySummary, "name">;
 
-function formatEventDetails(city: ReportSummary): string {
+function formatEventDetails(city: ReportSummary, isOnline: boolean): string {
   const eventLabel = city.eventCount === 1 ? "event" : "events";
   const venueLabel = city.venueCount === 1 ? "venue" : "venues";
 
   const averagePlayers = city.averagePlayersPerEvent.toFixed(1);
+  const venueDetails = isOnline
+    ? ""
+    : ` across ${city.venueCount} ${venueLabel}`;
 
-  return `${city.eventCount} ${eventLabel} across ${city.venueCount} ${venueLabel} · ${averagePlayers} players per event on average`;
+  return `${city.eventCount} ${eventLabel}${venueDetails} · ${averagePlayers} players per event on average`;
 }
 
 function formatPlayerDetails(city: ReportSummary): string {
