@@ -31,7 +31,7 @@ export async function findMonthlyReport(month: string) {
   for (const row of rows) {
     const eventValues = valuesByEvent.get(row.eventId) ?? {
       archetypeIds: new Set<string>(),
-      city: findMonthlyReportCity(row.address.city),
+      city: findMonthlyReportCity(row.address?.city),
       venueId: row.venueId,
       venueName: row.venueName,
       playerIds: new Set<string>(),
@@ -45,7 +45,7 @@ export async function findMonthlyReport(month: string) {
     valuesByEvent.set(row.eventId, eventValues);
   }
 
-  const valuesByCity = new Map<MonthlyReportCityName, CityValues>();
+  const valuesByCity = new Map<MonthlyReportCityName | null, CityValues>();
   const valuesByVenue = new Map<string, VenueValues>();
   for (const event of valuesByEvent.values()) {
     const venueValues = valuesByVenue.get(event.venueId) ?? {
@@ -55,10 +55,6 @@ export async function findMonthlyReport(month: string) {
     };
     venueValues.eventCount += 1;
     valuesByVenue.set(event.venueId, venueValues);
-
-    if (!event.city) {
-      continue;
-    }
 
     const cityValues = valuesByCity.get(event.city) ?? {
       archetypeIds: new Set<string>(),
@@ -79,15 +75,22 @@ export async function findMonthlyReport(month: string) {
     valuesByCity.set(event.city, cityValues);
   }
 
-  const cities = [...valuesByCity]
-    .map(([name, values]) => ({
-      archetypeCount: values.archetypeIds.size,
-      averagePlayersPerEvent: values.totalPlayerCount / values.eventCount,
-      eventCount: values.eventCount,
-      venueCount: values.venueIds.size,
-      name,
-      playerCount: values.playerIds.size,
-    }))
+  const summaries = [...valuesByCity].map(([name, values]) => ({
+    archetypeCount: values.archetypeIds.size,
+    averagePlayersPerEvent: values.totalPlayerCount / values.eventCount,
+    eventCount: values.eventCount,
+    venueCount: values.venueIds.size,
+    name,
+    playerCount: values.playerIds.size,
+  }));
+  const cities = summaries
+    .flatMap((summary) => {
+      if (!summary.name) {
+        return [];
+      }
+
+      return [{ ...summary, name: summary.name }];
+    })
     .toSorted(
       (left, right) =>
         monthlyReportCityNames.indexOf(left.name) -
@@ -99,6 +102,7 @@ export async function findMonthlyReport(month: string) {
 
   return monthlyReportPayloadSchema.parse({
     cities,
+    otherVenues: summaries.find((summary) => summary.name === null) ?? null,
     venues: monthlyVenues,
     month,
   });

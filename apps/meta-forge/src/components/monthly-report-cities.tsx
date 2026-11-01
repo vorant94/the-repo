@@ -1,22 +1,31 @@
 import { css, cx } from "hono/css";
-import type { MonthlyReportCitySummary } from "../shared/schema/jobs.ts";
+import type {
+  MonthlyReportCitySummary,
+  MonthlyReportPayload,
+} from "../shared/schema/jobs.ts";
 
 interface MonthlyReportCitiesProps {
   cities: Array<MonthlyReportCitySummary>;
+  otherVenues: MonthlyReportPayload["otherVenues"];
   mode: "dark" | "light";
 }
 
 export const MonthlyReportCities = ({
   cities,
+  otherVenues,
   mode,
 }: MonthlyReportCitiesProps) => {
   const isDark = mode === "dark";
+  const summaries = [
+    ...cities,
+    ...(otherVenues ? [{ ...otherVenues, name: "Other venues" }] : []),
+  ];
 
   return (
     <section class={citiesSectionStyle}>
-      <h2 class={headingStyle}>Tournaments accross the country</h2>
+      <h2 class={headingStyle}>Tournaments across the country</h2>
       <div class={citiesStyle}>
-        {cities.map((city) => (
+        {summaries.map((city) => (
           <p
             class={cityStyle}
             key={city.name}
@@ -35,7 +44,9 @@ export const MonthlyReportCities = ({
   );
 };
 
-function formatEventDetails(city: MonthlyReportCitySummary): string {
+type ReportSummary = Omit<MonthlyReportCitySummary, "name">;
+
+function formatEventDetails(city: ReportSummary): string {
   const eventLabel = city.eventCount === 1 ? "event" : "events";
   const venueLabel = city.venueCount === 1 ? "venue" : "venues";
 
@@ -44,7 +55,7 @@ function formatEventDetails(city: MonthlyReportCitySummary): string {
   return `${city.eventCount} ${eventLabel} across ${city.venueCount} ${venueLabel} · ${averagePlayers} players per event on average`;
 }
 
-function formatPlayerDetails(city: MonthlyReportCitySummary): string {
+function formatPlayerDetails(city: ReportSummary): string {
   const playerLabel = city.playerCount === 1 ? "player" : "players";
   const archetypeLabel = city.archetypeCount === 1 ? "archetype" : "archetypes";
 

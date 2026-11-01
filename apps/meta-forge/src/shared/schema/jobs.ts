@@ -51,7 +51,7 @@ export const eventReportPayloadSchema = z
     isLeagueBranded: z.boolean().nullable(),
     venue: z.object({
       name: z.string(),
-      address: venueAddressSchema,
+      address: venueAddressSchema.nullable(),
     }),
     ranks: z.array(
       z.object({
@@ -90,6 +90,10 @@ export type MonthlyReportCitySummary = z.infer<
 export const monthlyReportPayloadSchema = z
   .object({
     cities: monthlyReportCitySummarySchema.array(),
+    otherVenues: monthlyReportCitySummarySchema
+      .omit({ name: true })
+      .nullable()
+      .default(null),
     month: z.iso.date(),
     venues: monthlyReportVenueSchema.array(),
   })

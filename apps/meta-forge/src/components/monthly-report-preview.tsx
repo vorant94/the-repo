@@ -46,6 +46,7 @@ export const MonthlyReportPreview = ({
             />
             <MonthlyReportCities
               cities={report.cities}
+              otherVenues={report.otherVenues}
               mode={mode}
             />
           </main>

@@ -50,8 +50,12 @@ export const monthlyReportCities = [
 ] as const satisfies Array<MonthlyReportCity>;
 
 export function findMonthlyReportCity(
-  cityName: string,
+  cityName?: string | null,
 ): MonthlyReportCityName | null {
+  if (!cityName) {
+    return null;
+  }
+
   const normalizedCity = cityName.trim().toLocaleLowerCase("en");
   const city = monthlyReportCities.find(({ aliases }) =>
     aliases.some((alias) => alias === normalizedCity),

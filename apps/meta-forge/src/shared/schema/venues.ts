@@ -22,13 +22,13 @@ export const venues = sqliteTable(
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
     name: text().notNull(),
-    address: text({ mode: "json" }).$type<VenueAddress>().notNull(),
+    address: text({ mode: "json" }).$type<VenueAddress>(),
   },
   (table) => [uniqueIndex("venues_name_unique").on(table.name)],
 );
 
 const venueSchema = createSelectSchema(venues, {
-  address: venueAddressSchema,
+  address: () => venueAddressSchema,
 }).meta({
   ref: "VenueInternal",
 });
@@ -38,7 +38,7 @@ export const venueDtoSchema = venueSchema
   .meta({ ref: "Venue" });
 
 export const insertVenueSchema = createInsertSchema(venues, {
-  address: venueAddressSchema,
+  address: () => venueAddressSchema,
 })
   .omit({ id: true, createdAt: true, updatedAt: true })
   .meta({ ref: "InsertVenue" });
