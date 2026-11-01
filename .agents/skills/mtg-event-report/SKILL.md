@@ -1,6 +1,6 @@
 ---
 name: mtg-event-report
-description: Parse MTG standings screenshots into a Meta Forge event-report CSV. Use when preparing an event report for Meta Forge import.
+description: Prepare a Meta Forge event-report CSV from standings screenshots or text, matching players and archetypes against current Meta Forge records. Use when preparing an event report for Meta Forge import.
 ---
 
 # MTG Event Report
@@ -9,7 +9,7 @@ Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, g
 
 ## Data source and extraction
 
-- Use the standings screenshot and event details supplied by the user. Do not inspect or update `tools/studio` data files.
+- Use the standings screenshot or text and event details supplied by the user. Do not inspect or update `tools/studio` data files.
 - Transcribe standings in rank order. Use the best full-name capitalization supported by the source.
 - Normalize every supplied archetype name before showing the preview. Check all rows for shorthand, color prefixes, spelling, and capitalization; give repeated decks the same normalized name. Preserve an established archetype name when it does not indicate a color, and ask for clarification when a shorthand cannot be expanded reliably.
 - Use `Mono-<color letter>` with uppercase `W`, `U`, `B`, `R`, or `G` for single-color decks. Convert explicit color words and abbreviations as well as spaced `Mono` prefixes: `W Convoke` → `Mono-W Convoke`, `Mono W Heroic` → `Mono-W Heroic`, `Red Rally` → `Mono-R Rally`. Expand known shorthand: `Redness` → `Mono-R Madness`, `U Fae` → `Mono-U Faeries`, and mono-green `Elves` → `Mono-G Elves`.
@@ -19,6 +19,28 @@ Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, g
 - Record a requested hidden archetype on that rank with `isArchetypeHidden` set to `true`; otherwise use `false`.
 - Meta Forge requires an existing venue. Ask for the venue name if it is missing, and tell the user to create the venue separately if they indicate it does not exist.
 - Collect the event name and ISO 8601 date-time with an offset for the import form. Default the event name to `Weekly Pauper` only when the user does not supply one.
+
+## Match current players and archetypes
+
+- Before showing the preview, fetch the current players and archetypes from Meta Forge using authenticated GET requests. Use `curl` for HTTP requests and `jq` to inspect the responses; do not replace these requests with a Node fetch script. Use the existing `META_FORGE_API_TOKEN` environment variable without printing or saving its value.
+
+```bash
+curl --fail-with-body --silent --show-error \
+  'https://meta-forge.vorant94.dev/api/players?page=1&pageSize=100' \
+  -H "Authorization: Bearer ${META_FORGE_API_TOKEN}" \
+  -o /tmp/mtg-event-report-players-1.json
+curl --fail-with-body --silent --show-error \
+  'https://meta-forge.vorant94.dev/api/archetypes?page=1&pageSize=100' \
+  -H "Authorization: Bearer ${META_FORGE_API_TOKEN}" \
+  -o /tmp/mtg-event-report-archetypes-1.json
+```
+
+- Both endpoints return arrays and support `page` and `pageSize` (maximum 100). Fetch successive pages for each list until a page contains fewer than 100 records. Fetch fresh lists for each new report rather than relying on files from a previous report.
+- Match supplied player names against existing `name` and `aliases` values, ignoring case and incidental whitespace. Use the matched record's full `name` in the preview and CSV. A first name can identify a candidate, but do not choose arbitrarily when multiple players match.
+- Normalize the supplied archetypes as described above, then match them against existing archetype `name` and `aliases` values. Use the existing canonical `name` for a confident match. Do not substitute a different deck merely because it has a similar name or the player used it previously.
+- When venue or deck-history clues can resolve an ambiguous player, use GET `/api/ranks?playerId=<id>&page=1&pageSize=100`, paginate as above, and resolve relevant `eventId` and `archetypeId` values with GET `/api/events/<id>` and `/api/archetypes/<id>`. Match the event's `hostedBy` against GET `/api/venues?page=1&pageSize=100` (paginate as needed). Present the evidence for the match; ask only if ambiguity remains.
+- If a supplied name has no reliable existing match, flag it as a proposed new player or archetype in the preview. Keep clear user-supplied names rather than forcing a match. Resolve ambiguous shorthand with the user before approval.
+- If authentication or fetching fails, report the failure and request what is needed to complete matching. Do not claim the lists were checked or silently proceed with an unverified final CSV. These lookups do not authorize creating or updating records.
 
 ## Preview and approval
 
