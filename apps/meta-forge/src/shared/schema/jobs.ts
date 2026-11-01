@@ -61,7 +61,10 @@ export const eventReportPayloadSchema = z
         draws: z.number().int().nonnegative(),
         isArchetypeHidden: z.boolean().nullable(),
         player: z.object({ name: z.string() }),
-        archetype: z.object({ name: z.string() }),
+        archetype: z.object({
+          name: z.string(),
+          aliases: z.array(z.string()).optional(),
+        }),
       }),
     ),
   })

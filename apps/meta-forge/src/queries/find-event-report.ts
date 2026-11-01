@@ -26,7 +26,7 @@ export async function findEventReport(eventId: string) {
         isArchetypeHidden: ranks.isArchetypeHidden,
       },
       player: { name: players.name },
-      archetype: { name: archetypes.name },
+      archetype: { name: archetypes.name, aliases: archetypes.aliases },
     })
     .from(events)
     .innerJoin(venues, eq(events.hostedBy, venues.id))

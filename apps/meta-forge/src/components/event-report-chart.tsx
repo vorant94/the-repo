@@ -15,24 +15,40 @@ const minimumLabelGap = 48;
 const labelTop = 40;
 const labelBottom = chartHeight - 40;
 const maximumArchetypeLabelLength = 24;
-const pieColors = [
-  "#2563eb",
-  "#dc2626",
-  "#f59e0b",
-  "#16a34a",
-  "#7c3aed",
-  "#0891b2",
-  "#ea580c",
-  "#db2777",
-  "#65a30d",
-  "#4f46e5",
-  "#0f766e",
-  "#a16207",
-  "#9333ea",
-  "#be123c",
-  "#15803d",
-  "#475569",
-];
+const manaColors = {
+  w: "#f4e4b5",
+  u: "#2563eb",
+  b: "#292130",
+  r: "#dc2626",
+  g: "#16a34a",
+} as const;
+const namedColorCombinations: Record<string, string> = {
+  white: "w",
+  blue: "u",
+  black: "b",
+  red: "r",
+  green: "g",
+  azorius: "wu",
+  dimir: "ub",
+  rakdos: "br",
+  gruul: "rg",
+  selesnya: "gw",
+  orzhov: "wb",
+  izzet: "ur",
+  golgari: "bg",
+  boros: "rw",
+  simic: "gu",
+  bant: "gwu",
+  esper: "wub",
+  grixis: "ubr",
+  jund: "brg",
+  naya: "rgw",
+  abzan: "wbg",
+  jeskai: "urw",
+  sultai: "bgu",
+  mardu: "rwb",
+  temur: "gur",
+};
 
 interface EventReportChartProps {
   fullPage?: boolean;
@@ -100,11 +116,11 @@ export const EventReportChart = ({
           ))}
         </defs>
         <g transform={`translate(${width / 2} ${chartHeight / 2})`}>
-          {slices.map((slice, index) => (
+          {slices.map((slice) => (
             <path
               key={slice.data.name}
               d={slicePath(slice) ?? ""}
-              fill={pieColors[index % pieColors.length] ?? "#475569"}
+              fill={slice.data.color}
               stroke={isDark ? "#020617" : "#f8fafc"}
               stroke-width="5"
             />
@@ -188,6 +204,7 @@ export const EventReportChart = ({
 };
 
 interface ArchetypeDistribution {
+  color: string;
   count: number;
   name: string;
 }
@@ -235,6 +252,35 @@ interface PieLabel {
   y: number;
 }
 
+function getArchetypeColor(name: string, aliases?: Array<string>): string {
+  const combination = [name, ...(aliases ?? [])]
+    .map((candidate) => {
+      const prefix = candidate.trim().toLowerCase().split(/\s+/)[0] ?? "";
+      const colorName = prefix.startsWith("mono-") ? prefix.slice(5) : prefix;
+      return namedColorCombinations[colorName] ?? colorName;
+    })
+    .find((candidate) => /^[wubrg]{1,5}$/.test(candidate));
+  if (!combination) {
+    return "#475569";
+  }
+
+  const colors = Array.from(
+    new Set(combination),
+    (color) => manaColors[color as keyof typeof manaColors],
+  );
+  const channels = [1, 3, 5].map((offset) => {
+    const total = colors.reduce(
+      (sum, color) =>
+        sum + Number.parseInt(color.slice(offset, offset + 2), 16),
+      0,
+    );
+    return Math.round(total / colors.length)
+      .toString(16)
+      .padStart(2, "0");
+  });
+  return `#${channels.join("")}`;
+}
+
 function getConnectorPath(label: PieLabel): string {
   const bendX = (label.connectorRailX + label.railX) / 2;
   return `M ${label.connectorX} ${label.connectorY} H ${label.connectorRailX} C ${bendX} ${label.connectorY} ${bendX} ${label.y} ${label.railX} ${label.y}`;
@@ -243,13 +289,25 @@ function getConnectorPath(label: PieLabel): string {
 function getArchetypeDistribution(
   ranks: EventReportPayload["ranks"],
 ): Array<ArchetypeDistribution> {
-  const counts = new Map<string, number>();
+  const distribution = new Map<string, ArchetypeDistribution>();
   for (const rank of ranks) {
     const name = rank.isArchetypeHidden ? "Homebrew" : rank.archetype.name;
-    counts.set(name, (counts.get(name) ?? 0) + 1);
+    const existing = distribution.get(name);
+    if (existing) {
+      existing.count += 1;
+      continue;
+    }
+
+    distribution.set(name, {
+      name,
+      count: 1,
+      color: rank.isArchetypeHidden
+        ? "#475569"
+        : getArchetypeColor(name, rank.archetype.aliases),
+    });
   }
 
-  return Array.from(counts, ([name, count]) => ({ name, count })).sort(
+  return Array.from(distribution.values()).sort(
     (left, right) =>
       right.count - left.count || left.name.localeCompare(right.name),
   );
@@ -270,7 +328,7 @@ function groupSinglePlayerArchetypes(
       ?.count ?? 0;
   return [
     ...distribution.filter((item) => item.count > 1 && item.name !== "Other"),
-    { name: "Other", count: singlePlayerCount + otherCount },
+    { name: "Other", count: singlePlayerCount + otherCount, color: "#475569" },
   ].sort(
     (left, right) =>
       right.count - left.count || left.name.localeCompare(right.name),
