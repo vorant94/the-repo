@@ -19,7 +19,7 @@ const help = dedent`
     grimoire merge <deck...> [--outputPath out/merged.txt]
     grimoire compare <deck...>
     grimoire normalize <deck> [--outputPath out/normalized.txt]
-    grimoire split <collection.csv> [--outputDir out]
+    grimoire split <collection> [--outputDir out]
 
   merge    Keep the maximum quantity of each card across decks.
   compare  Report the percentage of cards whose names occur in every deck.

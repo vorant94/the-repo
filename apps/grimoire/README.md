@@ -30,7 +30,7 @@ node /path/to/the-repo/apps/grimoire/src/main.ts merge a.txt b.txt
   As in the Zig implementation, similarity is the number of copies of cards whose
   names appear in every deck, divided by all copies across all decks. Shared names
   with different quantities contribute all their copies. Empty decks yield 0%.
-- `split <collection.csv>` exports all ManaBox `list` entries to `out/wishlist.csv`
+- `split <collection>` exports all ManaBox `list` entries to `out/wishlist.csv`
   and `binder` entries whose names start with `B3-` to `out/tradelist.csv`. Proxies
   are excluded. Entries combine by name, set code, collector number, foil, and
   language; other metadata comes from the first matching entry. Both outputs omit
