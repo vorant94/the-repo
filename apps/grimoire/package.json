@@ -1,0 +1,28 @@
+{
+  "name": "grimoire",
+  "version": "0.0.1",
+  "bin": {
+    "grimoire": "src/main.ts"
+  },
+  "dependencies": {
+    "dedent": "^1.7.2",
+    "papaparse": "^5.5.4",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/papaparse": "^5.5.2",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node src/main.ts",
+    "test": "node --test",
+    "test:watch": "node --test --watch",
+    "ts:check": "tsc"
+  },
+  "type": "module"
+}

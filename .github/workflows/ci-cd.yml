@@ -86,6 +86,13 @@ jobs:
       - name: Unused Code
         run: pnpm run unused-code:check
 
+  grimoire:
+    needs: [detect, workspace-checks]
+    if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'grimoire')
+    uses: ./.github/workflows/pipeline.yml
+    with:
+      workspace: grimoire
+
   meta-forge:
     needs: [detect, workspace-checks]
     if: contains(fromJson(needs.detect.outputs.packages || '[]'), 'meta-forge')

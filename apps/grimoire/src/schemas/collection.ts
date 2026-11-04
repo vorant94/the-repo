@@ -1,0 +1,51 @@
+import { z } from "zod";
+
+export const collectionCardSchema = z.object({
+  binderName: z.string(),
+  binderType: z.enum(["deck", "list", "binder"]),
+  name: z.string(),
+  setCode: z.string(),
+  setName: z.string(),
+  collectorNumber: z.string(),
+  foil: z.enum(["normal", "foil"]),
+  rarity: z.enum(["common", "uncommon", "rare", "mythic"]),
+  quantity: z.coerce.number().int().nonnegative(),
+  manaboxId: z.coerce.number().int().nonnegative(),
+  scryfallId: z.string(),
+  purchasePrice: z.union([
+    z.literal("").transform(() => null),
+    z.string().pipe(z.coerce.number<string>().nonnegative()),
+  ]),
+  misprint: z.stringbool(),
+  altered: z.stringbool(),
+  signed: z.stringbool(),
+  condition: z.enum(["near_mint"]),
+  language: z.enum(["en", "ru", "ja", "it", "de", "es", "fr"]),
+  proxy: z.stringbool(),
+  purchasePriceCurrency: z.string(),
+  added: z.string(),
+});
+export type CollectionCard = z.infer<typeof collectionCardSchema>;
+
+export const collectionColumns = {
+  binderName: "Binder Name",
+  binderType: "Binder Type",
+  name: "Name",
+  setCode: "Set code",
+  setName: "Set name",
+  collectorNumber: "Collector number",
+  foil: "Foil",
+  rarity: "Rarity",
+  quantity: "Quantity",
+  manaboxId: "ManaBox ID",
+  scryfallId: "Scryfall ID",
+  purchasePrice: "Purchase price",
+  misprint: "Misprint",
+  altered: "Altered",
+  signed: "Signed",
+  condition: "Condition",
+  language: "Language",
+  proxy: "Proxy",
+  purchasePriceCurrency: "Purchase price currency",
+  added: "Added",
+} as const satisfies Record<keyof CollectionCard, string>;
