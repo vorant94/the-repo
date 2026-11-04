@@ -77,9 +77,6 @@ jobs:
       - name: Lint
         run: pnpm run lint:ci
 
-      - name: Check Markdown formatting
-        run: pnpm run prettier:check
-
       - name: Generate TypeScript Types
         run: pnpm -r run --if-present ts:codegen
 

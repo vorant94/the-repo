@@ -1,11 +1,10 @@
 {
   "name": "the-repo",
   "devDependencies": {
-    "@biomejs/biome": "^2.6.3",
+    "@biomejs/biome": "^2.6.5",
     "chrome-devtools-mcp": "^1.5.0",
     "knip": "^6.27.0",
     "lefthook": "^2.1.10",
-    "prettier": "^3.9.6",
     "skills": "^1.5.19"
   },
   "engines": {
@@ -35,8 +34,6 @@
     "lint:write": "biome check --write .",
     "lint:write:unsafe": "biome check --write --unsafe .",
     "prepare": "lefthook install",
-    "prettier:check": "prettier --check .",
-    "prettier:write": "prettier --write .",
     "unused-code:check": "knip"
   },
   "type": "module"
