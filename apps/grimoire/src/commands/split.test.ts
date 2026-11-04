@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import Papa from "papaparse";
+import { parseCollection } from "../parsers/collection.ts";
 import { split } from "./split.ts";
 
 const header =
@@ -16,7 +17,8 @@ test("puts lists in the wishlist and only B3- binders in the tradelist", () => {
     "B3-Deck,deck,Island,MMA,Modern Masters,5,normal,common,1,127,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist, tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist, tradelist } = split(parsedCollection);
   const wishlistCards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -43,7 +45,8 @@ test("combines matching printings in the wishlist", () => {
     "B3-Second,list,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -52,6 +55,10 @@ test("combines matching printings in the wishlist", () => {
   assert.equal(cards.length, 1);
   assert.equal(cards[0]?.Name, "Counterspell");
   assert.equal(cards[0]?.Quantity, "5");
+  assert.deepEqual(
+    parsedCollection.map((card) => card.quantity),
+    [2, 3],
+  );
 });
 
 test("keeps different sets separate in the wishlist", () => {
@@ -61,7 +68,8 @@ test("keeps different sets separate in the wishlist", () => {
     "B3-Second,list,Counterspell,FDN,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -83,7 +91,8 @@ test("keeps different collector numbers separate in the wishlist", () => {
     "B3-Second,list,Counterspell,MMA,Modern Masters,2,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -105,7 +114,8 @@ test("keeps different foil finishes separate in the wishlist", () => {
     "B3-Second,list,Counterspell,MMA,Modern Masters,1,foil,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -127,7 +137,8 @@ test("keeps different languages separate in the wishlist", () => {
     "B3-Second,list,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,ru,false,USD,2026-07-22",
   ].join("\n");
 
-  const { wishlist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { wishlist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(wishlist, {
     header: true,
     skipEmptyLines: true,
@@ -149,7 +160,8 @@ test("combines matching printings in the tradelist", () => {
     "B3-Second,binder,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { tradelist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(tradelist, {
     header: true,
     skipEmptyLines: true,
@@ -158,6 +170,10 @@ test("combines matching printings in the tradelist", () => {
   assert.equal(cards.length, 1);
   assert.equal(cards[0]?.Name, "Counterspell");
   assert.equal(cards[0]?.Quantity, "5");
+  assert.deepEqual(
+    parsedCollection.map((card) => card.quantity),
+    [2, 3],
+  );
 });
 
 test("keeps different sets separate in the tradelist", () => {
@@ -167,7 +183,8 @@ test("keeps different sets separate in the tradelist", () => {
     "B3-Second,binder,Counterspell,FDN,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { tradelist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(tradelist, {
     header: true,
     skipEmptyLines: true,
@@ -189,7 +206,8 @@ test("keeps different collector numbers separate in the tradelist", () => {
     "B3-Second,binder,Counterspell,MMA,Modern Masters,2,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { tradelist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(tradelist, {
     header: true,
     skipEmptyLines: true,
@@ -211,7 +229,8 @@ test("keeps different foil finishes separate in the tradelist", () => {
     "B3-Second,binder,Counterspell,MMA,Modern Masters,1,foil,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
   ].join("\n");
 
-  const { tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { tradelist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(tradelist, {
     header: true,
     skipEmptyLines: true,
@@ -233,7 +252,8 @@ test("keeps different languages separate in the tradelist", () => {
     "B3-Second,binder,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,ru,false,USD,2026-07-22",
   ].join("\n");
 
-  const { tradelist } = split(collection);
+  const parsedCollection = parseCollection(collection);
+  const { tradelist } = split(parsedCollection);
   const cards = Papa.parse<Record<string, string>>(tradelist, {
     header: true,
     skipEmptyLines: true,

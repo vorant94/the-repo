@@ -1,71 +1,94 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseDeck } from "./deck.ts";
+import { countDeckCardsByName, parseDeck, parseDeckLine } from "./deck.ts";
 
 test("parses the deck with different cards", () => {
   const parsed = parseDeck("4 Counterspell\n2 Force Spike\n1 Dispel");
 
-  assert.deepEqual(
-    parsed,
-    new Map([
-      ["Counterspell", 4],
-      ["Force Spike", 2],
-      ["Dispel", 1],
-    ]),
-  );
+  assert.deepEqual(parsed, [
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Force Spike", zone: "mainboard" },
+    { name: "Force Spike", zone: "mainboard" },
+    { name: "Dispel", zone: "mainboard" },
+  ]);
 });
 
 test("parses the deck with empty lines", () => {
   const parsed = parseDeck("4 Counterspell\n\n1 Dispel");
 
-  assert.deepEqual(
-    parsed,
-    new Map([
-      ["Counterspell", 4],
-      ["Dispel", 1],
-    ]),
-  );
+  assert.deepEqual(parsed, [
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Dispel", zone: "mainboard" },
+  ]);
 });
 
 test("preserves individual cards from multiple entries of the same name", () => {
   const parsed = parseDeck("2 Counterspell\n1 Counterspell\n1 Dispel");
 
-  assert.deepEqual(
-    parsed,
-    new Map([
-      ["Counterspell", 3],
-      ["Dispel", 1],
-    ]),
-  );
+  assert.deepEqual(parsed, [
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Dispel", zone: "mainboard" },
+  ]);
 });
 
-// The Node parser exposes card counts directly, so skipped lines yield an empty map.
 test("returns null for empty line", () => {
-  assert.deepEqual(parseDeck(""), new Map());
+  assert.equal(parseDeckLine(""), null);
 });
 
 test("returns null for category line", () => {
-  assert.deepEqual(parseDeck("Sideboard"), new Map());
+  assert.equal(parseDeckLine("Sideboard"), null);
 });
 
 test("returns null for card without amount but with spaces", () => {
-  assert.deepEqual(parseDeck("Force Spike"), new Map());
+  assert.equal(parseDeckLine("Force Spike"), null);
 });
 
 test("parses line with amount", () => {
-  assert.deepEqual(parseDeck("4 Counterspell"), new Map([["Counterspell", 4]]));
+  assert.deepEqual(parseDeckLine("4 Counterspell"), [
+    "Counterspell",
+    "Counterspell",
+    "Counterspell",
+    "Counterspell",
+  ]);
 });
 
 test("parses line with multi word name", () => {
-  assert.deepEqual(parseDeck("2 Force Spike"), new Map([["Force Spike", 2]]));
+  assert.deepEqual(parseDeckLine("2 Force Spike"), [
+    "Force Spike",
+    "Force Spike",
+  ]);
 });
 
 test("counts cards in deck by name", () => {
-  const counts = parseDeck(
-    "1 Counterspell\n1 Force Spike\nSideboard\n1 Counterspell",
-  );
+  const counts = countDeckCardsByName([
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Force Spike", zone: "mainboard" },
+    { name: "Counterspell", zone: "sideboard" },
+  ]);
 
   assert.equal(counts.size, 2);
   assert.equal(counts.get("Counterspell"), 2);
   assert.equal(counts.get("Force Spike"), 1);
+});
+
+test("preserves mainboard and sideboard assignments for copies of the same card", () => {
+  const parsed = parseDeck(
+    "2 Counterspell\r\n\r\nSideboard\r\n1 Counterspell\r\n2 Dispel",
+  );
+
+  assert.deepEqual(parsed, [
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "mainboard" },
+    { name: "Counterspell", zone: "sideboard" },
+    { name: "Dispel", zone: "sideboard" },
+    { name: "Dispel", zone: "sideboard" },
+  ]);
 });

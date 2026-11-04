@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseDeck } from "../parsers/deck.ts";
+import { countDeckCardsByName, parseDeck } from "../parsers/deck.ts";
 import { merge } from "./merge.ts";
 
 test("merges deck lists keeping maximum amount of each card", () => {
   const output = merge([
-    parseDeck("4 Counterspell\n2 Force Spike\n1 Dispel"),
-    parseDeck("1 Counterspell\n2 Dispel\n3 Envelop"),
+    countDeckCardsByName(parseDeck("4 Counterspell\n2 Force Spike\n1 Dispel")),
+    countDeckCardsByName(parseDeck("1 Counterspell\n2 Dispel\n3 Envelop")),
   ]);
 
   assert.ok(output.includes("4 Counterspell\n"));

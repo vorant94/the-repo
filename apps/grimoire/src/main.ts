@@ -8,7 +8,8 @@ import { z } from "zod";
 import { compare } from "./commands/compare.ts";
 import { merge } from "./commands/merge.ts";
 import { split } from "./commands/split.ts";
-import { parseDeck } from "./parsers/deck.ts";
+import { parseCollection } from "./parsers/collection.ts";
+import { countDeckCardsByName, parseDeck } from "./parsers/deck.ts";
 
 const help = dedent`
   Usage:
@@ -72,7 +73,8 @@ try {
     }
     case "split": {
       const content = await readText(args.paths[0]);
-      const { tradelist, wishlist } = split(content);
+      const collection = parseCollection(content);
+      const { tradelist, wishlist } = split(collection);
       await mkdir(args.outputDir, { recursive: true });
       await writeFile(join(args.outputDir, "tradelist.csv"), tradelist);
       await writeFile(join(args.outputDir, "wishlist.csv"), wishlist);
@@ -80,13 +82,17 @@ try {
     }
     case "compare": {
       const contents = await Promise.all(args.paths.map(readText));
-      const decks = contents.map(parseDeck);
+      const decks = contents.map((content) =>
+        countDeckCardsByName(parseDeck(content)),
+      );
       process.stdout.write(compare(decks));
       break;
     }
     case "merge": {
       const contents = await Promise.all(args.paths.map(readText));
-      const decks = contents.map(parseDeck);
+      const decks = contents.map((content) =>
+        countDeckCardsByName(parseDeck(content)),
+      );
       const output = merge(decks);
       await mkdir(dirname(args.outputPath), { recursive: true });
       await writeFile(args.outputPath, output);

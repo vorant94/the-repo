@@ -1,14 +1,14 @@
-import { formatBinder, parseCollection } from "../parsers/collection.ts";
+import { formatBinder } from "../parsers/collection.ts";
 import type { CollectionCard } from "../schemas/collection.ts";
 
-export function split(content: string): {
+export function split(collection: Array<CollectionCard>): {
   tradelist: string;
   wishlist: string;
 } {
   const tradelist = new Map<string, CollectionCard>();
   const wishlist = new Map<string, CollectionCard>();
 
-  for (const card of parseCollection(content)) {
+  for (const card of collection) {
     const isWishlist = isWishlistCard(card);
     const isTradelist = isTradelistCard(card);
     if (!isWishlist && !isTradelist) {
@@ -29,7 +29,7 @@ export function split(content: string): {
       continue;
     }
 
-    target.set(key, card);
+    target.set(key, { ...card });
   }
 
   return {
