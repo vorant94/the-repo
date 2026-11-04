@@ -1,18 +1,27 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { countDeckCardsByName, parseDeck } from "../parsers/deck.ts";
+import type { DeckCard } from "../schemas/deck.ts";
 import { compare } from "./compare.ts";
 
 test("compares deck lists and calculates deck similarity percentage", () => {
-  const output = compare([
-    countDeckCardsByName(parseDeck("1 Counterspell\n1 Force Spike\n1 Dispel")),
-    countDeckCardsByName(
-      parseDeck("1 Counterspell\n1 Force of Negation\n1 Envelop"),
-    ),
-    countDeckCardsByName(
-      parseDeck("1 Counterspell\n1 Spell Pierce\n1 Blue Elemental Blast"),
-    ),
-  ]);
+  const decks: Array<Array<DeckCard>> = [
+    [
+      { name: "Counterspell", zone: "mainboard" },
+      { name: "Force Spike", zone: "mainboard" },
+      { name: "Dispel", zone: "mainboard" },
+    ],
+    [
+      { name: "Counterspell", zone: "mainboard" },
+      { name: "Force of Negation", zone: "mainboard" },
+      { name: "Envelop", zone: "mainboard" },
+    ],
+    [
+      { name: "Counterspell", zone: "mainboard" },
+      { name: "Spell Pierce", zone: "mainboard" },
+      { name: "Blue Elemental Blast", zone: "mainboard" },
+    ],
+  ];
+  const expected = (3 / 9) * 100;
 
-  assert.ok(output.includes("Deck similarity: 33.33%\n"));
+  assert.equal(compare(decks), expected);
 });

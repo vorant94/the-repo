@@ -10,6 +10,7 @@ From the repository root:
 pnpm --filter grimoire start --help
 pnpm --filter grimoire start merge /path/to/a.txt /path/to/b.txt
 pnpm --filter grimoire start compare /path/to/a.txt /path/to/b.txt
+pnpm --filter grimoire start normalize /path/to/deck.txt
 pnpm --filter grimoire start split /path/to/ManaBox_Collection.csv
 ```
 
@@ -21,7 +22,8 @@ node /path/to/the-repo/apps/grimoire/src/main.ts merge a.txt b.txt
 ```
 
 - `merge <deck...>` totals duplicate entries within each deck, then keeps the
-  maximum quantity of each card across decks. It includes sideboards and writes
+  maximum quantity of each card across decks, counting mainboard and sideboard
+  copies together. It returns a combined list with all cards in the mainboard and writes
   an alphabetically sorted decklist to `out/merged.txt`. Override the destination
   with `--outputPath path/to/merged.txt`.
 - `compare <deck...>` requires at least two decks and prints similarity to stdout.
@@ -33,8 +35,17 @@ node /path/to/the-repo/apps/grimoire/src/main.ts merge a.txt b.txt
   are excluded. Entries combine by name, set code, collector number, foil, and
   language; other metadata comes from the first matching entry. Both outputs omit
   binder name/type columns. Override the directory with `--outputDir path/to/out`.
+- `normalize <deck>` replaces configured interchangeable cards with preferred
+  copies and writes `out/normalized.txt`. Override the destination with
+  `--outputPath path/to/normalized.txt`. The initial pair prefers Blue Elemental
+  Blast over Hydroblast. Preferred copies fill first, up to four across the whole
+  deck; remaining copies use the alternative, also up to four. Mainboard gets
+  priority over sideboard. Each card retains its board assignment, and unrelated
+  cards keep their quantities. More than eight combined copies are rejected.
+  Configure pairs in `src/commands/normalize.ts`.
 
-Decklists use `quantity Card Name` lines. Blank lines and headings are ignored.
+Decklists use `quantity Card Name` lines. `Sideboard` marks the sideboard section,
+which `normalize` preserves. Other headings and blank lines are ignored.
 Inputs must be UTF-8; BOM and CRLF are supported. CSV parsing and formatting use
 Papa Parse, and Zod schemas validate arguments and collection records. Collection
 enum values follow the Zig implementation, including `near_mint` condition and

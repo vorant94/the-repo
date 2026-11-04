@@ -1,10 +1,8 @@
-import { formatBinder } from "../parsers/collection.ts";
 import type { CollectionCard } from "../schemas/collection.ts";
 
-export function split(collection: Array<CollectionCard>): {
-  tradelist: string;
-  wishlist: string;
-} {
+export function split(
+  collection: Array<CollectionCard>,
+): [tradelist: Array<CollectionCard>, wishlist: Array<CollectionCard>] {
   const tradelist = new Map<string, CollectionCard>();
   const wishlist = new Map<string, CollectionCard>();
 
@@ -32,10 +30,7 @@ export function split(collection: Array<CollectionCard>): {
     target.set(key, { ...card });
   }
 
-  return {
-    tradelist: formatBinder(Array.from(tradelist.values())),
-    wishlist: formatBinder(Array.from(wishlist.values())),
-  };
+  return [Array.from(tradelist.values()), Array.from(wishlist.values())];
 }
 
 function isWishlistCard(card: CollectionCard): boolean {

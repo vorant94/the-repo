@@ -10,7 +10,18 @@ Monorepo: pnpm workspaces, Biome for linting and formatting (including Markdown 
 
 - `apps/digital-garden` - Astro blog (Cloudflare Pages)
 - `apps/meta-forge` - MTG tournament data tool (Hono, Drizzle ORM, Cloudflare Workers)
+- `apps/grimoire` - Node.js CLI for MTG decklists and ManaBox collections
 - `tools/studio` - Remotion studio for asset generation
+
+## Instruction Scope
+
+- Before working in a package, read its `AGENTS.md` and any intermediate `AGENTS.md` files along the path from the repository root. This also applies when the session starts at the repository root or the task spans multiple packages.
+- Load instructions and referenced documents only for packages and technologies relevant to the task. Do not preload sibling packages' instructions or all reference documents.
+- For Meta Forge API requests, read [Meta Forge instructions](apps/meta-forge/AGENTS.md), even when the request originates outside that package.
+- When writing or modifying React components, read [React patterns](docs/agents/react.md). When writing or modifying Zustand stores or consumers, read [Zustand patterns](docs/agents/zustand.md).
+- When writing, modifying, or reviewing unit tests, or fixing a bug, read [Unit testing preferences](docs/agents/unit-testing.md).
+- When writing, modifying, or reviewing Zod schemas or validation, read [Zod preferences](docs/agents/zod.md).
+- Keep repository-wide rules here, package-specific rules in that package's `AGENTS.md`, and shared technology-specific details in conditional references.
 
 ## Commands
 
@@ -31,14 +42,6 @@ pnpm run unused-code:check                 # Knip unused code analysis
 
 **Common per-project:** Most apps support `start:dev`, `build`, `ts:check`. E2E projects add `e2e:install`, `e2e`, `e2e:ui`. Deploy commands vary by platform (Cloudflare Pages/Workers).
 
-**D1 migrations:** Drizzle Kit uses the SQLite dialect for D1 and has no config option to generate D1-specific migration SQL. Review generated migrations that rebuild tables or change foreign keys: D1 enforces foreign keys inside implicit transactions, so `PRAGMA foreign_keys=OFF` does not disable them. `PRAGMA defer_foreign_keys=ON` only postpones validation until the transaction ends; all references must be valid then. Rewrite incompatible migrations and apply them to a disk-backed local D1 database with representative rows and foreign keys before production. An empty database migration run does not prove that existing data will migrate successfully. Do not rename migration files after they have been applied; Wrangler records their filenames in `d1_migrations`.
-
-**Cloudflare SSR headers:** Some projects have two CSP sources: `public/_headers` covers static assets, while Worker or framework middleware must set the equivalent header on SSR/API responses. Keep both policies in sync when changing CSP.
-
-## Architecture
-
-**digital-garden:** Astro content collections in src/content.config.ts, posts in src/posts/, i18n, custom rehype/remark plugins.
-
 ## Code Style (Biome)
 
 Always run Biome from repo root. Rules:
@@ -51,10 +54,6 @@ Always run Biome from repo root. Rules:
 - `Array<T>` not `T[]`
 - Always use braces: `if (!value) { continue; }` not `if (!value) continue;`
 - Never use biome-ignore except for external naming conventions (CSV headers, third-party APIs)
-
-## Testing
-
-- Playwright E2E tests for digital-garden run through its app pipeline.
 
 ## Git Hooks (lefthook)
 
@@ -73,8 +72,12 @@ Always run Biome from repo root. Rules:
 - Keep distinct actions in separate statements — extract and validate inputs before using them in queries or other operations
 - When approach fails: investigate, present findings, stop and wait
 - Prefer library-native APIs over custom workarounds — check library first before implementing
+- Prefer built-in coercion and defaults. Add restrictions only when required by the domain or explicitly requested.
+- Preserve domain data, information, and business rules when porting or refactoring. Do not discard fields or combine parsing with aggregation just because current callers do not need the original records.
+- Compute invariant mappings, keys, headers, and configuration at module scope. Functions should compute only what depends on their arguments.
+- Apply requested patterns consistently across the affected code, including removing redundant variables, helpers, imports, and tests.
+- Treat explanatory questions as questions. Do not change something merely because the user asks why it exists.
 - Do not write code scripts for single-use actions. Use existing CLI tools directly; use `curl` for HTTP requests and store fetched data in temporary JSON files. Use `jq` to inspect and transform JSON.
-- For Meta Forge API requests, the shell already has `META_FORGE_API_TOKEN` configured. Use `curl` with `-H "Authorization: Bearer ${META_FORGE_API_TOKEN}"` directly. Do not pass curl config files, generate tokens, or read credentials from `.dev.vars`. Never print or save the token. Follow `.agents/skills/mtg-event-report/SKILL.md` for authenticated requests and pagination.
 - When a reusable automation script is needed, use Node, not Python.
 - Use `dedent` for multiline strings (proper indentation in source, removed at runtime)
 - Prefer optional chaining (`?.`) over explicit null/undefined checks when supported
@@ -112,18 +115,7 @@ function baz(debugFileName?: string | null) {} // accepts string, null, or undef
 // Type-only imports, explicit node: protocol
 import type { Format } from "./types";
 import process from "node:process";
-
-// Zod: schema once, infer type, export both
-const rowSchema = z.object({ name: z.string(), value: z.number() });
-type Row = z.infer<typeof rowSchema>;
-
-// Use type aliases instead of inline inference
-export const chapterSchema = z.object({ title: z.string() });
-export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywhere
-// NOT: Array<z.infer<typeof chapterSchema>> at each usage site
 ```
-
-**Zod parsing:** Always use `.parse()` by default and let validation errors throw. NEVER use `.safeParse()` unless the user explicitly asks for it.
 
 **Naming:** lowerCamelCase for all variables including constants (`basicLands` not `BASIC_LANDS`). SCREAMING_CASE implies false immutability — objects stay mutable. Environment variable names are an exception: preserve their SCREAMING_SNAKE_CASE names across the codebase, including Zod schemas and parsed environment objects, and add a narrowly scoped `biome-ignore lint/style/useNamingConvention` comment where required.
 
@@ -132,7 +124,6 @@ export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywh
 **CLI patterns:**
 
 - camelCase CLI args matching schema fields for direct `parseArgs` → Zod pass-through
-- Avoid unnecessary `.min(1)` — `z.string()` suffices for required args
 - Don't rename in destructuring — name things right from start
 - Consistent structure: imports → constants → schema → parseArgs → validation → execution
 - Don't abstract until 5+ instances or truly complex shared logic
@@ -144,27 +135,6 @@ export type Chapter = z.infer<typeof chapterSchema>; // export and reuse everywh
 - Use clear, explicit variable names
 - Non-exported entities (constants, helpers) go after all exported entities in file
 - One component per file — never define multiple components (exported or local) in same file
-
-**React patterns:**
-
-- For components with children, define interface with only component-specific props, apply `PropsWithChildren` at component type level:
-
-```typescript
-interface UserProviderProps {
-  user?: User | null;
-}
-export const UserProvider: FC<PropsWithChildren<UserProviderProps>> = ({ user, children }) => { ... };
-```
-
-- Never add `children?: ReactNode` to the props interface—use `PropsWithChildren` wrapper instead
-- Never use type aliases for props—always use interfaces
-
-**Zustand patterns:**
-
-- Use `immer` middleware (`zustand/middleware/immer`) for mutable update syntax in `set()` callbacks: `create<Store>()(immer((set) => ({ ... })))`
-- Call actions via `store.getState().action()` in event handlers — never select actions with `useStore((s) => s.action)`. Selectors for state values only.
-- Compute derived state inline in `useStore((s) => ...)` selectors — don't store computed selectors as functions in store; calling them outside selector skips subscription
-- Wrap array/object-returning selectors with `useShallow` from `zustand/react/shallow` to prevent infinite re-renders: `useStore(useShallow((s) => s.items.filter(...)))`. Without it, new ref on every selector call triggers `useSyncExternalStore` to loop
 
 **Bootstrapping new apps:**
 

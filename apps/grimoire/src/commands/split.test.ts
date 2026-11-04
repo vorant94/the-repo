@@ -1,269 +1,217 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import Papa from "papaparse";
-import { parseCollection } from "../parsers/collection.ts";
+import type { CollectionCard } from "../schemas/collection.ts";
 import { split } from "./split.ts";
 
-const header =
-  "Binder Name,Binder Type,Name,Set code,Set name,Collector number,Foil,Rarity,Quantity,ManaBox ID,Scryfall ID,Purchase price,Misprint,Altered,Signed,Condition,Language,Proxy,Purchase price currency,Added";
-
 test("puts lists in the wishlist and only B3- binders in the tradelist", () => {
-  const collection = [
-    header,
-    "Wishlist,list,Counterspell,MMA,Modern Masters,1,normal,common,1,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Wishlist,list,Dispel,MMA,Modern Masters,2,normal,common,1,124,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Blue,binder,Force Spike,MMA,Modern Masters,3,normal,common,1,125,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B2-Keep,binder,Envelop,MMA,Modern Masters,4,normal,common,1,126,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Deck,deck,Island,MMA,Modern Masters,5,normal,common,1,127,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderName: "Wishlist", binderType: "list" },
+    {
+      ...counterspell,
+      binderName: "B3-Wishlist",
+      binderType: "list",
+      name: "Dispel",
+    },
+    { ...counterspell, binderName: "B3-Blue", name: "Force Spike" },
+    { ...counterspell, binderName: "B2-Keep", name: "Envelop" },
+    {
+      ...counterspell,
+      binderName: "B3-Deck",
+      binderType: "deck",
+      name: "Island",
+    },
+  ];
+  const expected: [Array<CollectionCard>, Array<CollectionCard>] = [
+    [{ ...counterspell, binderName: "B3-Blue", name: "Force Spike" }],
+    [
+      { ...counterspell, binderName: "Wishlist", binderType: "list" },
+      {
+        ...counterspell,
+        binderName: "B3-Wishlist",
+        binderType: "list",
+        name: "Dispel",
+      },
+    ],
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist, tradelist } = split(parsedCollection);
-  const wishlistCards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
-  const tradelistCards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
-
-  assert.deepEqual(
-    wishlistCards.map((card) => card.Name),
-    ["Counterspell", "Dispel"],
-  );
-  assert.deepEqual(
-    tradelistCards.map((card) => card.Name),
-    ["Force Spike"],
-  );
+  assert.deepEqual(split(collection), expected);
 });
 
 test("combines matching printings in the wishlist", () => {
-  const collection = [
-    header,
-    "B3-First,list,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,list,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderName: "First", binderType: "list", quantity: 2 },
+    { ...counterspell, binderName: "Second", binderType: "list", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderName: "First", binderType: "list", quantity: 5 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [, wishlist] = split(collection);
 
-  assert.equal(cards.length, 1);
-  assert.equal(cards[0]?.Name, "Counterspell");
-  assert.equal(cards[0]?.Quantity, "5");
+  assert.deepEqual(wishlist, expected);
   assert.deepEqual(
-    parsedCollection.map((card) => card.quantity),
+    collection.map((card) => card.quantity),
     [2, 3],
   );
 });
 
 test("keeps different sets separate in the wishlist", () => {
-  const collection = [
-    header,
-    "B3-First,list,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,list,Counterspell,FDN,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", setCode: "FDN", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", setCode: "FDN", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [, wishlist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card["Set code"], card.Quantity]),
-    [
-      ["Counterspell", "MMA", "2"],
-      ["Counterspell", "FDN", "3"],
-    ],
-  );
+  assert.deepEqual(wishlist, expected);
 });
 
 test("keeps different collector numbers separate in the wishlist", () => {
-  const collection = [
-    header,
-    "B3-First,list,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,list,Counterspell,MMA,Modern Masters,2,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", collectorNumber: "2", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", collectorNumber: "2", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [, wishlist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card["Collector number"], card.Quantity]),
-    [
-      ["Counterspell", "1", "2"],
-      ["Counterspell", "2", "3"],
-    ],
-  );
+  assert.deepEqual(wishlist, expected);
 });
 
 test("keeps different foil finishes separate in the wishlist", () => {
-  const collection = [
-    header,
-    "B3-First,list,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,list,Counterspell,MMA,Modern Masters,1,foil,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", foil: "foil", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", foil: "foil", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [, wishlist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card.Foil, card.Quantity]),
-    [
-      ["Counterspell", "normal", "2"],
-      ["Counterspell", "foil", "3"],
-    ],
-  );
+  assert.deepEqual(wishlist, expected);
 });
 
 test("keeps different languages separate in the wishlist", () => {
-  const collection = [
-    header,
-    "B3-First,list,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,list,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,ru,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", language: "ru", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderType: "list", quantity: 2 },
+    { ...counterspell, binderType: "list", language: "ru", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { wishlist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(wishlist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [, wishlist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card.Language, card.Quantity]),
-    [
-      ["Counterspell", "en", "2"],
-      ["Counterspell", "ru", "3"],
-    ],
-  );
+  assert.deepEqual(wishlist, expected);
 });
 
 test("combines matching printings in the tradelist", () => {
-  const collection = [
-    header,
-    "B3-First,binder,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,binder,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, binderName: "B3-First", quantity: 2 },
+    { ...counterspell, binderName: "B3-Second", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, binderName: "B3-First", quantity: 5 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { tradelist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [tradelist] = split(collection);
 
-  assert.equal(cards.length, 1);
-  assert.equal(cards[0]?.Name, "Counterspell");
-  assert.equal(cards[0]?.Quantity, "5");
+  assert.deepEqual(tradelist, expected);
   assert.deepEqual(
-    parsedCollection.map((card) => card.quantity),
+    collection.map((card) => card.quantity),
     [2, 3],
   );
 });
 
 test("keeps different sets separate in the tradelist", () => {
-  const collection = [
-    header,
-    "B3-First,binder,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,binder,Counterspell,FDN,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, setCode: "FDN", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, setCode: "FDN", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { tradelist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [tradelist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card["Set code"], card.Quantity]),
-    [
-      ["Counterspell", "MMA", "2"],
-      ["Counterspell", "FDN", "3"],
-    ],
-  );
+  assert.deepEqual(tradelist, expected);
 });
 
 test("keeps different collector numbers separate in the tradelist", () => {
-  const collection = [
-    header,
-    "B3-First,binder,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,binder,Counterspell,MMA,Modern Masters,2,normal,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, collectorNumber: "2", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, collectorNumber: "2", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { tradelist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [tradelist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card["Collector number"], card.Quantity]),
-    [
-      ["Counterspell", "1", "2"],
-      ["Counterspell", "2", "3"],
-    ],
-  );
+  assert.deepEqual(tradelist, expected);
 });
 
 test("keeps different foil finishes separate in the tradelist", () => {
-  const collection = [
-    header,
-    "B3-First,binder,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,binder,Counterspell,MMA,Modern Masters,1,foil,common,3,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, foil: "foil", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, foil: "foil", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { tradelist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [tradelist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card.Foil, card.Quantity]),
-    [
-      ["Counterspell", "normal", "2"],
-      ["Counterspell", "foil", "3"],
-    ],
-  );
+  assert.deepEqual(tradelist, expected);
 });
 
 test("keeps different languages separate in the tradelist", () => {
-  const collection = [
-    header,
-    "B3-First,binder,Counterspell,MMA,Modern Masters,1,normal,common,2,123,id,,false,false,false,near_mint,en,false,USD,2026-07-22",
-    "B3-Second,binder,Counterspell,MMA,Modern Masters,1,normal,common,3,123,id,,false,false,false,near_mint,ru,false,USD,2026-07-22",
-  ].join("\n");
+  const collection: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, language: "ru", quantity: 3 },
+  ];
+  const expected: Array<CollectionCard> = [
+    { ...counterspell, quantity: 2 },
+    { ...counterspell, language: "ru", quantity: 3 },
+  ];
 
-  const parsedCollection = parseCollection(collection);
-  const { tradelist } = split(parsedCollection);
-  const cards = Papa.parse<Record<string, string>>(tradelist, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  const [tradelist] = split(collection);
 
-  assert.deepEqual(
-    cards.map((card) => [card.Name, card.Language, card.Quantity]),
-    [
-      ["Counterspell", "en", "2"],
-      ["Counterspell", "ru", "3"],
-    ],
-  );
+  assert.deepEqual(tradelist, expected);
 });
+
+const counterspell: CollectionCard = {
+  binderName: "B3-Blue",
+  binderType: "binder",
+  name: "Counterspell",
+  setCode: "MMA",
+  setName: "Modern Masters",
+  collectorNumber: "1",
+  foil: "normal",
+  rarity: "common",
+  quantity: 1,
+  manaboxId: 123,
+  scryfallId: "id",
+  purchasePrice: null,
+  misprint: false,
+  altered: false,
+  signed: false,
+  condition: "near_mint",
+  language: "en",
+  proxy: false,
+  purchasePriceCurrency: "USD",
+  added: "2026-07-22",
+};
