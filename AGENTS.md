@@ -74,7 +74,9 @@ Always run Biome from repo root. Rules:
 - Keep distinct actions in separate statements — extract and validate inputs before using them in queries or other operations
 - When approach fails: investigate, present findings, stop and wait
 - Prefer library-native APIs over custom workarounds — check library first before implementing
-- Always use Node for any throwaway or automation scripts in this repo (`node -e 'console.log("workspace-ok")'` or a Node script, not Python).
+- Do not write code scripts for single-use actions. Use existing CLI tools directly; use `curl` for HTTP requests and store fetched data in temporary JSON files. Use `jq` to inspect and transform JSON.
+- For Meta Forge API requests, the shell already has `META_FORGE_API_TOKEN` configured. Use `curl` with `-H "Authorization: Bearer ${META_FORGE_API_TOKEN}"` directly. Do not pass curl config files, generate tokens, or read credentials from `.dev.vars`. Never print or save the token. Follow `.agents/skills/mtg-event-report/SKILL.md` for authenticated requests and pagination.
+- When a reusable automation script is needed, use Node, not Python.
 - Use `dedent` for multiline strings (proper indentation in source, removed at runtime)
 - Prefer optional chaining (`?.`) over explicit null/undefined checks when supported
 - Use `null` for explicit "nothing", not `undefined` — `undefined` for implicit absence (optional params)
