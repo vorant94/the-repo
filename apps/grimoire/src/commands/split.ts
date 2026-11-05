@@ -1,3 +1,4 @@
+import { getConfig } from "../config-context.ts";
 import type { CollectionCard } from "../schemas/collection.ts";
 
 export function split(
@@ -34,13 +35,19 @@ export function split(
 }
 
 function isWishlistCard(card: CollectionCard): boolean {
-  return !card.proxy && card.binderType === "list";
+  const config = getConfig();
+  return (
+    !card.proxy &&
+    card.binderType === "list" &&
+    config.split.wishlist.binderNamePattern.test(card.binderName)
+  );
 }
 
 function isTradelistCard(card: CollectionCard): boolean {
+  const config = getConfig();
   return (
     !card.proxy &&
     card.binderType === "binder" &&
-    card.binderName.startsWith("B3-")
+    config.split.tradelist.binderNamePattern.test(card.binderName)
   );
 }

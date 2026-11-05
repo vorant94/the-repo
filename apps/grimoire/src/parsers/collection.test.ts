@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { describe, test } from "node:test";
 import type { CollectionCard } from "../schemas/collection.ts";
 import { parseCollection } from "./collection.ts";
 
@@ -10,24 +10,26 @@ const bloodfellCavesLine =
 const ajaniLine =
   'TCC Foundations Cube,deck,"Ajani, Caller of the Pride",FDN,Foundations,357,normal,mythic,1,100063,9f329a0b-13cc-48c5-9fb7-38d8a537aa30,8.55,false,false,false,near_mint,en,false,USD,2026-07-31T15:24:42.657Z';
 
-test("parses the collection bypassing header row", () => {
-  const parsed = parseCollection(
-    [header, bloodfellCavesLine, ajaniLine].join("\n"),
-  );
+describe("parseCollection", () => {
+  test("parses the collection bypassing header row", () => {
+    const parsed = parseCollection(
+      [header, bloodfellCavesLine, ajaniLine].join("\n"),
+    );
 
-  assert.deepEqual(parsed, [bloodfellCaves, ajani]);
-});
+    assert.deepEqual(parsed, [bloodfellCaves, ajani]);
+  });
 
-test("parses line", () => {
-  const parsed = parseCollection(`${header}\n${bloodfellCavesLine}`);
+  test("parses line", () => {
+    const parsed = parseCollection(`${header}\n${bloodfellCavesLine}`);
 
-  assert.deepEqual(parsed, [bloodfellCaves]);
-});
+    assert.deepEqual(parsed, [bloodfellCaves]);
+  });
 
-test("parses line with names in quotes", () => {
-  const parsed = parseCollection(`${header}\n${ajaniLine}`);
+  test("parses line with names in quotes", () => {
+    const parsed = parseCollection(`${header}\n${ajaniLine}`);
 
-  assert.deepEqual(parsed, [ajani]);
+    assert.deepEqual(parsed, [ajani]);
+  });
 });
 
 const bloodfellCaves = {

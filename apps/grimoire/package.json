@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "dedent": "^1.7.2",
+    "env-paths": "^4.0.0",
     "papaparse": "^5.5.4",
     "zod": "catalog:"
   },
