@@ -25,12 +25,12 @@ const configPath = join(
 const help = dedent`
   Usage:
     grimoire merge <deck...> [--outputPath out/merged.txt] [--config path/to/config.json]
-    grimoire compare <deck...> [--config path/to/config.json]
+    grimoire compare <deck...> [--outputDir out] [--config path/to/config.json]
     grimoire normalize <deck> [--outputPath out/normalized.txt] [--config path/to/config.json]
     grimoire split <collection> [--outputDir out] [--config path/to/config.json]
 
   merge    Keep the maximum quantity of each card across decks.
-  compare  Report the percentage of cards whose names occur in every deck.
+  compare  Report similarity and export shared cards and each deck's differences.
   normalize Prefer configured replacements while preserving deck sections.
   split    Export configured ManaBox lists and binders, excluding proxies.
 
@@ -55,7 +55,7 @@ const argsSchema = z.discriminatedUnion("command", [
     command: z.literal("compare"),
     paths: z.array(z.string()).min(2),
     outputPath: z.never().optional(),
-    outputDir: z.never().optional(),
+    outputDir: z.string().default("out"),
   }),
   commonArgsSchema.extend({
     command: z.literal("normalize"),
@@ -113,7 +113,15 @@ try {
       case "compare": {
         const contents = await Promise.all(args.paths.map(readText));
         const decks = contents.map(parseDeck);
-        const similarity = compare(decks);
+        const { similarity, shared, differences } = compare(decks);
+        await mkdir(args.outputDir, { recursive: true });
+        await writeFile(join(args.outputDir, "shared.txt"), formatDeck(shared));
+        for (const [index, difference] of differences.entries()) {
+          await writeFile(
+            join(args.outputDir, `deck-${index + 1}-only.txt`),
+            formatDeck(difference),
+          );
+        }
         process.stdout.write(`Deck similarity: ${similarity.toFixed(2)}%\n`);
         break;
       }

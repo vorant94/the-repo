@@ -30,6 +30,13 @@ node /path/to/the-repo/apps/grimoire/src/main.ts merge a.txt b.txt
   As in the Zig implementation, similarity is the number of copies of cards whose
   names appear in every deck, divided by all copies across all decks. Shared names
   with different quantities contribute all their copies. Empty decks yield 0%.
+  It also writes `out/shared.txt` and `out/deck-1-only.txt`, `out/deck-2-only.txt`,
+  and so on in input order. The shared deck contains the minimum quantity of each
+  card across all decks, ignoring zones when matching. Each difference contains
+  the input deck's remaining copies. Shared cards retain their order from the
+  first deck; differences retain their input order. All output cards use mainboard
+  placement, so input zones do not affect output sections. Empty
+  results produce empty files. Override the directory with `--outputDir path/to/out`.
 - `split <collection>` exports matching ManaBox `list` entries to `out/wishlist.csv`
   and matching `binder` entries to `out/tradelist.csv`. Binder names must match the
   configured pattern for their destination (see configuration below). Proxies
