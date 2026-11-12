@@ -7,7 +7,7 @@ export const collectionCardSchema = z.object({
   setCode: z.string(),
   setName: z.string(),
   collectorNumber: z.string(),
-  foil: z.enum(["normal", "foil"]),
+  foil: z.enum(["normal", "foil", "etched"]),
   rarity: z.enum(["common", "uncommon", "rare", "mythic"]),
   quantity: z.coerce.number().int().nonnegative(),
   manaboxId: z.coerce.number().int().nonnegative(),
@@ -19,13 +19,19 @@ export const collectionCardSchema = z.object({
   misprint: z.stringbool(),
   altered: z.stringbool(),
   signed: z.stringbool(),
-  condition: z.enum(["near_mint"]),
+  condition: z.enum(["near_mint", "light_played"]),
   language: z.enum(["en", "ru", "ja", "it", "de", "es", "fr"]),
   proxy: z.stringbool(),
   purchasePriceCurrency: z.string(),
   added: z.string(),
 });
 export type CollectionCard = z.infer<typeof collectionCardSchema>;
+
+export const binderCardSchema = collectionCardSchema.omit({
+  binderName: true,
+  binderType: true,
+});
+export type BinderCard = z.infer<typeof binderCardSchema>;
 
 export const collectionColumns = {
   binderName: "Binder Name",

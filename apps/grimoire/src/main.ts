@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, extname, join } from "node:path";
 import process from "node:process";
 import { parseArgs } from "node:util";
 import dedent from "dedent";
 import envPaths from "env-paths";
 import { z } from "zod";
+import type { CardCounts } from "./card-counts.ts";
 import { compare } from "./commands/compare.ts";
 import { merge } from "./commands/merge.ts";
 import { normalize } from "./commands/normalize.ts";
@@ -15,7 +16,11 @@ import { configContext } from "./config-context.ts";
 import { formatCardCounts } from "./formatters/card-counts.ts";
 import { formatBinder } from "./formatters/collection.ts";
 import { formatDeck } from "./formatters/deck.ts";
-import { parseCollection } from "./parsers/collection.ts";
+import {
+  countBinderCardsByName,
+  parseBinder,
+  parseCollection,
+} from "./parsers/collection.ts";
 import { countDeckCardsByName, parseDeck } from "./parsers/deck.ts";
 
 const configPath = join(
@@ -26,16 +31,17 @@ const configPath = join(
 const help = dedent`
   Usage:
     grimoire merge <deck...> [--outputPath out/merged.txt] [--config path/to/config.json]
-    grimoire compare <deck...> [--outputDir out] [--config path/to/config.json]
+    grimoire compare <file...> [--outputDir out] [--config path/to/config.json]
     grimoire normalize <deck> [--outputPath out/normalized.txt] [--config path/to/config.json]
     grimoire split <collection> [--outputDir out] [--config path/to/config.json]
 
   merge    Keep the maximum quantity of each card across decks.
-  compare  Report similarity and export shared cards and each deck's differences.
+  compare  Compare decks, collection CSVs, or a mix; export shared cards and differences.
   normalize Prefer configured replacements while preserving deck sections.
   split    Export configured ManaBox lists and binders, excluding proxies.
 
   Paths are relative to the current working directory.
+  Compare treats .csv paths as collections; other paths as decklists.
   App config: ${configPath} (override with --config).
   Missing or invalid config fields are prompted for and saved before commands run.
   Use --help or -h to show this help. Use -- before paths starting with '-'.
@@ -112,9 +118,10 @@ try {
         break;
       }
       case "compare": {
-        const contents = await Promise.all(args.paths.map(readText));
-        const decks = contents.map(parseDeck);
-        const counts = decks.map(countDeckCardsByName);
+        const counts = await Promise.all(args.paths.map(readComparisonInput));
+        const hasCollection = args.paths.some(isCollectionPath);
+        const outputPrefix = hasCollection ? "input" : "deck";
+        const similarityLabel = hasCollection ? "Card" : "Deck";
         const { similarity, shared, differences } = compare(counts);
         await mkdir(args.outputDir, { recursive: true });
         await writeFile(
@@ -123,11 +130,13 @@ try {
         );
         for (const [index, difference] of differences.entries()) {
           await writeFile(
-            join(args.outputDir, `deck-${index + 1}-only.txt`),
+            join(args.outputDir, `${outputPrefix}-${index + 1}-only.txt`),
             formatCardCounts(difference),
           );
         }
-        process.stdout.write(`Deck similarity: ${similarity.toFixed(2)}%\n`);
+        process.stdout.write(
+          `${similarityLabel} similarity: ${similarity.toFixed(2)}%\n`,
+        );
         break;
       }
       case "normalize": {
@@ -158,4 +167,23 @@ try {
 async function readText(path: string): Promise<string> {
   const bytes = await readFile(path);
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+}
+
+function isCollectionPath(path: string): boolean {
+  return extname(path).toLowerCase() === ".csv";
+}
+
+async function readComparisonInput(path: string): Promise<CardCounts> {
+  try {
+    const content = await readText(path);
+    if (isCollectionPath(path)) {
+      const binder = parseBinder(content);
+      return countBinderCardsByName(binder);
+    }
+    const deck = parseDeck(content);
+    return countDeckCardsByName(deck);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`${path}: ${message}`, { cause: error });
+  }
 }

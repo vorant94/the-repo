@@ -10,6 +10,7 @@ From the repository root:
 pnpm --filter grimoire start --help
 pnpm --filter grimoire start merge /path/to/a.txt /path/to/b.txt
 pnpm --filter grimoire start compare /path/to/a.txt /path/to/b.txt
+pnpm --filter grimoire start compare /path/to/deck.txt /path/to/collection.csv /path/to/tradelist.csv
 pnpm --filter grimoire start normalize /path/to/deck.txt
 pnpm --filter grimoire start split /path/to/ManaBox_Collection.csv
 ```
@@ -26,17 +27,29 @@ node /path/to/the-repo/apps/grimoire/src/main.ts merge a.txt b.txt
   copies together. It returns a combined list with all cards in the mainboard and writes
   an alphabetically sorted decklist to `out/merged.txt`. Override the destination
   with `--outputPath path/to/merged.txt`.
-- `compare <deck...>` requires at least two decks and prints similarity to stdout.
+- `compare <file...>` requires at least two inputs: decks, collection CSVs, or a
+  mixture of both. Each `.csv` path (case-insensitive) is parsed as a collection;
+  other paths are parsed as decklists. Full ManaBox exports and Grimoire's own
+  `split` CSV exports are supported. Invalid CSVs report their path and fail before
+  output files are written; they never fall back to deck parsing.
+  Collection rows are counted by name across printings, foil, languages, and
+  binders. All supplied rows count, including lists and proxies; `split` filters
+  are not applied. Zero-quantity rows are ignored. Matching is case-sensitive.
   As in the Zig implementation, similarity is the number of copies of cards whose
-  names appear in every deck, divided by all copies across all decks. Shared names
-  with different quantities contribute all their copies. Empty decks yield 0%.
-  It also writes `out/shared.txt` and `out/deck-1-only.txt`, `out/deck-2-only.txt`,
-  and so on in input order. The shared deck contains the minimum quantity of each
-  card across all decks, ignoring zones when matching. Each difference contains
-  the input deck's remaining copies. Shared cards retain their order from the
-  first deck; differences retain the first-seen name order from each input. The
-  comparison uses name-to-quantity maps and outputs no zone sections. Empty
-  results produce empty files. Override the directory with `--outputDir path/to/out`.
+  names appear in every input, divided by all copies across all inputs. Shared names
+  with different quantities contribute all their copies. Empty inputs yield 0%.
+  This percentage measures name overlap, rather than how much of a deck a
+  collection can supply.
+  It also writes `out/shared.txt` and one difference file per input. Deck-only
+  runs keep `deck-1-only.txt`, `deck-2-only.txt`, and so on. Runs containing any
+  collection use `input-1-only.txt`, `input-2-only.txt`, and so on in input order.
+  Shared counts use the minimum quantity of each name across every input;
+  differences contain each input's remaining copies. With three or more inputs,
+  differences can include names found in some other inputs. Shared cards retain
+  the first input's name order; differences retain each input's name order.
+  All results are plain `quantity Card Name` text without zones or collection
+  metadata. Empty results produce empty files. Override the directory with
+  `--outputDir path/to/out`.
 - `split <collection>` exports matching ManaBox `list` entries to `out/wishlist.csv`
   and matching `binder` entries to `out/tradelist.csv`. Binder names must match the
   configured pattern for their destination (see configuration below). Proxies
@@ -100,10 +113,10 @@ command execution. Regexes are saved as source strings in the JSON file.
 Decklists use `quantity Card Name` lines. `Sideboard` marks the sideboard section,
 which `normalize` preserves. Other headings and blank lines are ignored.
 Inputs must be UTF-8; BOM and CRLF are supported. CSV parsing and formatting use
-Papa Parse, and Zod schemas validate arguments and collection records. Collection
-enum values follow the Zig implementation, including `near_mint` condition and
-languages `en`, `ru`, `ja`, `it`, `de`, `es`, and `fr`. Existing output files are
-replaced.
+Papa Parse, and Zod schemas validate arguments and collection records. Supported
+finishes are `normal`, `foil`, and `etched`; conditions are `near_mint` and
+`light_played`. Supported languages are `en`, `ru`, `ja`, `it`, `de`, `es`, and `fr`.
+Existing output files are replaced.
 
 ```sh
 pnpm --filter grimoire test
