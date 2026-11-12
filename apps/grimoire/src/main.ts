@@ -12,10 +12,11 @@ import { normalize } from "./commands/normalize.ts";
 import { split } from "./commands/split.ts";
 import { loadConfig } from "./config.ts";
 import { configContext } from "./config-context.ts";
+import { formatCardCounts } from "./formatters/card-counts.ts";
 import { formatBinder } from "./formatters/collection.ts";
 import { formatDeck } from "./formatters/deck.ts";
 import { parseCollection } from "./parsers/collection.ts";
-import { parseDeck } from "./parsers/deck.ts";
+import { countDeckCardsByName, parseDeck } from "./parsers/deck.ts";
 
 const configPath = join(
   envPaths("grimoire", { suffix: "" }).config,
@@ -113,13 +114,17 @@ try {
       case "compare": {
         const contents = await Promise.all(args.paths.map(readText));
         const decks = contents.map(parseDeck);
-        const { similarity, shared, differences } = compare(decks);
+        const counts = decks.map(countDeckCardsByName);
+        const { similarity, shared, differences } = compare(counts);
         await mkdir(args.outputDir, { recursive: true });
-        await writeFile(join(args.outputDir, "shared.txt"), formatDeck(shared));
+        await writeFile(
+          join(args.outputDir, "shared.txt"),
+          formatCardCounts(shared),
+        );
         for (const [index, difference] of differences.entries()) {
           await writeFile(
             join(args.outputDir, `deck-${index + 1}-only.txt`),
-            formatDeck(difference),
+            formatCardCounts(difference),
           );
         }
         process.stdout.write(`Deck similarity: ${similarity.toFixed(2)}%\n`);

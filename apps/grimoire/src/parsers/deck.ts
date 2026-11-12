@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CardCounts } from "../card-counts.ts";
 import { type DeckCard, deckCardSchema } from "../schemas/deck.ts";
 
 export function parseDeck(content: string): Array<DeckCard> {
@@ -43,9 +44,7 @@ export function parseDeckLine(line: string): Array<string> | null {
   return Array.from({ length: quantity }, () => name);
 }
 
-export function countDeckCardsByName(
-  deck: Array<DeckCard>,
-): Map<string, number> {
+export function countDeckCardsByName(deck: Array<DeckCard>): CardCounts {
   const counts = new Map<string, number>();
 
   for (const card of deck) {

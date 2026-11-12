@@ -1,51 +1,41 @@
-import { countDeckCardsByName } from "../parsers/deck.ts";
-import type { DeckCard } from "../schemas/deck.ts";
+import type { CardCounts } from "../card-counts.ts";
 
 interface Comparison {
   similarity: number;
-  shared: Array<DeckCard>;
-  differences: Array<Array<DeckCard>>;
+  shared: CardCounts;
+  differences: Array<CardCounts>;
 }
 
-export function compare(decks: Array<Array<DeckCard>>): Comparison {
-  const counts = decks.map(countDeckCardsByName);
+export function compare(inputs: Array<CardCounts>): Comparison {
   let totalCards = 0;
   let sharedCards = 0;
 
-  for (const deck of counts) {
-    for (const [name, quantity] of deck) {
+  for (const input of inputs) {
+    for (const [name, quantity] of input) {
       totalCards += quantity;
-      if (counts.every((other) => other.has(name))) {
+      if (inputs.every((other) => (other.get(name) ?? 0) > 0)) {
         sharedCards += quantity;
       }
     }
   }
 
-  const sharedCounts = new Map<string, number>();
-  for (const [name, quantity] of counts[0] ?? []) {
-    const sharedQuantity = Math.min(
-      quantity,
-      ...counts.map((deck) => deck.get(name) ?? 0),
-    );
-    sharedCounts.set(name, sharedQuantity);
+  const shared = new Map<string, number>();
+  for (const name of inputs[0]?.keys() ?? []) {
+    const quantity = Math.min(...inputs.map((input) => input.get(name) ?? 0));
+    if (quantity <= 0) {
+      continue;
+    }
+    shared.set(name, quantity);
   }
 
-  const shared: Array<DeckCard> = [];
-  const differences = decks.map((deck, deckIndex) => {
-    const remaining = new Map(sharedCounts);
-    const difference: Array<DeckCard> = [];
-
-    for (const card of deck) {
-      const quantity = remaining.get(card.name) ?? 0;
-      if (quantity === 0) {
-        difference.push({ name: card.name, zone: "mainboard" });
+  const differences = inputs.map((input) => {
+    const difference = new Map<string, number>();
+    for (const [name, quantity] of input) {
+      const remaining = quantity - (shared.get(name) ?? 0);
+      if (remaining <= 0) {
         continue;
       }
-
-      remaining.set(card.name, quantity - 1);
-      if (deckIndex === 0) {
-        shared.push({ name: card.name, zone: "mainboard" });
-      }
+      difference.set(name, remaining);
     }
 
     return difference;

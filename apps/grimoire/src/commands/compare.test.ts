@@ -1,152 +1,126 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import type { DeckCard } from "../schemas/deck.ts";
+import type { CardCounts } from "../card-counts.ts";
 import { compare } from "./compare.ts";
 
 describe("compare", () => {
   test("compares deck lists and calculates deck similarity percentage", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Force Spike", zone: "mainboard" },
-        { name: "Dispel", zone: "mainboard" },
-      ],
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Force of Negation", zone: "mainboard" },
-        { name: "Envelop", zone: "mainboard" },
-      ],
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Spell Pierce", zone: "mainboard" },
-        { name: "Blue Elemental Blast", zone: "mainboard" },
-      ],
+    const inputs: Array<CardCounts> = [
+      new Map([
+        ["Counterspell", 1],
+        ["Force Spike", 1],
+        ["Dispel", 1],
+      ]),
+      new Map([
+        ["Counterspell", 1],
+        ["Force of Negation", 1],
+        ["Envelop", 1],
+      ]),
+      new Map([
+        ["Counterspell", 1],
+        ["Spell Pierce", 1],
+        ["Blue Elemental Blast", 1],
+      ]),
     ];
     const expected = (3 / 9) * 100;
 
-    assert.equal(compare(decks).similarity, expected);
+    assert.equal(compare(inputs).similarity, expected);
   });
 
   test("separates matching copies, surplus copies, and unique cards", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Counterspell", zone: "sideboard" },
-        { name: "Dispel", zone: "sideboard" },
-      ],
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Counterspell", zone: "sideboard" },
-        { name: "Envelop", zone: "mainboard" },
-      ],
+    const inputs: Array<CardCounts> = [
+      new Map([
+        ["Counterspell", 4],
+        ["Dispel", 1],
+      ]),
+      new Map([
+        ["Counterspell", 2],
+        ["Envelop", 1],
+      ]),
     ];
-    const original = structuredClone(decks);
+    const original = structuredClone(inputs);
     const expected = {
       similarity: 75,
-      shared: [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Counterspell", zone: "mainboard" },
-      ],
+      shared: new Map([["Counterspell", 2]]),
       differences: [
-        [
-          { name: "Counterspell", zone: "mainboard" },
-          { name: "Counterspell", zone: "mainboard" },
-          { name: "Dispel", zone: "mainboard" },
-        ],
-        [{ name: "Envelop", zone: "mainboard" }],
+        new Map([
+          ["Counterspell", 2],
+          ["Dispel", 1],
+        ]),
+        new Map([["Envelop", 1]]),
       ],
     };
 
-    assert.deepEqual(compare(decks), expected);
-    assert.deepEqual(decks, original);
+    assert.deepEqual(compare(inputs), expected);
+    assert.deepEqual(inputs, original);
   });
 
   test("returns all cards as differences when one deck is empty", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [],
-      [{ name: "Dispel", zone: "sideboard" }],
-    ];
+    const inputs: Array<CardCounts> = [new Map(), new Map([["Dispel", 1]])];
     const expected = {
       similarity: 0,
-      shared: [],
-      differences: [[], [{ name: "Dispel", zone: "mainboard" }]],
+      shared: new Map(),
+      differences: [new Map(), new Map([["Dispel", 1]])],
     };
 
-    assert.deepEqual(compare(decks), expected);
+    assert.deepEqual(compare(inputs), expected);
   });
 
   test("returns empty differences for identical decks", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [{ name: "Dispel", zone: "sideboard" }],
-      [{ name: "Dispel", zone: "sideboard" }],
+    const inputs: Array<CardCounts> = [
+      new Map([["Dispel", 1]]),
+      new Map([["Dispel", 1]]),
     ];
     const expected = {
       similarity: 100,
-      shared: [{ name: "Dispel", zone: "mainboard" }],
-      differences: [[], []],
+      shared: new Map([["Dispel", 1]]),
+      differences: [new Map(), new Map()],
     };
 
-    assert.deepEqual(compare(decks), expected);
+    assert.deepEqual(compare(inputs), expected);
   });
 
   test("uses the minimum shared quantity across all decks", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [
-        { name: "Dispel", zone: "mainboard" },
-        { name: "Dispel", zone: "sideboard" },
-      ],
-      [{ name: "Dispel", zone: "sideboard" }],
-      [
-        { name: "Dispel", zone: "mainboard" },
-        { name: "Dispel", zone: "mainboard" },
-      ],
+    const inputs: Array<CardCounts> = [
+      new Map([["Dispel", 2]]),
+      new Map([["Dispel", 1]]),
+      new Map([["Dispel", 2]]),
     ];
     const expected = {
       similarity: 100,
-      shared: [{ name: "Dispel", zone: "mainboard" }],
+      shared: new Map([["Dispel", 1]]),
       differences: [
-        [{ name: "Dispel", zone: "mainboard" }],
-        [],
-        [{ name: "Dispel", zone: "mainboard" }],
+        new Map([["Dispel", 1]]),
+        new Map(),
+        new Map([["Dispel", 1]]),
       ],
     };
 
-    assert.deepEqual(compare(decks), expected);
+    assert.deepEqual(compare(inputs), expected);
   });
 
   test("returns zero similarity and empty outputs for empty decks", () => {
-    const decks: Array<Array<DeckCard>> = [[], []];
+    const inputs: Array<CardCounts> = [new Map(), new Map()];
     const expected = {
       similarity: 0,
-      shared: [],
-      differences: [[], []],
+      shared: new Map(),
+      differences: [new Map(), new Map()],
     };
 
-    assert.deepEqual(compare(decks), expected);
+    assert.deepEqual(compare(inputs), expected);
   });
 
-  test("ignores input zones for shared cards and both differences", () => {
-    const decks: Array<Array<DeckCard>> = [
-      [
-        { name: "Counterspell", zone: "sideboard" },
-        { name: "Dispel", zone: "sideboard" },
-      ],
-      [
-        { name: "Counterspell", zone: "mainboard" },
-        { name: "Envelop", zone: "sideboard" },
-      ],
+  test("treats zero quantities as absent", () => {
+    const inputs: Array<CardCounts> = [
+      new Map([["Counterspell", 2]]),
+      new Map([["Counterspell", 0]]),
     ];
     const expected = {
-      similarity: 50,
-      shared: [{ name: "Counterspell", zone: "mainboard" }],
-      differences: [
-        [{ name: "Dispel", zone: "mainboard" }],
-        [{ name: "Envelop", zone: "mainboard" }],
-      ],
+      similarity: 0,
+      shared: new Map(),
+      differences: [new Map([["Counterspell", 2]]), new Map()],
     };
 
-    assert.deepEqual(compare(decks), expected);
+    assert.deepEqual(compare(inputs), expected);
   });
 });
