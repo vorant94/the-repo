@@ -3,6 +3,7 @@ import z from "zod";
 // order of cities determines render order in monthly report
 export const monthlyReportCityNames = [
   "Tel-Aviv",
+  "Rishon LeZion",
   "Jerusalem",
   "Haifa",
 ] as const;
@@ -32,6 +33,20 @@ export const monthlyReportCities = [
     longitude: 35.21633,
     name: "Jerusalem",
     side: "right",
+  },
+  {
+    aliases: [
+      "rishon lezion",
+      "rishon le-zion",
+      "rishon-lezion",
+      "rishon le zion",
+      "ראשון לציון",
+      "ראשון-לציון",
+    ],
+    latitude: 31.96416667,
+    longitude: 34.80444444,
+    name: "Rishon LeZion",
+    side: "left",
   },
   {
     aliases: [
