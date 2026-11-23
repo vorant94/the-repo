@@ -2,8 +2,6 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
-import Papa from "papaparse";
-import { z } from "zod";
 import { findArchetypesByNames } from "../../queries/find-archetypes-by-names.ts";
 import { findEventReport } from "../../queries/find-event-report.ts";
 import { findPlayersByNames } from "../../queries/find-players-by-names.ts";
@@ -11,71 +9,26 @@ import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
 import { archetypes } from "../../shared/schema/archetypes.ts";
 import { events } from "../../shared/schema/events.ts";
-import { eventReportPayloadSchema } from "../../shared/schema/jobs.ts";
+import {
+  type EventReportPayload,
+  eventReportPayloadSchema,
+} from "../../shared/schema/jobs.ts";
 import { players } from "../../shared/schema/players.ts";
 import { ranks } from "../../shared/schema/ranks.ts";
 import { venues } from "../../shared/schema/venues.ts";
 
 export const eventReportCreateRoute = new Hono<HonoEnv>();
 
-const eventReportCreateFormSchema = z.object({
-  eventName: z.string(),
-  venueName: z.string(),
-  eventDate: z.iso.datetime({ offset: true }),
-  isLeagueBranded: z.stringbool().optional(),
-  report: z.instanceof(File).meta({ type: "string", format: "binary" }),
-});
-
-const eventReportRowSchema = z.object({
-  rank: z.coerce.number().int().positive(),
-  player: z.string(),
-  archetype: z.string(),
-  wins: z.coerce.number().int().nonnegative(),
-  losses: z.coerce.number().int().nonnegative(),
-  draws: z.coerce.number().int().nonnegative().optional(),
-  isArchetypeHidden: z.stringbool({
-    truthy: ["true"],
-    falsy: ["false"],
-    case: "sensitive",
-  }),
-});
-type EventReportRow = z.infer<typeof eventReportRowSchema>;
-
-const expectedHeaders = [
-  "rank",
-  "player",
-  "archetype",
-  "wins",
-  "losses",
-  "draws",
-  "isArchetypeHidden",
-];
+const eventReportCreateSchema = eventReportPayloadSchema.omit({ id: true });
+type EventReportRank = EventReportPayload["ranks"][number];
 // Rank inserts bind 11 values per row; keep each statement below D1's limit.
 const maximumRowsPerStatement = 8;
 
 eventReportCreateRoute.post(
   "/",
   describeRoute({
-    description: "Create an event report from a CSV file",
+    description: "Create an event report from JSON",
     tags: ["event reports"],
-    requestBody: {
-      required: true,
-      content: {
-        "multipart/form-data": {
-          schema: {
-            type: "object",
-            required: ["eventName", "venueName", "eventDate", "report"],
-            properties: {
-              eventName: { type: "string" },
-              venueName: { type: "string" },
-              eventDate: { type: "string", format: "date-time" },
-              isLeagueBranded: { type: "string", enum: ["true", "false"] },
-              report: { type: "string", format: "binary" },
-            },
-          },
-        },
-      },
-    },
     responses: {
       201: {
         description: "Created event report",
@@ -83,20 +36,24 @@ eventReportCreateRoute.post(
           "application/json": { schema: resolver(eventReportPayloadSchema) },
         },
       },
-      400: { description: "Invalid multipart data, CSV report, or venue" },
+      400: { description: "Invalid event report or venue" },
       401: { description: "Unauthorized" },
     },
   }),
-  validator("form", eventReportCreateFormSchema),
+  validator("json", eventReportCreateSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { eventName, venueName, eventDate, isLeagueBranded, report } =
-      c.req.valid("form");
-    const rows = parseEventReport(await report.text());
+    const {
+      name,
+      venue,
+      hostedAt,
+      isLeagueBranded,
+      ranks: reportRanks,
+    } = c.req.valid("json");
     const rawVenue = await db
       .select()
       .from(venues)
-      .where(eq(venues.name, venueName))
+      .where(eq(venues.name, venue.name))
       .then((venues) => venues.at(0));
     if (!rawVenue) {
       throw new HTTPException(400, { message: "Venue was not found" });
@@ -106,9 +63,12 @@ eventReportCreateRoute.post(
     const [
       { inserts: playerInserts, idsByName: playerIdsByName },
       { inserts: archetypeInserts, idsByName: archetypeIdsByName },
-    ] = await Promise.all([preparePlayers(rows), prepareArchetypes(rows)]);
+    ] = await Promise.all([
+      preparePlayers(reportRanks),
+      prepareArchetypes(reportRanks),
+    ]);
     const rankInserts = prepareRanks(
-      rows,
+      reportRanks,
       eventId,
       playerIdsByName,
       archetypeIdsByName,
@@ -117,8 +77,8 @@ eventReportCreateRoute.post(
     await db.batch([
       db.insert(events).values({
         id: eventId,
-        name: eventName,
-        hostedAt: eventDate,
+        name,
+        hostedAt,
         hostedBy: rawVenue.id,
         isLeagueBranded,
       }),
@@ -136,31 +96,9 @@ eventReportCreateRoute.post(
   },
 );
 
-function parseEventReport(report: string): Array<EventReportRow> {
-  const parsedReport = Papa.parse<Record<string, string>>(report, {
-    header: true,
-    skipEmptyLines: true,
-  });
-  const { data: rawRows, errors, meta } = parsedReport;
-  if (!meta.fields || meta.fields.join(",") !== expectedHeaders.join(",")) {
-    throw new HTTPException(400, {
-      message: `Expected CSV columns: ${expectedHeaders.join(", ")}`,
-    });
-  }
-
-  const firstError = errors.at(0);
-  if (firstError) {
-    throw new HTTPException(400, {
-      message: `Invalid CSV row ${(firstError.row ?? 0) + 2}`,
-    });
-  }
-
-  return rawRows.map((rawRow) => eventReportRowSchema.parse(rawRow));
-}
-
-async function preparePlayers(rows: Array<EventReportRow>) {
+async function preparePlayers(reportRanks: Array<EventReportRank>) {
   const { db } = getAppContext();
-  const names = new Set(rows.map((row) => row.player));
+  const names = new Set(reportRanks.map((rank) => rank.player.name));
   const idsByName = await findPlayersByNames([...names]);
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
@@ -180,9 +118,9 @@ async function preparePlayers(rows: Array<EventReportRow>) {
   };
 }
 
-async function prepareArchetypes(rows: Array<EventReportRow>) {
+async function prepareArchetypes(reportRanks: Array<EventReportRank>) {
   const { db } = getAppContext();
-  const names = new Set(rows.map((row) => row.archetype));
+  const names = new Set(reportRanks.map((rank) => rank.archetype.name));
   const idsByName = await findArchetypesByNames([...names]);
   const values = [...names].flatMap((name) => {
     if (idsByName.has(name)) {
@@ -203,15 +141,15 @@ async function prepareArchetypes(rows: Array<EventReportRow>) {
 }
 
 function prepareRanks(
-  rows: Array<EventReportRow>,
+  reportRanks: Array<EventReportRank>,
   eventId: string,
   playerIdsByName: Map<string, string>,
   archetypeIdsByName: Map<string, string>,
 ) {
   const { db } = getAppContext();
-  const values = rows.map((row) => {
-    const playerId = playerIdsByName.get(row.player);
-    const archetypeId = archetypeIdsByName.get(row.archetype);
+  const values = reportRanks.map((rank) => {
+    const playerId = playerIdsByName.get(rank.player.name);
+    const archetypeId = archetypeIdsByName.get(rank.archetype.name);
     if (!playerId || !archetypeId) {
       throw new Error("Could not resolve report player or archetype");
     }
@@ -220,11 +158,11 @@ function prepareRanks(
       eventId,
       playerId,
       archetypeId,
-      position: row.rank,
-      wins: row.wins,
-      losses: row.losses,
-      draws: row.draws,
-      isArchetypeHidden: row.isArchetypeHidden,
+      position: rank.position,
+      wins: rank.wins,
+      losses: rank.losses,
+      draws: rank.draws,
+      isArchetypeHidden: rank.isArchetypeHidden,
     };
   });
 
