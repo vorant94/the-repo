@@ -1,4 +1,4 @@
 interface:
   display_name: "MTG Event Report"
-  short_description: "Prepare Meta Forge report CSVs from standings screenshots"
-  default_prompt: "Parse this MTG standings screenshot into a Meta Forge event-report CSV."
+  short_description: "Import standings and generate Meta Forge R2 report links"
+  default_prompt: "Use $mtg-event-report to preview these standings, then after approval import the event, generate the report in R2, and return download links."

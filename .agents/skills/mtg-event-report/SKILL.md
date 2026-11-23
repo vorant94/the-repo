@@ -1,11 +1,11 @@
 ---
 name: mtg-event-report
-description: Prepare a Meta Forge event-report CSV from standings screenshots or text, matching players and archetypes against current Meta Forge records. Use when preparing an event report for Meta Forge import.
+description: Prepare and import Meta Forge event reports from standings files, screenshots, or text, matching current players and archetypes, then generate report images in R2 and return download links after preview approval.
 ---
 
 # MTG Event Report
 
-Prepare a CSV for Meta Forge's event-report import. Do not modify Studio data, generate Studio renders, or change Meta Forge data or code.
+Prepare standings, obtain approval of the table, then save the CSV, import the event, generate its report images in Meta Forge R2, and return download links. Approval authorizes this entire flow unless the user explicitly limits the task (for example, CSV only). Do not modify Studio data, generate Studio renders, edit application code, or mutate Meta Forge records outside this import and generation flow.
 
 ## Data source and extraction
 
@@ -45,14 +45,24 @@ curl --fail-with-body --silent --show-error \
 ## Preview and approval
 
 - Before producing the final CSV, show the parsed standings in a Markdown table with exactly these columns: `rank`, `player`, `archetype`, `wins`, `losses`, `draws`, and `is archetype hidden`.
-- State the proposed event name, venue name, and event date-time alongside the preview.
-- Wait for explicit approval or corrections. Do not create database records or edit application files.
+- State the proposed event name, venue name, and event date-time alongside the preview. Explain that approval will save the CSV, import the event (creating missing players and archetypes), and generate the R2 report download links. Meta Forge rejects an unknown venue.
+- Wait for explicit approval or corrections before importing. Once approved, complete the remaining flow in the same turn without requesting another confirmation or waiting for "continue". Honor any explicit limits such as CSV only or no import.
 
-## CSV handoff
+## Save the approved CSV
 
 - After approval, save the CSV in the repository root as `event-report-YYYY-MM-DD-<venue-slug>.csv`, using the event's local date and a lowercase kebab-case venue slug. Do this automatically; do not wait for a separate request to create the file.
-- Return the saved file as a clickable link and include its contents in a fenced `csv` block with this exact header and order: `rank,player,archetype,wins,losses,draws,isArchetypeHidden`.
+- Use this exact header and order: `rank,player,archetype,wins,losses,draws,isArchetypeHidden`.
 - Include all seven columns for every row, including `draws` with `0` where appropriate and `isArchetypeHidden` as lowercase `true` or `false`. Quote CSV values when required by CSV syntax.
 - Do not include IDs, venue details, event details, or extra columns in the CSV. The import form receives `eventName`, `venueName`, and `eventDate` separately.
-- Provide a ready-to-run `curl` snippet that imports the saved file with `POST https://meta-forge.vorant94.dev/api/event-reports` (no trailing slash). Use multipart fields `eventName`, `venueName`, `eventDate`, and `report`, and authenticate with `Authorization: Bearer ${META_FORGE_API_TOKEN}`. Do not execute the import unless the user explicitly asks.
-- State that Meta Forge creates missing players and archetypes during import, but rejects an unknown venue.
+
+## Import, generate, and deliver
+
+Use `curl` for these requests, save responses in temporary JSON files, and inspect them with `jq`. Authenticate API calls with `Authorization: Bearer ${META_FORGE_API_TOKEN}` without printing or saving the token.
+
+1. Import the saved CSV with `POST https://meta-forge.vorant94.dev/api/event-reports` (no trailing slash). Use multipart fields `eventName`, `venueName`, `eventDate`, and `report=@<saved-csv-path>`. Retain the returned event `id`.
+2. Queue report generation with `POST https://meta-forge.vorant94.dev/api/event-reports/<event-id>/generate`. Retain the returned job `id`.
+3. Poll `GET https://meta-forge.vorant94.dev/api/jobs/<job-id>` until `status` is `completed` or `failed`. While `queued` or `generating`, wait about 5–10 seconds between checks and keep the user informed during longer waits. Allow up to five minutes; if still pending, report the job ID and pending status without creating another job or claiming completion.
+4. On completion, inspect `result.pages` for the generated images. Return a clickable download link for each page in order: `https://meta-forge.vorant94.dev/ln/<job-id>/<page-number>` (page numbers start at 1). A legacy result with a single `objectKey` has one page. These public links redirect to signed R2 downloads; prefer them over copying an expiring signed URL or constructing a bucket URL.
+5. Lead the final response with the generated report download link(s), labeling pages by their `kind` and page number when there are several. Include the local CSV link as a secondary artifact. Do not substitute a CSV link for the generated report or stop after import. Include raw CSV contents or a manual import command only when requested or when the user explicitly requested a CSV-only handoff.
+
+Do not blindly retry POST requests after a timeout or uncertain response: inspect whether the event or generation job was created first, using saved responses and current event/job records. Resume from existing event and job IDs when continuing an interrupted flow. If import or generation fails, report the actual error and stop; do not reimport the event, enqueue repeated jobs, or claim an R2 report exists before generation completes.
