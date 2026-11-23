@@ -6,7 +6,6 @@ import { z } from "zod";
 import { findArchetypesByNames } from "../queries/find-archetypes-by-names.ts";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
-import { idSchema } from "../shared/id-schema.ts";
 import { paginationQuerySchema } from "../shared/pagination.ts";
 import { archetypes } from "../shared/schema/archetypes.ts";
 import {
@@ -18,9 +17,10 @@ import {
 
 export const ranksRoute = new Hono<HonoEnv>();
 
+const eventParamSchema = z.object({ venueId: z.uuid(), eventId: z.uuid() });
+const rankParamSchema = eventParamSchema.extend({ id: z.uuid() });
 const ranksQuerySchema = paginationQuerySchema.extend({
   archetypeId: z.uuid().optional(),
-  eventId: z.uuid().optional(),
   playerId: z.uuid().optional(),
 });
 
@@ -33,7 +33,7 @@ ranksRoute.get(
   "/",
   describeRoute({
     description:
-      "List ranks, optionally filtered by archetype, event, and player IDs",
+      "List event ranks, optionally filtered by archetype and player IDs",
     tags: ["ranks"],
     responses: {
       400: { description: "Invalid pagination or filters" },
@@ -45,19 +45,21 @@ ranksRoute.get(
       },
     },
   }),
+  validator("param", eventParamSchema),
   validator("query", ranksQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const { eventId } = c.req.valid("param");
     const query = c.req.valid("query");
-    const { archetypeId, eventId, playerId, page, pageSize } = query;
+    const { archetypeId, playerId, page, pageSize } = query;
 
     const rawRanks = await db
       .select()
       .from(ranks)
       .where(
         and(
+          eq(ranks.eventId, eventId),
           archetypeId ? eq(ranks.archetypeId, archetypeId) : undefined,
-          eventId ? eq(ranks.eventId, eventId) : undefined,
           playerId ? eq(ranks.playerId, playerId) : undefined,
         ),
       )
@@ -83,12 +85,15 @@ ranksRoute.get(
       404: { description: "Rank not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", rankParamSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { eventId, id } = c.req.valid("param");
 
-    const rawRanks = await db.select().from(ranks).where(eq(ranks.id, id));
+    const rawRanks = await db
+      .select()
+      .from(ranks)
+      .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)));
     const rawRank = rawRanks.at(0);
     if (!rawRank) {
       throw new HTTPException(404, { message: "Rank was not found" });
@@ -112,12 +117,17 @@ ranksRoute.post(
       400: { description: "Invalid request body" },
     },
   }),
+  validator("param", eventParamSchema),
   validator("json", insertRankSchema),
   async (c) => {
     const { db } = getAppContext();
+    const { eventId } = c.req.valid("param");
     const body = c.req.valid("json");
 
-    const rawRanks = await db.insert(ranks).values(body).returning();
+    const rawRanks = await db
+      .insert(ranks)
+      .values({ ...body, eventId })
+      .returning();
     const rawRank = rawRanks.at(0);
     if (!rawRank) {
       throw new Error("Rank insertion returned no record");
@@ -142,17 +152,17 @@ ranksRoute.patch(
       404: { description: "Rank not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", rankParamSchema),
   validator("json", updateRankSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { eventId, id } = c.req.valid("param");
     const body = c.req.valid("json");
 
     const rawRanks = await db
       .update(ranks)
       .set(body)
-      .where(eq(ranks.id, id))
+      .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)))
       .returning();
     const rawRank = rawRanks.at(0);
     if (!rawRank) {
@@ -178,17 +188,17 @@ ranksRoute.patch(
       404: { description: "Rank not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", rankParamSchema),
   validator("json", fixRankSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { eventId, id } = c.req.valid("param");
     const { archetypeName, isArchetypeHidden } = c.req.valid("json");
 
     const existingRanks = await db
       .select({ id: ranks.id })
       .from(ranks)
-      .where(eq(ranks.id, id));
+      .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)));
     if (!existingRanks.at(0)) {
       throw new HTTPException(404, { message: "Rank was not found" });
     }
@@ -215,7 +225,7 @@ ranksRoute.patch(
     const rawRanks = await db
       .update(ranks)
       .set({ archetypeId, isArchetypeHidden })
-      .where(eq(ranks.id, id))
+      .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)))
       .returning();
     const rawRank = rawRanks.at(0);
     if (!rawRank) {
@@ -237,14 +247,14 @@ ranksRoute.delete(
       404: { description: "Rank not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", rankParamSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { eventId, id } = c.req.valid("param");
 
     const rawRanks = await db
       .delete(ranks)
-      .where(eq(ranks.id, id))
+      .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)))
       .returning({ id: ranks.id });
     const rawRank = rawRanks.at(0);
     if (!rawRank) {

@@ -71,7 +71,7 @@ export const rankDtoSchema = rankSchema
   .meta({ ref: "Rank" });
 
 export const insertRankSchema = createInsertSchema(ranks)
-  .omit({ id: true, createdAt: true, updatedAt: true })
+  .omit({ id: true, createdAt: true, updatedAt: true, eventId: true })
   .meta({ ref: "InsertRank" });
 
 export const updateRankSchema = insertRankSchema.partial().meta({

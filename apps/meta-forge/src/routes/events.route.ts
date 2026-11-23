@@ -1,11 +1,10 @@
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
 import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
-import { idSchema } from "../shared/id-schema.ts";
 import { paginationQuerySchema } from "../shared/pagination.ts";
 import {
   eventDtoSchema,
@@ -13,8 +12,30 @@ import {
   insertEventSchema,
   updateEventSchema,
 } from "../shared/schema/events.ts";
+import { ranksRoute } from "./ranks.route.ts";
 
 export const eventsRoute = new Hono<HonoEnv>();
+
+const venueParamSchema = z.object({ venueId: z.uuid() });
+const eventParamSchema = venueParamSchema.extend({ id: z.uuid() });
+const rankParentParamSchema = venueParamSchema.extend({ eventId: z.uuid() });
+
+eventsRoute.use(
+  "/:eventId/*",
+  validator("param", rankParentParamSchema),
+  async (c, next) => {
+    const { venueId, eventId } = rankParentParamSchema.parse(c.req.param());
+    const { db } = getAppContext();
+    const [event] = await db
+      .select({ id: events.id })
+      .from(events)
+      .where(and(eq(events.id, eventId), eq(events.hostedBy, venueId)));
+    if (!event) {
+      throw new HTTPException(404, { message: "Event was not found" });
+    }
+    await next();
+  },
+);
 
 eventsRoute.get(
   "/",
@@ -31,15 +52,18 @@ eventsRoute.get(
       },
     },
   }),
+  validator("param", venueParamSchema),
   validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
+    const { venueId } = c.req.valid("param");
     const query = c.req.valid("query");
     const { page, pageSize } = query;
 
     const rawEvents = await db
       .select()
       .from(events)
+      .where(eq(events.hostedBy, venueId))
       .orderBy(desc(events.hostedAt), asc(events.id))
       .limit(pageSize)
       .offset((page - 1) * pageSize);
@@ -62,12 +86,15 @@ eventsRoute.get(
       404: { description: "Event not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", eventParamSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { venueId, id } = c.req.valid("param");
 
-    const rawEvents = await db.select().from(events).where(eq(events.id, id));
+    const rawEvents = await db
+      .select()
+      .from(events)
+      .where(and(eq(events.id, id), eq(events.hostedBy, venueId)));
     const rawEvent = rawEvents.at(0);
     if (!rawEvent) {
       throw new HTTPException(404, { message: "Event was not found" });
@@ -91,12 +118,17 @@ eventsRoute.post(
       400: { description: "Invalid request body" },
     },
   }),
+  validator("param", venueParamSchema),
   validator("json", insertEventSchema),
   async (c) => {
     const { db } = getAppContext();
+    const { venueId } = c.req.valid("param");
     const body = c.req.valid("json");
 
-    const rawEvents = await db.insert(events).values(body).returning();
+    const rawEvents = await db
+      .insert(events)
+      .values({ ...body, hostedBy: venueId })
+      .returning();
     const rawEvent = rawEvents.at(0);
     if (!rawEvent) {
       throw new Error("Event insertion returned no record");
@@ -121,17 +153,17 @@ eventsRoute.patch(
       404: { description: "Event not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", eventParamSchema),
   validator("json", updateEventSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { venueId, id } = c.req.valid("param");
     const body = c.req.valid("json");
 
     const rawEvents = await db
       .update(events)
       .set(body)
-      .where(eq(events.id, id))
+      .where(and(eq(events.id, id), eq(events.hostedBy, venueId)))
       .returning();
     const rawEvent = rawEvents.at(0);
     if (!rawEvent) {
@@ -153,14 +185,14 @@ eventsRoute.delete(
       404: { description: "Event not found" },
     },
   }),
-  validator("param", idSchema),
+  validator("param", eventParamSchema),
   async (c) => {
     const { db } = getAppContext();
-    const { id } = c.req.valid("param");
+    const { venueId, id } = c.req.valid("param");
 
     const rawEvents = await db
       .delete(events)
-      .where(eq(events.id, id))
+      .where(and(eq(events.id, id), eq(events.hostedBy, venueId)))
       .returning({ id: events.id });
     const rawEvent = rawEvents.at(0);
     if (!rawEvent) {
@@ -170,3 +202,5 @@ eventsRoute.delete(
     return c.body(null, 204);
   },
 );
+
+eventsRoute.route("/:eventId/ranks", ranksRoute);

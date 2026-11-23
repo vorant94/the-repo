@@ -36,7 +36,7 @@ export const eventDtoSchema = eventSchema
 export const insertEventSchema = createInsertSchema(events, {
   hostedAt: z.iso.datetime({ offset: true }),
 })
-  .omit({ id: true, createdAt: true, updatedAt: true })
+  .omit({ id: true, createdAt: true, updatedAt: true, hostedBy: true })
   .meta({ ref: "InsertEvent" });
 
 export const updateEventSchema = insertEventSchema.partial().meta({

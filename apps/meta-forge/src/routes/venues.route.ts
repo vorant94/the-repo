@@ -13,8 +13,28 @@ import {
   venueDtoSchema,
   venues,
 } from "../shared/schema/venues.ts";
+import { eventsRoute } from "./events.route.ts";
 
 export const venuesRoute = new Hono<HonoEnv>();
+
+const venueParamSchema = z.object({ venueId: z.uuid() });
+
+venuesRoute.use(
+  "/:venueId/*",
+  validator("param", venueParamSchema),
+  async (c, next) => {
+    const { venueId } = venueParamSchema.parse(c.req.param());
+    const { db } = getAppContext();
+    const [venue] = await db
+      .select({ id: venues.id })
+      .from(venues)
+      .where(eq(venues.id, venueId));
+    if (!venue) {
+      throw new HTTPException(404, { message: "Venue was not found" });
+    }
+    await next();
+  },
+);
 
 venuesRoute.get(
   "/",
@@ -170,3 +190,5 @@ venuesRoute.delete(
     return c.body(null, 204);
   },
 );
+
+venuesRoute.route("/:venueId/events", eventsRoute);
