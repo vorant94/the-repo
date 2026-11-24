@@ -7,6 +7,7 @@ import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import { paginationQuerySchema } from "../shared/pagination.ts";
+import { getUser, requireAdmin } from "../shared/permissions.ts";
 import {
   archetypeDtoSchema,
   archetypes,
@@ -17,13 +18,19 @@ import { ranks } from "../shared/schema/ranks.ts";
 
 export const archetypesRoute = new Hono<HonoEnv>();
 
+archetypesRoute.use("/*", async (_c, next) => {
+  requireAdmin();
+  await next();
+});
+
 archetypesRoute.get(
   "/",
   describeRoute({
     description:
-      "List archetypes, optionally filtered by a case-insensitive partial name or alias",
+      "List archetypes, optionally filtered by a case-insensitive partial name or alias. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of archetypes",
@@ -46,10 +53,8 @@ archetypesRoute.get(
   ),
   async (c) => {
     const { db } = getAppContext();
-    const query = c.req.valid("query");
-    const { name, page, pageSize } = query;
+    const { name, page, pageSize } = c.req.valid("query");
     const namePattern = `%${name}%`;
-
     const rawArchetypes = await db
       .select()
       .from(archetypes)
@@ -73,9 +78,10 @@ archetypesRoute.get(
 archetypesRoute.get(
   "/:id",
   describeRoute({
-    description: "Get an archetype by ID",
+    description: "Get an archetype by ID. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Archetype",
         content: {
@@ -107,9 +113,10 @@ archetypesRoute.get(
 archetypesRoute.post(
   "/",
   describeRoute({
-    description: "Create an archetype",
+    description: "Create an archetype. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       201: {
         description: "Created archetype",
         content: {
@@ -122,9 +129,13 @@ archetypesRoute.post(
   validator("json", insertArchetypeSchema),
   async (c) => {
     const { db } = getAppContext();
+    const userId = getUser().id;
     const body = c.req.valid("json");
 
-    const rawArchetypes = await db.insert(archetypes).values(body).returning();
+    const rawArchetypes = await db
+      .insert(archetypes)
+      .values({ ...body, createdBy: userId, updatedBy: userId })
+      .returning();
     const rawArchetype = rawArchetypes.at(0);
     if (!rawArchetype) {
       throw new Error("Archetype insertion returned no record");
@@ -138,9 +149,11 @@ archetypesRoute.post(
 archetypesRoute.post(
   "/:id/reconcile",
   describeRoute({
-    description: "Merge another archetype into this archetype",
+    description:
+      "Merge another archetype into this archetype. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Reconciled archetype",
         content: {
@@ -185,11 +198,11 @@ archetypesRoute.post(
     const aliasValues = [...aliases];
     const updateRankReferences = db
       .update(ranks)
-      .set({ archetypeId: id })
+      .set({ archetypeId: id, updatedBy: getUser().id })
       .where(eq(ranks.archetypeId, duplicateId));
     const updateArchetype = db
       .update(archetypes)
-      .set({ aliases: aliasValues })
+      .set({ aliases: aliasValues, updatedBy: getUser().id })
       .where(eq(archetypes.id, id))
       .returning();
     const deleteDuplicate = db
@@ -213,9 +226,10 @@ archetypesRoute.post(
 archetypesRoute.patch(
   "/:id",
   describeRoute({
-    description: "Update an archetype",
+    description: "Update an archetype. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Updated archetype",
         content: {
@@ -235,7 +249,7 @@ archetypesRoute.patch(
 
     const rawArchetypes = await db
       .update(archetypes)
-      .set(body)
+      .set({ ...body, updatedBy: getUser().id })
       .where(eq(archetypes.id, id))
       .returning();
     const rawArchetype = rawArchetypes.at(0);
@@ -251,9 +265,10 @@ archetypesRoute.patch(
 archetypesRoute.delete(
   "/:id",
   describeRoute({
-    description: "Delete an archetype",
+    description: "Delete an archetype. Requires system admin access.",
     tags: ["archetypes"],
     responses: {
+      403: { description: "Insufficient permission" },
       204: { description: "Deleted archetype" },
       404: { description: "Archetype not found" },
     },

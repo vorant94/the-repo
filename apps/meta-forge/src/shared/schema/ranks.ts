@@ -10,6 +10,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { archetypes } from "./archetypes.ts";
 import { events } from "./events.ts";
 import { players } from "./players.ts";
+import { users } from "./users.ts";
 
 export const ranks = sqliteTable(
   "ranks",
@@ -24,6 +25,8 @@ export const ranks = sqliteTable(
       .notNull()
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
+    createdBy: text().references(() => users.id, { onDelete: "restrict" }),
+    updatedBy: text().references(() => users.id, { onDelete: "restrict" }),
     eventId: text()
       .notNull()
       .references(() => events.id, {
@@ -71,7 +74,14 @@ export const rankDtoSchema = rankSchema
   .meta({ ref: "Rank" });
 
 export const insertRankSchema = createInsertSchema(ranks)
-  .omit({ id: true, createdAt: true, updatedAt: true, eventId: true })
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    createdBy: true,
+    updatedBy: true,
+    eventId: true,
+  })
   .meta({ ref: "InsertRank" });
 
 export const updateRankSchema = insertRankSchema.partial().meta({

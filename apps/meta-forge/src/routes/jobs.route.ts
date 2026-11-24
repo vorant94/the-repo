@@ -6,16 +6,23 @@ import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import { paginationQuerySchema } from "../shared/pagination.ts";
+import { requireAdmin } from "../shared/permissions.ts";
 import { jobSchema, jobs } from "../shared/schema/jobs.ts";
 
 export const jobsRoute = new Hono<HonoEnv>();
 
+jobsRoute.use("/*", async (_c, next) => {
+  requireAdmin();
+  await next();
+});
+
 jobsRoute.get(
   "/",
   describeRoute({
-    description: "List jobs",
+    description: "List jobs. Requires system admin access.",
     tags: ["jobs"],
     responses: {
+      403: { description: "Insufficient permission" },
       400: { description: "Invalid pagination or filters" },
       200: {
         description: "Jobs",
@@ -29,25 +36,24 @@ jobsRoute.get(
   validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const query = c.req.valid("query");
-    const { page, pageSize } = query;
-    const rawJobs = await db
+    const { page, pageSize } = c.req.valid("query");
+    const allJobs = await db
       .select()
       .from(jobs)
       .orderBy(desc(jobs.createdAt), desc(jobs.id))
       .limit(pageSize)
       .offset((page - 1) * pageSize);
-
-    return c.json(jobSchema.array().parse(rawJobs));
+    return c.json(jobSchema.array().parse(allJobs));
   },
 );
 
 jobsRoute.get(
   "/:id",
   describeRoute({
-    description: "Get a job",
+    description: "Get a job. Requires system admin access.",
     tags: ["jobs"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Job",
         content: { "application/json": { schema: resolver(jobSchema) } },
@@ -59,15 +65,10 @@ jobsRoute.get(
   async (c) => {
     const { db } = getAppContext();
     const { id } = idSchema.parse(c.req.param());
-    const job = await db
-      .select()
-      .from(jobs)
-      .where(eq(jobs.id, id))
-      .then((rows) => rows.at(0));
+    const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
     if (!job) {
       throw new HTTPException(404, { message: "Job was not found" });
     }
-
     return c.json(jobSchema.parse(job));
   },
 );

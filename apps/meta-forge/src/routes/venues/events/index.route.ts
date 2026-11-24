@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAppContext } from "../../../shared/app-context.ts";
 import type { HonoEnv } from "../../../shared/hono-env.ts";
 import { paginationQuerySchema } from "../../../shared/pagination.ts";
+import { getUser } from "../../../shared/permissions.ts";
 import {
   eventDtoSchema,
   events,
@@ -41,9 +42,11 @@ eventsRoute.use(
 eventsRoute.get(
   "/",
   describeRoute({
-    description: "List events",
+    description:
+      "List events. Requires ownership of this venue or system admin access.",
     tags: ["events"],
     responses: {
+      403: { description: "Insufficient permission" },
       400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of events",
@@ -77,9 +80,11 @@ eventsRoute.get(
 eventsRoute.get(
   "/:id",
   describeRoute({
-    description: "Get an event by ID",
+    description:
+      "Get an event by ID. Requires ownership of this venue or system admin access.",
     tags: ["events"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Event",
         content: { "application/json": { schema: resolver(eventDtoSchema) } },
@@ -109,9 +114,11 @@ eventsRoute.get(
 eventsRoute.post(
   "/",
   describeRoute({
-    description: "Create an event",
+    description:
+      "Create an event. Requires ownership of this venue or system admin access.",
     tags: ["events"],
     responses: {
+      403: { description: "Insufficient permission" },
       201: {
         description: "Created event",
         content: { "application/json": { schema: resolver(eventDtoSchema) } },
@@ -125,10 +132,16 @@ eventsRoute.post(
     const { db } = getAppContext();
     const { venueId } = c.req.valid("param");
     const body = c.req.valid("json");
+    const userId = getUser().id;
 
     const rawEvents = await db
       .insert(events)
-      .values({ ...body, hostedBy: venueId })
+      .values({
+        ...body,
+        hostedBy: venueId,
+        createdBy: userId,
+        updatedBy: userId,
+      })
       .returning();
     const rawEvent = rawEvents.at(0);
     if (!rawEvent) {
@@ -143,9 +156,11 @@ eventsRoute.post(
 eventsRoute.patch(
   "/:id",
   describeRoute({
-    description: "Update an event",
+    description:
+      "Update an event. Requires ownership of this venue or system admin access.",
     tags: ["events"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Updated event",
         content: { "application/json": { schema: resolver(eventDtoSchema) } },
@@ -160,10 +175,11 @@ eventsRoute.patch(
     const { db } = getAppContext();
     const { venueId, id } = c.req.valid("param");
     const body = c.req.valid("json");
+    const userId = getUser().id;
 
     const rawEvents = await db
       .update(events)
-      .set(body)
+      .set({ ...body, updatedBy: userId })
       .where(and(eq(events.id, id), eq(events.hostedBy, venueId)))
       .returning();
     const rawEvent = rawEvents.at(0);
@@ -179,9 +195,11 @@ eventsRoute.patch(
 eventsRoute.delete(
   "/:id",
   describeRoute({
-    description: "Delete an event",
+    description:
+      "Delete an event. Requires ownership of this venue or system admin access.",
     tags: ["events"],
     responses: {
+      403: { description: "Insufficient permission" },
       204: { description: "Deleted event" },
       404: { description: "Event not found" },
     },

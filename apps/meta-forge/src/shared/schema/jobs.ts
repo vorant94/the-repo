@@ -2,6 +2,7 @@ import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { monthlyReportCityNameSchema } from "../monthly-report-city.ts";
+import { users } from "./users.ts";
 import { venueAddressSchema } from "./venues.ts";
 
 export const jobTypes = {
@@ -38,6 +39,8 @@ export const jobs = sqliteTable("jobs", {
   payload: text({ mode: "json" }).$type<unknown>().notNull(),
   result: text({ mode: "json" }).$type<unknown>(),
   error: text(),
+  requestedBy: text().references(() => users.id, { onDelete: "restrict" }),
+  eventId: text(),
 });
 
 export const jobSchema = createSelectSchema(jobs).meta({ ref: "Job" });

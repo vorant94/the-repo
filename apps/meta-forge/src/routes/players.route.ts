@@ -7,6 +7,7 @@ import { getAppContext } from "../shared/app-context.ts";
 import type { HonoEnv } from "../shared/hono-env.ts";
 import { idSchema } from "../shared/id-schema.ts";
 import { paginationQuerySchema } from "../shared/pagination.ts";
+import { getUser, requireAdmin } from "../shared/permissions.ts";
 import {
   insertPlayerSchema,
   playerDtoSchema,
@@ -17,12 +18,18 @@ import { ranks } from "../shared/schema/ranks.ts";
 
 export const playersRoute = new Hono<HonoEnv>();
 
+playersRoute.use("/*", async (_c, next) => {
+  requireAdmin();
+  await next();
+});
+
 playersRoute.get(
   "/",
   describeRoute({
-    description: "List players",
+    description: "List players. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of players",
@@ -35,9 +42,7 @@ playersRoute.get(
   validator("query", paginationQuerySchema),
   async (c) => {
     const { db } = getAppContext();
-    const query = c.req.valid("query");
-    const { page, pageSize } = query;
-
+    const { page, pageSize } = c.req.valid("query");
     const rawPlayers = await db
       .select()
       .from(players)
@@ -53,12 +58,15 @@ playersRoute.get(
 playersRoute.get(
   "/:id",
   describeRoute({
-    description: "Get a player by ID",
+    description: "Get a player by ID. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Player",
-        content: { "application/json": { schema: resolver(playerDtoSchema) } },
+        content: {
+          "application/json": { schema: resolver(playerDtoSchema) },
+        },
       },
       404: { description: "Player not found" },
     },
@@ -85,12 +93,15 @@ playersRoute.get(
 playersRoute.post(
   "/",
   describeRoute({
-    description: "Create a player",
+    description: "Create a player. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       201: {
         description: "Created player",
-        content: { "application/json": { schema: resolver(playerDtoSchema) } },
+        content: {
+          "application/json": { schema: resolver(playerDtoSchema) },
+        },
       },
       400: { description: "Invalid request body" },
     },
@@ -98,9 +109,13 @@ playersRoute.post(
   validator("json", insertPlayerSchema),
   async (c) => {
     const { db } = getAppContext();
+    const userId = getUser().id;
     const body = c.req.valid("json");
 
-    const rawPlayers = await db.insert(players).values(body).returning();
+    const rawPlayers = await db
+      .insert(players)
+      .values({ ...body, createdBy: userId, updatedBy: userId })
+      .returning();
     const rawPlayer = rawPlayers.at(0);
     if (!rawPlayer) {
       throw new Error("Player insertion returned no record");
@@ -114,12 +129,16 @@ playersRoute.post(
 playersRoute.post(
   "/:id/reconcile",
   describeRoute({
-    description: "Merge another player into this player",
+    description:
+      "Merge another player into this player. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Reconciled player",
-        content: { "application/json": { schema: resolver(playerDtoSchema) } },
+        content: {
+          "application/json": { schema: resolver(playerDtoSchema) },
+        },
       },
       400: { description: "Invalid request body or matching player IDs" },
       404: { description: "Player not found" },
@@ -157,12 +176,13 @@ playersRoute.post(
     const aliasValues = [...aliases];
     const updateRankReferences = db
       .update(ranks)
-      .set({ playerId: id })
+      .set({ playerId: id, updatedBy: getUser().id })
       .where(eq(ranks.playerId, duplicateId));
     const updatePlayer = db
       .update(players)
       .set({
         aliases: aliasValues,
+        updatedBy: getUser().id,
       })
       .where(eq(players.id, id))
       .returning();
@@ -187,12 +207,15 @@ playersRoute.post(
 playersRoute.patch(
   "/:id",
   describeRoute({
-    description: "Update a player",
+    description: "Update a player. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Updated player",
-        content: { "application/json": { schema: resolver(playerDtoSchema) } },
+        content: {
+          "application/json": { schema: resolver(playerDtoSchema) },
+        },
       },
       400: { description: "Invalid request body" },
       404: { description: "Player not found" },
@@ -207,7 +230,7 @@ playersRoute.patch(
 
     const rawPlayers = await db
       .update(players)
-      .set(body)
+      .set({ ...body, updatedBy: getUser().id })
       .where(eq(players.id, id))
       .returning();
     const rawPlayer = rawPlayers.at(0);
@@ -223,9 +246,10 @@ playersRoute.patch(
 playersRoute.delete(
   "/:id",
   describeRoute({
-    description: "Delete a player",
+    description: "Delete a player. Requires system admin access.",
     tags: ["players"],
     responses: {
+      403: { description: "Insufficient permission" },
       204: { description: "Deleted player" },
       404: { description: "Player not found" },
     },

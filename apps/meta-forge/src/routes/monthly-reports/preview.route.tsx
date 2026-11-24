@@ -15,9 +15,10 @@ const monthlyReportPreviewQuerySchema = z.object({
 monthlyReportPreviewRoute.get(
   "/preview",
   describeRoute({
-    description: "Preview a monthly report",
+    description: "Preview a monthly report. Requires system admin access.",
     tags: ["monthly reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Monthly report preview",
         content: { "text/html": { schema: { type: "string" } } },

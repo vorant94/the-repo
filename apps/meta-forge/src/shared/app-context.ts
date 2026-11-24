@@ -6,6 +6,7 @@ import type {
   EventReportPayload,
   MonthlyReportPayload,
 } from "./schema/jobs.ts";
+import type { users } from "./schema/users.ts";
 
 export interface AppContext {
   awsClient: AwsClient;
@@ -13,6 +14,7 @@ export interface AppContext {
   bucket: CloudflareBindings["BUCKET"];
   db: DrizzleD1Database<Record<string, unknown>>;
   env: Env;
+  user?: typeof users.$inferSelect;
   eventReport?: EventReportPayload;
   monthlyReport?: MonthlyReportPayload;
   queue: CloudflareBindings["QUEUE"];

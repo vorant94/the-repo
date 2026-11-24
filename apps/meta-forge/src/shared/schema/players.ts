@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./users.ts";
 
 export const players = sqliteTable(
   "players",
@@ -16,6 +17,8 @@ export const players = sqliteTable(
       .notNull()
       .$defaultFn(() => new Date().toISOString())
       .$onUpdateFn(() => new Date().toISOString()),
+    createdBy: text().references(() => users.id, { onDelete: "restrict" }),
+    updatedBy: text().references(() => users.id, { onDelete: "restrict" }),
     name: text().notNull(),
     aliases: text({ mode: "json" })
       .$type<Array<string>>()
@@ -38,7 +41,13 @@ export const playerDtoSchema = playerSchema
 export const insertPlayerSchema = createInsertSchema(players, {
   aliases: z.array(z.string()),
 })
-  .omit({ id: true, createdAt: true, updatedAt: true })
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    createdBy: true,
+    updatedBy: true,
+  })
   .meta({ ref: "InsertPlayer" });
 
 export const updatePlayerSchema = insertPlayerSchema.partial().meta({

@@ -10,13 +10,17 @@ export const monthlyReportGetRoute = new Hono<HonoEnv>();
 monthlyReportGetRoute.get(
   "/",
   describeRoute({
-    description: "Get a monthly report with its event venues",
+    description:
+      "Get a monthly report with its event venues. Requires system admin access.",
     tags: ["monthly reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Monthly report",
         content: {
-          "application/json": { schema: resolver(monthlyReportPayloadSchema) },
+          "application/json": {
+            schema: resolver(monthlyReportPayloadSchema),
+          },
         },
       },
       401: { description: "Unauthorized" },

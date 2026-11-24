@@ -4,6 +4,7 @@ import { z } from "zod";
 import { findMonthlyReport } from "../../queries/find-monthly-report.ts";
 import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
+import { requireAdmin } from "../../shared/permissions.ts";
 import { monthlyReportGenerateRoute } from "./generate.route.ts";
 import { monthlyReportGetRoute } from "./get.route.ts";
 import { monthlyReportPreviewRoute } from "./preview.route.tsx";
@@ -26,8 +27,8 @@ if (import.meta.env.DEV) {
 
 async function monthlyReportMiddleware(c: Context<HonoEnv>, next: Next) {
   const { month } = monthlyReportMonthSchema.parse(c.req.param());
+  requireAdmin();
   const monthlyReport = await findMonthlyReport(month);
-
   const appContext = getAppContext();
   appContext.monthlyReport = monthlyReport;
   await next();

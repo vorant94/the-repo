@@ -7,6 +7,7 @@ import { findArchetypesByNames } from "../../../queries/find-archetypes-by-names
 import { getAppContext } from "../../../shared/app-context.ts";
 import type { HonoEnv } from "../../../shared/hono-env.ts";
 import { paginationQuerySchema } from "../../../shared/pagination.ts";
+import { getUser } from "../../../shared/permissions.ts";
 import { archetypes } from "../../../shared/schema/archetypes.ts";
 import {
   insertRankSchema,
@@ -33,9 +34,10 @@ ranksRoute.get(
   "/",
   describeRoute({
     description:
-      "List event ranks, optionally filtered by archetype and player IDs",
+      "List event ranks, optionally filtered by archetype and player IDs. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       400: { description: "Invalid pagination or filters" },
       200: {
         description: "List of ranks",
@@ -75,9 +77,11 @@ ranksRoute.get(
 ranksRoute.get(
   "/:id",
   describeRoute({
-    description: "Get a rank by ID",
+    description:
+      "Get a rank by ID. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Rank",
         content: { "application/json": { schema: resolver(rankDtoSchema) } },
@@ -107,9 +111,11 @@ ranksRoute.get(
 ranksRoute.post(
   "/",
   describeRoute({
-    description: "Create a rank",
+    description:
+      "Create a rank. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       201: {
         description: "Created rank",
         content: { "application/json": { schema: resolver(rankDtoSchema) } },
@@ -123,10 +129,11 @@ ranksRoute.post(
     const { db } = getAppContext();
     const { eventId } = c.req.valid("param");
     const body = c.req.valid("json");
+    const userId = getUser().id;
 
     const rawRanks = await db
       .insert(ranks)
-      .values({ ...body, eventId })
+      .values({ ...body, eventId, createdBy: userId, updatedBy: userId })
       .returning();
     const rawRank = rawRanks.at(0);
     if (!rawRank) {
@@ -141,9 +148,11 @@ ranksRoute.post(
 ranksRoute.patch(
   "/:id",
   describeRoute({
-    description: "Update a rank",
+    description:
+      "Update a rank. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Updated rank",
         content: { "application/json": { schema: resolver(rankDtoSchema) } },
@@ -158,10 +167,11 @@ ranksRoute.patch(
     const { db } = getAppContext();
     const { eventId, id } = c.req.valid("param");
     const body = c.req.valid("json");
+    const userId = getUser().id;
 
     const rawRanks = await db
       .update(ranks)
-      .set(body)
+      .set({ ...body, updatedBy: userId })
       .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)))
       .returning();
     const rawRank = rawRanks.at(0);
@@ -177,9 +187,11 @@ ranksRoute.patch(
 ranksRoute.patch(
   "/:id/fix",
   describeRoute({
-    description: "Fix a rank's archetype by name or visibility",
+    description:
+      "Fix a rank's archetype by name or visibility. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Updated rank",
         content: { "application/json": { schema: resolver(rankDtoSchema) } },
@@ -194,6 +206,7 @@ ranksRoute.patch(
     const { db } = getAppContext();
     const { eventId, id } = c.req.valid("param");
     const { archetypeName, isArchetypeHidden } = c.req.valid("json");
+    const userId = getUser().id;
 
     const existingRanks = await db
       .select({ id: ranks.id })
@@ -212,7 +225,7 @@ ranksRoute.patch(
       } else {
         const createdArchetypes = await db
           .insert(archetypes)
-          .values({ name: archetypeName })
+          .values({ name: archetypeName, createdBy: userId, updatedBy: userId })
           .returning({ id: archetypes.id });
         const createdArchetype = createdArchetypes.at(0);
         if (!createdArchetype) {
@@ -224,7 +237,7 @@ ranksRoute.patch(
 
     const rawRanks = await db
       .update(ranks)
-      .set({ archetypeId, isArchetypeHidden })
+      .set({ archetypeId, isArchetypeHidden, updatedBy: userId })
       .where(and(eq(ranks.id, id), eq(ranks.eventId, eventId)))
       .returning();
     const rawRank = rawRanks.at(0);
@@ -240,9 +253,11 @@ ranksRoute.patch(
 ranksRoute.delete(
   "/:id",
   describeRoute({
-    description: "Delete a rank",
+    description:
+      "Delete a rank. Requires ownership of this venue or system admin access.",
     tags: ["ranks"],
     responses: {
+      403: { description: "Insufficient permission" },
       204: { description: "Deleted rank" },
       404: { description: "Rank not found" },
     },

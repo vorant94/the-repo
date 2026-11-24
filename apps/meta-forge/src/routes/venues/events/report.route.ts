@@ -12,6 +12,7 @@ import { findPlayersByNames } from "../../../queries/find-players-by-names.ts";
 import { getAppContext } from "../../../shared/app-context.ts";
 import { getEventReportPages } from "../../../shared/event-report-pages.ts";
 import type { HonoEnv } from "../../../shared/hono-env.ts";
+import { getUser } from "../../../shared/permissions.ts";
 import { archetypes } from "../../../shared/schema/archetypes.ts";
 import { events } from "../../../shared/schema/events.ts";
 import {
@@ -34,8 +35,8 @@ const eventReportPreviewQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
 });
 type EventReportRank = EventReportPayload["ranks"][number];
-// Rank inserts bind 11 values per row; keep each statement below D1's limit.
-const maximumRowsPerStatement = 8;
+// Keep multi-row inserts below D1's bound-parameter limit.
+const maximumRowsPerStatement = 5;
 
 eventReportRoute.use("*", async (c, next) => {
   const { eventId } = eventParamSchema.parse(c.req.param());
@@ -52,9 +53,11 @@ eventReportRoute.use("*", async (c, next) => {
 eventReportRoute.get(
   "/",
   describeRoute({
-    description: "Get an event report with its venue and standings",
+    description:
+      "Get an event report with its venue and standings. Requires ownership of this venue or system admin access.",
     tags: ["event reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       200: {
         description: "Event report",
         content: {
@@ -78,9 +81,11 @@ eventReportRoute.get(
 eventReportRoute.post(
   "/",
   describeRoute({
-    description: "Import report data into an existing event",
+    description:
+      "Import report data into an existing event. Requires ownership of this venue or system admin access.",
     tags: ["event reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       201: {
         description: "Created event report",
         content: {
@@ -99,6 +104,7 @@ eventReportRoute.post(
     if (!eventReport) {
       throw new HTTPException(404, { message: "Event was not found" });
     }
+    const userId = getUser().id;
     const { eventId } = eventParamSchema.parse(c.req.param());
     const {
       name,
@@ -131,7 +137,7 @@ eventReportRoute.post(
     await db.batch([
       db
         .update(events)
-        .set({ name, hostedAt, isLeagueBranded })
+        .set({ name, hostedAt, isLeagueBranded, updatedBy: userId })
         .where(eq(events.id, eventId)),
       ...playerInserts,
       ...archetypeInserts,
@@ -150,9 +156,11 @@ eventReportRoute.post(
 eventReportRoute.post(
   "/generate",
   describeRoute({
-    description: "Queue an event report screenshot generation",
+    description:
+      "Queue an event report screenshot generation. Requires ownership of this venue or system admin access.",
     tags: ["event reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       202: {
         description: "Queued event report generation",
         content: {
@@ -168,6 +176,7 @@ eventReportRoute.post(
     if (!eventReport) {
       throw new HTTPException(404, { message: "Event report was not found" });
     }
+    const userId = getUser().id;
 
     const jobsRows = await db
       .insert(jobs)
@@ -178,6 +187,8 @@ eventReportRoute.post(
         payload: eventReport,
         result: null,
         error: null,
+        requestedBy: userId,
+        eventId: eventReport.id,
       })
       .returning();
     const job = jobsRows.at(0);
@@ -195,9 +206,11 @@ if (import.meta.env.DEV) {
   eventReportRoute.get(
     "/preview",
     describeRoute({
-      description: "Preview an event report",
+      description:
+        "Preview an event report. Requires ownership of this venue or system admin access.",
       tags: ["event reports"],
       responses: {
+        403: { description: "Insufficient permission" },
         200: {
           description: "Event report preview",
           content: { "text/html": { schema: { type: "string" } } },
@@ -233,6 +246,7 @@ if (import.meta.env.DEV) {
 
 async function preparePlayers(reportRanks: Array<EventReportRank>) {
   const { db } = getAppContext();
+  const userId = getUser().id;
   const names = new Set(reportRanks.map((rank) => rank.player.name));
   const idsByName = await findPlayersByNames([...names]);
   const values = [...names].flatMap((name) => {
@@ -242,7 +256,7 @@ async function preparePlayers(reportRanks: Array<EventReportRank>) {
 
     const id = crypto.randomUUID();
     idsByName.set(name, id);
-    return [{ id, name }];
+    return [{ id, name, createdBy: userId, updatedBy: userId }];
   });
 
   return {
@@ -255,6 +269,7 @@ async function preparePlayers(reportRanks: Array<EventReportRank>) {
 
 async function prepareArchetypes(reportRanks: Array<EventReportRank>) {
   const { db } = getAppContext();
+  const userId = getUser().id;
   const names = new Set(reportRanks.map((rank) => rank.archetype.name));
   const idsByName = await findArchetypesByNames([...names]);
   const values = [...names].flatMap((name) => {
@@ -264,7 +279,7 @@ async function prepareArchetypes(reportRanks: Array<EventReportRank>) {
 
     const id = crypto.randomUUID();
     idsByName.set(name, id);
-    return [{ id, name }];
+    return [{ id, name, createdBy: userId, updatedBy: userId }];
   });
 
   return {
@@ -282,6 +297,7 @@ function prepareRanks(
   archetypeIdsByName: Map<string, string>,
 ) {
   const { db } = getAppContext();
+  const userId = getUser().id;
   const values = reportRanks.map((rank) => {
     const playerId = playerIdsByName.get(rank.player.name);
     const archetypeId = archetypeIdsByName.get(rank.archetype.name);
@@ -298,6 +314,8 @@ function prepareRanks(
       losses: rank.losses,
       draws: rank.draws,
       isArchetypeHidden: rank.isArchetypeHidden,
+      createdBy: userId,
+      updatedBy: userId,
     };
   });
 

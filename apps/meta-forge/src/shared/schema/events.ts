@@ -1,6 +1,7 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { users } from "./users.ts";
 import { venues } from "./venues.ts";
 
 export const events = sqliteTable("events", {
@@ -14,6 +15,8 @@ export const events = sqliteTable("events", {
     .notNull()
     .$defaultFn(() => new Date().toISOString())
     .$onUpdateFn(() => new Date().toISOString()),
+  createdBy: text().references(() => users.id, { onDelete: "restrict" }),
+  updatedBy: text().references(() => users.id, { onDelete: "restrict" }),
   name: text().notNull(),
   isLeagueBranded: integer({ mode: "boolean" }),
   hostedAt: text().notNull(),
@@ -36,7 +39,14 @@ export const eventDtoSchema = eventSchema
 export const insertEventSchema = createInsertSchema(events, {
   hostedAt: z.iso.datetime({ offset: true }),
 })
-  .omit({ id: true, createdAt: true, updatedAt: true, hostedBy: true })
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    createdBy: true,
+    updatedBy: true,
+    hostedBy: true,
+  })
   .meta({ ref: "InsertEvent" });
 
 export const updateEventSchema = insertEventSchema.partial().meta({

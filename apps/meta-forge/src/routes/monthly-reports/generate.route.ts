@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver } from "hono-openapi";
 import { getAppContext } from "../../shared/app-context.ts";
 import type { HonoEnv } from "../../shared/hono-env.ts";
+import { getUser } from "../../shared/permissions.ts";
 import {
   jobStatuses,
   jobs,
@@ -15,9 +16,11 @@ export const monthlyReportGenerateRoute = new Hono<HonoEnv>();
 monthlyReportGenerateRoute.post(
   "/generate",
   describeRoute({
-    description: "Queue a monthly report screenshot generation",
+    description:
+      "Queue a monthly report screenshot generation. Requires system admin access.",
     tags: ["monthly reports"],
     responses: {
+      403: { description: "Insufficient permission" },
       202: {
         description: "Queued monthly report generation",
         content: {
@@ -43,6 +46,7 @@ monthlyReportGenerateRoute.post(
         payload: monthlyReport,
         result: null,
         error: null,
+        requestedBy: getUser().id,
       })
       .returning();
     const job = jobsRows.at(0);
