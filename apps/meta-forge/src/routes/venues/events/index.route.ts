@@ -3,16 +3,17 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
-import { getAppContext } from "../shared/app-context.ts";
-import type { HonoEnv } from "../shared/hono-env.ts";
-import { paginationQuerySchema } from "../shared/pagination.ts";
+import { getAppContext } from "../../../shared/app-context.ts";
+import type { HonoEnv } from "../../../shared/hono-env.ts";
+import { paginationQuerySchema } from "../../../shared/pagination.ts";
 import {
   eventDtoSchema,
   events,
   insertEventSchema,
   updateEventSchema,
-} from "../shared/schema/events.ts";
+} from "../../../shared/schema/events.ts";
 import { ranksRoute } from "./ranks.route.ts";
+import { eventReportRoute } from "./report.route.ts";
 
 export const eventsRoute = new Hono<HonoEnv>();
 
@@ -204,3 +205,4 @@ eventsRoute.delete(
 );
 
 eventsRoute.route("/:eventId/ranks", ranksRoute);
+eventsRoute.route("/:eventId/report", eventReportRoute);

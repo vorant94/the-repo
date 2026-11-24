@@ -28,6 +28,7 @@ async function monthlyReportMiddleware(c: Context<HonoEnv>, next: Next) {
   const { month } = monthlyReportMonthSchema.parse(c.req.param());
   const monthlyReport = await findMonthlyReport(month);
 
-  getAppContext().monthlyReport = monthlyReport;
+  const appContext = getAppContext();
+  appContext.monthlyReport = monthlyReport;
   await next();
 }

@@ -7,6 +7,10 @@ MTG tournament data tool built with Hono, Drizzle ORM, and Cloudflare Workers. W
 - Before changing D1 schemas or migrations, read [Cloudflare guidance](../../docs/agents/cloudflare.md#d1-migrations).
 - Before changing CSP or response headers, read [Cloudflare guidance](../../docs/agents/cloudflare.md#ssr-headers).
 
+## Code Style
+
+- Never access or assign a property on an inline `getAppContext()` call. Assign or destructure the context in one statement, then use the variable in the next statement. For example, write `const appContext = getAppContext();` followed by `appContext.eventReport = eventReport;`.
+
 ## API Requests
 
 - The shell already has `META_FORGE_API_TOKEN` configured. Use `curl` with `-H "Authorization: Bearer ${META_FORGE_API_TOKEN}"` directly.

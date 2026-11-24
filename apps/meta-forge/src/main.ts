@@ -7,12 +7,11 @@ import { appContextMiddleware } from "./middlewares/app-context.middleware.ts";
 import { jwtMiddleware } from "./middlewares/jwt.middleware.ts";
 import { archetypesRoute } from "./routes/archetypes.route.ts";
 import { bucketRoute } from "./routes/bucket.route.ts";
-import { eventReportsRoute } from "./routes/event-reports/index.route.ts";
 import { jobsRoute } from "./routes/jobs.route.ts";
 import { linksRoute } from "./routes/links.route.ts";
 import { monthlyReportsRoute } from "./routes/monthly-reports/index.route.ts";
 import { playersRoute } from "./routes/players.route.ts";
-import { venuesRoute } from "./routes/venues.route.ts";
+import { venuesRoute } from "./routes/venues/index.route.ts";
 import type { HonoEnv } from "./shared/hono-env.ts";
 import { processJobs } from "./workers/index.ts";
 
@@ -22,7 +21,7 @@ app.use(cors());
 app.use(appContextMiddleware);
 const publicApiPaths = ["/api/docs", "/api/openapi.json"];
 if (import.meta.env.DEV) {
-  publicApiPaths.push("/api/event-reports/*/preview");
+  publicApiPaths.push("/api/venues/*/events/*/report/preview");
   publicApiPaths.push("/api/monthly-reports/*/preview");
   publicApiPaths.push("/api/bucket/*");
 }
@@ -35,7 +34,6 @@ app.route("/api/venues", venuesRoute);
 app.route("/api/jobs", jobsRoute);
 app.route("/api/players", playersRoute);
 app.route("/api/archetypes", archetypesRoute);
-app.route("/api/event-reports", eventReportsRoute);
 app.route("/api/monthly-reports", monthlyReportsRoute);
 if (import.meta.env.DEV) {
   app.route("/api/bucket", bucketRoute);

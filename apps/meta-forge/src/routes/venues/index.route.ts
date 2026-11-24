@@ -3,17 +3,17 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import { z } from "zod";
-import { getAppContext } from "../shared/app-context.ts";
-import type { HonoEnv } from "../shared/hono-env.ts";
-import { idSchema } from "../shared/id-schema.ts";
-import { paginationQuerySchema } from "../shared/pagination.ts";
+import { getAppContext } from "../../shared/app-context.ts";
+import type { HonoEnv } from "../../shared/hono-env.ts";
+import { idSchema } from "../../shared/id-schema.ts";
+import { paginationQuerySchema } from "../../shared/pagination.ts";
 import {
   insertVenueSchema,
   updateVenueSchema,
   venueDtoSchema,
   venues,
-} from "../shared/schema/venues.ts";
-import { eventsRoute } from "./events.route.ts";
+} from "../../shared/schema/venues.ts";
+import { eventsRoute } from "./events/index.route.ts";
 
 export const venuesRoute = new Hono<HonoEnv>();
 
